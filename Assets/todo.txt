@@ -1,0 +1,2 @@
+modele, textury itd.
+zanim zaczniecie tu wrzucać pierwsze rzeczy to pomyślcie jak je podzielić, na jakie katalogi itd. tak aby aby była tutaj jakaś spójna struktura plików i katalogów, nazewnictwo itd.
