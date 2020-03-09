@@ -119,4 +119,9 @@ public class CharController : MonoBehaviour
         transform.position += rightMovement;
         transform.position += forwardMovement;
     }
+
+    void PushEnemies()
+    {
+
+    }
 }
