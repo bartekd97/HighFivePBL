@@ -21,6 +21,8 @@ public class CharController : MonoBehaviour
     Vector3 forward, right;
     float leftGhostDistance;
 
+    public bool pushedEnemies;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,6 +32,7 @@ public class CharController : MonoBehaviour
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
         ghostMovement = false;
         leftGhostDistance = maxGhiostDistance;
+        pushedEnemies = false;
     }
 
     public float GetLeftGhostLevel()
@@ -59,6 +62,16 @@ public class CharController : MonoBehaviour
             if (Input.anyKey)
                 Move();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            pushedEnemies = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            pushedEnemies = false;
+        }
+
     }
 
     void StartGhost()
@@ -119,10 +132,4 @@ public class CharController : MonoBehaviour
         transform.position += rightMovement;
         transform.position += forwardMovement;
     }
-
-    void PushEnemies()
-    {
-
-    }
-
 }
