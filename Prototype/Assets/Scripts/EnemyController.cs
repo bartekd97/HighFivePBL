@@ -5,10 +5,12 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     private Rigidbody rb;
-    private float speed = 4.0f;
-    private float playerInRange = 10.0f;
+    private float speed = 3.0f;
+    private float playerInRange = 15.0f;
     private float stoppingDistance = 1.5f;
     public GameObject player;
+
+    private float enemyHealth = 10.0f;
 
 
     // Start is called before the first frame update
@@ -42,4 +44,16 @@ public class EnemyController : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("eldorado");
+        enemyHealth -= 5;
+
+        if (enemyHealth <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
 }
