@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 161090329}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -229,7 +229,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInRange: 15
+  stoppingDistance: 1.5
   player: {fileID: 1120882213}
+  charController: {fileID: 1120882215}
 --- !u!65 &161090330
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -288,7 +291,7 @@ GameObject:
   - component: {fileID: 215792998}
   m_Layer: 0
   m_Name: Enemy (1)
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -305,7 +308,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInRange: 15
+  stoppingDistance: 1.5
   player: {fileID: 1120882213}
+  charController: {fileID: 1120882215}
 --- !u!65 &215792999
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1304,6 +1310,7 @@ MonoBehaviour:
   maxGhiostDistance: 8
   ghostDistanceRecoverySpeed: 1
   speed: 4
+  pushedEnemies: 0
 --- !u!54 &1120882216
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1583,7 +1590,7 @@ GameObject:
   - component: {fileID: 1247581422}
   m_Layer: 0
   m_Name: Enemy (3)
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1600,7 +1607,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInRange: 15
+  stoppingDistance: 1.5
   player: {fileID: 1120882213}
+  charController: {fileID: 1120882215}
 --- !u!65 &1247581423
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1737,7 +1747,7 @@ GameObject:
   - component: {fileID: 1390460268}
   m_Layer: 0
   m_Name: Enemy (2)
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1754,7 +1764,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInRange: 15
+  stoppingDistance: 1.5
   player: {fileID: 1120882213}
+  charController: {fileID: 1120882215}
 --- !u!65 &1390460269
 BoxCollider:
   m_ObjectHideFlags: 0
