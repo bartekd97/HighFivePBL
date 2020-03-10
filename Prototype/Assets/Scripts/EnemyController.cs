@@ -15,17 +15,32 @@ public class EnemyController : MonoBehaviour
     public CharController charController;
     private bool pushedEnemiess;
 
+    Vector3 moveDirection = Vector3.zero;
+    Vector3 pushDirection = Vector3.zero;
+
+    //attacking
+    public float attackRange = 1.0f;
+    public float attackDelay = 2.0f;
+    private float timestampAttack;
+    private float timestampAfterAttackPushStart;
+    private float timestampAfterAttackPushStop;
+    private bool isPushedAfterAttack;
+    public float damage = 1.0f;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        timestampAttack = 0.0f;
+        timestampAfterAttackPushStart = 0.0f;
+        timestampAfterAttackPushStop = 0.0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        Vector3 moveDirection = Vector3.zero;
-        Vector3 pushDirection = Vector3.zero;
+        //Vector3 moveDirection = Vector3.zero;
+        //Vector3 pushDirection = Vector3.zero;
         pushedEnemiess = charController.pushedEnemies;
 
         if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
@@ -41,12 +56,42 @@ public class EnemyController : MonoBehaviour
         {
             PushEnemy(pushDirection);
         }
+
+        if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
+        {
+            if (timestampAttack <= Time.time)
+            {
+                timestampAttack = Time.time + attackDelay;
+                player.GetComponent<CharController>().TakeDamage(damage);
+
+                isPushedAfterAttack = true;
+                timestampAfterAttackPushStart = Time.time;
+                timestampAfterAttackPushStop = Time.time + 0.1f;
+            }
+        }
+
+
+        if (timestampAfterAttackPushStart >= timestampAfterAttackPushStop)
+        {
+            isPushedAfterAttack = false;
+        }
+        if (isPushedAfterAttack)
+        {
+            Vector3 afterAttackPushDirection = ((Vector3)transform.position - player.transform.position).normalized;
+            transform.position = Vector3.Slerp(transform.position, transform.position + afterAttackPushDirection, 0.15f);
+            timestampAfterAttackPushStart = Time.time;
+        }
+
     }
 
     void ChasePlayer(Vector3 direction)
     {
         direction = ((Vector3)player.transform.position - transform.position).normalized;
-        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
+
+        //rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
     }
 
     void Stop()
@@ -56,7 +101,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("eldorado");
+        Debug.Log("Enemy is hit");
         enemyHealth -= 5;
 
         if (enemyHealth <= 0)
@@ -68,8 +113,10 @@ public class EnemyController : MonoBehaviour
     public void PushEnemy(Vector3 direction)
     {
         direction = ((Vector3)transform.position - player.transform.position).normalized;
-        //rb.MovePosition(transform.position + direction * speed * Time.deltaTime * 100.0f);
-        rb.AddForce(direction * 20.0f, ForceMode.VelocityChange);
+
+
+        rb.MovePosition(transform.position + direction * speed * Time.deltaTime * 100.0f);
+        //rb.AddForce(direction * 20.0f, ForceMode.VelocityChange);
     }
 
 }
