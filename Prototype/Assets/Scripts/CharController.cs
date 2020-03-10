@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class CharController : MonoBehaviour
 {
@@ -18,8 +20,13 @@ public class CharController : MonoBehaviour
     [SerializeField]
     float speed = 4.0f;
 
+    [SerializeField]
+    float health = 10.0f;
+
     Vector3 forward, right;
     float leftGhostDistance;
+
+    public bool pushedEnemies;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +37,7 @@ public class CharController : MonoBehaviour
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
         ghostMovement = false;
         leftGhostDistance = maxGhiostDistance;
+        pushedEnemies = false;
     }
 
     public float GetLeftGhostLevel()
@@ -59,6 +67,16 @@ public class CharController : MonoBehaviour
             if (Input.anyKey)
                 Move();
         }
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            pushedEnemies = true;
+        }
+        else if (Input.GetKeyUp(KeyCode.Space))
+        {
+            pushedEnemies = false;
+        }
+
     }
 
     void StartGhost()
@@ -118,5 +136,20 @@ public class CharController : MonoBehaviour
         transform.forward = heading;
         transform.position += rightMovement;
         transform.position += forwardMovement;
+    }
+
+    public void TakeDamage(float damage)
+    {
+        health -= damage;
+        Debug.Log("Health remaining: " + health);
+        if (health <= 0)
+        {
+            KillPlayer();
+        }
+    }
+
+    public void KillPlayer()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
