@@ -46,6 +46,8 @@ public class EnemyController : MonoBehaviour
     void ChasePlayer(Vector3 direction)
     {
         direction = ((Vector3)player.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
     }
 

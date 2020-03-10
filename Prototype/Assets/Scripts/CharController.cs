@@ -18,6 +18,9 @@ public class CharController : MonoBehaviour
     [SerializeField]
     float speed = 4.0f;
 
+    [SerializeField]
+    float health = 10.0f;
+
     Vector3 forward, right;
     float leftGhostDistance;
 
