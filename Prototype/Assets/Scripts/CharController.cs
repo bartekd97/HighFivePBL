@@ -23,10 +23,18 @@ public class CharController : MonoBehaviour
     [SerializeField]
     float health = 10.0f;
 
+    [SerializeField]
+    float pushBackDistance = 5.0f;
+    [SerializeField]
+    float pushBackForce = 10.0f;
+    [SerializeField]
+    float pushCooldownTime = 1.0f;
+
     Vector3 forward, right;
     float leftGhostDistance;
+    float nextPushBackTime = 0.0f;
 
-    public bool pushedEnemies;
+    //public bool pushedEnemies;
 
     // Start is called before the first frame update
     void Start()
@@ -37,7 +45,7 @@ public class CharController : MonoBehaviour
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
         ghostMovement = false;
         leftGhostDistance = maxGhiostDistance;
-        pushedEnemies = false;
+        //pushedEnemies = false;
     }
 
     public float GetLeftGhostLevel()
@@ -68,6 +76,12 @@ public class CharController : MonoBehaviour
                 Move();
         }
 
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time >= nextPushBackTime)
+        {
+            PushEnemiesBack();
+            nextPushBackTime = Time.time + pushCooldownTime;
+        }
+        /*
         if (Input.GetKeyDown(KeyCode.Space))
         {
             pushedEnemies = true;
@@ -76,8 +90,22 @@ public class CharController : MonoBehaviour
         {
             pushedEnemies = false;
         }
-
+        */
     }
+
+    void PushEnemiesBack()
+    {
+        foreach (EnemyController ec in FindObjectsOfType<EnemyController>())
+        {
+            Vector3 dir = ec.transform.position - transform.position;
+            if (dir.magnitude < pushBackDistance)
+            {
+                dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
+                ec.PushEnemy(dir, pushBackForce);
+            }
+        }
+    }
+
 
     void StartGhost()
     {
