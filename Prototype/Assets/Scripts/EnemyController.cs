@@ -13,7 +13,7 @@ public class EnemyController : MonoBehaviour
     private float enemyHealth = 10.0f;
 
     public CharController charController;
-    private bool pushedEnemiess;
+    //private bool pushedEnemiess;
 
 
 
@@ -23,7 +23,8 @@ public class EnemyController : MonoBehaviour
     private float timestampAttack;
     private float timestampAfterAttackPushStart;
     private float timestampAfterAttackPushStop;
-    private bool isPushedAfterAttack;
+    //private bool isPushedAfterAttack;
+    public float pushBackForceAfterAttack = 5.0f;
     public float damage = 1.0f;
 
     // Start is called before the first frame update
@@ -40,7 +41,7 @@ public class EnemyController : MonoBehaviour
     {
         Vector3 moveDirection = Vector3.zero;
         Vector3 pushDirection = Vector3.zero;
-        pushedEnemiess = charController.pushedEnemies;
+        //pushedEnemiess = charController.pushedEnemies;
 
         //if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 10.0f))
         //{
@@ -50,10 +51,12 @@ public class EnemyController : MonoBehaviour
         if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
         {
             ChasePlayer(moveDirection);
+            /*
             if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
             {
                 PushEnemy(pushDirection);
             }
+            */
         }
         else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
         {
@@ -64,20 +67,26 @@ public class EnemyController : MonoBehaviour
 
         if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
         {
-            Debug.Log("eldorado");
+            //Debug.Log("eldorado");
 
             if (timestampAttack <= Time.time)
             {
                 timestampAttack = Time.time + attackDelay;
                 player.GetComponent<CharController>().TakeDamage(damage);
 
-                isPushedAfterAttack = true;
+                //isPushedAfterAttack = true;
                 timestampAfterAttackPushStart = Time.time;
                 timestampAfterAttackPushStop = Time.time + 0.1f;
+
+                // push after attack
+                Vector3 dir = transform.position - player.transform.position;
+                dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
+                PushEnemy(dir, pushBackForceAfterAttack);
             }
         }
 
 
+        /*
         if (timestampAfterAttackPushStart >= timestampAfterAttackPushStop)
         {
             isPushedAfterAttack = false;
@@ -89,7 +98,7 @@ public class EnemyController : MonoBehaviour
             transform.position = Vector3.Slerp(transform.position, transform.position + afterAttackPushDirection, 0.15f);
             timestampAfterAttackPushStart = Time.time;
         }
-
+        */
     }
 
     void ChasePlayer(Vector3 direction)
@@ -118,13 +127,13 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void PushEnemy(Vector3 direction)
+    public void PushEnemy(Vector3 direction, float force)
     {
-        direction = ((Vector3)transform.position - player.transform.position).normalized;
+        //direction = ((Vector3)transform.position - player.transform.position).normalized;
 
 
-        rb.MovePosition(transform.position + direction * speed * Time.deltaTime * 60.0f);
-        //rb.AddForce(direction * 20.0f, ForceMode.VelocityChange);
+        //rb.MovePosition(transform.position + direction * speed * Time.deltaTime * 60.0f);
+        rb.AddForce(direction * force, ForceMode.VelocityChange);
     }
 
 }

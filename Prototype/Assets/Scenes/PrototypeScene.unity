@@ -233,6 +233,8 @@ MonoBehaviour:
   stoppingDistance: 1.5
   player: {fileID: 1120882213}
   charController: {fileID: 1120882215}
+  pushBackForceAfterAttack: 5
+  damage: 1
 --- !u!65 &161090330
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -260,7 +262,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!4 &161090332
 Transform:
@@ -312,6 +314,8 @@ MonoBehaviour:
   stoppingDistance: 1.5
   player: {fileID: 1120882213}
   charController: {fileID: 1120882215}
+  pushBackForceAfterAttack: 5
+  damage: 1
 --- !u!65 &215792999
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -339,7 +343,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!4 &215793001
 Transform:
@@ -1310,7 +1314,10 @@ MonoBehaviour:
   maxGhiostDistance: 8
   ghostDistanceRecoverySpeed: 1
   speed: 4
-  pushedEnemies: 0
+  health: 10
+  pushBackDistance: 5
+  pushBackForce: 10
+  pushCooldownTime: 1
 --- !u!54 &1120882216
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1325,7 +1332,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!4 &1120882217
 Transform:
@@ -1611,6 +1618,8 @@ MonoBehaviour:
   stoppingDistance: 1.5
   player: {fileID: 1120882213}
   charController: {fileID: 1120882215}
+  pushBackForceAfterAttack: 5
+  damage: 1
 --- !u!65 &1247581423
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1638,7 +1647,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!4 &1247581425
 Transform:
@@ -1768,6 +1777,8 @@ MonoBehaviour:
   stoppingDistance: 1.5
   player: {fileID: 1120882213}
   charController: {fileID: 1120882215}
+  pushBackForceAfterAttack: 5
+  damage: 1
 --- !u!65 &1390460269
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1795,7 +1806,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!4 &1390460271
 Transform:
