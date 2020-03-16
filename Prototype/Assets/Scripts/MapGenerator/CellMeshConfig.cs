@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class CellMeshConfig
 {
+    public float mainScale = 0.9f;
     public float depth = 7.0f;
     public float depthMax = 20.0f;
     public float innerScale = 0.8f;

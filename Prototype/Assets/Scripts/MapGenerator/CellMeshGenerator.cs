@@ -34,12 +34,22 @@ public class CellMeshGenerator
     ConvexPolygon originalPolygon;
     ConvexPolygon baseOutline;
 
+
+    public ConvexPolygon PolygonBase { get; private set; }
+    public ConvexPolygon PolygonBaseInner { get; private set; }
+    public ConvexPolygon PolygonSmooth { get; private set; }
+    public ConvexPolygon PolygonSmoothInner { get; private set; }
+
+
     List<ConvexPolygon> outlines;
 
     public CellMeshGenerator(CellMeshConfig config, ConvexPolygon polygon)
     {
         this.config = config;
         this.originalPolygon = polygon;
+
+        PolygonBase = polygon;
+        PolygonBaseInner = polygon.ScaledBy(config.innerScale);
     }
 
     public void PrepareOutlines()
@@ -49,6 +59,9 @@ public class CellMeshGenerator
             baseOutline = baseOutline.BeveledVerticesBy(config.vertexBevel);
 
         baseOutline = baseOutline.CreateCircular(config.circularSegments);
+
+        PolygonSmooth = baseOutline;
+        PolygonSmoothInner = baseOutline.ScaledBy(config.innerScale);
 
         outlines = new List<ConvexPolygon>();
         int outlinesCount = config.outlineSplits + 1; // + outer
