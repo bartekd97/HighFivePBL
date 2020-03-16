@@ -6,8 +6,11 @@ using csDelaunay;
 public class MapGenerator : MonoBehaviour
 {
     public DiagramLayout layout;
-    public MapFence fence;
+    //public MapFence fence;
     public CellMeshConfig cellMeshConfig;
+
+    public GameObject bridgePrefab;
+    public float minEdgeLengthForBridge = 5.0f;
 
     // This is where we will store the resulting data
     private Dictionary<Vector2f, Site> sites;
@@ -16,7 +19,7 @@ public class MapGenerator : MonoBehaviour
 
     private void Start()
     {
-        fence.Initialize();
+        //fence.Initialize();
 
         bounds = layout.GetBounds();
         Voronoi voronoi = new Voronoi(layout.CreatePoints(), bounds);
@@ -28,10 +31,28 @@ public class MapGenerator : MonoBehaviour
         GameObject cellContainer = new GameObject("Cells");
         cellContainer.transform.parent = transform;
 
-        foreach (var s in sites)
+        // prepare cells
+        List<MapCell> cells = new List<MapCell>();
+
+        foreach (var s in sites.Values)
+            if (!IsBorderCell(s))
+                cells.Add(CreateCell(s, cellContainer));
+
+        // create bridges and connect references
+        GameObject bridgeContainer = new GameObject("Bridges");
+        bridgeContainer.transform.parent = transform;
+        CreateBridges(cells, bridgeContainer);
+
+        // now generate real cells
+        foreach (var s in sites.Values)
         {
-            CreateCell(s.Value, cellContainer);
-            //break;
+            if (!IsBorderCell(s))
+            {
+                MapCell cell = cells.Find(c => c.CellSiteIndex == s.SiteIndex);
+                ConvexPolygon cellPolygon = new ConvexPolygon(s.Region(bounds), s.Coord);
+                CellGenerator generator = cell.gameObject.AddComponent<CellGenerator>();
+                generator.Generate(cellPolygon, cellMeshConfig);
+            }
         }
 
         /*
@@ -41,9 +62,68 @@ public class MapGenerator : MonoBehaviour
         */
     }
 
+    MapCell CreateCell(Site cell, GameObject parent)
+    {
+        GameObject cellObject = new GameObject(cell.SiteIndex.ToString());
+        cellObject.transform.parent = parent.transform;
+        cellObject.transform.position = new Vector3(cell.Coord.x, 0, cell.Coord.y);
+
+        MapCell mCell = cellObject.AddComponent<MapCell>();
+        mCell.CellSiteIndex = cell.SiteIndex;
+        return mCell;
+    }
+
+    void CreateBridges(List<MapCell> cells, GameObject parent)
+    {
+        System.Func<Site, MapCell> GetCell = (s) =>
+        {
+            foreach (var cell in cells)
+                if (cell.CellSiteIndex == s.SiteIndex)
+                    return cell;
+            return null;
+        };
+
+        foreach (var edge in edges)
+        {
+            if (!edge.Visible())
+                continue;
+
+            Vector2f leftVertex = edge.ClippedEnds[LR.LEFT];
+            Vector2f rightVertex = edge.ClippedEnds[LR.RIGHT];
+
+            if (leftVertex.DistanceSquare(rightVertex) < minEdgeLengthForBridge * minEdgeLengthForBridge)
+                continue;
+
+            var cellA = GetCell(edge.LeftSite);
+            var cellB = GetCell(edge.RightSite);
+            if (cellA == null || cellB == null)
+                continue;
+
+            Vector3 position = new Vector3(
+                    (leftVertex.x + rightVertex.x) * 0.5f,
+                    0.0f,
+                    (leftVertex.y + rightVertex.y) * 0.5f
+                );
+
+            GameObject bridgeObject = Instantiate(bridgePrefab, parent.transform);
+            bridgeObject.transform.position = position;
+            bridgeObject.transform.right = (new Vector3(rightVertex.x, 0.0f, rightVertex.y) - position).normalized;
+            CellBridge bridge = bridgeObject.GetComponent<CellBridge>();
+
+            bridge.CellA = cellA;
+            bridge.CellB = cellB;
+
+            cellA.Bridges.Add(new MapCell.BridgeTo() { Bridge = bridge, Cell = cellB });
+            cellB.Bridges.Add(new MapCell.BridgeTo() { Bridge = bridge, Cell = cellA });
+        }
+    }
+
+    /*
     void CreateCell(Site cell, GameObject parent)
     {
         ConvexPolygon cellPolygon = new ConvexPolygon(cell.Region(layout.GetBounds()), cell.Coord);
+        cellPolygon = cellPolygon.ScaledBy(cellMeshConfig.mainScale);
+
         GameObject cellObject = new GameObject(cell.SiteIndex.ToString());
         cellObject.transform.parent = parent.transform;
         cellObject.transform.position = new Vector3(cell.Coord.x, 0, cell.Coord.y);
@@ -57,7 +137,17 @@ public class MapGenerator : MonoBehaviour
         generator.PrepareBaseMeshStructure();
         filter.mesh = generator.BuildMesh();
     }
+    */
 
+    bool IsBorderCell(Site cell)
+    {
+        foreach (var p in cell.Region(layout.GetBounds()))
+            if (p.x == 0 || p.x == layout.width || p.y == 0 || p.y == layout.height)
+                return true;
+        return false;
+    }
+
+    /*
     void CreateTerrain()
     {
         GameObject terrainObject = new GameObject("Terrain");
@@ -136,4 +226,5 @@ public class MapGenerator : MonoBehaviour
 
         }
     }
+    */
 }

@@ -155,26 +155,12 @@ MonoBehaviour:
     columns: 5
     rows: 7
     LloydRelaxIteraions: 2
-  fence:
-    entities:
-    - name: vertex
-      gameObject: {fileID: 5328141453955960781, guid: 3f8c6b9ff92a78c488edb16c77082748,
-        type: 3}
-      length: 2
-    - name: divider
-      gameObject: {fileID: 3831403179537603598, guid: 2e2d0f1196d38f24e9208ddf1e707c6d,
-        type: 3}
-      length: 1
-    - name: barrier
-      gameObject: {fileID: 2545382280035860291, guid: 72512691c037a714baa168dbbbdbe23f,
-        type: 3}
-      length: 1
-    MaxBarrierSegmentLength: 15
   cellMeshConfig:
+    mainScale: 0.95
     depth: 5
     depthMax: 10
     innerScale: 0.9
-    outlineSplits: 12
+    outlineSplits: 6
     nextOutlineScale: 0.999
     nextOutlineScaleMultiplier: 0.97
     vertexBevel: 0.1
@@ -183,6 +169,9 @@ MonoBehaviour:
     noiseCenterRatio: 0.9
     noiseScale: 0.1
     noiseForce: {x: 5, y: 5}
+  bridgePrefab: {fileID: 5821484929687913678, guid: 32ada4d4553efe540b28fe16cd71f4f2,
+    type: 3}
+  minEdgeLengthForBridge: 10
 --- !u!4 &807237717
 Transform:
   m_ObjectHideFlags: 0
