@@ -11,6 +11,8 @@ public class DiagramLayout
     public int columns = 3;
     public int rows = 4;
 
+    public int LloydRelaxIteraions = 2;
+
     public Rectf GetBounds()
     {
         return new Rectf(0, 0, width, height);

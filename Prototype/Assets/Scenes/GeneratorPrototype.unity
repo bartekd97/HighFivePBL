@@ -154,6 +154,7 @@ MonoBehaviour:
     height: 256
     columns: 5
     rows: 7
+    LloydRelaxIteraions: 2
   fence:
     entities:
     - name: vertex
@@ -169,6 +170,19 @@ MonoBehaviour:
         type: 3}
       length: 1
     MaxBarrierSegmentLength: 15
+  cellMeshConfig:
+    depth: 5
+    depthMax: 10
+    innerScale: 0.9
+    outlineSplits: 12
+    nextOutlineScale: 0.999
+    nextOutlineScaleMultiplier: 0.97
+    vertexBevel: 0.1
+    vertexBevelSteps: 3
+    circularSegments: 32
+    noiseCenterRatio: 0.9
+    noiseScale: 0.1
+    noiseForce: {x: 5, y: 5}
 --- !u!4 &807237717
 Transform:
   m_ObjectHideFlags: 0
