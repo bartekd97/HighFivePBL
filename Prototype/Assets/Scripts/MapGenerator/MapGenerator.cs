@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using csDelaunay;
 
 public class MapGenerator : MonoBehaviour
@@ -16,6 +17,9 @@ public class MapGenerator : MonoBehaviour
     private Dictionary<Vector2f, Site> sites;
     private List<Edge> edges;
     private Rectf bounds;
+
+
+    public UnityEvent OnMapGenerated;
 
     private void Start()
     {
@@ -60,6 +64,15 @@ public class MapGenerator : MonoBehaviour
         CreateEdges();
         CreateVertices();
         */
+
+
+        StartCoroutine(coTriggerOnMapGenerated());
+    }
+
+    IEnumerator coTriggerOnMapGenerated()
+    {
+        yield return new WaitForEndOfFrame();
+        OnMapGenerated.Invoke();
     }
 
     MapCell CreateCell(Site cell, GameObject parent)
