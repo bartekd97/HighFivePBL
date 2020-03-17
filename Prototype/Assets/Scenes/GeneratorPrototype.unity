@@ -889,6 +889,7 @@ MonoBehaviour:
   centerSpawnRadiusPercentage: 0.6
   maxBossSpawnCellDistance: 4
   playerObject: {fileID: 2066263928}
+  bossCellMaterial: {fileID: 2100000, guid: 59506a8a305a8db4d8155384ca3390d3, type: 2}
   enemyPrefab: {fileID: 5058164864356723304, guid: 82cd9f3d442d0c04a98ad0b9bb61d277,
     type: 3}
   bossPrefab: {fileID: 8886014663648545004, guid: 045f9a318b5eaf3408faf5840371993c,
