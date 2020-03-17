@@ -8,9 +8,11 @@ public class MapSetuper : MonoBehaviour
     public int minEnemiesInCell;
     public int maxEnemiesInCell;
     public float centerSpawnRadiusPercentage;
+    public int maxBossSpawnCellDistance;
     public GameObject playerObject;
 
     public GameObject enemyPrefab;
+    public GameObject bossPrefab;
 
     public void SetupMap()
     {
@@ -26,26 +28,46 @@ public class MapSetuper : MonoBehaviour
         return tmp[0];
     }
 
+    MapCell GetRandomBossCell()
+    {
+        List<MapCell> tmp = new List<MapCell>(MapCell.All);
+        tmp.Sort((a, b) => { return b.transform.position.x.CompareTo(a.transform.position.x); });
+        return tmp[Mathf.Min(Random.Range(0, maxBossSpawnCellDistance), tmp.Count - 1)];
+    }
+
     void SetupEnemies()
     {
         List<MapCell> cells = new List<MapCell>(MapCell.All);
         MapCell startupCell = GetStartupCell();
-        cells.Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex)).ToList().ForEach(cell =>
+        MapCell bossCell = GetRandomBossCell();
+        cells
+            .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
+            .Where(c => !c.CellSiteIndex.Equals(bossCell.CellSiteIndex))
+            .ToList()
+            .ForEach(cell => SpawnEnemiesInCell(cell));
+        InstantiateBoss(bossCell.transform.position);
+    }
+
+    private void SpawnEnemiesInCell(MapCell cell)
+    {
+        int enemiesCount = Random.Range(minEnemiesInCell, maxEnemiesInCell);
+        float minRadius = Mathf.Infinity;
+        for (int i = 0; i < cell.PolygonBase.Points.Length - 1; i++)
         {
-            int enemiesCount = Random.Range(minEnemiesInCell, maxEnemiesInCell);
-            float minRadius = Mathf.Infinity;
-            for (int i = 0; i < cell.PolygonBase.Points.Length - 1; i++)
+            float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[i], cell.PolygonBase.Points[i + 1], new Vector2(0, 0));
+            if (distance < minRadius) minRadius = distance;
+        }
+        while (enemiesCount > 0)
+        {
+            Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+            Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0, circlePoint.y);
+            if (Physics.OverlapBox(finalPoint + new Vector3(0, enemyPrefab.GetComponent<BoxCollider>().size.y, 0), enemyPrefab.GetComponent<BoxCollider>().size / 2.0f).Length == 0)
             {
-                float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[i], cell.PolygonBase.Points[i + 1], new Vector2(0, 0));
-                if (distance < minRadius) minRadius = distance;
+                InstantiateEnemy(finalPoint);
             }
-            while (enemiesCount > 0)
-            {
-                Vector2 point = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                InstantiateEnemy(cell.transform.position + new Vector3(point.x, 0, point.y));
-                enemiesCount -= 1;
-            }
-        });
+
+            enemiesCount -= 1;
+        }
     }
 
     private GameObject InstantiateEnemy(Vector3 position)
@@ -55,6 +77,15 @@ public class MapSetuper : MonoBehaviour
         enemyController.player = playerObject;
         enemyController.charController = playerObject.GetComponent<CharController>();
         return enemy;
+    }
+
+    private GameObject InstantiateBoss(Vector3 position)
+    {
+        GameObject boss = Instantiate(bossPrefab, position, Quaternion.identity);
+        var bossController = boss.GetComponent<EnemyController>();
+        bossController.player = playerObject;
+        bossController.charController = playerObject.GetComponent<CharController>();
+        return boss;
     }
 
     private float GetDistanceFromPointToLine(Vector2 lineA, Vector2 lineB, Vector2 C)
