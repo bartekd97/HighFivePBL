@@ -104,6 +104,9 @@ public class ConvexPolygon
         if (!IsPointInside(point))
             return 1.0f;
 
+        if (point.magnitude < 0.01f)
+            return 0.0f;
+
         Vector2 direction = point.normalized;
         Vector2 edgePoint = point + direction;
         while (IsPointInside(edgePoint))
