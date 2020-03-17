@@ -120,6 +120,51 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &19682694
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 19682696}
+  - component: {fileID: 19682695}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &19682695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19682694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10083821b0396e544aa947a7a450f614, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentCell: {fileID: 0}
+  playerObject: {fileID: 2066263928}
+--- !u!4 &19682696
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19682694}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 57.22036, y: 5.9408836, z: 111.15969}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &116320362
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,6 +413,17 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1873961012}
         m_MethodName: SetupMap
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 19682695}
+        m_MethodName: GameSetup
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -887,6 +943,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
+        type: 3}
+      propertyPath: ghostObject
+      value: 
+      objectReference: {fileID: 1283206961}
     - target: {fileID: 7091947314756690521, guid: be4e7c0f6494dfc459f9f516a1f74434,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -942,11 +1003,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
-        type: 3}
-      propertyPath: ghostObject
-      value: 
-      objectReference: {fileID: 1283206961}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: be4e7c0f6494dfc459f9f516a1f74434, type: 3}
 --- !u!1001 &8393135772809976592

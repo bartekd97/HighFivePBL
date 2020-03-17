@@ -39,6 +39,10 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(transform.position.y < -50)
+        {
+            Destroy(gameObject);
+        }
         Vector3 moveDirection = Vector3.zero;
         Vector3 pushDirection = Vector3.zero;
         //pushedEnemiess = charController.pushedEnemies;

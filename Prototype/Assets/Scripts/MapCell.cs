@@ -14,6 +14,9 @@ public class MapCell : MonoBehaviour
     }
     public List<BridgeTo> Bridges = new List<BridgeTo>();
 
+    public List<GameObject> Enemies = new List<GameObject>();
+
+
     [HideInInspector]
     public int CellSiteIndex;
 
@@ -33,6 +36,7 @@ public class MapCell : MonoBehaviour
     private void Awake()
     {
         All.Add(this);
+
     }
     private void OnDestroy()
     {

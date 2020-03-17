@@ -63,13 +63,14 @@ public class MapSetuper : MonoBehaviour
             Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0, circlePoint.y);
             if (Physics.OverlapBox(finalPoint + new Vector3(0, enemyPrefab.GetComponent<BoxCollider>().size.y, 0), enemyPrefab.GetComponent<BoxCollider>().size / 2.0f).Length == 0)
             {
-                InstantiateEnemy(finalPoint);
+                GameObject enemy = InstantiateEnemy(finalPoint, cell);
+                cell.Enemies.Add(enemy);
                 enemiesCount -= 1;
             }
         }
     }
 
-    private GameObject InstantiateEnemy(Vector3 position)
+    private GameObject InstantiateEnemy(Vector3 position, MapCell cell)
     {
         GameObject enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
         var enemyController = enemy.GetComponent<EnemyController>();
