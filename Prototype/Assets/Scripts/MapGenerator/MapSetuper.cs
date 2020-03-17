@@ -64,9 +64,8 @@ public class MapSetuper : MonoBehaviour
             if (Physics.OverlapBox(finalPoint + new Vector3(0, enemyPrefab.GetComponent<BoxCollider>().size.y, 0), enemyPrefab.GetComponent<BoxCollider>().size / 2.0f).Length == 0)
             {
                 InstantiateEnemy(finalPoint);
+                enemiesCount -= 1;
             }
-
-            enemiesCount -= 1;
         }
     }
 
