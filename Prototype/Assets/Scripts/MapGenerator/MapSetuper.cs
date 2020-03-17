@@ -10,6 +10,7 @@ public class MapSetuper : MonoBehaviour
     public float centerSpawnRadiusPercentage;
     public int maxBossSpawnCellDistance;
     public GameObject playerObject;
+    public Material bossCellMaterial;
 
     public GameObject enemyPrefab;
     public GameObject bossPrefab;
@@ -46,6 +47,7 @@ public class MapSetuper : MonoBehaviour
             .ToList()
             .ForEach(cell => SpawnEnemiesInCell(cell));
         InstantiateBoss(bossCell.transform.position);
+        bossCell.GetComponentInChildren<MeshRenderer>().material = bossCellMaterial;
     }
 
     private void SpawnEnemiesInCell(MapCell cell)
@@ -65,9 +67,8 @@ public class MapSetuper : MonoBehaviour
             {
                 GameObject enemy = InstantiateEnemy(finalPoint, cell);
                 cell.Enemies.Add(enemy);
+                enemiesCount -= 1;
             }
-
-            enemiesCount -= 1;
         }
     }
 
