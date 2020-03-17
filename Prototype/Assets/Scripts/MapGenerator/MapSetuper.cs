@@ -46,7 +46,10 @@ public class MapSetuper : MonoBehaviour
             .Where(c => !c.CellSiteIndex.Equals(bossCell.CellSiteIndex))
             .ToList()
             .ForEach(cell => SpawnEnemiesInCell(cell));
-        InstantiateBoss(bossCell.transform.position);
+
+        GameObject boss = InstantiateBoss(bossCell.transform.position);
+        bossCell.Enemies.Add(boss);
+
         bossCell.GetComponentInChildren<MeshRenderer>().material = bossCellMaterial;
     }
 
