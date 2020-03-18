@@ -9,8 +9,7 @@ public class CharController : MonoBehaviour
     public bool ghostMovement { get; private set; }
 
 
-    [SerializeField]
-    Ghost ghost;
+    public Ghost ghost;
 
     [SerializeField]
     float maxGhiostDistance = 8.0f;
@@ -140,7 +139,7 @@ public class CharController : MonoBehaviour
         float yDist = mouseRay.origin.y - ghost.transform.position.y;
         Vector3 rayPoint = mouseRay.origin - mouseRay.direction * (yDist / mouseRay.direction.y);
         Quaternion toRot = Quaternion.LookRotation(rayPoint - ghost.transform.position);
-        ghost.transform.rotation = Quaternion.Lerp(ghost.transform.rotation, toRot, Time.deltaTime * 7f);
+        ghost.transform.rotation = Quaternion.Lerp(ghost.transform.rotation, toRot, Time.deltaTime * 5f);
         
 
         Vector3 moveBy = Vector3.forward * ghostSpeed * Time.deltaTime;

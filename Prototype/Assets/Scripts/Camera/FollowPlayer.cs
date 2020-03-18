@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class FollowPlayer : MonoBehaviour
 {
+    public CharController Player;
     public Transform PlayerTransform;
+    public Transform GhostTransform;
 
     private Vector3 cameraOffset;
 
@@ -21,7 +23,11 @@ public class FollowPlayer : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        Vector3 newPos = PlayerTransform.position + cameraOffset;
+        Vector3 newPos;
+        if (Player.ghostMovement && Player.ghost.IsMarking)
+            newPos = GhostTransform.position + cameraOffset;
+        else
+            newPos = PlayerTransform.position + cameraOffset;
 
         transform.position = Vector3.Slerp(transform.position, newPos, SmoothFactor);
     }
