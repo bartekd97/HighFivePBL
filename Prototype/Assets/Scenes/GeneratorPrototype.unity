@@ -297,8 +297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 032ee15d2307f3640a4b83a8befa3563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Player: {fileID: 2066263929}
   PlayerTransform: {fileID: 683384593}
-  SmoothFactor: 0.2
+  GhostTransform: {fileID: 1283206963}
+  SmoothFactor: 0.15
 --- !u!81 &628385988
 AudioListener:
   m_ObjectHideFlags: 0
@@ -955,26 +957,6 @@ PrefabInstance:
       propertyPath: ghost
       value: 
       objectReference: {fileID: 1283206962}
-    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
-        type: 3}
-      propertyPath: ghostSpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
-        type: 3}
-      propertyPath: maxGhiostDistance
-      value: 25
-      objectReference: {fileID: 0}
-    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
-        type: 3}
-      propertyPath: ghostDistanceRecoverySpeed
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
-        type: 3}
-      propertyPath: speed
-      value: 9
-      objectReference: {fileID: 0}
     - target: {fileID: 7091947314756690521, guid: be4e7c0f6494dfc459f9f516a1f74434,
         type: 3}
       propertyPath: m_LocalPosition.x
