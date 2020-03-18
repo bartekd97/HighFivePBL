@@ -119,11 +119,10 @@ public class EnemyController : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
     }
-
-    private void OnTriggerEnter(Collider other)
+    
+    public void TakeDamage(float value)
     {
-        Debug.Log("Enemy is hit");
-        enemyHealth -= 5;
+        enemyHealth -= value;
 
         if (enemyHealth <= 0)
         {
