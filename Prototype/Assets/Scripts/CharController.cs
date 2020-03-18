@@ -10,7 +10,7 @@ public class CharController : MonoBehaviour
 
 
     [SerializeField]
-    GameObject ghostObject;
+    Ghost ghost;
 
     [SerializeField]
     float maxGhiostDistance = 8.0f;
@@ -19,6 +19,8 @@ public class CharController : MonoBehaviour
 
     [SerializeField]
     float speed = 4.0f;
+    [SerializeField]
+    float ghostSpeed = 8.0f;
 
     [SerializeField]
     float health = 10.0f;
@@ -110,37 +112,41 @@ public class CharController : MonoBehaviour
     void StartGhost()
     {
         if (ghostMovement) return;
-        ghostObject.SetActive(true);
+        ghost.Show(transform);
 
-        ghostObject.transform.position = transform.position;
+        //ghost.transform.position = transform.position;
 
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        float yDist = mouseRay.origin.y - ghostObject.transform.position.y;
+        float yDist = mouseRay.origin.y - ghost.transform.position.y;
         Vector3 rayPoint = mouseRay.origin - mouseRay.direction * (yDist / mouseRay.direction.y);
-        Quaternion toRot = Quaternion.LookRotation(rayPoint - ghostObject.transform.position);
-        ghostObject.transform.rotation = toRot;
+        Quaternion toRot = Quaternion.LookRotation(rayPoint - ghost.transform.position);
+        ghost.transform.rotation = toRot;
 
         ghostMovement = true;
+        ghost.StartMarking();
     }
     void StopGhost()
     {
         if (!ghostMovement) return;
-        ghostObject.SetActive(false);
+        ghost.EndMarking();
+        ghost.Hide();
         ghostMovement = false;
     }
 
     void MoveGhost()
     {
+        /*
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         float yDist = mouseRay.origin.y - ghostObject.transform.position.y;
         Vector3 rayPoint = mouseRay.origin - mouseRay.direction * (yDist / mouseRay.direction.y);
         Quaternion toRot = Quaternion.LookRotation(rayPoint - ghostObject.transform.position);
-
         ghostObject.transform.rotation = Quaternion.Lerp(ghostObject.transform.rotation, toRot, Time.deltaTime * 5f);
-        Vector3 moveBy = Vector3.forward * speed * Time.deltaTime;
-        ghostObject.transform.Translate(moveBy, Space.Self);
+        */
 
-        Vector3 heading = ghostObject.transform.position - transform.position;
+        Vector3 moveBy = Vector3.forward * ghostSpeed * Time.deltaTime;
+        ghost.transform.Translate(moveBy, Space.Self);
+
+        Vector3 heading = ghost.transform.position - transform.position;
         heading.y = 0;
         heading = Vector3.Normalize(heading);
         transform.forward = heading;

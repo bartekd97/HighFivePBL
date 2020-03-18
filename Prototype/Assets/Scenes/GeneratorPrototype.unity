@@ -579,12 +579,18 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
---- !u!1 &1283206961 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8393135771930489889, guid: 02badba0fd3137f4aa4481eec7e1ed77,
+--- !u!114 &1283206962 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1283206962, guid: 02badba0fd3137f4aa4481eec7e1ed77,
     type: 3}
   m_PrefabInstance: {fileID: 8393135772809976592}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8cc96d611992b4a93a0f194b63690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1283206963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8393135771930489891, guid: 02badba0fd3137f4aa4481eec7e1ed77,
@@ -946,9 +952,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
         type: 3}
-      propertyPath: ghostObject
+      propertyPath: ghost
       value: 
-      objectReference: {fileID: 1283206961}
+      objectReference: {fileID: 1283206962}
+    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
+        type: 3}
+      propertyPath: ghostSpeed
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 7091947314756690521, guid: be4e7c0f6494dfc459f9f516a1f74434,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1072,6 +1083,10 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1283206962, guid: 02badba0fd3137f4aa4481eec7e1ed77, type: 3}
+      propertyPath: miniGhostSpawnDistance
+      value: 1.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02badba0fd3137f4aa4481eec7e1ed77, type: 3}
