@@ -20,8 +20,9 @@ public class Ghost : MonoBehaviour
     }
     public class GhostLine
     {
-        public Vector2 from;
-        public Vector2 to;
+        //public Vector2 from;
+        //public Vector2 to;
+        public List<Vector2> points;
         public List<GhostCrossing> crosings = new List<GhostCrossing>();
         public List<MiniGhost> ghosts;
     }
@@ -32,8 +33,11 @@ public class Ghost : MonoBehaviour
 
     List<GhostLine> activeLines = new List<GhostLine>();
 
-    Vector2 startPosition;
-    Vector3 lastMiniGhostSpawnPosition;
+    List<Vector2> recordedPositions;
+    float distanceReached;
+    Vector3 lastDistanceRecordPos;
+
+    //Vector3 lastMiniGhostSpawnPosition;
 
     List<MiniGhost> spawnedMiniGhostsCurrent;
 
@@ -51,6 +55,24 @@ public class Ghost : MonoBehaviour
     {
         if (IsMarking)
         {
+            distanceReached += Vector3.Distance(lastDistanceRecordPos, transform.position);
+            lastDistanceRecordPos = transform.position;
+            if (distanceReached >= miniGhostSpawnDistance)
+            {
+                MiniGhost mg = Instantiate(
+                    miniGhostPrefab,
+                    transform.position,
+                    transform.rotation
+                    ).GetComponent<MiniGhost>();
+                spawnedMiniGhostsCurrent.Add(mg);
+                recordedPositions.Add(new Vector2(
+                    transform.position.x,
+                    transform.position.z
+                ));
+                distanceReached = 0.0f;
+            }
+
+            /*
             if (Vector3.Distance(lastMiniGhostSpawnPosition, transform.position)
                 >= miniGhostSpawnDistance)
             {
@@ -62,6 +84,7 @@ public class Ghost : MonoBehaviour
                 spawnedMiniGhostsCurrent.Add(mg);
                 lastMiniGhostSpawnPosition = transform.position;
             }
+            */
         }
     }
 
@@ -78,11 +101,20 @@ public class Ghost : MonoBehaviour
     {
         if (IsMarking) return;
 
+        /*
         startPosition = new Vector2(
                 transform.position.x,
                 transform.position.z
             );
-        lastMiniGhostSpawnPosition = transform.position;
+            */
+        recordedPositions = new List<Vector2>();
+        recordedPositions.Add(new Vector2(
+                transform.position.x,
+                transform.position.z
+            ));
+        //lastMiniGhostSpawnPosition = transform.position;
+        distanceReached = 0.0f;
+        lastDistanceRecordPos = transform.position;
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
     }
@@ -91,19 +123,27 @@ public class Ghost : MonoBehaviour
     {
         if (!IsMarking) return;
 
+        /*
         Vector2 endPosition = new Vector2(
                 transform.position.x,
                 transform.position.z
             );
+            */
+        recordedPositions.Add(new Vector2(
+            transform.position.x,
+            transform.position.z
+        ));
 
         if (spawnedMiniGhostsCurrent.Count > 0)
             activeLines.Add(new GhostLine()
             {
-                from = startPosition,
-                to = endPosition,
+                //from = startPosition,
+                //to = endPosition,
+                points = recordedPositions,
                 ghosts = spawnedMiniGhostsCurrent
             });
 
+        recordedPositions = null;
         spawnedMiniGhostsCurrent = null;
 
         IsMarking = false;
@@ -123,11 +163,14 @@ public class Ghost : MonoBehaviour
             foreach (var l2 in activeLines)
             {
                 if (l1 == l2) continue;
-                var crossing = CalculateCrossing(l1, l2);
-                if (crossing == null) continue;
-                if (l1.crosings.Exists(c => c.Equals(crossing))) continue;
-                l1.crosings.Add(crossing);
-                l2.crosings.Add(crossing);
+                var crossings = CalculateCrossings(l1, l2);
+                //if (crossing == null) continue;
+                foreach (var crossing in crossings)
+                {
+                    if (l1.crosings.Exists(c => c.Equals(crossing))) continue;
+                    l1.crosings.Add(crossing);
+                    l2.crosings.Add(crossing);
+                }
             }
         }
     }
@@ -146,7 +189,7 @@ public class Ghost : MonoBehaviour
                     if (!figureCrossing.Exists(fc => fc.Equals(c)))
                         figureCrossing.Add(c);
 
-        if (figureCrossing.Count == possibleLines.Count)
+        if (figureCrossing.Count >= possibleLines.Count)
         {
             AttackWithClosedFigure(possibleLines, figureCrossing);
             return;
@@ -174,8 +217,28 @@ public class Ghost : MonoBehaviour
         }
     }
 
-    GhostCrossing CalculateCrossing(GhostLine l1, GhostLine l2)
+    List<GhostCrossing> CalculateCrossings(GhostLine l1, GhostLine l2)
     {
+        List<GhostCrossing> crossing = new List<GhostCrossing>();
+        for (int i = 0; i < l1.points.Count - 1; i++)
+        {
+            for (int j = 0; j < l2.points.Count - 1; j++)
+            {
+                Vector2 p = GetSegmentsCommonPoint(
+                        l1.points[i], l1.points[i + 1],
+                        l2.points[j], l2.points[j + 1]
+                    );
+                if (p != Vector2.zero)
+                    crossing.Add( new GhostCrossing()
+                    {
+                        a = l1,
+                        b = l2,
+                        position = p
+                    });
+            }
+        }
+        return crossing;
+        /*
         float
             dXab = l1.to.x - l1.from.x,
             dYab = l1.to.y - l1.from.y,
@@ -199,6 +262,27 @@ public class Ghost : MonoBehaviour
             b = l2,
             position = p
         };
+        */
+    }
+    Vector2 GetSegmentsCommonPoint(Vector2 a, Vector2 b, Vector2 c, Vector2 d)
+    {
+        float
+            dXab = b.x - a.x,
+            dYab = b.y - a.y,
+
+            dXac = c.x - a.x,
+            dYac = c.y - a.y,
+
+            dXcd = d.x - c.x,
+            dYcd = d.y - c.y;
+
+        float t1 = (dXac * dYcd - dYac * dXcd) / (dXab * dYcd - dYab * dXcd);
+        float t2 = (dXac * dYab - dYac * dXab) / (dXab * dYcd - dYab * dXcd);
+
+        if (t1 < 0 || t1 > 1 || t2 < 0 || t2 > 1)
+            return Vector2.zero;
+
+        return Vector2.Lerp(a, b, t1);
     }
 
     private void OnTriggerEnter(Collider other)

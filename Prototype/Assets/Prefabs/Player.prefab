@@ -63,10 +63,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ghost: {fileID: 0}
-  maxGhiostDistance: 15
-  ghostDistanceRecoverySpeed: 10
+  maxGhiostDistance: 20
+  ghostDistanceRecoverySpeed: 15
   speed: 7
-  ghostSpeed: 10
+  ghostSpeed: 15
   health: 10
   pushBackDistance: 5
   pushBackForce: 10

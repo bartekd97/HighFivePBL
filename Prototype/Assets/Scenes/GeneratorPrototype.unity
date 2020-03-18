@@ -960,6 +960,21 @@ PrefabInstance:
       propertyPath: ghostSpeed
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
+        type: 3}
+      propertyPath: maxGhiostDistance
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
+        type: 3}
+      propertyPath: ghostDistanceRecoverySpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7091947314756690524, guid: be4e7c0f6494dfc459f9f516a1f74434,
+        type: 3}
+      propertyPath: speed
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 7091947314756690521, guid: be4e7c0f6494dfc459f9f516a1f74434,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1029,6 +1044,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ghost
       objectReference: {fileID: 0}
+    - target: {fileID: 1283206962, guid: 02badba0fd3137f4aa4481eec7e1ed77, type: 3}
+      propertyPath: miniGhostSpawnDistance
+      value: 1.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8393135771930489891, guid: 02badba0fd3137f4aa4481eec7e1ed77,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1083,10 +1102,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1283206962, guid: 02badba0fd3137f4aa4481eec7e1ed77, type: 3}
-      propertyPath: miniGhostSpawnDistance
-      value: 1.25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02badba0fd3137f4aa4481eec7e1ed77, type: 3}

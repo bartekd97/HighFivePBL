@@ -135,13 +135,13 @@ public class CharController : MonoBehaviour
 
     void MoveGhost()
     {
-        /*
+        
         Ray mouseRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-        float yDist = mouseRay.origin.y - ghostObject.transform.position.y;
+        float yDist = mouseRay.origin.y - ghost.transform.position.y;
         Vector3 rayPoint = mouseRay.origin - mouseRay.direction * (yDist / mouseRay.direction.y);
-        Quaternion toRot = Quaternion.LookRotation(rayPoint - ghostObject.transform.position);
-        ghostObject.transform.rotation = Quaternion.Lerp(ghostObject.transform.rotation, toRot, Time.deltaTime * 5f);
-        */
+        Quaternion toRot = Quaternion.LookRotation(rayPoint - ghost.transform.position);
+        ghost.transform.rotation = Quaternion.Lerp(ghost.transform.rotation, toRot, Time.deltaTime * 7f);
+        
 
         Vector3 moveBy = Vector3.forward * ghostSpeed * Time.deltaTime;
         ghost.transform.Translate(moveBy, Space.Self);
