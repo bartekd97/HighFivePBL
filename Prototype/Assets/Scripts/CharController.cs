@@ -13,14 +13,14 @@ public class CharController : MonoBehaviour
     public HealthBar healthBar;
 
     [SerializeField]
-    float maxGhiostDistance = 8.0f;
+    public float maxGhostDistance = 8.0f;
     [SerializeField]
-    float ghostDistanceRecoverySpeed = 1.0f;
+    public float ghostDistanceRecoverySpeed = 1.0f;
 
     [SerializeField]
-    float speed = 4.0f;
+    public float speed = 4.0f;
     [SerializeField]
-    float ghostSpeed = 8.0f;
+    public float ghostSpeed = 8.0f;
 
     [SerializeField]
     float maxHealth = 10.0f;
@@ -47,7 +47,7 @@ public class CharController : MonoBehaviour
         forward = Vector3.Normalize(forward);
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
         ghostMovement = false;
-        leftGhostDistance = maxGhiostDistance;
+        leftGhostDistance = maxGhostDistance;
         health = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         //pushedEnemies = false;
@@ -55,7 +55,7 @@ public class CharController : MonoBehaviour
 
     public float GetLeftGhostLevel()
     {
-        return leftGhostDistance / maxGhiostDistance;
+        return leftGhostDistance / maxGhostDistance;
     }
 
     // Update is called once per frame
@@ -73,7 +73,7 @@ public class CharController : MonoBehaviour
         if (!ghostMovement)
         {
             leftGhostDistance = Mathf.Min(
-                    maxGhiostDistance,
+                    maxGhostDistance,
                     leftGhostDistance + Time.deltaTime * ghostDistanceRecoverySpeed
                 );
 

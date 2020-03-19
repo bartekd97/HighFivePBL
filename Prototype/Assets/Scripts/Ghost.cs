@@ -31,7 +31,7 @@ public class Ghost : MonoBehaviour
     public float miniGhostSpawnDistance = 1.5f;
     public int maxActiveLines = 4;
 
-    List<GhostLine> activeLines = new List<GhostLine>();
+    public List<GhostLine> activeLines = new List<GhostLine>();
 
     List<Vector2> recordedPositions;
     float distanceReached;

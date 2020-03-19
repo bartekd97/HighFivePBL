@@ -11,6 +11,9 @@ public class EnemyController : MonoBehaviour
     public GameObject player;
     public float maxHealth = 10.0f;
 
+    public float slow = 0.0f;
+    public float frozenTo = 0.0f;
+
     private float enemyHealth;
 
     public CharController charController;
@@ -56,21 +59,23 @@ public class EnemyController : MonoBehaviour
         //    PushEnemy(pushDirection);
         //}
 
-        if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+        if (Time.time > frozenTo)
         {
-            ChasePlayer(moveDirection);
-            /*
-            if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+            if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
             {
-                PushEnemy(pushDirection);
+                ChasePlayer(moveDirection);
+                /*
+                if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                {
+                    PushEnemy(pushDirection);
+                }
+                */
             }
-            */
+            else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+            {
+                Stop();
+            }
         }
-        else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
-        {
-            Stop();
-        }
-
         
 
         if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
@@ -116,7 +121,7 @@ public class EnemyController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
 
-        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+        rb.MovePosition(transform.position + direction * (speed - slow) * Time.deltaTime);
     }
 
     void Stop()
