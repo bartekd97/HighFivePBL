@@ -53,7 +53,7 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         CalculateColor();
-        if (transform.position.y < -50)
+        if (transform.position.y < -10)
         {
             Destroy(gameObject);
         }

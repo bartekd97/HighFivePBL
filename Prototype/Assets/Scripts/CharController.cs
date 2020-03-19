@@ -32,7 +32,7 @@ public class CharController : MonoBehaviour
     private float health;
 
     [SerializeField]
-    float pushBackDistance = 5.0f;
+    public float pushBackDistance = 5.0f;
     [SerializeField]
     float pushBackForce = 10.0f;
     [SerializeField]
@@ -93,6 +93,11 @@ public class CharController : MonoBehaviour
             PushEnemiesBack();
             nextPushBackTime = Time.time + pushCooldownTime;
         }
+        if (transform.position.y < -10)
+        {
+            KillPlayer();
+        }
+
         /*
         if (Input.GetKeyDown(KeyCode.Space))
         {

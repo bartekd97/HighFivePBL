@@ -94,6 +94,10 @@ public class PerkTestPanel : MonoBehaviour
     {
         ghostFreezeTime = time;
     }
+    public void SetPushBackDistance(float distance)
+    {
+        player.pushBackDistance = distance;
+    }
 
     public void SetDotTick(float tick)
     {
