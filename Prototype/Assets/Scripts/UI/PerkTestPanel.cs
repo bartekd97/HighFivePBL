@@ -99,6 +99,16 @@ public class PerkTestPanel : MonoBehaviour
         player.pushBackDistance = distance;
     }
 
+    public void SetPushBackForce(float force)
+    {
+        player.pushBackForce = force;
+    }
+
+    public void SetPushBackCooldown(float time)
+    {
+        player.pushCooldownTime = time;
+    }
+
     public void SetDotTick(float tick)
     {
         dotTick = tick;

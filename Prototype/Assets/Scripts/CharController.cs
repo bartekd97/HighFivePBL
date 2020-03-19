@@ -34,13 +34,13 @@ public class CharController : MonoBehaviour
     [SerializeField]
     public float pushBackDistance = 5.0f;
     [SerializeField]
-    float pushBackForce = 10.0f;
+    public float pushBackForce = 10.0f;
     [SerializeField]
-    float pushCooldownTime = 1.0f;
+    public float pushCooldownTime = 1.0f;
 
     Vector3 forward, right;
     float leftGhostDistance;
-    float nextPushBackTime = 0.0f;
+    public float nextPushBackTime = 0.0f;
 
     //public bool pushedEnemies;
 
