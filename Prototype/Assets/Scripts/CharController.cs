@@ -12,6 +12,11 @@ public class CharController : MonoBehaviour
     public Ghost ghost;
     public HealthBar healthBar;
 
+    public Color defaultColor;
+    public Color damagedColor;
+    public float dmgAnimationDuration = 0.5f;
+    private float lastDmgTime = 0.0f;
+
     [SerializeField]
     public float maxGhostDistance = 8.0f;
     [SerializeField]
@@ -50,6 +55,7 @@ public class CharController : MonoBehaviour
         leftGhostDistance = maxGhostDistance;
         health = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+        SetMeshColor(defaultColor);
         //pushedEnemies = false;
     }
 
@@ -61,6 +67,7 @@ public class CharController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CalculateColor();
         if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f)
             StartGhost();
         else if (Input.GetKeyUp(KeyCode.Mouse0))
@@ -177,6 +184,7 @@ public class CharController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        lastDmgTime = Time.time;
         health -= damage;
         healthBar.SetHealth(health);
         Debug.Log("Health remaining: " + health);
@@ -189,5 +197,26 @@ public class CharController : MonoBehaviour
     public void KillPlayer()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void SetMeshColor(Color color)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].material.SetColor("_BaseColor", color);
+        }
+    }
+
+    private void CalculateColor()
+    {
+        float R = Time.time - lastDmgTime;
+        if (R <= dmgAnimationDuration)
+        {
+            float halfDuration = dmgAnimationDuration / 2.0f;
+            if (R > halfDuration) R = dmgAnimationDuration - R;
+            float wsp = R / halfDuration;
+            SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
+        }
     }
 }

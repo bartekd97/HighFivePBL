@@ -159,10 +159,10 @@ public class EnemyController : MonoBehaviour
 
     private void SetMeshColor(Color color)
     {
-        Renderer[] meshRenderers = GetComponentsInChildren<Renderer>();
-        for (int i = 0; i < meshRenderers.Length; i++)
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderers.Length; i++)
         {
-            meshRenderers[i].material.SetColor("_BaseColor", color);
+            renderers[i].material.SetColor("_BaseColor", color);
         }
     }
 
