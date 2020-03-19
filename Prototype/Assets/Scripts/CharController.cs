@@ -10,30 +10,37 @@ public class CharController : MonoBehaviour
 
 
     public Ghost ghost;
+    public HealthBar healthBar;
+
+    public Color defaultColor;
+    public Color damagedColor;
+    public float dmgAnimationDuration = 0.5f;
+    private float lastDmgTime = 0.0f;
 
     [SerializeField]
-    float maxGhiostDistance = 8.0f;
+    public float maxGhostDistance = 8.0f;
     [SerializeField]
-    float ghostDistanceRecoverySpeed = 1.0f;
+    public float ghostDistanceRecoverySpeed = 1.0f;
 
     [SerializeField]
-    float speed = 4.0f;
+    public float speed = 4.0f;
     [SerializeField]
-    float ghostSpeed = 8.0f;
+    public float ghostSpeed = 8.0f;
 
     [SerializeField]
-    float health = 10.0f;
+    float maxHealth = 10.0f;
+    private float health;
 
     [SerializeField]
-    float pushBackDistance = 5.0f;
+    public float pushBackDistance = 5.0f;
     [SerializeField]
-    float pushBackForce = 10.0f;
+    public float pushBackForce = 10.0f;
     [SerializeField]
-    float pushCooldownTime = 1.0f;
+    public float pushCooldownTime = 1.0f;
 
     Vector3 forward, right;
     float leftGhostDistance;
-    float nextPushBackTime = 0.0f;
+    public float nextPushBackTime = 0.0f;
 
     //public bool pushedEnemies;
 
@@ -45,18 +52,22 @@ public class CharController : MonoBehaviour
         forward = Vector3.Normalize(forward);
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
         ghostMovement = false;
-        leftGhostDistance = maxGhiostDistance;
+        leftGhostDistance = maxGhostDistance;
+        health = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
+        SetMeshColor(defaultColor);
         //pushedEnemies = false;
     }
 
     public float GetLeftGhostLevel()
     {
-        return leftGhostDistance / maxGhiostDistance;
+        return leftGhostDistance / maxGhostDistance;
     }
 
     // Update is called once per frame
     void Update()
     {
+        CalculateColor();
         if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f)
             StartGhost();
         else if (Input.GetKeyUp(KeyCode.Mouse0))
@@ -69,7 +80,7 @@ public class CharController : MonoBehaviour
         if (!ghostMovement)
         {
             leftGhostDistance = Mathf.Min(
-                    maxGhiostDistance,
+                    maxGhostDistance,
                     leftGhostDistance + Time.deltaTime * ghostDistanceRecoverySpeed
                 );
 
@@ -82,6 +93,11 @@ public class CharController : MonoBehaviour
             PushEnemiesBack();
             nextPushBackTime = Time.time + pushCooldownTime;
         }
+        if (transform.position.y < -10)
+        {
+            KillPlayer();
+        }
+
         /*
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -173,7 +189,9 @@ public class CharController : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        lastDmgTime = Time.time;
         health -= damage;
+        healthBar.SetHealth(health);
         Debug.Log("Health remaining: " + health);
         if (health <= 0)
         {
@@ -184,5 +202,26 @@ public class CharController : MonoBehaviour
     public void KillPlayer()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void SetMeshColor(Color color)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].material.SetColor("_BaseColor", color);
+        }
+    }
+
+    private void CalculateColor()
+    {
+        float R = Time.time - lastDmgTime;
+        if (R <= dmgAnimationDuration)
+        {
+            float halfDuration = dmgAnimationDuration / 2.0f;
+            if (R > halfDuration) R = dmgAnimationDuration - R;
+            float wsp = R / halfDuration;
+            SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
+        }
     }
 }
