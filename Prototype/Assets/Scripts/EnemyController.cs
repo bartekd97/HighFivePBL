@@ -9,10 +9,15 @@ public class EnemyController : MonoBehaviour
     public float playerInRange = 15.0f;
     public float stoppingDistance = 1.5f;
     public GameObject player;
+    public float maxHealth = 10.0f;
 
-    private float enemyHealth = 10.0f;
+    public float slow = 0.0f;
+    public float frozenTo = 0.0f;
+
+    private float enemyHealth;
 
     public CharController charController;
+    public HealthBar healthBar;
     //private bool pushedEnemiess;
 
 
@@ -34,6 +39,8 @@ public class EnemyController : MonoBehaviour
         timestampAttack = 0.0f;
         timestampAfterAttackPushStart = 0.0f;
         timestampAfterAttackPushStop = 0.0f;
+        enemyHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     // Update is called once per frame
@@ -52,21 +59,23 @@ public class EnemyController : MonoBehaviour
         //    PushEnemy(pushDirection);
         //}
 
-        if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+        if (Time.time > frozenTo)
         {
-            ChasePlayer(moveDirection);
-            /*
-            if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+            if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
             {
-                PushEnemy(pushDirection);
+                ChasePlayer(moveDirection);
+                /*
+                if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                {
+                    PushEnemy(pushDirection);
+                }
+                */
             }
-            */
+            else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+            {
+                Stop();
+            }
         }
-        else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
-        {
-            Stop();
-        }
-
         
 
         if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
@@ -112,7 +121,7 @@ public class EnemyController : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
 
-        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+        rb.MovePosition(transform.position + direction * (speed - slow) * Time.deltaTime);
     }
 
     void Stop()
@@ -123,6 +132,7 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(float value)
     {
         enemyHealth -= value;
+        healthBar.SetHealth(enemyHealth);
 
         if (enemyHealth <= 0)
         {
