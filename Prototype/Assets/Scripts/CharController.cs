@@ -10,6 +10,7 @@ public class CharController : MonoBehaviour
 
 
     public Ghost ghost;
+    public HealthBar healthBar;
 
     [SerializeField]
     float maxGhiostDistance = 8.0f;
@@ -22,7 +23,8 @@ public class CharController : MonoBehaviour
     float ghostSpeed = 8.0f;
 
     [SerializeField]
-    float health = 10.0f;
+    float maxHealth = 10.0f;
+    private float health;
 
     [SerializeField]
     float pushBackDistance = 5.0f;
@@ -46,6 +48,8 @@ public class CharController : MonoBehaviour
         right = Quaternion.Euler(new Vector3(0, 90, 0)) * forward;
         ghostMovement = false;
         leftGhostDistance = maxGhiostDistance;
+        health = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
         //pushedEnemies = false;
     }
 
@@ -174,6 +178,7 @@ public class CharController : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+        healthBar.SetHealth(health);
         Debug.Log("Health remaining: " + health);
         if (health <= 0)
         {

@@ -9,10 +9,12 @@ public class EnemyController : MonoBehaviour
     public float playerInRange = 15.0f;
     public float stoppingDistance = 1.5f;
     public GameObject player;
+    public float maxHealth = 10.0f;
 
-    private float enemyHealth = 10.0f;
+    private float enemyHealth;
 
     public CharController charController;
+    public HealthBar healthBar;
     //private bool pushedEnemiess;
 
 
@@ -34,6 +36,8 @@ public class EnemyController : MonoBehaviour
         timestampAttack = 0.0f;
         timestampAfterAttackPushStart = 0.0f;
         timestampAfterAttackPushStop = 0.0f;
+        enemyHealth = maxHealth;
+        healthBar.SetMaxHealth(maxHealth);
     }
 
     // Update is called once per frame
@@ -123,6 +127,7 @@ public class EnemyController : MonoBehaviour
     public void TakeDamage(float value)
     {
         enemyHealth -= value;
+        healthBar.SetHealth(enemyHealth);
 
         if (enemyHealth <= 0)
         {
