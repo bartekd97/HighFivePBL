@@ -11,6 +11,11 @@ public class EnemyController : MonoBehaviour
     public GameObject player;
     public float maxHealth = 10.0f;
 
+    public Color defaultColor;
+    public Color damagedColor;
+    public float dmgAnimationDuration = 0.5f;
+    private float lastDmgTime = 0.0f;
+
     public float slow = 0.0f;
     public float frozenTo = 0.0f;
 
@@ -41,12 +46,14 @@ public class EnemyController : MonoBehaviour
         timestampAfterAttackPushStop = 0.0f;
         enemyHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
+        SetMeshColor(defaultColor);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(transform.position.y < -50)
+        CalculateColor();
+        if (transform.position.y < -50)
         {
             Destroy(gameObject);
         }
@@ -131,6 +138,7 @@ public class EnemyController : MonoBehaviour
     
     public void TakeDamage(float value)
     {
+        lastDmgTime = Time.time;
         enemyHealth -= value;
         healthBar.SetHealth(enemyHealth);
 
@@ -149,4 +157,24 @@ public class EnemyController : MonoBehaviour
         rb.AddForce(direction * force, ForceMode.VelocityChange);
     }
 
+    private void SetMeshColor(Color color)
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].material.SetColor("_BaseColor", color);
+        }
+    }
+
+    private void CalculateColor()
+    {
+        float R = Time.time - lastDmgTime;
+        if (R <= dmgAnimationDuration)
+        {
+            float halfDuration = dmgAnimationDuration / 2.0f;
+            if (R > halfDuration) R = dmgAnimationDuration - R;
+            float wsp = R / halfDuration;
+            SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
+        }
+    }
 }
