@@ -6,7 +6,6 @@ public class Ghost : MonoBehaviour
 {
     public float damageToEnemies = 5.0f;
 
-
     public class GhostCrossing : System.IEquatable<GhostCrossing>
     {
         public Vector2 position;
@@ -41,13 +40,14 @@ public class Ghost : MonoBehaviour
 
     List<MiniGhost> spawnedMiniGhostsCurrent;
 
-    public bool ghostEnemyCollision;
+    public EnemyController enemyController;
+    public bool firstEnemyHit;
 
     public bool IsMarking { get; private set; }
     private void Awake()
     {
         IsMarking = false;
-        ghostEnemyCollision = false;
+        firstEnemyHit = false;
     }
     private void Start()
     {
@@ -74,7 +74,6 @@ public class Ghost : MonoBehaviour
                 ));
                 distanceReached = 0.0f;
             }
-
             /*
             if (Vector3.Distance(lastMiniGhostSpawnPosition, transform.position)
                 >= miniGhostSpawnDistance)
@@ -119,7 +118,7 @@ public class Ghost : MonoBehaviour
         lastDistanceRecordPos = transform.position;
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
-        
+        firstEnemyHit = true;
     }
 
     public void EndMarking()
@@ -149,7 +148,6 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = null;
 
         IsMarking = false;
-        ghostEnemyCollision = false;
 
         UpdateLineCrossings();
         CheckClosedLines();
@@ -296,11 +294,11 @@ public class Ghost : MonoBehaviour
         if (!other.gameObject.CompareTag("Enemy"))
             return;
 
-        EnemyController ec = other.GetComponent<EnemyController>();
-        if (ec != null)
+        enemyController = other.GetComponent<EnemyController>();
+        if (enemyController != null && firstEnemyHit == true)
         {
-            ec.TakeDamage(damageToEnemies);
-            ghostEnemyCollision = true;
-        } 
+            enemyController.TakeDamage(damageToEnemies);
+            firstEnemyHit = false;
+        }
     }
 }
