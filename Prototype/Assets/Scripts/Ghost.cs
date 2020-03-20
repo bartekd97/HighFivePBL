@@ -41,10 +41,13 @@ public class Ghost : MonoBehaviour
 
     List<MiniGhost> spawnedMiniGhostsCurrent;
 
+    public bool ghostEnemyCollision;
+
     public bool IsMarking { get; private set; }
     private void Awake()
     {
         IsMarking = false;
+        ghostEnemyCollision = false;
     }
     private void Start()
     {
@@ -100,7 +103,6 @@ public class Ghost : MonoBehaviour
     public void StartMarking()
     {
         if (IsMarking) return;
-
         /*
         startPosition = new Vector2(
                 transform.position.x,
@@ -117,12 +119,12 @@ public class Ghost : MonoBehaviour
         lastDistanceRecordPos = transform.position;
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
+        
     }
 
     public void EndMarking()
     {
         if (!IsMarking) return;
-
         /*
         Vector2 endPosition = new Vector2(
                 transform.position.x,
@@ -147,6 +149,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = null;
 
         IsMarking = false;
+        ghostEnemyCollision = false;
 
         UpdateLineCrossings();
         CheckClosedLines();
@@ -295,6 +298,9 @@ public class Ghost : MonoBehaviour
 
         EnemyController ec = other.GetComponent<EnemyController>();
         if (ec != null)
+        {
             ec.TakeDamage(damageToEnemies);
+            ghostEnemyCollision = true;
+        } 
     }
 }
