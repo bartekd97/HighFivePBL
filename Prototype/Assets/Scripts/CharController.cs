@@ -42,6 +42,8 @@ public class CharController : MonoBehaviour
     float leftGhostDistance;
     public float nextPushBackTime = 0.0f;
 
+    private bool ghostEnemyCollision;
+
     //public bool pushedEnemies;
 
     // Start is called before the first frame update
@@ -63,14 +65,16 @@ public class CharController : MonoBehaviour
     {
         return leftGhostDistance / maxGhostDistance;
     }
-
+    
     // Update is called once per frame
     void Update()
     {
         CalculateColor();
         if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f)
+        {
             StartGhost();
-        else if (Input.GetKeyUp(KeyCode.Mouse0))
+        }
+        else if (Input.GetKeyUp(KeyCode.Mouse0) || ghost.ghostEnemyCollision == true)
             StopGhost();
 
         if (ghostMovement && Input.GetKey(KeyCode.Mouse0))
@@ -146,6 +150,7 @@ public class CharController : MonoBehaviour
         ghost.EndMarking();
         ghost.Hide();
         ghostMovement = false;
+        ghostEnemyCollision = false;
     }
 
     void MoveGhost()
