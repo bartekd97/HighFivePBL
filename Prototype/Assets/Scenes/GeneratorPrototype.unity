@@ -2299,8 +2299,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   layout:
-    width: 192
-    height: 256
+    width: 240
+    height: 320
     columns: 5
     rows: 7
     LloydRelaxIteraions: 2
@@ -2318,6 +2318,22 @@ MonoBehaviour:
     noiseCenterRatio: 0.9
     noiseScale: 0.1
     noiseForce: {x: 5, y: 5}
+  cellFenceConfig:
+    gateEntity:
+      gameObject: {fileID: 1523006188585765467, guid: 9f1ab5d0cd336de4185405a43c9cbde3,
+        type: 3}
+      length: 3.3574
+    fragmentEntity:
+      gameObject: {fileID: 8404386615826660912, guid: 793b217c1bccb4b4fa8749e9c3c9cdc3,
+        type: 3}
+      length: 1.3954
+    connectorEntity:
+      gameObject: {fileID: 163840231950961997, guid: 6c811f485930bd04f9b6f3b42c6941f3,
+        type: 3}
+      length: 0.3174
+    gateDistance: 5
+    fragmentCount: 2
+    innerLevelFenceLocation: 0.9
   bridgePrefab: {fileID: 5821484929687913678, guid: 32ada4d4553efe540b28fe16cd71f4f2,
     type: 3}
   minEdgeLengthForBridge: 10
@@ -8127,6 +8143,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1578443203}
     m_Modifications:
+    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthBar
+      objectReference: {fileID: 0}
     - target: {fileID: 5290705387214696610, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -8231,11 +8252,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
-        type: 3}
-      propertyPath: m_Name
-      value: HealthBar
       objectReference: {fileID: 0}
     - target: {fileID: 5290705387946340837, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
