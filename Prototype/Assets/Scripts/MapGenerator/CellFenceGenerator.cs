@@ -58,6 +58,7 @@ public class CellFenceGenerator
         public int[] targetReversedPointI = new int[] { 1 };
 
         public List<FenceObject> objects;
+        public List<FenceObject> filler;
 
         public float HoleDistance()
         {
@@ -268,6 +269,161 @@ public class CellFenceGenerator
 
     }
 
+    public void TryFillGapsInSections()
+    {
+        Segment forward, backward;
+        foreach (var curve in brokenCurves)
+        {
+            forward = curve.forawrdSegments[curve.forawrdSegments.Count - 1];
+            backward = curve.backwardSegments[curve.backwardSegments.Count - 1];
+            curve.filler = TryFillGap(forward, backward);
+        }
+    }
+    List<FenceObject> TryFillGap(Segment forward, Segment backward)
+    {
+        List<FenceObject> filler = new List<FenceObject>();
+
+        FenceEntity fragment = config.fragmentEntity;
+        FenceEntity connector = config.connectorEntity;
+        float conLen2 = connector.length * 2.0f;
+
+        Vector2 forwardDirFrom = forward.direction;
+        Vector2 forwardDirTo = (backward.position - forward.position).normalized;
+        Vector2 backwarddDirFrom = backward.direction;
+        Vector2 backwardDirTo = (forward.position - backward.position).normalized;
+
+        for (float f = 1.0f; f >= 0.0f; f -= 0.2f)
+        {
+            forward.direction = Vector2.Lerp(
+                    forwardDirFrom, forwardDirTo, f
+                ).normalized;
+            backward.direction = Vector2.Lerp(
+                    backwarddDirFrom, backwardDirTo, f
+                ).normalized;
+
+            float gap = (forward.endPosition - backward.endPosition).magnitude;
+            Vector2 dir = (backward.endPosition - forward.endPosition).normalized;
+
+            // maybe just 1 connector?
+            if (connector.InFillRange(gap))
+            {
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * gap * 0.5f,
+                    direction = dir,
+                    entity = connector
+                });
+                return filler;
+            }
+
+            // maybe 2 connectors + fragment?
+            if (fragment.InFillRange(gap - conLen2))
+            {
+                float fragLen = gap - conLen2;
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * connector.length * 0.5f,
+                    direction = dir,
+                    entity = connector
+                });
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * (connector.length + fragLen * 0.5f),
+                    direction = dir,
+                    entity = fragment
+                });
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * (connector.length * 1.5f + fragLen),
+                    direction = dir,
+                    entity = connector
+                });
+                return filler;
+            }
+
+            // maybe 2 connectors + 2 fragments?
+            if (fragment.InFillRange(gap - conLen2, 2))
+            {
+                float fragsLen = gap - conLen2;
+                float fragHalfLen = (fragsLen - fragment.length) * 0.5f;
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * connector.length * 0.5f,
+                    direction = dir,
+                    entity = connector
+                });
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * (connector.length + fragHalfLen),
+                    direction = dir,
+                    entity = fragment
+                });
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * (connector.length + fragHalfLen + fragment.length),
+                    direction = dir,
+                    entity = fragment
+                });
+                filler.Add(new FenceObject()
+                {
+                    position = forward.endPosition + dir * (connector.length * 1.5f + fragsLen),
+                    direction = dir,
+                    entity = connector
+                });
+                return filler;
+            }
+
+
+            if (f < 0.00001f)
+            {
+                // couldn't find fill?
+                // remove one fragment from one segment and try again
+                if (backward.fragmentCount == 2)
+                {
+                    backward.fragmentCount = 1;
+                    f = 1.2f;
+                }
+                // couldnt find then? try with three fragments instead
+                else if (backward.fragmentCount == 1)
+                {
+                    backward.fragmentCount = 3;
+                    f = 1.2f;
+                }
+                // couldnt find even then? reverse change and cancel finding :c
+                else if (backward.fragmentCount == 3)
+                {
+                    // leave it "random"
+                    if (Mathf.FloorToInt(backward.position.magnitude) % 2 == 0)
+                    {
+                        forward.fragmentCount = 2;
+                        backward.fragmentCount = 3;
+                    }
+                    else
+                    {
+                        forward.fragmentCount = 3;
+                        backward.fragmentCount = 2;
+                    }
+                    break;
+                }
+            }
+        }
+
+        return filler;
+    }
+
+    public void MakeHoles()
+    {
+        // TODO - make it better
+        foreach (var curve in brokenCurves)
+        {
+            if (curve.filler != null && curve.filler.Count == 0)
+            {
+                curve.forawrdSegments[curve.forawrdSegments.Count - 1].fragmentCount = 0;
+                curve.backwardSegments[curve.backwardSegments.Count - 1].fragmentCount = 0;
+            }
+        }
+    }
+
     public void PrepareObjects()
     {
         foreach (var curve in brokenCurves)
@@ -275,6 +431,8 @@ public class CellFenceGenerator
             curve.objects = new List<FenceObject>();
             PrepareObjectsForSection(curve.forawrdSegments, curve.objects, false);
             PrepareObjectsForSection(curve.backwardSegments, curve.objects, true);
+            if (curve.filler != null)
+                curve.objects.AddRange(curve.filler);
         }
     }
     void PrepareObjectsForSection(List<Segment> segments, List<FenceObject> target, bool reversed)

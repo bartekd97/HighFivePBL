@@ -2303,12 +2303,12 @@ MonoBehaviour:
     height: 320
     columns: 5
     rows: 7
-    LloydRelaxIteraions: 2
+    LloydRelaxIteraions: 1
   cellMeshConfig:
-    mainScale: 0.95
+    mainScale: 0.97
     depth: 5
     depthMax: 10
-    innerScale: 0.9
+    innerScale: 0.92
     outlineSplits: 6
     nextOutlineScale: 0.999
     nextOutlineScaleMultiplier: 0.97
@@ -2323,17 +2323,23 @@ MonoBehaviour:
       gameObject: {fileID: 1523006188585765467, guid: 9f1ab5d0cd336de4185405a43c9cbde3,
         type: 3}
       length: 3.3574
+      minForFill: 0
+      maxForFill: 0
     fragmentEntity:
       gameObject: {fileID: 8404386615826660912, guid: 793b217c1bccb4b4fa8749e9c3c9cdc3,
         type: 3}
       length: 1.3954
+      minForFill: 0.6
+      maxForFill: 1.3954
     connectorEntity:
       gameObject: {fileID: 163840231950961997, guid: 6c811f485930bd04f9b6f3b42c6941f3,
         type: 3}
       length: 0.3174
+      minForFill: 0
+      maxForFill: 0.45
     gateDistance: 5
     fragmentCount: 2
-    innerLevelFenceLocation: 0.9
+    innerLevelFenceLocation: 0.87
   bridgePrefab: {fileID: 5821484929687913678, guid: 32ada4d4553efe540b28fe16cd71f4f2,
     type: 3}
   minEdgeLengthForBridge: 10
@@ -4326,7 +4332,7 @@ MonoBehaviour:
   m_MinValue: 4
   m_MaxValue: 24
   m_WholeNumbers: 0
-  m_Value: 8
+  m_Value: 12
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:

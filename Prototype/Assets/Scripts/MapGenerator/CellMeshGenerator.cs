@@ -49,7 +49,7 @@ public class CellMeshGenerator
         this.originalPolygon = polygon;
 
         PolygonBase = polygon;
-        PolygonBaseInner = polygon.ScaledBy(config.innerScale);
+        PolygonBaseInner = polygon.ShellScaledBy(config.innerScale);
     }
 
     public void PrepareOutlines()
@@ -61,7 +61,7 @@ public class CellMeshGenerator
         baseOutline = baseOutline.CreateCircular(config.circularSegments);
 
         PolygonSmooth = baseOutline;
-        PolygonSmoothInner = baseOutline.ScaledBy(config.innerScale);
+        PolygonSmoothInner = baseOutline.ShellScaledBy(config.innerScale);
 
         outlines = new List<ConvexPolygon>();
         int outlinesCount = config.outlineSplits + 1; // + outer
@@ -70,7 +70,7 @@ public class CellMeshGenerator
         for (int i = 0; i < outlinesCount; i++)
         {
             outlines.Add(
-                baseOutline.ScaledBy(scale)
+                baseOutline.ShellScaledBy(scale)
             );
 
             scale *= scaleFactor;

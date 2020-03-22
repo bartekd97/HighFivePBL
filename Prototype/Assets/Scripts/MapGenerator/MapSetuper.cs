@@ -20,6 +20,8 @@ public class MapSetuper : MonoBehaviour
         MapCell startupCell = GetStartupCell();
         playerObject.transform.position = startupCell.transform.position;
         SetupEnemies();
+
+        GameManager.Instance.SetCurrentCell(startupCell);
     }
 
     MapCell GetStartupCell()

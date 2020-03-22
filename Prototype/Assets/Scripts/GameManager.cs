@@ -4,25 +4,49 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
+
     public MapCell currentCell;
     public GameObject playerObject;
-    List<MapCell> cells;
+    //List<MapCell> cells;
 
-    bool isCellClear;
+    //bool isCellClear;
 
-    // Start is called before the first frame update
-    public void GameSetup()
+    private void Awake()
     {
-        cells = new List<MapCell>(MapCell.All);
+        Instance = this;
     }
 
-    // Update is called once per frame
+    public void SetCurrentCell(MapCell cell)
+    {
+        currentCell = cell;
+        if (!IsCellClear(currentCell))
+        {
+            CloseGates(currentCell);
+        }
+    }
+
+    bool IsCellClear(MapCell cell)
+    {
+        bool isClear = true;
+        foreach (GameObject e in cell.Enemies)
+        {
+            if (!e.Equals(null))
+            {
+                isClear = false;
+                break;
+            }
+        }
+        return isClear;
+    }
+
     void Update()
     {
-        if(cells != null)
+        if (currentCell != null)
         {
-            SetCurrentCell();
+            //SetCurrentCell();
 
+            /*
             if (currentCell.Enemies.Count == 0)
             {
                 isCellClear = true;
@@ -37,15 +61,41 @@ public class GameManager : MonoBehaviour
                     break;
                 }
             }
+            */
 
-            if (isCellClear)
+            if (IsCellClear(currentCell))
             {
-                ActivateBridges();
+                //ActivateBridges();
+                OpenGates(currentCell);
             }
 
         }
-        
+
     }
+
+    void OpenGates(MapCell cell)
+    {
+        foreach (MapCell.BridgeTo b in cell.Bridges)
+        {
+            b.Gate.Open();
+        }
+    }
+
+    void CloseGates(MapCell cell)
+    {
+        foreach (MapCell.BridgeTo b in cell.Bridges)
+        {
+            b.Gate.Close();
+        }
+    }
+
+    /*
+    // Start is called before the first frame update
+    public void GameSetup()
+    {
+        cells = new List<MapCell>(MapCell.All);
+    }
+
 
     void SetCurrentCell()
     {
@@ -81,6 +131,7 @@ public class GameManager : MonoBehaviour
             b.Bridge.gameObject.SetActive(true);
         }
     }
+    */
 
     //private float GetDistanceFromPointToLine(Vector3 p,  Vector3 c)
     //{
