@@ -226,4 +226,16 @@ public class CharController : MonoBehaviour
             SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Gate"))
+        {
+            CellGate gate = other.GetComponent<CellGate>();
+            if (gate != null)
+            {
+                GameManager.Instance.SetCurrentCell(gate.Cell);
+            }
+        }
+    }
 }
