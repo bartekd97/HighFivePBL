@@ -27,7 +27,7 @@ public class CellGenerator : MonoBehaviour
         CellFenceConfig fenceConfig
         )
     {
-        this.originalPolygon = originalPolygon.ScaledBy(meshConfig.mainScale);
+        this.originalPolygon = originalPolygon.ShellScaledBy(meshConfig.mainScale);
         this.meshConfig = meshConfig;
         this.fenceConfig = fenceConfig;
 
@@ -65,7 +65,7 @@ public class CellGenerator : MonoBehaviour
     {
         CellFenceGenerator generator = new CellFenceGenerator(
             fenceConfig,
-            cell.PolygonSmoothInner.ScaledBy(fenceConfig.innerLevelFenceLocation)
+            cell.PolygonSmoothInner.ShellScaledBy(fenceConfig.innerLevelFenceLocation)
         );
 
 

@@ -2303,12 +2303,12 @@ MonoBehaviour:
     height: 320
     columns: 5
     rows: 7
-    LloydRelaxIteraions: 2
+    LloydRelaxIteraions: 1
   cellMeshConfig:
-    mainScale: 0.95
+    mainScale: 0.97
     depth: 5
     depthMax: 10
-    innerScale: 0.9
+    innerScale: 0.92
     outlineSplits: 6
     nextOutlineScale: 0.999
     nextOutlineScaleMultiplier: 0.97
@@ -2339,7 +2339,7 @@ MonoBehaviour:
       maxForFill: 0.45
     gateDistance: 5
     fragmentCount: 2
-    innerLevelFenceLocation: 0.9
+    innerLevelFenceLocation: 0.87
   bridgePrefab: {fileID: 5821484929687913678, guid: 32ada4d4553efe540b28fe16cd71f4f2,
     type: 3}
   minEdgeLengthForBridge: 10
