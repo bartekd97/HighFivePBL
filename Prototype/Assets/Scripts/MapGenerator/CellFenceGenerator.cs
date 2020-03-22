@@ -411,6 +411,19 @@ public class CellFenceGenerator
         return filler;
     }
 
+    public void MakeHoles()
+    {
+        // TODO - make it better
+        foreach (var curve in brokenCurves)
+        {
+            if (curve.filler != null && curve.filler.Count == 0)
+            {
+                curve.forawrdSegments[curve.forawrdSegments.Count - 1].fragmentCount = 0;
+                curve.backwardSegments[curve.backwardSegments.Count - 1].fragmentCount = 0;
+            }
+        }
+    }
+
     public void PrepareObjects()
     {
         foreach (var curve in brokenCurves)

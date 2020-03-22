@@ -93,6 +93,7 @@ public class CellGenerator : MonoBehaviour
         generator.PrepareBrokenCurves();
         generator.CreateSections();
         generator.TryFillGapsInSections();
+        generator.MakeHoles();
         generator.PrepareObjects();
         generator.BuildSections(fenceContainer);
 
