@@ -11,6 +11,17 @@ public class CellFenceConfig
     {
         public GameObject gameObject;
         public float length;
+        public float minForFill;
+        public float maxForFill;
+
+        public bool InFillRange(float gap)
+        {
+            return gap >= minForFill && gap <= maxForFill;
+        }
+        public bool InFillRange(float gap, int segments)
+        {
+            return InFillRange(gap - (segments-1)*length);
+        }
     }
 
     //public List<FenceEntity> sectionEntities;

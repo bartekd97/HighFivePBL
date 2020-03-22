@@ -2323,14 +2323,20 @@ MonoBehaviour:
       gameObject: {fileID: 1523006188585765467, guid: 9f1ab5d0cd336de4185405a43c9cbde3,
         type: 3}
       length: 3.3574
+      minForFill: 0
+      maxForFill: 0
     fragmentEntity:
       gameObject: {fileID: 8404386615826660912, guid: 793b217c1bccb4b4fa8749e9c3c9cdc3,
         type: 3}
       length: 1.3954
+      minForFill: 0.6
+      maxForFill: 1.3954
     connectorEntity:
       gameObject: {fileID: 163840231950961997, guid: 6c811f485930bd04f9b6f3b42c6941f3,
         type: 3}
       length: 0.3174
+      minForFill: 0
+      maxForFill: 0.45
     gateDistance: 5
     fragmentCount: 2
     innerLevelFenceLocation: 0.9
