@@ -157,8 +157,8 @@ public class Ghost : MonoBehaviour
         UpdateLineCrossings();
         CheckClosedLines();
 
-        if (activeLines.Count == maxActiveLines)
-            while (activeLines.Count > 0)
+        if (activeLines.Count > maxActiveLines)
+            //while (activeLines.Count > 0)
                 FadeOutLine(activeLines[0]);
     }
 
