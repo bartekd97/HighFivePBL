@@ -119,6 +119,11 @@ public class PerkTestPanel : MonoBehaviour
         ghost.numberOfEnemyToHit = (int)number;
     }
 
+    public void SetNumberOfActiveLines(float number)
+    {
+        ghost.maxActiveLines = (int)number;
+    }
+
     public void SetDotTick(float tick)
     {
         dotTick = tick;
