@@ -123,7 +123,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
         firstEnemyHit = true;
-        numberOfEnemyHit = 1;
+        numberOfEnemyHit = 0;
     }
 
     public void EndMarking()
@@ -300,7 +300,7 @@ public class Ghost : MonoBehaviour
             return;
 
         enemyController = other.GetComponent<EnemyController>();
-        if (enemyController != null && numberOfEnemyHit <= numberOfEnemyToHit)
+        if (enemyController != null && numberOfEnemyHit < numberOfEnemyToHit)
         {
             enemyController.TakeDamage(damageToEnemies);
             numberOfEnemyHit++;
