@@ -26,6 +26,8 @@ public class CharController : MonoBehaviour
     public float speed = 4.0f;
     [SerializeField]
     public float ghostSpeed = 8.0f;
+    [SerializeField]
+    public float ghostCooldownTime = 1.0f;
 
     [SerializeField]
     float maxHealth = 10.0f;
@@ -41,6 +43,7 @@ public class CharController : MonoBehaviour
     Vector3 forward, right;
     float leftGhostDistance;
     public float nextPushBackTime = 0.0f;
+    public float nextGhostTime = 0.0f;
 
     //public bool pushedEnemies;
 
@@ -68,12 +71,15 @@ public class CharController : MonoBehaviour
     void Update()
     {
         CalculateColor();
-        if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f && Time.time >= nextGhostTime)
         {
             StartGhost();
+            nextGhostTime = Time.time + ghostCooldownTime;
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
             StopGhost();
+        }
 
         if (ghostMovement && Input.GetKey(KeyCode.Mouse0))
             MoveGhost();

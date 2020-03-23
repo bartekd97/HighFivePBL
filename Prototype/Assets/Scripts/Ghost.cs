@@ -42,12 +42,16 @@ public class Ghost : MonoBehaviour
 
     public EnemyController enemyController;
     public bool firstEnemyHit;
+    public int numberOfEnemyToHit;
+    public int numberOfEnemyHit;
 
     public bool IsMarking { get; private set; }
     private void Awake()
     {
         IsMarking = false;
         firstEnemyHit = false;
+        numberOfEnemyToHit = 1;
+        numberOfEnemyHit = 1;
     }
     private void Start()
     {
@@ -119,6 +123,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
         firstEnemyHit = true;
+        numberOfEnemyHit = 1;
     }
 
     public void EndMarking()
@@ -295,9 +300,10 @@ public class Ghost : MonoBehaviour
             return;
 
         enemyController = other.GetComponent<EnemyController>();
-        if (enemyController != null && firstEnemyHit == true)
+        if (enemyController != null && numberOfEnemyHit <= numberOfEnemyToHit)
         {
             enemyController.TakeDamage(damageToEnemies);
+            numberOfEnemyHit++;
             firstEnemyHit = false;
         }
     }

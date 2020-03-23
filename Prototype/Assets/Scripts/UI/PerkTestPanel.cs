@@ -109,6 +109,16 @@ public class PerkTestPanel : MonoBehaviour
         player.pushCooldownTime = time;
     }
 
+    public void SetGhostCooldown(float time)
+    {
+        player.ghostCooldownTime = time;
+    }
+
+    public void SetNumberOfEnemiesToHit(float number)
+    {
+        ghost.numberOfEnemyToHit = (int)number;
+    }
+
     public void SetDotTick(float tick)
     {
         dotTick = tick;
