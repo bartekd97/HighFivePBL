@@ -123,7 +123,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
         firstEnemyHit = true;
-        numberOfEnemyHit = 1;
+        numberOfEnemyHit = 0;
     }
 
     public void EndMarking()
@@ -157,8 +157,8 @@ public class Ghost : MonoBehaviour
         UpdateLineCrossings();
         CheckClosedLines();
 
-        if (activeLines.Count == maxActiveLines)
-            while (activeLines.Count > 0)
+        if (activeLines.Count > maxActiveLines)
+            //while (activeLines.Count > 0)
                 FadeOutLine(activeLines[0]);
     }
 
@@ -300,7 +300,7 @@ public class Ghost : MonoBehaviour
             return;
 
         enemyController = other.GetComponent<EnemyController>();
-        if (enemyController != null && numberOfEnemyHit <= numberOfEnemyToHit)
+        if (enemyController != null && numberOfEnemyHit < numberOfEnemyToHit)
         {
             enemyController.TakeDamage(damageToEnemies);
             numberOfEnemyHit++;
