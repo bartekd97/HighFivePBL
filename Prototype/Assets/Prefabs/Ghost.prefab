@@ -10,13 +10,14 @@ GameObject:
   m_Component:
   - component: {fileID: 8393135771930489891}
   - component: {fileID: 8393135771930489890}
+  - component: {fileID: 1283206962}
   m_Layer: 0
   m_Name: Ghost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8393135771930489891
 Transform:
   m_ObjectHideFlags: 0
@@ -24,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8393135771930489889}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.9221449, y: 5.8491173, z: -8.913428}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -45,6 +46,23 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &1283206962
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8393135771930489889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8cc96d611992b4a93a0f194b63690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageToEnemies: 3.5
+  miniGhostPrefab: {fileID: 3375344697600657614, guid: c8fb797289102894d98b639d1927debb,
+    type: 3}
+  miniGhostSpawnDistance: 1.25
+  maxActiveLines: 4
 --- !u!1 &8393135772255878134
 GameObject:
   m_ObjectHideFlags: 0

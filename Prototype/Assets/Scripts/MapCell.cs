@@ -11,6 +11,7 @@ public class MapCell : MonoBehaviour
     {
         public CellBridge Bridge;
         public MapCell Cell;
+        public CellGate Gate;
     }
     public List<BridgeTo> Bridges = new List<BridgeTo>();
 
