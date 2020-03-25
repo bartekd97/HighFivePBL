@@ -29,13 +29,8 @@ public class Ghost : MonoBehaviour
         public GameObject lineRend;
     }
 
-    //public class Line
-    //{
-    //    public List<Vector3> linePoints;
-    //}
-
+    public GameObject recordedLine;
     List<Vector3> recordedLinePositions;
-    //List<GameObject> linesRend = new List<GameObject>();
 
     public GameObject miniGhostPrefab;
     public float miniGhostSpawnDistance = 1.5f;
@@ -92,6 +87,7 @@ public class Ghost : MonoBehaviour
                 transform.position.y,
                 transform.position.z
                 ));
+                UpdateLineRenderer(recordedLinePositions);
                 distanceReached = 0.0f;
             }
             /*
@@ -139,6 +135,7 @@ public class Ghost : MonoBehaviour
                 transform.position.y,
                 transform.position.z
             ));
+        recordedLine = SpawnLineGenerator(recordedLinePositions);
         //lastMiniGhostSpawnPosition = transform.position;
         distanceReached = 0.0f;
         lastDistanceRecordPos = transform.position;
@@ -166,6 +163,7 @@ public class Ghost : MonoBehaviour
                 transform.position.y,
                 transform.position.z
             ));
+        UpdateLineRenderer(recordedLinePositions);
 
         if (spawnedMiniGhostsCurrent.Count > 0)
         {
@@ -175,12 +173,13 @@ public class Ghost : MonoBehaviour
                 //to = endPosition,
                 points = recordedPositions,
                 ghosts = spawnedMiniGhostsCurrent,
-                lineRend = SpawnLineGenerator(recordedLinePositions)
+                lineRend = recordedLine
 
         });
         }
 
         //SpawnLineGenerator(recordedLinePositions);
+        recordedLine = null;
         recordedPositions = null;
         recordedLinePositions = null;
         spawnedMiniGhostsCurrent = null;
@@ -354,5 +353,14 @@ public class Ghost : MonoBehaviour
         IRend.SetPositions(linePointsV);
         return newLineGen;
         // Destroy(newLineGen);
+    }
+
+    private void UpdateLineRenderer(List<Vector3> linePoints)
+    {
+        Vector3[] linePointsV = linePoints.ToArray();
+        LineRenderer IRend = recordedLine.GetComponent<LineRenderer>();
+
+        IRend.positionCount = linePointsV.Length;
+        IRend.SetPositions(linePointsV);
     }
 }
