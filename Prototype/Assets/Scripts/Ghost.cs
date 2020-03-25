@@ -5,6 +5,8 @@ using UnityEngine;
 public class Ghost : MonoBehaviour
 {
     public float damageToEnemies = 5.0f;
+    [SerializeField]
+    public GameObject lineGeneratorPrefab;
 
     public class GhostCrossing : System.IEquatable<GhostCrossing>
     {
@@ -25,6 +27,14 @@ public class Ghost : MonoBehaviour
         public List<GhostCrossing> crosings = new List<GhostCrossing>();
         public List<MiniGhost> ghosts;
     }
+
+    public class Line
+    {
+        public List<Vector3> linePoints;
+    }
+
+    List<Vector3> recordedLinePositions;
+    List<GameObject> lines = new List<GameObject>();
 
     public GameObject miniGhostPrefab;
     public float miniGhostSpawnDistance = 1.5f;
@@ -76,6 +86,11 @@ public class Ghost : MonoBehaviour
                     transform.position.x,
                     transform.position.z
                 ));
+                recordedLinePositions.Add(new Vector3(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z
+                ));
                 distanceReached = 0.0f;
             }
             /*
@@ -113,8 +128,14 @@ public class Ghost : MonoBehaviour
             );
             */
         recordedPositions = new List<Vector2>();
+        recordedLinePositions = new List<Vector3>();
         recordedPositions.Add(new Vector2(
                 transform.position.x,
+                transform.position.z
+            ));
+        recordedLinePositions.Add(new Vector3(
+                transform.position.x,
+                transform.position.y,
                 transform.position.z
             ));
         //lastMiniGhostSpawnPosition = transform.position;
@@ -139,8 +160,14 @@ public class Ghost : MonoBehaviour
             transform.position.x,
             transform.position.z
         ));
+        recordedLinePositions.Add(new Vector3(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z
+            ));
 
         if (spawnedMiniGhostsCurrent.Count > 0)
+        {
             activeLines.Add(new GhostLine()
             {
                 //from = startPosition,
@@ -148,8 +175,11 @@ public class Ghost : MonoBehaviour
                 points = recordedPositions,
                 ghosts = spawnedMiniGhostsCurrent
             });
+        }
 
+        SpawnLineGenerator(recordedLinePositions);
         recordedPositions = null;
+        recordedLinePositions = null;
         spawnedMiniGhostsCurrent = null;
 
         IsMarking = false;
@@ -159,7 +189,7 @@ public class Ghost : MonoBehaviour
 
         if (activeLines.Count > maxActiveLines)
             //while (activeLines.Count > 0)
-                FadeOutLine(activeLines[0]);
+                FadeOutLine(activeLines[0], lines[0]);
     }
 
     void UpdateLineCrossings()
@@ -202,10 +232,12 @@ public class Ghost : MonoBehaviour
         }
     }
 
-    void FadeOutLine(GhostLine line)
+    void FadeOutLine(GhostLine ghostLine, GameObject line)
     {
-        line.ghosts.ForEach(g => g.FadeOut());
-        activeLines.Remove(line);
+        ghostLine.ghosts.ForEach(g => g.FadeOut());
+        activeLines.Remove(ghostLine);
+        Destroy(lines[0]);
+        lines.Remove(line);
     }
 
     void AttackWithClosedFigure(List<GhostLine> lines, List<GhostCrossing> crossings)
@@ -306,5 +338,17 @@ public class Ghost : MonoBehaviour
             numberOfEnemyHit++;
             firstEnemyHit = false;
         }
+    }
+
+    private void SpawnLineGenerator(List<Vector3> linePoints)
+    {
+        Vector3[] linePointsV = linePoints.ToArray();
+        GameObject newLineGen = Instantiate(lineGeneratorPrefab);
+        LineRenderer IRend = newLineGen.GetComponent<LineRenderer>();
+
+        IRend.positionCount = linePointsV.Length;
+        IRend.SetPositions(linePointsV);
+        lines.Add(newLineGen);
+        // Destroy(newLineGen);
     }
 }

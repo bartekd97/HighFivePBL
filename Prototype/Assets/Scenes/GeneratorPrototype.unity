@@ -10052,6 +10052,11 @@ PrefabInstance:
       propertyPath: miniGhostSpawnDistance
       value: 1.25
       objectReference: {fileID: 0}
+    - target: {fileID: 1283206962, guid: 02badba0fd3137f4aa4481eec7e1ed77, type: 3}
+      propertyPath: lineGeneratorPrefab
+      value: 
+      objectReference: {fileID: 3862765075830686919, guid: 2c9acc1936f6c8d4bbfd879bd49950b3,
+        type: 3}
     - target: {fileID: 8393135771930489891, guid: 02badba0fd3137f4aa4481eec7e1ed77,
         type: 3}
       propertyPath: m_LocalPosition.x
