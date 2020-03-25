@@ -26,15 +26,16 @@ public class Ghost : MonoBehaviour
         public List<Vector2> points;
         public List<GhostCrossing> crosings = new List<GhostCrossing>();
         public List<MiniGhost> ghosts;
+        public GameObject lineRend;
     }
 
-    public class Line
-    {
-        public List<Vector3> linePoints;
-    }
+    //public class Line
+    //{
+    //    public List<Vector3> linePoints;
+    //}
 
     List<Vector3> recordedLinePositions;
-    List<GameObject> lines = new List<GameObject>();
+    //List<GameObject> linesRend = new List<GameObject>();
 
     public GameObject miniGhostPrefab;
     public float miniGhostSpawnDistance = 1.5f;
@@ -173,11 +174,13 @@ public class Ghost : MonoBehaviour
                 //from = startPosition,
                 //to = endPosition,
                 points = recordedPositions,
-                ghosts = spawnedMiniGhostsCurrent
-            });
+                ghosts = spawnedMiniGhostsCurrent,
+                lineRend = SpawnLineGenerator(recordedLinePositions)
+
+        });
         }
 
-        SpawnLineGenerator(recordedLinePositions);
+        //SpawnLineGenerator(recordedLinePositions);
         recordedPositions = null;
         recordedLinePositions = null;
         spawnedMiniGhostsCurrent = null;
@@ -189,7 +192,7 @@ public class Ghost : MonoBehaviour
 
         if (activeLines.Count > maxActiveLines)
             //while (activeLines.Count > 0)
-                FadeOutLine(activeLines[0], lines[0]);
+                FadeOutLine(activeLines[0]);
     }
 
     void UpdateLineCrossings()
@@ -232,12 +235,11 @@ public class Ghost : MonoBehaviour
         }
     }
 
-    void FadeOutLine(GhostLine ghostLine, GameObject line)
+    void FadeOutLine(GhostLine ghostLine)
     {
         ghostLine.ghosts.ForEach(g => g.FadeOut());
+        Destroy(ghostLine.lineRend);
         activeLines.Remove(ghostLine);
-        Destroy(lines[0]);
-        lines.Remove(line);
     }
 
     void AttackWithClosedFigure(List<GhostLine> lines, List<GhostCrossing> crossings)
@@ -251,8 +253,10 @@ public class Ghost : MonoBehaviour
         foreach(var line in lines)
         {
             line.ghosts.ForEach(g => g.DoAttack(center3));
+            Destroy(line.lineRend);
             activeLines.Remove(line);
         }
+
     }
 
     List<GhostCrossing> CalculateCrossings(GhostLine l1, GhostLine l2)
@@ -340,7 +344,7 @@ public class Ghost : MonoBehaviour
         }
     }
 
-    private void SpawnLineGenerator(List<Vector3> linePoints)
+    private GameObject SpawnLineGenerator(List<Vector3> linePoints)
     {
         Vector3[] linePointsV = linePoints.ToArray();
         GameObject newLineGen = Instantiate(lineGeneratorPrefab);
@@ -348,7 +352,7 @@ public class Ghost : MonoBehaviour
 
         IRend.positionCount = linePointsV.Length;
         IRend.SetPositions(linePointsV);
-        lines.Add(newLineGen);
+        return newLineGen;
         // Destroy(newLineGen);
     }
 }
