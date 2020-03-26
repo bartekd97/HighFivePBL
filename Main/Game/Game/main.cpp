@@ -4,6 +4,7 @@
 #include <memory>
 #include <tinyxml2.h>
 
+#include "Texture.h"
 #include "Shader.h"
 #include "PrimitiveRenderer.h"
 #include "Logger.h"
@@ -47,9 +48,14 @@ int main()
 
 
 	ShaderManager::Initialize();
+	TextureManager::Initialize();
 
 	auto hwShader = ShaderManager::GetShader("HelloWorldShader");
+	hwShader->use();
+	hwShader->setInt("sampleMap", 1);
 
+	auto sampleTex = TextureManager::GetTexture("Sample", "albedo");
+	sampleTex->bind(1);
 
 	while (!glfwWindowShouldClose(window))
 	{

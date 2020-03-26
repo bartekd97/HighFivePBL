@@ -17,5 +17,8 @@ namespace std {
 	inline string to_string(string val) {
 		return val;
 	}
+	inline string to_string(const char* val) {
+		return val;
+	}
 }
 #pragma endregion
