@@ -5,6 +5,7 @@
 #include <tinyxml2.h>
 
 #include "Texture.h"
+#include "Material.h"
 #include "Shader.h"
 #include "PrimitiveRenderer.h"
 #include "Logger.h"
@@ -49,13 +50,22 @@ int main()
 
 	ShaderManager::Initialize();
 	TextureManager::Initialize();
+	MaterialManager::Initialize();
 
 	auto hwShader = ShaderManager::GetShader("HelloWorldShader");
 	hwShader->use();
-	hwShader->setInt("sampleMap", 1);
+	hwShader->setInt("albedoMap", MaterialBindingPoint::ALBEDO_MAP);
+	hwShader->setInt("normalMap", MaterialBindingPoint::NORMAL_MAP);
+	hwShader->setInt("metalnessMap", MaterialBindingPoint::METALNESS_MAP);
+	hwShader->setInt("roughnessMap", MaterialBindingPoint::ROUGHNESS_MAP);
+	hwShader->setInt("emissiveMap", MaterialBindingPoint::EMISSIVE_MAP);
 
-	auto sampleTex = TextureManager::GetTexture("Sample", "albedo");
-	sampleTex->bind(1);
+	//auto sampleTex = TextureManager::GetTexture("Sample", "albedo");
+	//sampleTex->bind(1);
+
+	auto sampleMat = MaterialManager::GetMaterial("Sample", "mat");
+	sampleMat->apply();
+
 
 	while (!glfwWindowShouldClose(window))
 	{

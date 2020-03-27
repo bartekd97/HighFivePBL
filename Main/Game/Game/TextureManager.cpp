@@ -31,6 +31,7 @@ namespace TextureManager {
 		GLuint textureId;
 
 		glGenTextures(1, &textureId);
+		glActiveTexture(GL_TEXTURE31); // use last slot to prevent accidential rewriting current texture
 		glBindTexture(GL_TEXTURE_2D, textureId);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, config.filteringMin);
@@ -60,14 +61,20 @@ void TextureManager::Initialize()
 
 	GENERIC_LIBRARY = std::shared_ptr<TextureLibrary>(new TextureLibrary());
 	TextureConfig blankTextureConfig;
-	BLANK_TEXTURE = std::shared_ptr<Texture>(new Texture(
-		MakeTexture2DFromData(BLANK_TEXTURE_DATA, 4, 4, GL_RGB, blankTextureConfig),
-		4, 4, blankTextureConfig.format
-		));
+	BLANK_TEXTURE = CreateTextureFromRawData(BLANK_TEXTURE_DATA, 4, 4, GL_RGB, blankTextureConfig);
 
 	Initialized = true;
+
+	LogInfo("TextureManager initialized.");
 }
 
+
+std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config)
+{
+	// TODO: Logging when texture creation failed
+	GLuint textureId = MakeTexture2DFromData(data, width, height, dataFormat, config);
+	return std::shared_ptr<Texture>(new Texture(textureId, width, height, config.format));
+}
 std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filename, TextureConfig& config)
 {
 	int width, height, noChannels;
@@ -181,7 +188,7 @@ TextureLibrary::TextureLibrary(std::string name) : name(name)
 		
 		entities[textureName] = entity;
 	}
-	LogInfo("TextureLibrary::TextureLibrary():Initialized '{}' library with {} entities", name, entities.size());
+	LogInfo("TextureLibrary::TextureLibrary(): Initialized '{}' library with {} entities", name, entities.size());
 }
 
 TextureLibrary::~TextureLibrary()
@@ -190,11 +197,11 @@ TextureLibrary::~TextureLibrary()
 		delete e.second;
 }
 
-std::shared_ptr<Texture> TextureLibrary::LoadEntity(LibraryEntity* entity)
+std::shared_ptr<Texture> TextureLibrary::LoadEntity(std::string& name, LibraryEntity* entity)
 {
 	auto ptr = TextureManager::CreateTextureFromFile(entity->path, entity->config);
 	entity->texture = ptr;
-	LogInfo("TextureLibrary::LoadEntity(): Loaded '{}' in '{}'", entity->path, this->name);
+	LogInfo("TextureLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
 	return ptr;
 }
 
@@ -202,9 +209,9 @@ std::shared_ptr<Texture> TextureLibrary::GetTexture(std::string name)
 {
 	try
 	{
-		static LibraryEntity* entity = entities.at(name);
+		LibraryEntity* entity = entities.at(name);
 		if (entity->texture.expired())
-			return LoadEntity(entity);
+			return LoadEntity(name, entity);
 		else
 			return entity->texture.lock();
 	}

@@ -5,6 +5,7 @@
 #define M_PI 3.1415926f
 #define rad2deg(x) ((x)/M_PI)*180.0f
 #define deg2rad(x) ((x)/180.0f)*M_PI
+#define nullabeString(s) s ? s : ""
 
 
 namespace Utility {
