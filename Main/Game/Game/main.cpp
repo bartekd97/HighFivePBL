@@ -3,6 +3,11 @@
 #include <iostream>
 #include <memory>
 #include <tinyxml2.h>
+#include <chrono>
+
+#include "LifeTime.h"
+#include "LifeTimeSystem.h"
+#include "ECSCore.h"
 
 #include "Texture.h"
 #include "Material.h"
@@ -15,10 +20,31 @@ const int SCREEN_HEIGHT = 720;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
+ECSCore gECSCore;
 
 int main()
 {
 	LoggerInitialize();
+
+	gECSCore.Init();
+	gECSCore.RegisterComponent<LifeTime>();
+	auto lifeTimeSystem = gECSCore.RegisterSystem<LifeTimeSystem>();
+	{
+		Signature signature;
+		signature.set(gECSCore.GetComponentType<LifeTime>());
+		gECSCore.SetSystemSignature<LifeTimeSystem>(signature);
+	}
+
+	std::vector<GameObject> gameObjects(5);
+	for (int i = 0; i < gameObjects.size(); i++)
+	{
+		gameObjects[i] = gECSCore.CreateGameObject();
+
+		gECSCore.AddComponent<LifeTime>(
+			gameObjects[i],
+			{ 0.0f, i * 5.0f }
+		);
+	}
 
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -66,10 +92,15 @@ int main()
 	auto sampleMat = MaterialManager::GetMaterial("Sample", "mat");
 	sampleMat->apply();
 
+	float dt = 0.0f;
 
 	while (!glfwWindowShouldClose(window))
 	{
+		auto startTime = std::chrono::high_resolution_clock::now();
+
 		glfwPollEvents();
+
+		gECSCore.UpdateSystems(dt);
 
 		glClearColor(0.2f, 0.7f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -78,6 +109,9 @@ int main()
 		PrimitiveRenderer::DrawScreenQuad();
 
 		glfwSwapBuffers(window);
+		
+		auto stopTime = std::chrono::high_resolution_clock::now();
+		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
 
 	glfwTerminate();

@@ -86,7 +86,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="LifeTimeSystem.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
     <ClCompile Include="PrimitiveRenderer.cpp" />
@@ -100,15 +102,25 @@
     <ClCompile Include="_stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ComponentArray.h" />
+    <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="ECSCore.h" />
+    <ClInclude Include="ECSTypes.h" />
+    <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="LifeTime.h" />
+    <ClInclude Include="LifeTimeSystem.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
     <ClInclude Include="PrimitiveRenderer.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="SystemManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
