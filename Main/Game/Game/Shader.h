@@ -5,14 +5,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "ShaderManager.h"
 
-class Shader
-{
+class Shader {
 	friend void ShaderManager::Initialize();
 
 private:
 	GLuint program;
 
-	inline Shader(GLuint program) : program(program) {}
+	Shader(GLuint program) : program(program) {}
 
 public:
 	inline void use() { glUseProgram(program); }
@@ -21,7 +20,7 @@ public:
 		glUniform1i( glGetUniformLocation(program, name), val );
 	}
 	inline void setFloat(const char* name, float val) {
-		glUniform1i(glGetUniformLocation(program, name), val);
+		glUniform1f(glGetUniformLocation(program, name), val);
 	}
 
 	inline void setVector2F(const char* name, float x, float y) {
@@ -56,6 +55,6 @@ public:
 	void bindUBO(const char* name, GLuint bindingPoint);
 	*/
 
-	inline ~Shader()
+	~Shader()
 	{ glDeleteProgram(program); }
 };

@@ -1,0 +1,3 @@
+<models materialLibrary="this">
+    <model name="spaceship" file="spaceship.fbx" material="mat" />
+</models>

@@ -162,11 +162,12 @@ void ShaderManager::Initialize()
 		LogInfo("Initialized shader '{}'.", shaderName);
 	}
 
-
 	Initialized = true;
+
+	LogInfo("ShaderManager initialized.");
 }
 
-std::shared_ptr<Shader> ShaderManager::GetShader(std::string &&name)
+std::shared_ptr<Shader> ShaderManager::GetShader(std::string name)
 {
 	try
 	{
