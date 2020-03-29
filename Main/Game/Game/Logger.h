@@ -21,7 +21,7 @@
 #ifdef _DEBUG
 	#define LoggerInitialize() Logger::Initialize()
 #else
-	#define LoggerInitialize()d
+	#define LoggerInitialize()
 #endif
 
 // DON'T USE Logger:: FUNCTIONS DIRECTLY !!!!!

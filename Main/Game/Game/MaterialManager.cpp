@@ -51,7 +51,7 @@ namespace MaterialManager {
 
 	bool Initialized = false;
 
-	std::map<std::string, std::shared_ptr<MaterialLibrary>> LibraryContainer;
+	std::unordered_map<std::string, std::shared_ptr<MaterialLibrary>> LibraryContainer;
 }
 
 
@@ -92,6 +92,17 @@ std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial()
 
 std::shared_ptr<MaterialLibrary> MaterialManager::GetLibrary(std::string name)
 {
+#ifdef _DEBUG
+	for (auto lib : LibraryContainer)
+	{
+		const char* key = lib.first.c_str();
+		if (_stricmp(key, name.c_str()) == 0 &&
+			strcmp(key, name.c_str()) != 0)
+		{
+			LogWarning("MaterialLibrary::GetLibrary(): Trying to get duplciate of '{}' library but with different letter size. It causes dupliacate and increased memory usage!!!", name);
+		}
+	}
+#endif
 	try
 	{
 		return LibraryContainer.at(name);
@@ -210,6 +221,8 @@ std::shared_ptr<Material> MaterialLibrary::LoadEntity(std::string& name, Library
 
 std::shared_ptr<Material> MaterialLibrary::GetMaterial(std::string name)
 {
+	if (this->name == "GENERIC")
+		return MaterialManager::BLANK_MATERIAL;
 	try
 	{
 		LibraryEntity* entity = entities.at(name);

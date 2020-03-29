@@ -8,6 +8,7 @@
 
 #include "Texture.h"
 #include "Material.h"
+#include "Model.h"
 #include "Shader.h"
 #include "PrimitiveRenderer.h"
 #include "WindowManager.h"
@@ -59,6 +60,7 @@ namespace HFEngine
 		ShaderManager::Initialize();
 		TextureManager::Initialize();
 		MaterialManager::Initialize();
+		ModelManager::Initialize();
 
 		initialized = true;
 

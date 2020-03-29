@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <glad/glad.h>
 
 class Texture;
@@ -40,7 +40,7 @@ private:
 		std::weak_ptr<Texture> texture;
 		TextureConfig config;
 	};
-	std::map<std::string, LibraryEntity*> entities;
+	std::unordered_map<std::string, LibraryEntity*> entities;
 
 	TextureLibrary();
 	TextureLibrary(std::string name);

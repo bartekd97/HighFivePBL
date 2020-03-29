@@ -30,7 +30,7 @@ public:
 	glm::vec3 emissiveColor;
 
 private:
-	void SetLibraryProperties(std::map<std::string, std::string>& properties, std::shared_ptr<TextureLibrary> textureLibrary);
+	void SetLibraryProperties(std::unordered_map<std::string, std::string>& properties, std::shared_ptr<TextureLibrary> textureLibrary);
 
 	Material();
 

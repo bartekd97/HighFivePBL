@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include <map>
+#include <unordered_map>
 #include <glad/glad.h>
 
 class Material;
@@ -38,9 +38,9 @@ public:
 private:
 	struct LibraryEntity {
 		std::weak_ptr<Material> material;
-		std::map<std::string, std::string> properties;
+		std::unordered_map<std::string, std::string> properties;
 	};
-	std::map<std::string, LibraryEntity*> entities;
+	std::unordered_map<std::string, LibraryEntity*> entities;
 
 	std::shared_ptr<TextureLibrary> textureLibrary;
 
