@@ -6,8 +6,6 @@
 #include <chrono>
 
 #include "LifeTime.h"
-#include "LifeTimeSystem.h"
-#include "ECSCore.h"
 
 #include "Texture.h"
 #include "Material.h"
@@ -15,68 +13,32 @@
 #include "PrimitiveRenderer.h"
 #include "Logger.h"
 
+#include "HFEngine.h"
+#include "WindowManager.h"
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
-ECSCore gECSCore;
-
 int main()
 {
-	LoggerInitialize();
-
-	gECSCore.Init();
-	gECSCore.RegisterComponent<LifeTime>();
-	auto lifeTimeSystem = gECSCore.RegisterSystem<LifeTimeSystem>();
+	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "HFEngine test"))
 	{
-		Signature signature;
-		signature.set(gECSCore.GetComponentType<LifeTime>());
-		gECSCore.SetSystemSignature<LifeTimeSystem>(signature);
+		std::cout << "Failed to initialize engine" << std::endl;
+		return -1;
 	}
 
 	std::vector<GameObject> gameObjects(5);
 	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		gameObjects[i] = gECSCore.CreateGameObject();
+		gameObjects[i] = HFEngine::ECS.CreateGameObject();
 
-		gECSCore.AddComponent<LifeTime>(
+		HFEngine::ECS.AddComponent<LifeTime>(
 			gameObjects[i],
 			{ 0.0f, i * 5.0f }
 		);
 	}
 
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", nullptr, nullptr);
-
-	if (window == nullptr)
-	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
-
-
-	//glViewport(0,0, 1280, 720);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-
-	ShaderManager::Initialize();
-	TextureManager::Initialize();
-	MaterialManager::Initialize();
+	GLFWwindow* window = WindowManager::GetWindow();
 
 	auto hwShader = ShaderManager::GetShader("HelloWorldShader");
 	hwShader->use();
@@ -100,7 +62,7 @@ int main()
 
 		glfwPollEvents();
 
-		gECSCore.UpdateSystems(dt);
+		HFEngine::ECS.UpdateSystems(dt);
 
 		glClearColor(0.2f, 0.7f, 0.5f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -114,13 +76,7 @@ int main()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
 
-	glfwTerminate();
+	HFEngine::Terminate();
+
 	return 0;
-}
-
-
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
 }

@@ -1,23 +1,23 @@
 #include <iostream>
 
-#include "ECSCore.h"
+#include "Logger.h"
 #include "LifeTimeSystem.h"
 #include "LifeTime.h"
-
-extern ECSCore gECSCore;
+#include "HFEngine.h"
 
 void LifeTimeSystem::Update(float dt)
 {
 	for (auto const& gameObject : gameObjects)
 	{
-		auto& lifeTime = gECSCore.GetComponent<LifeTime>(gameObject);
+		auto& lifeTime = HFEngine::ECS.GetComponent<LifeTime>(gameObject);
 		lifeTime.lifeTime += dt;
 		if (isgreater(lifeTime.threshold, 0.0f))
 		{
 			if (isgreaterequal(lifeTime.lifeTime, lifeTime.threshold))
 			{
 				lifeTime.lifeTime = 0.0f;
-				std::cout << "[LifeTime] GameObject " << gameObject << " reached lifetime threshold (" << lifeTime.threshold << ")" << std::endl;
+				//std::cout << "[LifeTime] GameObject " << gameObject << " reached lifetime threshold (" << lifeTime.threshold << ")" << std::endl;
+				LogInfo("[LifeTime] GameObject {} reached lifetime threshold: {}", gameObject, lifeTime.threshold);
 			}
 		}
 	}

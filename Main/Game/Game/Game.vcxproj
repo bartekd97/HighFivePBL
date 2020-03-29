@@ -88,6 +88,7 @@
   <ItemGroup>
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="LifeTimeSystem.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
     <ClCompile Include="_stb_image.cpp" />
   </ItemGroup>
@@ -108,6 +110,7 @@
     <ClInclude Include="ECSTypes.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="HFEngine.h" />
     <ClInclude Include="LifeTime.h" />
     <ClInclude Include="LifeTimeSystem.h" />
     <ClInclude Include="Material.h" />
@@ -122,6 +125,7 @@
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utility.h" />
+    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
