@@ -8,5 +8,5 @@ class Shader;
 namespace ShaderManager {
 	void Initialize();
 
-	std::shared_ptr<Shader> GetShader(std::string &&name);
+	std::shared_ptr<Shader> GetShader(std::string name);
 }

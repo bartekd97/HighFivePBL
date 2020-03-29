@@ -62,7 +62,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Debug-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,24 +82,56 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Release-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="Global.cpp" />
+    <ClCompile Include="HFEngine.cpp" />
+    <ClCompile Include="LifeTimeSystem.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="MaterialManager.cpp" />
+    <ClCompile Include="MeshFileLoader.cpp" />
+    <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="PrimitiveRenderer.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
+    <ClCompile Include="_stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ComponentArray.h" />
+    <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="ECSCore.h" />
+    <ClInclude Include="ECSTypes.h" />
+    <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="Global.h" />
+    <ClInclude Include="HFEngine.h" />
+    <ClInclude Include="LifeTime.h" />
+    <ClInclude Include="LifeTimeSystem.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="MaterialManager.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshFileLoader.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelManager.h" />
     <ClInclude Include="PrimitiveRenderer.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="System.h" />
+    <ClInclude Include="SystemManager.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="Utility.h" />
+    <ClInclude Include="WindowManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
