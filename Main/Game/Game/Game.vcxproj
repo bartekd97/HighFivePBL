@@ -121,6 +121,8 @@
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemManager.h" />
+    <ClInclude Include="SystemRender.h" />
+    <ClInclude Include="SystemUpdate.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />

@@ -85,9 +85,17 @@ public:
 
 	void UpdateSystems(float dt)
 	{
-		for (auto it = systemManager->systemsQueue.begin(); it != systemManager->systemsQueue.end(); ++it)
+		for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)
 		{
 			(*it)->Update(dt);
+		}
+	}
+
+	void RenderSystems()
+	{
+		for (auto it = systemManager->renderQueue.begin(); it != systemManager->renderQueue.end(); ++it)
+		{
+			(*it)->Render();
 		}
 	}
 

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "System.h"
+#include "SystemUpdate.h"
 
-class LifeTimeSystem : public System
+class LifeTimeSystem : public SystemUpdate
 {
 public:
-	void Init() {}
-	void Update(float dt);
+	void Update(float dt) override;
 };

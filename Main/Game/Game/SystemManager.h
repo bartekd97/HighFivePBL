@@ -4,7 +4,9 @@
 #include <memory>
 #include <unordered_map>
 
-#include "System.h"
+#include "Utility.h"
+#include "SystemUpdate.h"
+#include "SystemRender.h"
 #include "ECSTypes.h"
 
 class SystemManager
@@ -18,8 +20,17 @@ public:
 		assert(systems.find(typeName) == systems.end() && "Registering system more than once.");
 
 		auto system = std::make_shared<T>();
+		system->Init();
 		systems.insert({ typeName, system });
-		systemsQueue.push_back(system);
+		
+		if constexpr (std::is_base_of<SystemUpdate, T>::value)
+		{
+			updateQueue.push_back(system);
+		}
+		if constexpr (std::is_base_of<SystemRender, T>::value)
+		{
+			renderQueue.push_back(system);
+		}
 		return system;
 	}
 
@@ -61,7 +72,8 @@ public:
 		}
 	}
 
-	std::vector<std::shared_ptr<System>> systemsQueue;
+	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
+	std::vector<std::shared_ptr<SystemRender>> renderQueue;
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};
