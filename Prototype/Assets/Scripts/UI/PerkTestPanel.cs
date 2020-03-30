@@ -60,6 +60,14 @@ public class PerkTestPanel : MonoBehaviour
         
     }
 
+    public void EnableDisablePanel()
+    {
+        if (this.gameObject.activeSelf == true)
+            this.gameObject.SetActive(false);
+        else
+            this.gameObject.SetActive(true);
+    }
+
     public void SetGhostSpawnDistance(float distance)
     {
         ghost.miniGhostSpawnDistance = distance;
