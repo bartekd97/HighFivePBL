@@ -1,3 +1,3 @@
 <models materialLibrary="this">
-    <model name="spaceship" file="spaceship.fbx" material="mat" />
+    <model name="spaceship" mesh="spaceship.fbx" material="mat" />
 </models>

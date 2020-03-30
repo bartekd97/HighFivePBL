@@ -21,7 +21,7 @@ namespace TextureManager {
 
 	bool Initialized = false;
 
-	std::map<std::string, std::shared_ptr<TextureLibrary>> LibraryContainer;
+	std::unordered_map<std::string, std::shared_ptr<TextureLibrary>> LibraryContainer;
 }
 
 // privates
@@ -107,6 +107,17 @@ std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filen
 
 std::shared_ptr<TextureLibrary> TextureManager::GetLibrary(std::string name)
 {
+#ifdef _DEBUG
+	for (auto lib : LibraryContainer)
+	{
+		const char* key = lib.first.c_str();
+		if (_stricmp(key, name.c_str()) == 0 &&
+			strcmp(key, name.c_str()) != 0)
+		{
+			LogWarning("TextureLibrary::GetLibrary(): Trying to get duplciate of '{}' library but with different letter size. It causes dupliacate and increased memory usage!!!", name);
+		}
+	}
+#endif
 	try
 	{
 		return LibraryContainer.at(name);
@@ -207,6 +218,8 @@ std::shared_ptr<Texture> TextureLibrary::LoadEntity(std::string& name, LibraryEn
 
 std::shared_ptr<Texture> TextureLibrary::GetTexture(std::string name)
 {
+	if (this->name == "GENERIC")
+		return TextureManager::BLANK_TEXTURE;
 	try
 	{
 		LibraryEntity* entity = entities.at(name);

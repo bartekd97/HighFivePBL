@@ -30,12 +30,12 @@ Material::Material() {
 	emissiveColor = {0.0f, 0.0f, 0.0f};
 }
 
-void Material::SetLibraryProperties(std::map<std::string, std::string>& properties, std::shared_ptr<TextureLibrary> textureLibrary)
+void Material::SetLibraryProperties(std::unordered_map<std::string, std::string>& properties, std::shared_ptr<TextureLibrary> textureLibrary)
 {
-	std::map<std::string, std::string>::iterator val;
+	std::unordered_map<std::string, std::string>::iterator val;
 
 #ifdef _DEBUG
-	std::map<std::string, std::string> debugProperties = properties;
+	std::unordered_map<std::string, std::string> debugProperties = properties;
 #endif
 
 	if ((val = properties.find("albedoMap")) != properties.end())

@@ -1,5 +1,5 @@
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <stdexcept>
 #include <tinyxml2.h>
 #include "Shader.h"
@@ -17,7 +17,7 @@ namespace ShaderManager {
 
 	bool Initialized = false;
 
-	std::map<std::string, std::shared_ptr<Shader>> ShaderContainer;
+	std::unordered_map<std::string, std::shared_ptr<Shader>> ShaderContainer;
 }
 
 // privates
