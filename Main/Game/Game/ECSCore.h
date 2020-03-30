@@ -99,6 +99,11 @@ public:
 		}
 	}
 
+	inline int GetLivingGameObjectsCount()
+	{
+		return gameObjectManager->GetLivingGameObjectCount();
+	}
+
 private:
 	std::unique_ptr<ComponentManager> componentManager;
 	std::unique_ptr<GameObjectManager> gameObjectManager;

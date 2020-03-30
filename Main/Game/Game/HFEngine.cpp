@@ -3,8 +3,18 @@
 
 #include "HFEngine.h"
 #include "Logger.h"
+
 #include "LifeTime.h"
+#include "Transform.h"
+#include "CubeRenderer.h"
+#include "CubeSpawner.h"
+#include "RigidBody.h"
+#include "Gravity.h"
+
 #include "LifeTimeSystem.h"
+#include "CubeRenderSystem.h"
+#include "CubeSpawnerSystem.h"
+#include "PhysicsSystem.h"
 
 #include "Texture.h"
 #include "Material.h"
@@ -26,15 +36,6 @@ namespace HFEngine
 		}
 
 		LoggerInitialize();
-
-		ECS.Init();
-		ECS.RegisterComponent<LifeTime>();
-		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();
-		{
-			Signature signature;
-			signature.set(ECS.GetComponentType<LifeTime>());
-			ECS.SetSystemSignature<LifeTimeSystem>(signature);
-		}
 
 		glfwInit();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -59,6 +60,43 @@ namespace HFEngine
 		ShaderManager::Initialize();
 		TextureManager::Initialize();
 		MaterialManager::Initialize();
+
+		ECS.Init();
+
+		ECS.RegisterComponent<LifeTime>();
+		ECS.RegisterComponent<Transform>();
+		ECS.RegisterComponent<CubeRenderer>();
+		ECS.RegisterComponent<CubeSpawner>();
+		ECS.RegisterComponent<RigidBody>();
+		ECS.RegisterComponent<Gravity>();
+
+		auto cubeRenderSystem = ECS.RegisterSystem<CubeRenderSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<CubeRenderer>());
+			ECS.SetSystemSignature<CubeRenderSystem>(signature);
+		}
+		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<CubeSpawner>());
+			ECS.SetSystemSignature<CubeSpawnerSystem>(signature);
+		}
+		auto physicsSystem = ECS.RegisterSystem<PhysicsSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			signature.set(ECS.GetComponentType<Gravity>());
+			ECS.SetSystemSignature<PhysicsSystem>(signature);
+		}
+		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<LifeTime>());
+			ECS.SetSystemSignature<LifeTimeSystem>(signature);
+		}
 
 		initialized = true;
 

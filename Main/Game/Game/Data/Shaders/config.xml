@@ -1,3 +1,4 @@
 <shaders>
     <shader name="HelloWorldShader" vertex="ScreenPass.glsl" fragment="HelloWorld.glsl"/>
+    <shader name="CubeShader" vertex="CubeVertex.glsl" fragment="CubeFragment.glsl"/>
 </shaders>
