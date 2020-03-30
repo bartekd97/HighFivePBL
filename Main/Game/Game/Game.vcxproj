@@ -86,12 +86,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CubeRenderSystem.cpp" />
+    <ClCompile Include="CubeSpawnerSystem.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="LifeTimeSystem.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="MeshFileLoader.cpp" />
     <ClCompile Include="ModelManager.cpp" />
     <ClCompile Include="PrimitiveRenderer.cpp" />
@@ -108,25 +111,34 @@
   <ItemGroup>
     <ClInclude Include="ComponentArray.h" />
     <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="CubeRenderer.h" />
+    <ClInclude Include="CubeRenderSystem.h" />
+    <ClInclude Include="CubeSpawner.h" />
+    <ClInclude Include="CubeSpawnerSystem.h" />
     <ClInclude Include="ECSCore.h" />
     <ClInclude Include="ECSTypes.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Gravity.h" />
     <ClInclude Include="HFEngine.h" />
     <ClInclude Include="LifeTime.h" />
     <ClInclude Include="LifeTimeSystem.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
+    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshFileLoader.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelManager.h" />
     <ClInclude Include="PrimitiveRenderer.h" />
     <ClInclude Include="Logger.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemManager.h" />
+    <ClInclude Include="SystemRender.h" />
+    <ClInclude Include="SystemUpdate.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureManager.h" />
     <ClInclude Include="Transform.h" />

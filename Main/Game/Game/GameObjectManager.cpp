@@ -41,3 +41,8 @@ Signature GameObjectManager::GetSignature(GameObject gameObject)
 
 	return signatures[gameObject];
 }
+
+int GameObjectManager::GetLivingGameObjectCount()
+{
+	return livingGameObjectCount;
+}

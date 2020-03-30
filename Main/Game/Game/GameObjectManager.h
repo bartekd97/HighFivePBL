@@ -14,6 +14,7 @@ public:
 	void DestroyGameObject(GameObject gameObject);
 	void SetSignature(GameObject gameObject, Signature signature);
 	Signature GetSignature(GameObject gameObject);
+	int GetLivingGameObjectCount();
 
 private:
 	std::queue<GameObject> availableGameObjects{};

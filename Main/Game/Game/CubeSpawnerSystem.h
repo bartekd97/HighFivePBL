@@ -2,7 +2,7 @@
 
 #include "SystemUpdate.h"
 
-class LifeTimeSystem : public SystemUpdate
+class CubeSpawnerSystem : public SystemUpdate
 {
 public:
 	void Update(float dt) override;
