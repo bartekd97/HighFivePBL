@@ -7,6 +7,6 @@
 class System
 {
 public:
+	virtual void Init() {};
 	std::set<GameObject> gameObjects;
-	virtual void Update(float dt) = 0;
 };

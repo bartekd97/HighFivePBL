@@ -1,7 +1,7 @@
 #pragma once
 
-struct LifeTime
+struct CubeSpawner
 {
-	float lifeTime;
+	float interval;
 	float accumulator;
 };

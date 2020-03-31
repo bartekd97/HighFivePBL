@@ -8,6 +8,9 @@
 #include <math.h>
 
 #include "LifeTime.h"
+#include "Transform.h"
+#include "CubeRenderer.h"
+#include "CubeSpawner.h"
 
 #include "Texture.h"
 #include "Material.h"
@@ -22,6 +25,8 @@
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
+void ReportGameObjects(float dt);
+
 int main()
 {
 	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "HFEngine test"))
@@ -30,16 +35,11 @@ int main()
 		return -1;
 	}
 
-	std::vector<GameObject> gameObjects(5);
-	for (int i = 0; i < gameObjects.size(); i++)
-	{
-		gameObjects[i] = HFEngine::ECS.CreateGameObject();
-
-		HFEngine::ECS.AddComponent<LifeTime>(
-			gameObjects[i],
-			{ 0.0f, i * 5.0f }
-		);
-	}
+	GameObject cubeSpawner = HFEngine::ECS.CreateGameObject();
+	HFEngine::ECS.AddComponent<CubeSpawner>(
+		cubeSpawner,
+		{ 0.05f, 0.0f }
+	);
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
@@ -75,10 +75,13 @@ int main()
 		glfwPollEvents();
 
 		HFEngine::ECS.UpdateSystems(dt);
+		ReportGameObjects(dt);
 
-		glClearColor(0.2f, 0.7f, 0.5f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		HFEngine::ECS.RenderSystems();
 
 		//hwShader->use();
 		//PrimitiveRenderer::DrawScreenQuad();
@@ -102,4 +105,19 @@ int main()
 	HFEngine::Terminate();
 
 	return 0;
+}
+
+void ReportGameObjects(float dt)
+{
+	const float interval = 5.0f;
+	static int frames = 0;
+	static float accumulator = 0.0f;
+	accumulator += dt;
+	frames += 1;
+	if (isgreaterequal(accumulator, interval))
+	{
+		LogInfo("FPS: {}; GameObjects count: {}", frames / interval, HFEngine::ECS.GetLivingGameObjectsCount());
+		accumulator = 0.0f;
+		frames = 0;
+	}
 }

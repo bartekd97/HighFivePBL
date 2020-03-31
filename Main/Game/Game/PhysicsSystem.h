@@ -2,7 +2,7 @@
 
 #include "SystemUpdate.h"
 
-class LifeTimeSystem : public SystemUpdate
+class PhysicsSystem : public SystemUpdate
 {
 public:
 	void Update(float dt) override;

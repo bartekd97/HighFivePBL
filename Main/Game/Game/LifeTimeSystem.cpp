@@ -7,18 +7,15 @@
 
 void LifeTimeSystem::Update(float dt)
 {
-	for (auto const& gameObject : gameObjects)
+	auto it = gameObjects.begin();
+	while (it != gameObjects.end())
 	{
+		auto gameObject = *(it++);
 		auto& lifeTime = HFEngine::ECS.GetComponent<LifeTime>(gameObject);
-		lifeTime.lifeTime += dt;
-		if (isgreater(lifeTime.threshold, 0.0f))
+		lifeTime.accumulator += dt;
+		if (isgreaterequal(lifeTime.accumulator, lifeTime.lifeTime))
 		{
-			if (isgreaterequal(lifeTime.lifeTime, lifeTime.threshold))
-			{
-				lifeTime.lifeTime = 0.0f;
-				//std::cout << "[LifeTime] GameObject " << gameObject << " reached lifetime threshold (" << lifeTime.threshold << ")" << std::endl;
-				LogInfo("[LifeTime] GameObject {} reached lifetime threshold: {}", gameObject, lifeTime.threshold);
-			}
+			HFEngine::ECS.DestroyGameObject(gameObject);
 		}
 	}
 }
