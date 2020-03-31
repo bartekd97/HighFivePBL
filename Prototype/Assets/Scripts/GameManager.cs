@@ -144,63 +144,63 @@ public class GameManager : MonoBehaviour
     {
         if (upgrade == (Upgrades)0)
         {
-            return "SetGhostSpawnDistance";
+            return "Increase MiniGhosts Number";
         }
         else if (upgrade == (Upgrades)1)
         {
-            return "SetGhostSpeed";
+            return "Increase GhostBar Recovery";
         }
         else if (upgrade == (Upgrades)2)
         {
-            return "SetMaxGhostDistance";
+            return "Increase Ghost Max Distance";
         }
         else if (upgrade == (Upgrades)3)
         {
-            return "SetGhostDistanceRecoverySpeed";
+            return "Increase Ghost Recovery Speed";
         }
         else if (upgrade == (Upgrades)4)
         {
-            return "SetPlayerSpeed";
+            return "Increase Player Speed";
         }
         else if (upgrade == (Upgrades)5)
         {
-            return "SetLineSlow";
+            return "Increase Line Slow";
         }
         else if (upgrade == (Upgrades)6)
         {
-            return "SetGhostFreezeTime";
+            return "Increase Line FreezeTime";
         }
         else if (upgrade == (Upgrades)7)
         {
-            return "SetPushBackDistance";
+            return "Increse PushBack Distance";
         }
         else if (upgrade == (Upgrades)8)
         {
-            return "SetPushBackForce";
+            return "Increase PushBack Force";
         }
         else if (upgrade == (Upgrades)9)
         {
-            return "SetPushBackCooldown";
+            return "Decrese PushBack Cooldown";
         }
         else if (upgrade == (Upgrades)10)
         {
-            return "SetGhostCooldown";
+            return "Decrese Ghost Cooldown";
         }
         else if (upgrade == (Upgrades)11)
         {
-            return "SetNumberOfEnemiesToHit";
+            return "Increase Number Of Enemies Hit";
         }
         else if (upgrade == (Upgrades)12)
         {
-            return "SetNumberOfActiveLines";
+            return "Increase Number Of Active Lines";
         }
         else if (upgrade == (Upgrades)13)
         {
-            return "SetDotTick";
+            return "Increase Dot Tick";
         }
         else
         {
-            return "SetDotDmg";
+            return "Increase Dot Dmg";
         }
     }
 
@@ -208,18 +208,11 @@ public class GameManager : MonoBehaviour
     {
         if (upgrade == (Upgrades)0)
         {
-            Debug.Log(ghost.miniGhostSpawnDistance);
             ghost.miniGhostSpawnDistance = 1.5f* ghost.miniGhostSpawnDistance;
-            Debug.Log(ghost.miniGhostSpawnDistance);
-
         }
         else if (upgrade == (Upgrades)1)
         {
-            Debug.Log(player.ghostSpeed);
-
             player.ghostSpeed = 1.5f * player.ghostSpeed;
-            Debug.Log(player.ghostSpeed);
-
         }
         else if (upgrade == (Upgrades)2)
         {
@@ -235,11 +228,11 @@ public class GameManager : MonoBehaviour
         }
         else if (upgrade == (Upgrades)5)
         {
-
+            ghost.lineSlow += 0.3f;
         }
         else if (upgrade == (Upgrades)6)
         {
-
+            ghost.ghostFreezeTime += 0.3f;
         }
         else if (upgrade == (Upgrades)7)
         {
@@ -267,11 +260,11 @@ public class GameManager : MonoBehaviour
         }
         else if (upgrade == (Upgrades)13)
         {
-
+            ghost.dotTick += 1f;
         }
         else if (upgrade == (Upgrades)14)
         {
-
+            ghost.dotDmg += 1f;
         }
     }
 
