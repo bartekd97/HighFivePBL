@@ -1,10 +1,18 @@
 #pragma once
 
 #include "FrameBuffer.h"
+#include "MeshRendererSystem.h"
 
 class RenderPipeline
 {
-private:
+public:
+	enum class GBufferBindingPoint {
+		POSITION = 1,
+		NORMAL,
+		ALBEDO,
+		METALNESS_ROUGHNESS,
+		EMISSIVE
+	};
 	struct GBufferStruct {
 		std::shared_ptr<Texture> position;
 		std::shared_ptr<Texture> normal;
@@ -14,9 +22,19 @@ private:
 
 		std::shared_ptr<FrameBuffer> frameBuffer;
 	};
+	struct RenderSystemsStruct {
+		std::shared_ptr<MeshRendererSystem> meshRenderer;
+	};
 
+private:
 	GBufferStruct GBuffer;
+	RenderSystemsStruct RenderSystems;
+
 	bool initialized = false;
+	std::shared_ptr<Shader> combineGBufferShader;
+
+	void InitGBuffer();
+	void InitRenderSystems();
 
 public:
 	void Init();

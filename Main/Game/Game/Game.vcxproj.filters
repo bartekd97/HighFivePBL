@@ -24,6 +24,7 @@
     <ClCompile Include="_stb_image.cpp" />
     <ClCompile Include="FrameBuffer.cpp" />
     <ClCompile Include="RenderPipeline.cpp" />
+    <ClCompile Include="MeshRendererSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ComponentArray.h" />
@@ -63,5 +64,8 @@
     <ClInclude Include="WindowManager.h" />
     <ClInclude Include="FrameBuffer.h" />
     <ClInclude Include="RenderPipeline.h" />
+    <ClInclude Include="Components.h" />
+    <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="MeshRendererSystem.h" />
   </ItemGroup>
 </Project>

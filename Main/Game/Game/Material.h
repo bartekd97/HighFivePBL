@@ -3,6 +3,7 @@
 #include <glm/glm.hpp>
 #include "Texture.h"
 #include "MaterialManager.h"
+#include "Shader.h"
 
 namespace MaterialBindingPoint {
 	extern const int ALBEDO_MAP;
@@ -10,6 +11,8 @@ namespace MaterialBindingPoint {
 	extern const int METALNESS_MAP;
 	extern const int ROUGHNESS_MAP;
 	extern const int EMISSIVE_MAP;
+
+	void AssignToShader(std::shared_ptr<Shader> shader);
 }
 
 class Material {
@@ -35,6 +38,6 @@ private:
 	Material();
 
 public:
-	void apply();
+	void apply(std::shared_ptr<Shader> shader);
 
 };

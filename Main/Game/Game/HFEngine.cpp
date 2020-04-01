@@ -4,12 +4,7 @@
 #include "HFEngine.h"
 #include "Logger.h"
 
-#include "LifeTime.h"
-#include "Transform.h"
-#include "CubeRenderer.h"
-#include "CubeSpawner.h"
-#include "RigidBody.h"
-#include "Gravity.h"
+#include "Components.h"
 
 #include "LifeTimeSystem.h"
 #include "CubeRenderSystem.h"
@@ -71,12 +66,16 @@ namespace HFEngine
 
 		ECS.Init();
 
-		ECS.RegisterComponent<LifeTime>();
+		// general components
 		ECS.RegisterComponent<Transform>();
-		ECS.RegisterComponent<CubeRenderer>();
-		ECS.RegisterComponent<CubeSpawner>();
 		ECS.RegisterComponent<RigidBody>();
 		ECS.RegisterComponent<Gravity>();
+		// render components
+		ECS.RegisterComponent<CubeRenderer>();
+		ECS.RegisterComponent<MeshRenderer>();
+		// script components
+		ECS.RegisterComponent<LifeTime>();
+		ECS.RegisterComponent<CubeSpawner>();
 
 		auto cubeRenderSystem = ECS.RegisterSystem<CubeRenderSystem>();
 		{

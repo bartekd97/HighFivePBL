@@ -7,10 +7,7 @@
 #include <chrono>
 #include <math.h>
 
-#include "LifeTime.h"
-#include "Transform.h"
-#include "CubeRenderer.h"
-#include "CubeSpawner.h"
+#include "Components.h"
 
 #include "Texture.h"
 #include "Material.h"
@@ -43,6 +40,7 @@ int main()
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
+	/*
 	auto ssShader = ShaderManager::GetShader("SpaceshipShader");
 	ssShader->use();
 	ssShader->setInt("albedoMap", MaterialBindingPoint::ALBEDO_MAP);
@@ -50,6 +48,7 @@ int main()
 	ssShader->setInt("metalnessMap", MaterialBindingPoint::METALNESS_MAP);
 	ssShader->setInt("roughnessMap", MaterialBindingPoint::ROUGHNESS_MAP);
 	ssShader->setInt("emissiveMap", MaterialBindingPoint::EMISSIVE_MAP);
+	*/
 
 	//auto sampleTex = TextureManager::GetTexture("Sample", "albedo");
 	//sampleTex->bind(1);
@@ -57,14 +56,37 @@ int main()
 	//auto sampleMat = MaterialManager::GetMaterial("Sample", "mat");
 
 	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
+	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material, true };
+	/*
 	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 10.0f),
 		glm::vec3(0.0f, 0.0f, 0.0f),
 		glm::vec3(0.0f, 1.0f, 0.0f));
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)(SCREEN_WIDTH) / (float)(SCREEN_HEIGHT), 0.1f, 100.0f);
-
+	*/
 	//ssShader->setMat4("gModel", model);
-	ssShader->setMat4("gView", view);
-	ssShader->setMat4("gProjection", projection);
+	//ssShader->setMat4("gView", view);
+	//ssShader->setMat4("gProjection", projection);
+
+	GameObject ss1 = HFEngine::ECS.CreateGameObject();
+	HFEngine::ECS.AddComponent<Transform>(
+		ss1,
+		{ { 0.0f, -1.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 1.0f, 1.0f, 1.0f } }
+	);
+	HFEngine::ECS.AddComponent<MeshRenderer>(ss1,spaceshipRenderer);
+
+	GameObject ss2 = HFEngine::ECS.CreateGameObject();
+	HFEngine::ECS.AddComponent<Transform>(
+		ss2,
+		{ { 4.0f, 2.75f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 0.5f, 0.5f, 0.5f } }
+	);
+	HFEngine::ECS.AddComponent<MeshRenderer>(ss2, spaceshipRenderer);
+
+	GameObject ss3 = HFEngine::ECS.CreateGameObject();
+	HFEngine::ECS.AddComponent<Transform>(
+		ss3,
+		{ { -4.0f, 2.75f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 0.5f, 0.5f, 0.5f } }
+	);
+	HFEngine::ECS.AddComponent<MeshRenderer>(ss3, spaceshipRenderer);
 
 	float dt = 0.0f;
 
@@ -76,6 +98,10 @@ int main()
 
 		HFEngine::ECS.UpdateSystems(dt);
 		ReportGameObjects(dt);
+
+		HFEngine::ECS.GetComponent<Transform>(ss1).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
+		HFEngine::ECS.GetComponent<Transform>(ss2).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
+		HFEngine::ECS.GetComponent<Transform>(ss3).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
 
 		/*
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

@@ -1,5 +1,6 @@
 <shaders>
     <shader name="HelloWorldShader" vertex="ScreenPass.glsl" fragment="HelloWorld.glsl"/>
     <shader name="CubeShader" vertex="CubeVertex.glsl" fragment="CubeFragment.glsl"/>
-    <shader name="SpaceshipShader" vertex="GeometryPass.glsl" fragment="spaceship.glsl"/>
+    <shader name="ToGBuffer" vertex="GeometryPass.glsl" fragment="ToGBuffer.glsl"/>
+    <shader name="CombineGBuffer" vertex="ScreenPass.glsl" fragment="CombineGBuffer.glsl"/>
 </shaders>

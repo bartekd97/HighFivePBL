@@ -23,7 +23,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 		std::vector<unsigned int> attachementsIDs;
 		for (auto ca : colorAttachements)
 		{
-			auto texture = TextureManager::CreateEmptyTexture(width, height, ca.dataFormat, ca.dataType, ca.internalFormat);
+			auto texture = TextureManager::CreateEmptyTexture(width, height, ca.dataFormat, ca.dataType, ca.internalFormat, GL_LINEAR);
 
 			unsigned int attachementId = GL_COLOR_ATTACHMENT0 + fb->colorAttachementTextures.size();
 			glFramebufferTexture2D(

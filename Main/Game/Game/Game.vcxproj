@@ -95,6 +95,7 @@
     <ClCompile Include="LifeTimeSystem.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MaterialManager.cpp" />
+    <ClCompile Include="MeshRendererSystem.cpp" />
     <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="MeshFileLoader.cpp" />
     <ClCompile Include="ModelManager.cpp" />
@@ -113,6 +114,7 @@
   <ItemGroup>
     <ClInclude Include="ComponentArray.h" />
     <ClInclude Include="ComponentManager.h" />
+    <ClInclude Include="Components.h" />
     <ClInclude Include="CubeRenderer.h" />
     <ClInclude Include="CubeRenderSystem.h" />
     <ClInclude Include="CubeSpawner.h" />
@@ -128,6 +130,8 @@
     <ClInclude Include="LifeTimeSystem.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MaterialManager.h" />
+    <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="MeshRendererSystem.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshFileLoader.h" />
