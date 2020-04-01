@@ -27,6 +27,9 @@ namespace HFEngine
 {
 	bool initialized = false;
 	ECSCore ECS;
+	RenderPipeline Renderer;
+	int RENDER_WIDTH;
+	int RENDER_HEIGHT;
 
 	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
 	{
@@ -44,6 +47,9 @@ namespace HFEngine
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		WindowManager::Initialize(screenWidth, screenHeight, windowTitle);
+
+		RENDER_WIDTH = screenWidth;
+		RENDER_HEIGHT = screenHeight;
 
 		if (WindowManager::GetWindow() == nullptr)
 		{
@@ -99,6 +105,8 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
 		}
+
+		Renderer.Init();
 
 		initialized = true;
 

@@ -22,6 +22,7 @@ namespace TextureManager {
 	extern std::shared_ptr<Texture> BLANK_TEXTURE; // 4x4 white (255) rgb texture
 
 	std::shared_ptr<Texture> CreateTextureFromRawData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config);
+	std::shared_ptr<Texture> CreateEmptyTexture(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat);
 	std::shared_ptr<Texture> CreateTextureFromFile(std::string filename, TextureConfig& config);
 	std::shared_ptr<TextureLibrary> GetLibrary(std::string name);
 	std::shared_ptr<Texture> GetTexture(std::string libraryName, std::string textureName);
