@@ -11,6 +11,7 @@ struct Vertex {
 	glm::vec2 uv;
 	glm::vec3 normal;
 	glm::vec3 tangent;
+	glm::vec3 bitangent;
 };
 
 class Mesh
@@ -27,8 +28,6 @@ private:
 		VAO(VAO), VBO(VBO), EBO(EBO), indicesSize(indicesSize) {}
 
 public:
-	static std::shared_ptr<Mesh> New(std::vector<Vertex>& vertices, std::vector<unsigned>& indices);
-
 	inline void bind() { glBindVertexArray(VAO); }
 
 	inline void draw() {

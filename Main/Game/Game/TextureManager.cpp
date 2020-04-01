@@ -26,6 +26,26 @@ namespace TextureManager {
 
 // privates
 namespace TextureManager {
+	GLuint MakeEmptyTexture2D(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat, GLenum filtering)
+	{
+		GLuint textureId;
+
+		glGenTextures(1, &textureId);
+		glActiveTexture(GL_TEXTURE31); // use last slot to prevent accidential rewriting current texture
+		glBindTexture(GL_TEXTURE_2D, textureId);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
+			width, height,
+			0, // deprecated
+			dataFormat, dataType, NULL);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		return textureId;
+	}
 	GLuint MakeTexture2DFromData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config)
 	{
 		GLuint textureId;
@@ -74,6 +94,12 @@ std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(unsigned char*
 	// TODO: Logging when texture creation failed
 	GLuint textureId = MakeTexture2DFromData(data, width, height, dataFormat, config);
 	return std::shared_ptr<Texture>(new Texture(textureId, width, height, config.format));
+}
+std::shared_ptr<Texture> TextureManager::CreateEmptyTexture(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat, GLenum filtering)
+{
+	// TODO: Logging when texture creation failed
+	GLuint textureId = MakeEmptyTexture2D(width, height, dataFormat, dataType, internalFormat, filtering);
+	return std::shared_ptr<Texture>(new Texture(textureId, width, height, internalFormat));
 }
 std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filename, TextureConfig& config)
 {

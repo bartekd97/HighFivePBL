@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ECSCore.h"
+#include "RenderPipeline.h"
 
 namespace HFEngine
 {
@@ -8,4 +9,7 @@ namespace HFEngine
 	void Terminate();
 
 	extern ECSCore ECS;
+	extern RenderPipeline Renderer;
+	extern int RENDER_WIDTH;
+	extern int RENDER_HEIGHT;
 }

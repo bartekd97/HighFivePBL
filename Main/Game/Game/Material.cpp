@@ -2,6 +2,7 @@
 
 #include "Logger.h"
 #include "Material.h"
+#include "Shader.h"
 
 #ifdef _DEBUG
 #define debugOnly(expression) expression
@@ -15,6 +16,15 @@ namespace MaterialBindingPoint {
 	const int METALNESS_MAP = 3;
 	const int ROUGHNESS_MAP = 4;
 	const int EMISSIVE_MAP = 5;
+
+	void AssignToShader(std::shared_ptr<Shader> shader)
+	{
+		shader->setInt("albedoMap", ALBEDO_MAP);
+		shader->setInt("normalMap", NORMAL_MAP);
+		shader->setInt("metalnessMap", METALNESS_MAP);
+		shader->setInt("roughnessMap", ROUGHNESS_MAP);
+		shader->setInt("emissiveMap", EMISSIVE_MAP);
+	}
 }
 
 Material::Material() {
@@ -83,11 +93,18 @@ void Material::SetLibraryProperties(std::unordered_map<std::string, std::string>
 
 }
 
-void Material::apply()
+void Material::apply(std::shared_ptr<Shader> shader)
 {
+	// bind maps
 	albedoMap->bind(MaterialBindingPoint::ALBEDO_MAP);
 	normalMap->bind(MaterialBindingPoint::NORMAL_MAP);
 	metalnessMap->bind(MaterialBindingPoint::METALNESS_MAP);
 	roughnessMap->bind(MaterialBindingPoint::ROUGHNESS_MAP);
 	emissiveMap->bind(MaterialBindingPoint::EMISSIVE_MAP);
+
+	// assign values
+	shader->setVector3F("albedoColor", albedoColor);
+	shader->setFloat("roughnessValue", roughnessValue);
+	shader->setFloat("metalnessValue", metalnessValue);
+	shader->setVector3F("emissiveColor", emissiveColor);
 }
