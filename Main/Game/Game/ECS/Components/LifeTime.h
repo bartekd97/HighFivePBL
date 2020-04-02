@@ -1,5 +1,6 @@
 #pragma once
 
+// TEST COMPONENT
 struct LifeTime
 {
 	float lifeTime;

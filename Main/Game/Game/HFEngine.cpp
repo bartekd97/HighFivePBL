@@ -4,12 +4,8 @@
 #include "HFEngine.h"
 #include "Logger.h"
 
-#include "Components.h"
-
-#include "LifeTimeSystem.h"
-#include "CubeRenderSystem.h"
-#include "CubeSpawnerSystem.h"
-#include "PhysicsSystem.h"
+#include "ECS/Components.h"
+#include "ECS/Systems.h"
 
 #include "Texture.h"
 #include "Material.h"

@@ -2,8 +2,9 @@
 
 #include "Logger.h"
 #include "LifeTimeSystem.h"
-#include "LifeTime.h"
 #include "HFEngine.h"
+
+#include "../Components.h"
 
 void LifeTimeSystem::Update(float dt)
 {

@@ -2,7 +2,7 @@
 #include "RenderPipeline.h"
 #include "HFEngine.h"
 #include "Logger.h"
-#include "Components.h"
+#include "ECS/Components.h"
 #include "PrimitiveRenderer.h"
 
 void RenderPipeline::InitGBuffer()

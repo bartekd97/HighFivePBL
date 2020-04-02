@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SystemUpdate.h"
+#include "../SystemUpdate.h"
 
 class CubeSpawnerSystem : public SystemUpdate
 {

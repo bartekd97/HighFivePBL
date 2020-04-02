@@ -7,7 +7,7 @@
 #include <chrono>
 #include <math.h>
 
-#include "Components.h"
+#include "ECS/Components.h"
 
 #include "Texture.h"
 #include "Material.h"

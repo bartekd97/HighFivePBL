@@ -3,8 +3,7 @@
 #include "Material.h"
 #include "Mesh.h"
 
-#include "Transform.h"
-#include "MeshRenderer.h"
+#include "../Components.h"
 
 void MeshRendererSystem::Init()
 {

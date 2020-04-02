@@ -3,9 +3,7 @@
 #include "PhysicsSystem.h"
 #include "HFEngine.h"
 
-#include "RigidBody.h"
-#include "Transform.h"
-#include "Gravity.h"
+#include "../Components.h"
 
 void PhysicsSystem::Update(float dt)
 {
