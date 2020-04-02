@@ -11,9 +11,10 @@ public class MonumentController : MonoBehaviour
     public float dmgAnimationDuration = 0.5f;
 
     private float monumentHealth;
-    private float maxMonumentHealth = 20.0f;
+    public float maxMonumentHealth = 20.0f;
     public HealthBar healthBar;
-    //public GameManager gameManager;
+    private GameObject gameManagerObject;
+    private GameManager gameManager;
 
 
     // Start is called before the first frame update
@@ -23,6 +24,8 @@ public class MonumentController : MonoBehaviour
         //rb = GetComponent<Rigidbody>();
         healthBar.SetMaxHealth(maxMonumentHealth);
         SetMeshColor(defaultColor);
+        gameManagerObject = GameObject.Find("GameManager");
+        gameManager = gameManagerObject.GetComponent<GameManager>();
     }
      
     // Update is called once per frame
@@ -42,7 +45,7 @@ public class MonumentController : MonoBehaviour
         if (monumentHealth <= 0)
         {
             Destroy(gameObject);
-            //gameManager.Upgrade(); ??
+            gameManager.Upgrade();
         }
     }
 
