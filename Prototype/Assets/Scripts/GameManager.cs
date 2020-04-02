@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        Upgrade();
+        //Upgrade();
     }
 
     public void SetCurrentCell(MapCell cell)
@@ -118,7 +118,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void Upgrade()
+    public void Upgrade()
     {
         prepareUpgrades();
         int r = Random.Range(0, upgradesList.Count);
@@ -271,14 +271,14 @@ public class GameManager : MonoBehaviour
     public void GetFirstUpgrade()
     {
         SetUpgrade(firstUpgrade);
-        upgradesList = null;
+        upgradesList = new List<Upgrades>();
         upgradesPanel.SetActive(false);
     }
 
     public void GetSecondUpgrade()
     {
         SetUpgrade(secondUpgrade);
-        upgradesList = null;
+        upgradesList = new List<Upgrades>();
 
         upgradesPanel.SetActive(false);
     }
@@ -286,7 +286,7 @@ public class GameManager : MonoBehaviour
     public void GetThirdUpgrade()
     {
         SetUpgrade(thirdUpgrade);
-        upgradesList = null;
+        upgradesList = new List<Upgrades>();
 
         upgradesPanel.SetActive(false);
     }

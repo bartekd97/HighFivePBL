@@ -281,8 +281,8 @@ MonoBehaviour:
   defaultColor: {r: 0.26237094, g: 0.26237094, b: 0.8301887, a: 1}
   damagedColor: {r: 0.764151, g: 0.039649345, b: 0.039649345, a: 1}
   dmgAnimationDuration: 0.5
-  healthBar: {fileID: 5290705387214696611, guid: 40a3de57c4d1ca14ba12237ac23f346d,
-    type: 3}
+  maxMonumentHealth: 20
+  healthBar: {fileID: 4431763044092605764}
 --- !u!1 &5058164865257003887
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,3 +601,15 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 8425273408412616167}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4431763044092605764 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5290705387214696611, guid: 40a3de57c4d1ca14ba12237ac23f346d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8425273408412616167}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4431763044092605762}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc8ae7bcbc4ffb345b89bb80184f93fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
