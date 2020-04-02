@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ECSCore.h"
-#include "RenderPipeline.h"
+#include "ECS/ECSCore.h"
+#include "Rendering/RenderPipeline.h"
 
 namespace HFEngine
 {

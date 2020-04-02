@@ -1,6 +1,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include "Logger.h"
+#include "../Utility/Logger.h"
 #include "MeshFileLoader.h"
 
 MeshFileLoader::MeshFileLoader(std::string filepath)

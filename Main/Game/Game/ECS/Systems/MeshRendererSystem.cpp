@@ -1,10 +1,9 @@
 #include "HFEngine.h"
 #include "MeshRendererSystem.h"
-#include "Material.h"
-#include "Mesh.h"
+#include "../../Resourcing/Material.h"
+#include "../../Resourcing/Mesh.h"
 
-#include "Transform.h"
-#include "MeshRenderer.h"
+#include "../Components.h"
 
 void MeshRendererSystem::Init()
 {

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Mesh.h"
-#include "Material.h"
+#include "../../Resourcing/Mesh.h"
+#include "../../Resourcing/Material.h"
 
 struct MeshRenderer
 {

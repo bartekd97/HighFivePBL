@@ -1,7 +1,8 @@
 #pragma once
 
-#include "SystemUpdate.h"
+#include "../SystemUpdate.h"
 
+//TEST SYSTEM
 class LifeTimeSystem : public SystemUpdate
 {
 public:

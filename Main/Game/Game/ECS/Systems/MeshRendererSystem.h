@@ -1,7 +1,7 @@
 #pragma once
 
-#include "System.h"
-#include "Shader.h"
+#include "../System.h"
+#include "../../Resourcing/Shader.h"
 
 // require MeshRenderer component
 class MeshRendererSystem : public System
@@ -13,4 +13,3 @@ public:
 	void Init() override;
 	void RenderToGBuffer();
 };
-

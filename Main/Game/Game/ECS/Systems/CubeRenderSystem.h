@@ -2,9 +2,10 @@
 
 #include <glad/glad.h>
 
-#include "ShaderManager.h"
-#include "SystemRender.h"
+#include "../../Resourcing/ShaderManager.h"
+#include "../SystemRender.h"
 
+// TEST SYSTEM
 class CubeRenderSystem : public SystemRender
 {
 public:

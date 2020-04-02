@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Utility.h"
+#include "../Utility/Utility.h"
 #include "SystemUpdate.h"
 #include "SystemRender.h"
 #include "ECSTypes.h"
@@ -73,7 +73,7 @@ public:
 	}
 
 	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
-	std::vector<std::shared_ptr<SystemRender>> renderQueue;
+	std::vector<std::shared_ptr<SystemRender>> renderQueue; // TODO: remove when possible
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};

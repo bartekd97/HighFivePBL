@@ -1,16 +1,11 @@
 #include <iostream>
 #include <random>
 
-#include "Logger.h"
+#include "../../Utility/Logger.h"
 #include "CubeSpawnerSystem.h"
-#include "CubeSpawner.h"
 #include "HFEngine.h"
 
-#include "Transform.h"
-#include "CubeRenderer.h"
-#include "RigidBody.h"
-#include "Gravity.h"
-#include "LifeTime.h"
+#include "../Components.h"
 
 void CubeSpawnerSystem::Update(float dt)
 {

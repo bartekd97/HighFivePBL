@@ -3,8 +3,8 @@
 #include <glad/glad.h>
 #include <vector>
 #include <memory>
-#include "Texture.h"
-#include "WindowManager.h"
+#include "../Resourcing/Texture.h"
+#include "../WindowManager.h"
 
 class FrameBuffer
 {
@@ -64,5 +64,3 @@ public:
 			glDeleteRenderbuffers(1, &depthRenderBuffer);
 	}
 };
-
-
