@@ -9,12 +9,12 @@
 
 #include "ECS/Components.h"
 
-#include "Texture.h"
-#include "Material.h"
-#include "Model.h"
-#include "Shader.h"
-#include "PrimitiveRenderer.h"
-#include "Logger.h"
+#include "Resourcing/Texture.h"
+#include "Resourcing/Material.h"
+#include "Resourcing/Model.h"
+#include "Resourcing/Shader.h"
+#include "Rendering/PrimitiveRenderer.h"
+#include "Utility/Logger.h"
 
 #include "HFEngine.h"
 #include "WindowManager.h"

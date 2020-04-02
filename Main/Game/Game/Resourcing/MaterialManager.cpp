@@ -2,8 +2,8 @@
 #include <tinyxml2.h>
 #include <stb_image.h>
 #include "Global.h"
-#include "Logger.h"
-#include "Utility.h"
+#include "../Utility/Logger.h"
+#include "../Utility/Utility.h"
 #include "Texture.h"
 #include "Material.h"
 

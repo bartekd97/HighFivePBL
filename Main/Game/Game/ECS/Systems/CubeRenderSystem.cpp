@@ -3,7 +3,7 @@
 
 #include "HFEngine.h"
 #include "CubeRenderSystem.h"
-#include "Shader.h"
+#include "../../Resourcing/Shader.h"
 
 #include "../Components.h"
 

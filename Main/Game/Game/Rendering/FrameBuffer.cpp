@@ -1,5 +1,5 @@
 #include "FrameBuffer.h"
-#include "Logger.h"
+#include "../Utility/Logger.h"
 
 std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 	int width, int height,

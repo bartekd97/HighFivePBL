@@ -4,7 +4,7 @@
 #include <memory>
 #include <unordered_map>
 
-#include "Utility.h"
+#include "../Utility/Utility.h"
 #include "SystemUpdate.h"
 #include "SystemRender.h"
 #include "ECSTypes.h"

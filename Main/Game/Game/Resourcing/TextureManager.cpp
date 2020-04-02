@@ -1,8 +1,8 @@
 #include <filesystem>
 #include <tinyxml2.h>
 #include <stb_image.h>
-#include "Global.h"
-#include "Logger.h"
+#include "../Global.h"
+#include "../Utility/Logger.h"
 #include "Texture.h"
 
 using namespace tinyxml2;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Logger.h"
+#include "../Utility/Logger.h"
 #include "Material.h"
 #include "Shader.h"
 

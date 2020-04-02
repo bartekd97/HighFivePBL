@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include "RenderPipeline.h"
 #include "HFEngine.h"
-#include "Logger.h"
-#include "ECS/Components.h"
+#include "../Utility/Logger.h"
+#include "../ECS/Components.h"
 #include "PrimitiveRenderer.h"
 
 void RenderPipeline::InitGBuffer()

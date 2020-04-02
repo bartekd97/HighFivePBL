@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <tinyxml2.h>
 #include "Shader.h"
-#include "Utility.h"
-#include "Logger.h"
+#include "../Utility/Utility.h"
+#include "../Utility/Logger.h"
 
 using namespace tinyxml2;
 
