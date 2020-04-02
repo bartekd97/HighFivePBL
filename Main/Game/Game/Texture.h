@@ -5,6 +5,7 @@
 class Texture {
 	friend void TextureManager::Initialize();
 	friend std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config);
+	friend std::shared_ptr<Texture> TextureManager::CreateEmptyTexture(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat, GLenum filtering);
 	friend std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filename, TextureConfig& config);
 	
 private:
@@ -50,6 +51,7 @@ public:
 	}
 	inline void setBorderColor(float r, float g, float b, float a) {
 		glActiveTexture(GL_TEXTURE31);
+		glBindTexture(GL_TEXTURE_2D, texture);
 		float borderColor[] = { r, g, b, a };
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 		glBindTexture(GL_TEXTURE_2D, 0);

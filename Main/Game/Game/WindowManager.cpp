@@ -6,10 +6,14 @@
 namespace WindowManager
 {
 	GLFWwindow* window = nullptr;
+	int SCREEN_WIDTH;
+	int SCREEN_HEIGHT;
 
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
-		glViewport(0, 0, width, height);
+		//glViewport(0, 0, width, height);
+		SCREEN_WIDTH = width;
+		SCREEN_HEIGHT = height;
 	}
 
 	void Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
@@ -26,6 +30,9 @@ namespace WindowManager
 			glfwMakeContextCurrent(window);
 			glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 		}
+
+		SCREEN_WIDTH = screenWidth;
+		SCREEN_HEIGHT = screenHeight;
 	}
 
 	GLFWwindow* GetWindow()

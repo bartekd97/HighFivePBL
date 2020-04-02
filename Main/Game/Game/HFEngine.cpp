@@ -4,12 +4,7 @@
 #include "HFEngine.h"
 #include "Logger.h"
 
-#include "LifeTime.h"
-#include "Transform.h"
-#include "CubeRenderer.h"
-#include "CubeSpawner.h"
-#include "RigidBody.h"
-#include "Gravity.h"
+#include "Components.h"
 
 #include "LifeTimeSystem.h"
 #include "CubeRenderSystem.h"
@@ -27,6 +22,9 @@ namespace HFEngine
 {
 	bool initialized = false;
 	ECSCore ECS;
+	RenderPipeline Renderer;
+	int RENDER_WIDTH;
+	int RENDER_HEIGHT;
 
 	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
 	{
@@ -44,6 +42,9 @@ namespace HFEngine
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 		WindowManager::Initialize(screenWidth, screenHeight, windowTitle);
+
+		RENDER_WIDTH = screenWidth;
+		RENDER_HEIGHT = screenHeight;
 
 		if (WindowManager::GetWindow() == nullptr)
 		{
@@ -65,12 +66,16 @@ namespace HFEngine
 
 		ECS.Init();
 
-		ECS.RegisterComponent<LifeTime>();
+		// general components
 		ECS.RegisterComponent<Transform>();
-		ECS.RegisterComponent<CubeRenderer>();
-		ECS.RegisterComponent<CubeSpawner>();
 		ECS.RegisterComponent<RigidBody>();
 		ECS.RegisterComponent<Gravity>();
+		// render components
+		ECS.RegisterComponent<CubeRenderer>();
+		ECS.RegisterComponent<MeshRenderer>();
+		// script components
+		ECS.RegisterComponent<LifeTime>();
+		ECS.RegisterComponent<CubeSpawner>();
 
 		auto cubeRenderSystem = ECS.RegisterSystem<CubeRenderSystem>();
 		{
@@ -99,6 +104,8 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
 		}
+
+		Renderer.Init();
 
 		initialized = true;
 

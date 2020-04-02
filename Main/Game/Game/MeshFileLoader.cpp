@@ -44,6 +44,7 @@ bool MeshFileLoader::ReadMeshData(std::vector<Vertex>& vertices, std::vector<uns
 		v.uv = { mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y };
 		v.normal = { mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z };
 		v.tangent = { mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z };
+		v.bitangent = { mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z };
 		vertices.push_back(v);
 	}
 

@@ -39,7 +39,7 @@ namespace ShaderManager {
 		if (!successStatus)
 		{
 			glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-			LogError("ShaderManager::MakeProgram(): VertexShader Compile Problem:\n", std::string(errorLog));
+			LogError("ShaderManager::MakeProgram(): VertexShader Compile Problem:\n{}", std::string(errorLog));
 			errorCount++;
 		}
 
@@ -53,8 +53,8 @@ namespace ShaderManager {
 			glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &successStatus);
 			if (!successStatus)
 			{
-				glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-				LogError("ShaderManager::MakeProgram(): GeometryShader Compile Problem:\n", std::string(errorLog));
+				glGetShaderInfoLog(geometryShader, 512, NULL, errorLog);
+				LogError("ShaderManager::MakeProgram(): GeometryShader Compile Problem:\n{}", std::string(errorLog));
 				errorCount++;
 			}
 		}
@@ -67,8 +67,8 @@ namespace ShaderManager {
 		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &successStatus);
 		if (!successStatus)
 		{
-			glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
-			LogError("ShaderManager::MakeProgram(): FragmentShader Compile Problem:\n", std::string(errorLog));
+			glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
+			LogError("ShaderManager::MakeProgram(): FragmentShader Compile Problem:\n{}", std::string(errorLog));
 			errorCount++;
 		}
 
@@ -86,7 +86,7 @@ namespace ShaderManager {
 			if (!successStatus)
 			{
 				glGetProgramInfoLog(shaderProgram, 512, NULL, errorLog);
-				LogError("ShaderManager::MakeProgram(): Shader Link Problem:\n", std::string(errorLog));
+				LogError("ShaderManager::MakeProgram(): Shader Link Problem:\n{}", std::string(errorLog));
 				errorCount++;
 			}
 		}
