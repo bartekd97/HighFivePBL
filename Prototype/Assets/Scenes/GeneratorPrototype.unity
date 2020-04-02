@@ -9336,6 +9336,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minEnemiesInCell: 4
   maxEnemiesInCell: 10
+  maxMonumentsCounter: 3
   centerSpawnRadiusPercentage: 0.6
   maxBossSpawnCellDistance: 4
   playerObject: {fileID: 2066263928}
@@ -9343,6 +9344,8 @@ MonoBehaviour:
   enemyPrefab: {fileID: 5058164864356723304, guid: 82cd9f3d442d0c04a98ad0b9bb61d277,
     type: 3}
   bossPrefab: {fileID: 8886014663648545004, guid: 045f9a318b5eaf3408faf5840371993c,
+    type: 3}
+  monumentPrefab: {fileID: 5058164864356723304, guid: 12c1e192743bf454fadf4a227c24ecdf,
     type: 3}
 --- !u!4 &1873961013
 Transform:

@@ -51,6 +51,7 @@ public class Ghost : MonoBehaviour
     public int numberOfEnemyToHit;
     public int numberOfEnemyHit;
 
+    public MonumentController monumentController;
     public float lineSlow = 0.0f;
     public float ghostFreezeTime = 0.0f;
     public float dotTick = 0.0f;
@@ -379,7 +380,7 @@ public class Ghost : MonoBehaviour
         if (!IsMarking)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument"))
             return;
 
         enemyController = other.GetComponent<EnemyController>();
@@ -388,6 +389,12 @@ public class Ghost : MonoBehaviour
             enemyController.TakeDamage(damageToEnemies);
             numberOfEnemyHit++;
             firstEnemyHit = false;
+        }
+        
+        monumentController = other.GetComponent<MonumentController>();
+        if (monumentController != null)
+        {
+            monumentController.ApplyDamageToMonument(damageToEnemies);
         }
     }
 
