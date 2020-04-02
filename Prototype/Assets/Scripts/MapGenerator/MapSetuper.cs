@@ -7,7 +7,7 @@ public class MapSetuper : MonoBehaviour
 {
     public int minEnemiesInCell;
     public int maxEnemiesInCell;
-    public int maxMonumentsCounter;
+    public int maxMonumentsCounter = 3;
     public float centerSpawnRadiusPercentage;
     public int maxBossSpawnCellDistance;
     public GameObject playerObject;
@@ -106,7 +106,7 @@ public class MapSetuper : MonoBehaviour
     {
         Vector3 monumentPosition = cell.transform.position;
         GameObject monument = Instantiate(monumentPrefab, cell.transform.position, Quaternion.identity);
-        var monumentController = monument.GetComponent<MonumentController>();
+        //var monumentController = monument.GetComponent<MonumentController>();
 
         cell.Monuments.Add(monument);
     }
@@ -114,23 +114,61 @@ public class MapSetuper : MonoBehaviour
     void SetupMonuments()
     {
         List<MapCell> cells = new List<MapCell>(MapCell.All);
+        
         MapCell startupCell = GetStartupCell();
         MapCell bossCell = GetRandomBossCell();
-        int monumentCounter = maxMonumentsCounter;
 
-        for (int i=0; i<cells.Count() - 1; i++)
+        //Debug.Log("start:" + startupCell.CellSiteIndex);
+        //Debug.Log("boss:" + bossCell.CellSiteIndex);
+        cells.ToList();
+        
+        cells.Sort((p, q) => p.CellSiteIndex.CompareTo(q.CellSiteIndex));
+
+        cells.Remove(startupCell);
+        cells.Remove(bossCell);
+
+        int[] cellIndexes = new int[cells.Count];
+
+        for (int i = 0; i < cells.Count - 1; i++)
         {
-            if (monumentCounter >= 0)
+            cellIndexes[i] = cells[i].CellSiteIndex;
+        }
+
+        for (int i = 0; i < maxMonumentsCounter; i++)
+        {
+            int index = Random.Range(0, cellIndexes.Length - 1);
+            int x = cellIndexes[index];
+
+
+            for (int j = 0; j < cells.Count - 1; j++)
             {
-                if (cells[i].CellSiteIndex != startupCell.CellSiteIndex)
+                if (cells[j].CellSiteIndex == x)
                 {
-                    if (cells[i].CellSiteIndex != bossCell.CellSiteIndex)
-                    {
-                        GenerateMonumentInCell(cells[i]);
-                        monumentCounter--;
-                    }
+                    GenerateMonumentInCell(cells[j]);
                 }
             }
+            cellIndexes = RemoveIndices(cellIndexes, index);
         }
     }
+
+    private int[] RemoveIndices(int[] IndicesArray, int RemoveAt)
+    {
+        int[] newIndicesArray = new int[IndicesArray.Length - 1];
+
+        int i = 0;
+        int j = 0;
+        while (i < IndicesArray.Length)
+        {
+            if (i != RemoveAt)
+            {
+                newIndicesArray[j] = IndicesArray[i];
+                j++;
+            }
+
+            i++;
+        }
+
+        return newIndicesArray;
+    }
+
 }

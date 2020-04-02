@@ -35,7 +35,9 @@ public class MonumentController : MonoBehaviour
     {
         lastDmgTime = Time.time;
         monumentHealth -= value;
+        //Debug.Log("zycko:" + monumentHealth);
         healthBar.SetHealth(monumentHealth);
+        //Debug.Log("pasek:" + healthBar.GetHealth());
 
         if (monumentHealth <= 0)
         {

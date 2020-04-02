@@ -343,7 +343,7 @@ public class Ghost : MonoBehaviour
             numberOfEnemyHit++;
             firstEnemyHit = false;
         }
-
+        
         monumentController = other.GetComponent<MonumentController>();
         if (monumentController != null)
         {

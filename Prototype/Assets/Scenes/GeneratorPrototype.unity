@@ -8634,7 +8634,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minEnemiesInCell: 4
   maxEnemiesInCell: 10
-  maxMonumentsCounter: 0
+  maxMonumentsCounter: 3
   centerSpawnRadiusPercentage: 0.6
   maxBossSpawnCellDistance: 4
   playerObject: {fileID: 2066263928}
