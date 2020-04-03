@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Main",
+    "\\Main\\Game",
+    "\\Main\\Game\\Game",
+    "\\Main\\Game\\Game\\ECS",
+    "\\Main\\Game\\Game\\ECS\\Components",
+    "\\Main\\Game\\Game\\ECS\\Systems"
+  ],
+  "SelectedNode": "\\Main\\Game\\Game\\ECS\\Systems\\PhysicsSystem.cpp",
+  "PreviewInSolutionExplorer": false
+}

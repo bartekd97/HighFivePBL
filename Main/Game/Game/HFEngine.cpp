@@ -2,20 +2,16 @@
 #include <GLFW/glfw3.h>
 
 #include "HFEngine.h"
-#include "Logger.h"
+#include "Utility/Logger.h"
 
-#include "Components.h"
+#include "ECS/Components.h"
+#include "ECS/Systems.h"
 
-#include "LifeTimeSystem.h"
-#include "CubeRenderSystem.h"
-#include "CubeSpawnerSystem.h"
-#include "PhysicsSystem.h"
-
-#include "Texture.h"
-#include "Material.h"
-#include "Model.h"
-#include "Shader.h"
-#include "PrimitiveRenderer.h"
+#include "Resourcing/Texture.h"
+#include "Resourcing/Material.h"
+#include "Resourcing/Model.h"
+#include "Resourcing/Shader.h"
+#include "Rendering/PrimitiveRenderer.h"
 #include "WindowManager.h"
 
 namespace HFEngine

@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 
 #include "WindowManager.h"
-#include "Logger.h"
+#include "Utility/Logger.h"
 
 namespace WindowManager
 {

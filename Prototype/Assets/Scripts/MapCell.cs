@@ -17,6 +17,8 @@ public class MapCell : MonoBehaviour
 
     public List<GameObject> Enemies = new List<GameObject>();
 
+    public List<GameObject> Monuments = new List<GameObject>();
+
 
     [HideInInspector]
     public int CellSiteIndex;
