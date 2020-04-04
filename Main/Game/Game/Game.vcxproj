@@ -86,12 +86,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ECS\ECSCore.cpp" />
+    <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
     <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
     <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
@@ -124,7 +127,9 @@
     <ClInclude Include="ECS\Components\Transform.h" />
     <ClInclude Include="ECS\ECSCore.h" />
     <ClInclude Include="ECS\ECSTypes.h" />
+    <ClInclude Include="ECS\GameObjectHierarchy.h" />
     <ClInclude Include="ECS\GameObjectManager.h" />
+    <ClInclude Include="ECS\HierarchyNode.h" />
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
@@ -134,6 +139,7 @@
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
     <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
+    <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="HFEngine.h" />

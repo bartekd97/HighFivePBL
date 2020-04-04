@@ -1,4 +1,5 @@
 #include "GameObjectManager.h"
+#include "GameObjectHierarchy.h"
 
 GameObjectManager::GameObjectManager()
 {
@@ -26,6 +27,33 @@ void GameObjectManager::DestroyGameObject(GameObject gameObject)
 	signatures[gameObject].reset();
 	availableGameObjects.push(gameObject);
 	--livingGameObjectCount;
+}
+
+Signature GameObjectManager::SetEnabled(GameObject gameObject, bool enabled)
+{
+	bool isEnabled = disabledSignatures[gameObject].count() == 0;
+	if (enabled)
+	{
+		if (!isEnabled)
+		{
+			signatures[gameObject] = disabledSignatures[gameObject];
+			disabledSignatures[gameObject].reset();
+		}
+	}
+	else
+	{
+		if (isEnabled)
+		{
+			disabledSignatures[gameObject] = signatures[gameObject];
+			signatures[gameObject].reset();
+		}
+	}
+	return signatures[gameObject];
+}
+
+bool GameObjectManager::IsEnabled(GameObject gameObject)
+{
+	return disabledSignatures[gameObject].count() == 0;
 }
 
 void GameObjectManager::SetSignature(GameObject gameObject, Signature signature)

@@ -100,6 +100,12 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
 		}
+		auto transformUpdateSystem = ECS.RegisterSystem<TransformUpdateSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			ECS.SetSystemSignature<TransformUpdateSystem>(signature);
+		}
 
 		Renderer.Init();
 
@@ -118,3 +124,4 @@ namespace HFEngine
 		glfwTerminate();
 	}
 }
+
