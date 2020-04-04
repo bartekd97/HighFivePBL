@@ -26,6 +26,8 @@
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
+    <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
+    <ClCompile Include="ECS\ECSCore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -71,5 +73,6 @@
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="ECS\HierarchyNode.h" />
     <ClInclude Include="ECS\GameObjectHierarchy.h" />
+    <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
   </ItemGroup>
 </Project>

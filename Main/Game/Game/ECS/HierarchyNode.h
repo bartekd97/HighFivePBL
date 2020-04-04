@@ -1,15 +1,16 @@
 #pragma once
 
 #include <vector>
+#include <optional>
 
 #include "ECSTypes.h"
 
 class HierarchyNode
 {
 public:
-	HierarchyNode(GameObject gameObject, std::shared_ptr<HierarchyNode> parent) : gameObject(gameObject), parent(parent) {}
+	HierarchyNode(GameObject gameObject, std::optional<GameObject> parent = std::nullopt) : gameObject(gameObject), parent(parent) {}
 
 	GameObject gameObject;
-	std::shared_ptr<HierarchyNode> parent;
-	std::vector<HierarchyNode> children;
+	std::optional<GameObject> parent;
+	std::vector<GameObject> children;
 };

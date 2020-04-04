@@ -8,35 +8,26 @@
 #include "GameObjectHierarchy.h"
 #include "ECSTypes.h"
 
+extern GameObjectHierarchy gameObjectHierarchy;
+
 class ECSCore
 {
 public:
-	void Init()
-	{
-		componentManager = std::make_unique<ComponentManager>();
-		gameObjectManager = std::make_unique<GameObjectManager>();
-		systemManager = std::make_unique<SystemManager>();
-		gameObjectHierarchy = std::make_unique<GameObjectHierarchy>();
-	}
+	void Init();
 
-	GameObject CreateGameObject()
-	{
-		return gameObjectManager->CreateGameObject();
-	}
+	GameObject CreateGameObject();
 
-	GameObject CreateGameObject(GameObject parent)
-	{
-		GameObject created = gameObjectManager->CreateGameObject();
-		gameObjectHierarchy->AddGameObject(created, parent);
-		return created;
-	}
+	GameObject CreateGameObject(GameObject parent);
 
-	void DestroyGameObject(GameObject gameObject)
+	void DestroyGameObject(GameObject gameObject);
+
+	void UpdateSystems(float dt);
+
+	void RenderSystems();
+
+	inline int GetLivingGameObjectsCount()
 	{
-		gameObjectManager->DestroyGameObject(gameObject);
-		componentManager->GameObjectDestroyed(gameObject);
-		systemManager->GameObjectDestroyed(gameObject);
-		gameObjectHierarchy->RemoveGameObject(gameObject);
+		return gameObjectManager->GetLivingGameObjectCount();
 	}
 
 	template<typename T>
@@ -93,30 +84,8 @@ public:
 		systemManager->SetSignature<T>(signature);
 	}
 
-	void UpdateSystems(float dt)
-	{
-		for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)
-		{
-			(*it)->Update(dt);
-		}
-	}
-
-	void RenderSystems()
-	{
-		for (auto it = systemManager->renderQueue.begin(); it != systemManager->renderQueue.end(); ++it)
-		{
-			(*it)->Render();
-		}
-	}
-
-	inline int GetLivingGameObjectsCount()
-	{
-		return gameObjectManager->GetLivingGameObjectCount();
-	}
-
 private:
 	std::unique_ptr<ComponentManager> componentManager;
 	std::unique_ptr<GameObjectManager> gameObjectManager;
 	std::unique_ptr<SystemManager> systemManager;
-	std::unique_ptr<GameObjectHierarchy> gameObjectHierarchy;
 };

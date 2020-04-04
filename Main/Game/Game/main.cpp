@@ -74,14 +74,14 @@ int main()
 	);
 	HFEngine::ECS.AddComponent<MeshRenderer>(ss1,spaceshipRenderer);
 
-	GameObject ss2 = HFEngine::ECS.CreateGameObject();
+	GameObject ss2 = HFEngine::ECS.CreateGameObject(ss1);
 	HFEngine::ECS.AddComponent<Transform>(
 		ss2,
 		{ { 4.0f, 2.75f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 0.5f, 0.5f, 0.5f } }
 	);
 	HFEngine::ECS.AddComponent<MeshRenderer>(ss2, spaceshipRenderer);
 
-	GameObject ss3 = HFEngine::ECS.CreateGameObject();
+	GameObject ss3 = HFEngine::ECS.CreateGameObject(ss2);
 	HFEngine::ECS.AddComponent<Transform>(
 		ss3,
 		{ { -4.0f, 2.75f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 0.5f, 0.5f, 0.5f } }
@@ -100,8 +100,9 @@ int main()
 		ReportGameObjects(dt);
 
 		HFEngine::ECS.GetComponent<Transform>(ss1).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
-		HFEngine::ECS.GetComponent<Transform>(ss2).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
-		HFEngine::ECS.GetComponent<Transform>(ss3).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
+		HFEngine::ECS.GetComponent<Transform>(ss1).dirty = true;
+		//HFEngine::ECS.GetComponent<Transform>(ss2).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
+		//HFEngine::ECS.GetComponent<Transform>(ss3).rotation = { 0.0f, (float)glfwGetTime(), 0.0f };
 
 		/*
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

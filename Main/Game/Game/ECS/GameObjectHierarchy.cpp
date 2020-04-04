@@ -2,16 +2,18 @@
 
 #include "GameObjectHierarchy.h"
 
+#include "../Utility/Logger.h"
+
 void GameObjectHierarchy::AddGameObject(GameObject child, GameObject parent)
 {
 	auto parentNode = pointers[parent];
 	if (parentNode == nullptr)
 	{
-		nodes.push_back(HierarchyNode(parent, nullptr));
-		parentNode = std::make_shared<HierarchyNode>(nodes.back());
+		root.push_back(parent);
+		parentNode = std::make_shared<HierarchyNode>(parent);
 		pointers[parent] = parentNode;
 	}
-	parentNode->children.push_back(HierarchyNode(child, parentNode));
+	parentNode->children.push_back(child);
 	pointers[child] = std::make_shared<HierarchyNode>(parentNode->children.back());
 }
 
@@ -22,15 +24,16 @@ void GameObjectHierarchy::RemoveGameObject(GameObject gameObject)
 	{
 		for (int i = node->children.size() - 1; i >= 0; i--)
 		{
-			RemoveGameObject(node->children[i].gameObject);
+			RemoveGameObject(node->children[i]);
 		}
-		if (node->parent == nullptr)
+		if (!node->parent.has_value())
 		{
-			nodes.erase(std::remove_if(nodes.begin(), nodes.end(), [gameObject](HierarchyNode node) { return node.gameObject == gameObject; }), nodes.end());
+			root.erase(std::remove(root.begin(), root.end(), gameObject), root.end());
 		}
 		else
 		{
-			node->parent->children.erase(std::remove_if(nodes.begin(), nodes.end(), [gameObject](HierarchyNode node) { return node.gameObject == gameObject; }), nodes.end());
+			auto parentNode = pointers[node->parent.value()];
+			parentNode->children.erase(std::remove(parentNode->children.begin(), parentNode->children.end(), gameObject), parentNode->children.end());
 		}
 		pointers[gameObject] = nullptr;
 	}
@@ -38,14 +41,15 @@ void GameObjectHierarchy::RemoveGameObject(GameObject gameObject)
 
 std::vector<GameObject> GameObjectHierarchy::GetChildren(GameObject parent)
 {
-	std::vector<GameObject> children;
 	auto node = pointers[parent];
 	if (node != nullptr)
 	{
-		for (auto it = node->children.begin(); it != node->children.end(); it++)
-		{
-			children.push_back(it->gameObject);
-		}
+		return node->children;
 	}
-	return children;
+	return std::vector<GameObject>();
+}
+
+std::vector<GameObject> GameObjectHierarchy::GetRoot()
+{
+	return root;
 }
