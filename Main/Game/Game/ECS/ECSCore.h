@@ -5,6 +5,7 @@
 #include "ComponentManager.h"
 #include "GameObjectManager.h"
 #include "SystemManager.h"
+#include "GameObjectHierarchy.h"
 #include "ECSTypes.h"
 
 class ECSCore
@@ -15,6 +16,7 @@ public:
 		componentManager = std::make_unique<ComponentManager>();
 		gameObjectManager = std::make_unique<GameObjectManager>();
 		systemManager = std::make_unique<SystemManager>();
+		gameObjectHierarchy = std::make_unique<GameObjectHierarchy>();
 	}
 
 	GameObject CreateGameObject()
@@ -22,11 +24,19 @@ public:
 		return gameObjectManager->CreateGameObject();
 	}
 
+	GameObject CreateGameObject(GameObject parent)
+	{
+		GameObject created = gameObjectManager->CreateGameObject();
+		gameObjectHierarchy->AddGameObject(created, parent);
+		return created;
+	}
+
 	void DestroyGameObject(GameObject gameObject)
 	{
 		gameObjectManager->DestroyGameObject(gameObject);
 		componentManager->GameObjectDestroyed(gameObject);
 		systemManager->GameObjectDestroyed(gameObject);
+		gameObjectHierarchy->RemoveGameObject(gameObject);
 	}
 
 	template<typename T>
@@ -108,4 +118,5 @@ private:
 	std::unique_ptr<ComponentManager> componentManager;
 	std::unique_ptr<GameObjectManager> gameObjectManager;
 	std::unique_ptr<SystemManager> systemManager;
+	std::unique_ptr<GameObjectHierarchy> gameObjectHierarchy;
 };

@@ -25,6 +25,7 @@
     <ClCompile Include="Resourcing\TextureManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
+    <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -68,5 +69,7 @@
     <ClInclude Include="Resourcing\TextureManager.h" />
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\Utility.h" />
+    <ClInclude Include="ECS\HierarchyNode.h" />
+    <ClInclude Include="ECS\GameObjectHierarchy.h" />
   </ItemGroup>
 </Project>
