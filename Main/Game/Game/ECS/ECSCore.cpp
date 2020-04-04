@@ -9,14 +9,14 @@ void ECSCore::Init()
 	systemManager = std::make_unique<SystemManager>();
 }
 
-GameObject ECSCore::CreateGameObject()
+GameObject ECSCore::CreateGameObject(std::string name)
 {
-	return gameObjectManager->CreateGameObject();
+	return gameObjectManager->CreateGameObject(name);
 }
 
-GameObject ECSCore::CreateGameObject(GameObject parent)
+GameObject ECSCore::CreateGameObject(GameObject parent, std::string name)
 {
-	GameObject created = gameObjectManager->CreateGameObject();
+	GameObject created = gameObjectManager->CreateGameObject(name);
 	gameObjectHierarchy.AddGameObject(created, parent);
 	return created;
 }
@@ -26,7 +26,13 @@ void ECSCore::DestroyGameObject(GameObject gameObject)
 	gameObjectManager->DestroyGameObject(gameObject);
 	componentManager->GameObjectDestroyed(gameObject);
 	systemManager->GameObjectDestroyed(gameObject);
+
+	auto children = gameObjectHierarchy.GetChildren(gameObject);
 	gameObjectHierarchy.RemoveGameObject(gameObject);
+	for (auto it = children.begin(); it != children.end(); it++)
+	{
+		DestroyGameObject(*it);
+	}
 }
 
 void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
@@ -44,6 +50,16 @@ void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
 bool ECSCore::IsEnabledGameObject(GameObject gameObject)
 {
 	return gameObjectManager->IsEnabled(gameObject);
+}
+
+const char* ECSCore::GetNameGameObject(GameObject gameObject)
+{
+	return gameObjectManager->GetName(gameObject);
+}
+
+void ECSCore::SetNameGameObject(GameObject gameObject, std::string name)
+{
+	gameObjectManager->SetName(gameObject, name);
 }
 
 void ECSCore::UpdateSystems(float dt)

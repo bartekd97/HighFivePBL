@@ -49,6 +49,16 @@ std::vector<GameObject> GameObjectHierarchy::GetChildren(GameObject parent)
 	return std::vector<GameObject>();
 }
 
+std::optional<GameObject> GameObjectHierarchy::GetParent(GameObject child)
+{
+	auto node = pointers[child];
+	if (node != nullptr)
+	{
+		return node->parent;
+	}
+	return std::nullopt;
+}
+
 std::vector<GameObject> GameObjectHierarchy::GetRoot()
 {
 	return root;

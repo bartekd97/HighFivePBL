@@ -81,7 +81,7 @@ int main()
 	);
 	HFEngine::ECS.AddComponent<MeshRenderer>(ss2, spaceshipRenderer);
 
-	GameObject ss3 = HFEngine::ECS.CreateGameObject(ss2);
+	GameObject ss3 = HFEngine::ECS.CreateGameObject(ss2, "Esese trzy");
 	HFEngine::ECS.AddComponent<Transform>(
 		ss3,
 		{ { -4.0f, 2.75f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 0.5f, 0.5f, 0.5f } }
@@ -99,6 +99,7 @@ int main()
 		{
 			accum = 0.0f;
 			HFEngine::ECS.SetEnabledGameObject(ss2, !HFEngine::ECS.IsEnabledGameObject(ss2));
+			LogInfo("Name  of ss2: {}; name of ss3: {}", HFEngine::ECS.GetNameGameObject(ss2), HFEngine::ECS.GetNameGameObject(ss3));
 		}
 
 		auto startTime = std::chrono::high_resolution_clock::now();
