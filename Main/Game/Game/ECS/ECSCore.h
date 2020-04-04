@@ -15,13 +15,17 @@ class ECSCore
 public:
 	void Init();
 
-	GameObject CreateGameObject();
+	GameObject CreateGameObject(std::string name = "GameObject");
 
-	GameObject CreateGameObject(GameObject parent);
+	GameObject CreateGameObject(GameObject parent, std::string name = "GameObject");
 
 	void SetEnabledGameObject(GameObject gameObject, bool enabled);
 
 	bool IsEnabledGameObject(GameObject gameObject);
+
+	const char* GetNameGameObject(GameObject gameObject);
+
+	void SetNameGameObject(GameObject gameObject, std::string name);
 
 	void DestroyGameObject(GameObject gameObject);
 

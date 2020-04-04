@@ -11,6 +11,7 @@ public:
 	void AddGameObject(GameObject child, GameObject parent);
 	void RemoveGameObject(GameObject gameObject);
 	std::vector<GameObject> GetChildren(GameObject parent);
+	std::optional<GameObject> GetParent(GameObject child);
 	std::vector<GameObject> GetRoot();
 private:
 	std::vector<GameObject> root;
