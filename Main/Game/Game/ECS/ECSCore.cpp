@@ -29,6 +29,23 @@ void ECSCore::DestroyGameObject(GameObject gameObject)
 	gameObjectHierarchy.RemoveGameObject(gameObject);
 }
 
+void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
+{
+	auto signature = gameObjectManager->SetEnabled(gameObject, enabled);
+	systemManager->GameObjectSignatureChanged(gameObject, signature);
+	auto children = gameObjectHierarchy.GetChildren(gameObject);
+	for (auto it = children.begin(); it != children.end(); it++)
+	{
+		signature = gameObjectManager->SetEnabled(*it, enabled);
+		systemManager->GameObjectSignatureChanged(*it, signature);
+	}
+}
+
+bool ECSCore::IsEnabledGameObject(GameObject gameObject)
+{
+	return gameObjectManager->IsEnabled(gameObject);
+}
+
 void ECSCore::UpdateSystems(float dt)
 {
 	for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)

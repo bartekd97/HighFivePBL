@@ -88,10 +88,19 @@ int main()
 	);
 	HFEngine::ECS.AddComponent<MeshRenderer>(ss3, spaceshipRenderer);
 
+	float enableTestInterval = 2.0f, accum = 0.0f;
+
 	float dt = 0.0f;
 
 	while (!glfwWindowShouldClose(window))
 	{
+		accum += dt;
+		if (accum >= enableTestInterval)
+		{
+			accum = 0.0f;
+			HFEngine::ECS.SetEnabledGameObject(ss2, !HFEngine::ECS.IsEnabledGameObject(ss2));
+		}
+
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		glfwPollEvents();

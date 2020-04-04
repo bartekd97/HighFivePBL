@@ -17,6 +17,7 @@ void TransformUpdateSystem::Update(float dt)
 	}
 }
 
+// TODO: maybe iterative instead of recursive?
 void TransformUpdateSystem::UpdateGameObject(GameObject gameObject)
 {
 	// TODO: shouldnt transform be built in?

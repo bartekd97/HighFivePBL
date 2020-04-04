@@ -12,6 +12,8 @@ public:
 	GameObjectManager();
 	GameObject CreateGameObject();
 	void DestroyGameObject(GameObject gameObject);
+	Signature SetEnabled(GameObject gameObject, bool enabled);
+	bool IsEnabled(GameObject gameObject);
 	void SetSignature(GameObject gameObject, Signature signature);
 	Signature GetSignature(GameObject gameObject);
 	int GetLivingGameObjectCount();
@@ -19,5 +21,6 @@ public:
 private:
 	std::queue<GameObject> availableGameObjects{};
 	std::array<Signature, MAX_GAMEOBJECTS> signatures{};
+	std::array<Signature, MAX_GAMEOBJECTS> disabledSignatures{};
 	uint32_t livingGameObjectCount{};
 };

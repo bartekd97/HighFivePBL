@@ -19,6 +19,10 @@ public:
 
 	GameObject CreateGameObject(GameObject parent);
 
+	void SetEnabledGameObject(GameObject gameObject, bool enabled);
+
+	bool IsEnabledGameObject(GameObject gameObject);
+
 	void DestroyGameObject(GameObject gameObject);
 
 	void UpdateSystems(float dt);
