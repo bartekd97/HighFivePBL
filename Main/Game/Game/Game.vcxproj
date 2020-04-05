@@ -62,7 +62,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Debug-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;cppDelaunay.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,7 +82,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Release-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;cppDelaunay.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -100,6 +100,11 @@
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapGenerator\CellGenerator.cpp" />
+    <ClCompile Include="MapGenerator\CellMeshGenerator.cpp" />
+    <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
+    <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
+    <ClCompile Include="MapGenerator\MapGenerator.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
@@ -123,6 +128,7 @@
     <ClInclude Include="ECS\Components\CubeSpawner.h" />
     <ClInclude Include="ECS\Components\Gravity.h" />
     <ClInclude Include="ECS\Components\LifeTime.h" />
+    <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
@@ -144,6 +150,12 @@
     <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="HFEngine.h" />
+    <ClInclude Include="MapGenerator\CellGenerator.h" />
+    <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
+    <ClInclude Include="MapGenerator\Config.h" />
+    <ClInclude Include="MapGenerator\ConvexPolygon.h" />
+    <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
+    <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />

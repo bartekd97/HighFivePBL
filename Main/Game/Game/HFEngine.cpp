@@ -72,6 +72,10 @@ namespace HFEngine
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
+		// map layout components
+		ECS.RegisterComponent<MapCell>();
+		ECS.RegisterComponent<CellGate>();
+		ECS.RegisterComponent<CellBridge>();
 
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
 		{

@@ -6,3 +6,4 @@
 #include "Components/RigidBody.h"
 #include "Components/Gravity.h"
 #include "Components/MeshRenderer.h"
+#include "Components/MapLayoutComponents.h"

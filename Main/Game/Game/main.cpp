@@ -19,6 +19,8 @@
 #include "HFEngine.h"
 #include "WindowManager.h"
 
+#include "MapGenerator/MapGenerator.h"
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -39,6 +41,9 @@ int main()
 	);
 
 	GLFWwindow* window = WindowManager::GetWindow();
+
+	MapGenerator generator;
+	generator.Generate();
 
 	/*
 	auto ssShader = ShaderManager::GetShader("SpaceshipShader");
