@@ -1,4 +1,5 @@
 #include "ECSCore.h"
+#include "Components/Transform.h"
 
 GameObjectHierarchy gameObjectHierarchy;
 
@@ -11,12 +12,17 @@ void ECSCore::Init()
 
 GameObject ECSCore::CreateGameObject(std::string name)
 {
-	return gameObjectManager->CreateGameObject(name);
+	auto created = gameObjectManager->CreateGameObject(name);
+	AddComponent<Transform>(
+		created,
+		{}
+	);
+	return created;
 }
 
 GameObject ECSCore::CreateGameObject(GameObject parent, std::string name)
 {
-	GameObject created = gameObjectManager->CreateGameObject(name);
+	GameObject created = CreateGameObject(name);
 	gameObjectHierarchy.AddGameObject(created, parent);
 	return created;
 }
@@ -37,13 +43,17 @@ void ECSCore::DestroyGameObject(GameObject gameObject)
 
 void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
 {
+	auto parent = gameObjectHierarchy.GetParent(gameObject);
+	if (parent.has_value() && enabled && !gameObjectManager->IsEnabled(parent.value()))
+	{
+		return;
+	}
 	auto signature = gameObjectManager->SetEnabled(gameObject, enabled);
 	systemManager->GameObjectSignatureChanged(gameObject, signature);
 	auto children = gameObjectHierarchy.GetChildren(gameObject);
 	for (auto it = children.begin(); it != children.end(); it++)
 	{
-		signature = gameObjectManager->SetEnabled(*it, enabled);
-		systemManager->GameObjectSignatureChanged(*it, signature);
+		SetEnabledGameObject(*it, enabled);
 	}
 }
 
@@ -67,13 +77,5 @@ void ECSCore::UpdateSystems(float dt)
 	for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)
 	{
 		(*it)->Update(dt);
-	}
-}
-
-void ECSCore::RenderSystems()
-{
-	for (auto it = systemManager->renderQueue.begin(); it != systemManager->renderQueue.end(); ++it)
-	{
-		(*it)->Render();
 	}
 }

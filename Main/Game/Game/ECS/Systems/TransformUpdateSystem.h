@@ -7,6 +7,5 @@ class TransformUpdateSystem : public SystemUpdate
 public:
 	void Update(float dt) override;
 private:
-	void UpdateGameObject(GameObject gameObject);
-	bool GameObjectHasTransform(GameObject gameObject);
+	void UpdateGameObject(GameObject gameObject, glm::mat4& parentWorldTransform, bool parentDirty);
 };

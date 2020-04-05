@@ -13,6 +13,7 @@ public:
 	std::vector<GameObject> GetChildren(GameObject parent);
 	std::optional<GameObject> GetParent(GameObject child);
 	std::vector<GameObject> GetRoot();
+	bool IsPresent(GameObject gameObject);
 private:
 	std::vector<GameObject> root;
 	std::array<std::shared_ptr<HierarchyNode>, MAX_GAMEOBJECTS> pointers{};
