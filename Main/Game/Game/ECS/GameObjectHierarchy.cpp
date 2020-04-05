@@ -14,7 +14,7 @@ void GameObjectHierarchy::AddGameObject(GameObject child, GameObject parent)
 		pointers[parent] = parentNode;
 	}
 	parentNode->children.push_back(child);
-	pointers[child] = std::make_shared<HierarchyNode>(parentNode->children.back());
+	pointers[child] = std::make_shared<HierarchyNode>(parentNode->children.back(), parent);
 }
 
 void GameObjectHierarchy::RemoveGameObject(GameObject gameObject)

@@ -43,13 +43,17 @@ void ECSCore::DestroyGameObject(GameObject gameObject)
 
 void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
 {
+	auto parent = gameObjectHierarchy.GetParent(gameObject);
+	if (parent.has_value() && enabled && !gameObjectManager->IsEnabled(parent.value()))
+	{
+		return;
+	}
 	auto signature = gameObjectManager->SetEnabled(gameObject, enabled);
 	systemManager->GameObjectSignatureChanged(gameObject, signature);
 	auto children = gameObjectHierarchy.GetChildren(gameObject);
 	for (auto it = children.begin(); it != children.end(); it++)
 	{
-		signature = gameObjectManager->SetEnabled(*it, enabled);
-		systemManager->GameObjectSignatureChanged(*it, signature);
+		SetEnabledGameObject(*it, enabled);
 	}
 }
 
