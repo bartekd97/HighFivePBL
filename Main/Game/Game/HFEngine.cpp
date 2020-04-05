@@ -73,13 +73,6 @@ namespace HFEngine
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
 
-		auto cubeRenderSystem = ECS.RegisterSystem<CubeRenderSystem>();
-		{
-			Signature signature;
-			signature.set(ECS.GetComponentType<Transform>());
-			signature.set(ECS.GetComponentType<CubeRenderer>());
-			ECS.SetSystemSignature<CubeRenderSystem>(signature);
-		}
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
 		{
 			Signature signature;
@@ -124,4 +117,3 @@ namespace HFEngine
 		glfwTerminate();
 	}
 }
-

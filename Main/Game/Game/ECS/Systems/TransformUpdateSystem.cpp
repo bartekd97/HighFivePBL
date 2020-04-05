@@ -10,43 +10,31 @@ extern GameObjectHierarchy gameObjectHierarchy;
 
 void TransformUpdateSystem::Update(float dt)
 {
+	glm::mat4 identity(1.0f);
 	auto root = gameObjectHierarchy.GetRoot();
 	for (auto it = root.begin(); it != root.end(); it++)
 	{
-		UpdateGameObject(*it);
+		UpdateGameObject(*it, identity, false);
 	}
-}
-
-// TODO: maybe iterative instead of recursive?
-void TransformUpdateSystem::UpdateGameObject(GameObject gameObject)
-{
-	// TODO: shouldnt transform be built in?
-	if (GameObjectHasTransform(gameObject))
+	for (auto const& gameObject : gameObjects)
 	{
-		auto transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
-		if (transform.dirty)
+		if (!gameObjectHierarchy.IsPresent(gameObject))
 		{
-			auto children = gameObjectHierarchy.GetChildren(gameObject);
-			for (auto it = children.begin(); it != children.end(); it++)
-			{
-				if (GameObjectHasTransform(*it))
-				{
-					auto& childTransform = HFEngine::ECS.GetComponent<Transform>(*it);
-
-					// TODO: spoko, wiem ¿e tak siê tego nie liczy, to demko tylko xD
-					childTransform.worldPosition = transform.worldPosition + transform.position;
-					childTransform.worldRotation = transform.worldRotation + transform.rotation;
-					childTransform.worldScale = transform.worldScale * transform.scale;
-					childTransform.dirty = true;
-				}
-				UpdateGameObject(*it);
-			}
-			transform.dirty = false;
+			glm::mat4 modelMat(1.0f);
+			UpdateGameObject(gameObject, identity, false);
 		}
 	}
 }
 
-bool TransformUpdateSystem::GameObjectHasTransform(GameObject gameObject)
+// TODO: maybe iterative instead of recursive?
+void TransformUpdateSystem::UpdateGameObject(GameObject gameObject, glm::mat4& parentWorldTransform, bool parentDirty)
 {
-	return gameObjects.find(gameObject) != gameObjects.end();
+	auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+	bool nextDirty = transform.Update(parentWorldTransform, parentDirty);
+	auto children = gameObjectHierarchy.GetChildren(gameObject);
+	for (auto it = children.begin(); it != children.end(); it++)
+	{
+		glm::mat4 modelMat = transform.GetWorldTransform();
+		UpdateGameObject(*it, modelMat, nextDirty);
+	}
 }

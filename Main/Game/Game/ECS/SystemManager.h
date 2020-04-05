@@ -27,10 +27,6 @@ public:
 		{
 			updateQueue.push_back(system);
 		}
-		if constexpr (std::is_base_of<SystemRender, T>::value)
-		{
-			renderQueue.push_back(system);
-		}
 		return system;
 	}
 
@@ -73,7 +69,6 @@ public:
 	}
 
 	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
-	std::vector<std::shared_ptr<SystemRender>> renderQueue; // TODO: remove when possible
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};

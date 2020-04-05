@@ -14,7 +14,7 @@ void GameObjectHierarchy::AddGameObject(GameObject child, GameObject parent)
 		pointers[parent] = parentNode;
 	}
 	parentNode->children.push_back(child);
-	pointers[child] = std::make_shared<HierarchyNode>(parentNode->children.back());
+	pointers[child] = std::make_shared<HierarchyNode>(parentNode->children.back(), parent);
 }
 
 void GameObjectHierarchy::RemoveGameObject(GameObject gameObject)
@@ -62,4 +62,9 @@ std::optional<GameObject> GameObjectHierarchy::GetParent(GameObject child)
 std::vector<GameObject> GameObjectHierarchy::GetRoot()
 {
 	return root;
+}
+
+bool GameObjectHierarchy::IsPresent(GameObject gameObject)
+{
+	return pointers[gameObject] != nullptr;
 }

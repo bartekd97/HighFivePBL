@@ -29,21 +29,14 @@ void MeshRendererSystem::RenderToGBuffer()
 
 	for (auto const& gameObject : gameObjects)
 	{
-		auto const& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto const& renderer = HFEngine::ECS.GetComponent<MeshRenderer>(gameObject);
 
 		if (!renderer.enabled)
 			continue;
 
-		// TODO: use better transform component with already calcualted matrix
-		glm::mat4 matrix = glm::mat4(1.0f);
-		matrix = glm::translate(matrix, transform.position);
-		matrix = glm::rotate(matrix, transform.rotation.y + transform.worldRotation.y, glm::vec3(0.0, 1.0, 0.0));
-		matrix = glm::rotate(matrix, transform.rotation.x + transform.worldRotation.x, glm::vec3(1.0, 0.0, 0.0));
-		matrix = glm::rotate(matrix, transform.rotation.z + transform.worldRotation.z, glm::vec3(0.0, 0.0, 1.0));
-		matrix = glm::scale(matrix, transform.scale);
-
-		toGBufferShader->setMat4("gModel", matrix);
+		glm::mat4 modelMat = transform.GetWorldTransform();
+		toGBufferShader->setMat4("gModel", modelMat);
 
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
