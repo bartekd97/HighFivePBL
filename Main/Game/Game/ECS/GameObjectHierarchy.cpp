@@ -63,3 +63,8 @@ std::vector<GameObject> GameObjectHierarchy::GetRoot()
 {
 	return root;
 }
+
+bool GameObjectHierarchy::IsPresent(GameObject gameObject)
+{
+	return pointers[gameObject] != nullptr;
+}

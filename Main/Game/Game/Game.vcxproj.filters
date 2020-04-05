@@ -28,6 +28,7 @@
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
+    <ClCompile Include="ECS\Components\Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />

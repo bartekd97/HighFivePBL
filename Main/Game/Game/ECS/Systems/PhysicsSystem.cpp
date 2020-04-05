@@ -14,7 +14,7 @@ void PhysicsSystem::Update(float dt)
 
 		auto const& gravity = HFEngine::ECS.GetComponent<Gravity>(gameObject);
 
-		transform.position += rigidBody.velocity * dt;
-		rigidBody.velocity += gravity.force * dt;
+		//transform.position += rigidBody.velocity * dt;
+		//rigidBody.velocity += gravity.force * dt;
 	}
 }

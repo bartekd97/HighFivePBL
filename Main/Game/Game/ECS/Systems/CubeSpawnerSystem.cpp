@@ -24,7 +24,7 @@ void CubeSpawnerSystem::Update(float dt)
 			GameObject cube = HFEngine::ECS.CreateGameObject();
 			HFEngine::ECS.AddComponent<Transform>(
 				cube,
-				{ { randPosition(generator), 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, { 1.0f, 1.0f, 1.0f } }
+				{ { randPosition(generator), 0.0f, 0.0f} }
 			);
 			HFEngine::ECS.AddComponent<CubeRenderer>(
 				cube,

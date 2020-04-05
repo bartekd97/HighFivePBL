@@ -14,15 +14,15 @@ void CubeRenderSystem::Render()
 
 	for (auto const& gameObject : gameObjects)
 	{
-		auto const& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto& cubeRenderer = HFEngine::ECS.GetComponent<CubeRenderer>(gameObject);
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::scale(model, glm::vec3(cubeRenderer.size, cubeRenderer.size, cubeRenderer.size));
-		model = glm::translate(model, transform.position);
+		//glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::scale(model, glm::vec3(cubeRenderer.size, cubeRenderer.size, cubeRenderer.size));
+		//model = glm::translate(model, transform.position);
 		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
-
-		shader->setMat4("model", model);
+		glm::mat4 modelMat = transform.GetWorldTransform();
+		shader->setMat4("model", modelMat);
 		shader->setVector3F("uColor", cubeRenderer.color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
