@@ -5,28 +5,37 @@
 #include "ComponentManager.h"
 #include "GameObjectManager.h"
 #include "SystemManager.h"
+#include "GameObjectHierarchy.h"
 #include "ECSTypes.h"
+
+extern GameObjectHierarchy gameObjectHierarchy;
 
 class ECSCore
 {
 public:
-	void Init()
-	{
-		componentManager = std::make_unique<ComponentManager>();
-		gameObjectManager = std::make_unique<GameObjectManager>();
-		systemManager = std::make_unique<SystemManager>();
-	}
+	void Init();
 
-	GameObject CreateGameObject()
-	{
-		return gameObjectManager->CreateGameObject();
-	}
+	GameObject CreateGameObject(std::string name = "GameObject");
 
-	void DestroyGameObject(GameObject gameObject)
+	GameObject CreateGameObject(GameObject parent, std::string name = "GameObject");
+
+	void SetEnabledGameObject(GameObject gameObject, bool enabled);
+
+	bool IsEnabledGameObject(GameObject gameObject);
+
+	const char* GetNameGameObject(GameObject gameObject);
+
+	void SetNameGameObject(GameObject gameObject, std::string name);
+
+	void DestroyGameObject(GameObject gameObject);
+
+	void UpdateSystems(float dt);
+
+	void RenderSystems();
+
+	inline int GetLivingGameObjectsCount()
 	{
-		gameObjectManager->DestroyGameObject(gameObject);
-		componentManager->GameObjectDestroyed(gameObject);
-		systemManager->GameObjectDestroyed(gameObject);
+		return gameObjectManager->GetLivingGameObjectCount();
 	}
 
 	template<typename T>
@@ -81,27 +90,6 @@ public:
 	void SetSystemSignature(Signature signature)
 	{
 		systemManager->SetSignature<T>(signature);
-	}
-
-	void UpdateSystems(float dt)
-	{
-		for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)
-		{
-			(*it)->Update(dt);
-		}
-	}
-
-	void RenderSystems()
-	{
-		for (auto it = systemManager->renderQueue.begin(); it != systemManager->renderQueue.end(); ++it)
-		{
-			(*it)->Render();
-		}
-	}
-
-	inline int GetLivingGameObjectsCount()
-	{
-		return gameObjectManager->GetLivingGameObjectCount();
 	}
 
 private:
