@@ -12,17 +12,21 @@ void CubeRenderSystem::Render()
 	shader->use();
 	glBindVertexArray(vao);
 
+	// TODO: use camera matrixes
+	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 10.0f),
+		glm::vec3(0.0f, 0.0f, 0.0f),
+		glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)(1280) / (float)(720), 0.1f, 100.0f);
+	shader->setMat4("gView", view);
+	shader->setMat4("gProjection", projection);
+
 	for (auto const& gameObject : gameObjects)
 	{
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto& cubeRenderer = HFEngine::ECS.GetComponent<CubeRenderer>(gameObject);
 
-		//glm::mat4 model = glm::mat4(1.0f);
-		//model = glm::scale(model, glm::vec3(cubeRenderer.size, cubeRenderer.size, cubeRenderer.size));
-		//model = glm::translate(model, transform.position);
-		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
 		glm::mat4 modelMat = transform.GetWorldTransform();
-		shader->setMat4("model", modelMat);
+		shader->setMat4("gModel", modelMat);
 		shader->setVector3F("uColor", cubeRenderer.color);
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);

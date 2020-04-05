@@ -2,6 +2,7 @@
 
 #include "FrameBuffer.h"
 #include "ECS/Systems/MeshRendererSystem.h"
+#include "ECS/Systems/CubeRenderSystem.h"
 
 class RenderPipeline
 {
@@ -24,6 +25,7 @@ public:
 	};
 	struct RenderSystemsStruct {
 		std::shared_ptr<MeshRendererSystem> meshRenderer;
+		std::shared_ptr<CubeRenderSystem> cubeRenderer;
 	};
 
 private:

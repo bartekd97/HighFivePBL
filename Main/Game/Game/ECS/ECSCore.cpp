@@ -1,4 +1,5 @@
 #include "ECSCore.h"
+#include "Components/Transform.h"
 
 GameObjectHierarchy gameObjectHierarchy;
 
@@ -11,12 +12,17 @@ void ECSCore::Init()
 
 GameObject ECSCore::CreateGameObject(std::string name)
 {
-	return gameObjectManager->CreateGameObject(name);
+	auto created = gameObjectManager->CreateGameObject(name);
+	AddComponent<Transform>(
+		created,
+		{}
+	);
+	return created;
 }
 
 GameObject ECSCore::CreateGameObject(GameObject parent, std::string name)
 {
-	GameObject created = gameObjectManager->CreateGameObject(name);
+	GameObject created = CreateGameObject(name);
 	gameObjectHierarchy.AddGameObject(created, parent);
 	return created;
 }
@@ -67,13 +73,5 @@ void ECSCore::UpdateSystems(float dt)
 	for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)
 	{
 		(*it)->Update(dt);
-	}
-}
-
-void ECSCore::RenderSystems()
-{
-	for (auto it = systemManager->renderQueue.begin(); it != systemManager->renderQueue.end(); ++it)
-	{
-		(*it)->Render();
 	}
 }

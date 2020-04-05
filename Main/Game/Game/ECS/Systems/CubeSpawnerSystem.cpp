@@ -11,7 +11,7 @@ void CubeSpawnerSystem::Update(float dt)
 {
 	std::random_device rd;
 	std::default_random_engine generator(rd());
-	std::uniform_real<float> randPosition(-8.0f, 8.0f);
+	std::uniform_real<float> randPosition(-10.0f, 10.0f);
 	std::uniform_real<float> randColor(0.0f, 1.0f);
 
 	for (auto const& gameObject : gameObjects)
@@ -22,10 +22,8 @@ void CubeSpawnerSystem::Update(float dt)
 		{
 
 			GameObject cube = HFEngine::ECS.CreateGameObject();
-			HFEngine::ECS.AddComponent<Transform>(
-				cube,
-				{ { randPosition(generator), 0.0f, 0.0f} }
-			);
+			HFEngine::ECS.GetComponent<Transform>(cube).SetPosition({ randPosition(generator), 0.0f, 0.0f });
+			HFEngine::ECS.GetComponent<Transform>(cube).SetScale({ 0.1f, 0.1f, 0.1f });
 			HFEngine::ECS.AddComponent<CubeRenderer>(
 				cube,
 				{ 0.1f, {randColor(generator), randColor(generator), randColor(generator)} }

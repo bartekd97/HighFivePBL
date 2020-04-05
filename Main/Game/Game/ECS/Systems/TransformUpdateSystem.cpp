@@ -38,8 +38,3 @@ void TransformUpdateSystem::UpdateGameObject(GameObject gameObject, glm::mat4& p
 		UpdateGameObject(*it, modelMat, nextDirty);
 	}
 }
-
-bool TransformUpdateSystem::GameObjectHasTransform(GameObject gameObject)
-{
-	return gameObjects.find(gameObject) != gameObjects.end();
-}

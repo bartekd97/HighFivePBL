@@ -38,6 +38,13 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<MeshRenderer>());
 		HFEngine::ECS.SetSystemSignature<MeshRendererSystem>(signature);
 	}
+	RenderSystems.cubeRenderer = HFEngine::ECS.RegisterSystem<CubeRenderSystem>();
+	{
+		Signature signature;
+		signature.set(HFEngine::ECS.GetComponentType<Transform>());
+		signature.set(HFEngine::ECS.GetComponentType<CubeRenderer>());
+		HFEngine::ECS.SetSystemSignature<CubeRenderSystem>(signature);
+	}
 }
 
 void RenderPipeline::Init()
@@ -72,6 +79,7 @@ void RenderPipeline::Render()
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RenderSystems.meshRenderer->RenderToGBuffer();
+	RenderSystems.cubeRenderer->Render();
 
 	// combine gbuffer
 	FrameBuffer::BindDefaultScreen();

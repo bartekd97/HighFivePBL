@@ -31,8 +31,6 @@ public:
 
 	void UpdateSystems(float dt);
 
-	void RenderSystems();
-
 	inline int GetLivingGameObjectsCount()
 	{
 		return gameObjectManager->GetLivingGameObjectCount();

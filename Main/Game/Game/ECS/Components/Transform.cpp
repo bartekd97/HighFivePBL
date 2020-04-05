@@ -2,14 +2,7 @@
 
 Transform::Transform()
 {
-	SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
-	SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
-	dirty = true;
-}
-
-Transform::Transform(glm::vec3 position)
-{
-	SetPosition(position);
+	SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 	SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
 	dirty = true;
