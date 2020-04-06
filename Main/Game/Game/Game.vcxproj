@@ -161,6 +161,7 @@
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
+    <ClInclude Include="Rendering\Lights.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
     <ClInclude Include="Resourcing\Material.h" />

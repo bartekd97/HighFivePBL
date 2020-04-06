@@ -91,5 +91,6 @@
     <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Rendering\Lights.h" />
   </ItemGroup>
 </Project>

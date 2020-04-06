@@ -21,6 +21,7 @@ namespace HFEngine
 	ECSCore ECS;
 	RenderPipeline Renderer;
 	Camera MainCamera;
+	DirectionalLight WorldLight;
 	int RENDER_WIDTH;
 	int RENDER_HEIGHT;
 

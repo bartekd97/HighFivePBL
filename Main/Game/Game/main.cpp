@@ -77,6 +77,7 @@ int main()
 	
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 25.0f, 100.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -45.0f, 0.0f, 0.0f });
 
 	while (!glfwWindowShouldClose(window))
 	{
