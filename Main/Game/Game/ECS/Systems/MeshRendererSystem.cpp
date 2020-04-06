@@ -18,14 +18,7 @@ void MeshRendererSystem::RenderToGBuffer()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	// tmp
-	// TODO: use camera matrixes
-	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 10.0f),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)(1280) / (float)(720), 0.1f, 100.0f);
-	toGBufferShader->setMat4("gView", view);
-	toGBufferShader->setMat4("gProjection", projection);
+	HFEngine::MainCamera.Use(toGBufferShader);
 
 	for (auto const& gameObject : gameObjects)
 	{

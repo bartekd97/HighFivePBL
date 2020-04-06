@@ -79,11 +79,13 @@ void RenderPipeline::Render()
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RenderSystems.meshRenderer->RenderToGBuffer();
-	RenderSystems.cubeRenderer->Render();
+	//RenderSystems.cubeRenderer->Render();
 
 	// combine gbuffer
 	FrameBuffer::BindDefaultScreen();
 	combineGBufferShader->use();
+	HFEngine::MainCamera.Use(combineGBufferShader); // for gCameraPosition
+	HFEngine::WorldLight.Apply(combineGBufferShader); // for gDirectionalLight struct
 	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
 	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
 	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);

@@ -7,7 +7,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
-    <ClCompile Include="_stb_image.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
     <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
@@ -29,6 +28,14 @@
     <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
+    <ClCompile Include="MapGenerator\MapGenerator.cpp" />
+    <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
+    <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
+    <ClCompile Include="MapGenerator\CellGenerator.cpp" />
+    <ClCompile Include="MapGenerator\CellMeshGenerator.cpp" />
+    <ClCompile Include="_stb_impl.cpp" />
+    <ClCompile Include="Rendering\Camera.cpp" />
+    <ClCompile Include="InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -75,5 +82,15 @@
     <ClInclude Include="ECS\HierarchyNode.h" />
     <ClInclude Include="ECS\GameObjectHierarchy.h" />
     <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
+    <ClInclude Include="MapGenerator\MapGenerator.h" />
+    <ClInclude Include="MapGenerator\Config.h" />
+    <ClInclude Include="MapGenerator\ConvexPolygon.h" />
+    <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
+    <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
+    <ClInclude Include="MapGenerator\CellGenerator.h" />
+    <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
+    <ClInclude Include="Rendering\Camera.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Rendering\Lights.h" />
   </ItemGroup>
 </Project>

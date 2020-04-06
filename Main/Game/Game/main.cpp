@@ -18,11 +18,15 @@
 
 #include "HFEngine.h"
 #include "WindowManager.h"
+#include "InputManager.h"
+
+#include "MapGenerator/MapGenerator.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 void ReportGameObjects(float dt);
+void doCameraMovement(GameObject cameraObject, float dt);
 
 int main()
 {
@@ -40,32 +44,13 @@ int main()
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
-	/*
-	auto ssShader = ShaderManager::GetShader("SpaceshipShader");
-	ssShader->use();
-	ssShader->setInt("albedoMap", MaterialBindingPoint::ALBEDO_MAP);
-	ssShader->setInt("normalMap", MaterialBindingPoint::NORMAL_MAP);
-	ssShader->setInt("metalnessMap", MaterialBindingPoint::METALNESS_MAP);
-	ssShader->setInt("roughnessMap", MaterialBindingPoint::ROUGHNESS_MAP);
-	ssShader->setInt("emissiveMap", MaterialBindingPoint::EMISSIVE_MAP);
-	*/
+	MapGenerator generator;
+	generator.Generate();
 
-	//auto sampleTex = TextureManager::GetTexture("Sample", "albedo");
-	//sampleTex->bind(1);
-
-	//auto sampleMat = MaterialManager::GetMaterial("Sample", "mat");
 
 	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
 	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material, true };
-	/*
-	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 10.0f),
-		glm::vec3(0.0f, 0.0f, 0.0f),
-		glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)(SCREEN_WIDTH) / (float)(SCREEN_HEIGHT), 0.1f, 100.0f);
-	*/
-	//ssShader->setMat4("gModel", model);
-	//ssShader->setMat4("gView", view);
-	//ssShader->setMat4("gProjection", projection);
+
 
 	GameObject ss1 = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.GetComponent<Transform>(ss1).SetPosition({ 0.0f, -1.0f, 0.0f });
@@ -89,6 +74,11 @@ int main()
 
 	float dt = 0.0f;
 
+	
+	GameObject cameraObject = HFEngine::ECS.CreateGameObject();
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 25.0f, 100.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -45.0f, 0.0f, 0.0f });
+
 	while (!glfwWindowShouldClose(window))
 	{
 		accum += dt;
@@ -100,7 +90,9 @@ int main()
 
 		auto startTime = std::chrono::high_resolution_clock::now();
 
-		glfwPollEvents();
+		InputManager::PollEvents();
+
+		doCameraMovement(cameraObject, dt);
 
 		HFEngine::ECS.UpdateSystems(dt);
 		ReportGameObjects(dt);
@@ -109,26 +101,7 @@ int main()
 		HFEngine::ECS.GetComponent<Transform>(ss3).SetRotation({ 0.0f, (float)glfwGetTime() * 15.0f, 0.0f });
 		HFEngine::ECS.GetComponent<Transform>(ss4).SetRotation({ 0.0f, (float)glfwGetTime() * -3.0f, 0.0f });
 
-		/*
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glEnable(GL_DEPTH_TEST);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		HFEngine::ECS.RenderSystems();
-
-		//hwShader->use();
-		//PrimitiveRenderer::DrawScreenQuad();
-
-		ssShader->use();
-
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.0, 1.0, 0.0));
-		ssShader->setMat4("gModel", model);
-
-		spaceship->material->apply();
-		spaceship->mesh->bind();
-		spaceship->mesh->draw();
-		*/
+		HFEngine::MainCamera.SetView(HFEngine::ECS.GetComponent<Transform>(cameraObject));
 
 		HFEngine::Renderer.Render();
 
@@ -156,4 +129,39 @@ void ReportGameObjects(float dt)
 		accumulator = 0.0f;
 		frames = 0;
 	}
+}
+
+void doCameraMovement(GameObject cameraObject, float dt)
+{
+	const float moveSpeed = 25.0f;
+	const float rotateSpeed = 90.0f;
+	Transform& trans = HFEngine::ECS.GetComponent<Transform>(cameraObject);
+
+	if (InputManager::GetKeyStatus(GLFW_KEY_W))
+		trans.TranslateSelf(moveSpeed * dt, trans.GetFront());
+	if (InputManager::GetKeyStatus(GLFW_KEY_S))
+		trans.TranslateSelf(moveSpeed * dt, -trans.GetFront());
+	if (InputManager::GetKeyStatus(GLFW_KEY_A))
+		trans.TranslateSelf(moveSpeed * dt, -trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_D))
+		trans.TranslateSelf(moveSpeed * dt, trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_SPACE))
+		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, 1, 0));
+	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT_SHIFT))
+		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, -1, 0));
+
+	if (InputManager::GetKeyStatus(GLFW_KEY_UP))
+		trans.RotateSelf(rotateSpeed * dt, trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_DOWN))
+		trans.RotateSelf(rotateSpeed * dt, -trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT))
+		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, 1, 0));
+	if (InputManager::GetKeyStatus(GLFW_KEY_RIGHT))
+		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, -1, 0));
+	/*
+	if (input.getKeyStatus(GLFW_KEY_PAGE_UP))
+		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, 1));
+	if (input.getKeyStatus(GLFW_KEY_PAGE_DOWN))
+		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, -1));
+		*/
 }

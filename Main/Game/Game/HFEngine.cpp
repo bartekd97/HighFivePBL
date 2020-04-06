@@ -13,12 +13,15 @@
 #include "Resourcing/Shader.h"
 #include "Rendering/PrimitiveRenderer.h"
 #include "WindowManager.h"
+#include "InputManager.h"
 
 namespace HFEngine
 {
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
+	Camera MainCamera;
+	DirectionalLight WorldLight;
 	int RENDER_WIDTH;
 	int RENDER_HEIGHT;
 
@@ -49,6 +52,8 @@ namespace HFEngine
 			return false;
 		}
 
+		InputManager::Initialize();
+
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			LogError("Failed to initialize GLAD");
@@ -59,6 +64,11 @@ namespace HFEngine
 		TextureManager::Initialize();
 		MaterialManager::Initialize();
 		ModelManager::Initialize();
+
+		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
+		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
+		//MainCamera.SetScale(0.015625f); // 1/64
+		MainCamera.SetScale(0.0625f); // 1/16
 
 		ECS.Init();
 
@@ -72,6 +82,10 @@ namespace HFEngine
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
+		// map layout components
+		ECS.RegisterComponent<MapCell>();
+		ECS.RegisterComponent<CellGate>();
+		ECS.RegisterComponent<CellBridge>();
 
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
 		{
