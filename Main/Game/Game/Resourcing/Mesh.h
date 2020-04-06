@@ -7,11 +7,11 @@
 #include "ModelManager.h"
 
 struct Vertex {
-	glm::vec3 position;
-	glm::vec2 uv;
-	glm::vec3 normal;
-	glm::vec3 tangent;
-	glm::vec3 bitangent;
+	glm::vec3 position = { 0,0,0 };
+	glm::vec2 uv = { 0,0 };
+	glm::vec3 normal = { 0,0,0 };
+	glm::vec3 tangent = { 0,0,0 };
+	glm::vec3 bitangent = { 0,0,0 };
 };
 
 class Mesh

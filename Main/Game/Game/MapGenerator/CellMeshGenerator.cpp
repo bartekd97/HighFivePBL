@@ -130,12 +130,75 @@ void CellMeshGenerator::CalculateNormals()
 
 void CellMeshGenerator::GenerateUV()
 {
-    // TODO
+    // TODO: maybe better generation? more proportional, according to Y value?
+    glm::vec2 uvmin = { 0,0 }, uvmax = { 0,0 };
+    for (auto v : vertices)
+    {
+        v->vert.uv = { v->vert.position.x, v->vert.position.z };
+        uvmin.x = glm::min(uvmin.x, v->vert.uv.x);
+        uvmin.y = glm::min(uvmin.y, v->vert.uv.y);
+        uvmax.x = glm::max(uvmax.x, v->vert.uv.x);
+        uvmax.y = glm::max(uvmax.y, v->vert.uv.y);
+    }
+    // normalize
+    glm::vec2 range = uvmax - uvmin;
+    for (auto v : vertices)
+    {
+        v->vert.uv -= uvmin;
+        v->vert.uv /= range;
+        v->vert.uv.y = 1.0f - v->vert.uv.y; // flip y for openGL
+    }
 }
+// tangent calculation code taken from Assimp aiProcess_CalcTangentSpace code
 void CellMeshGenerator::CalculateTangents()
 {
-    // TODO
-    // it requries normals & UV
+    Vertex *p1, *p2, *p3;
+    glm::vec3 v, w;
+    glm::vec3 tangent, bitangent;
+    glm::vec3 localTangent, localBitangent;
+    for (auto tri : triangles)
+    {
+        p1 = &tri->a->vert;
+        p2 = &tri->b->vert;
+        p3 = &tri->c->vert;
+
+        // position differences p1->p2 and p1->p3
+        v = p2->position - p1->position, w = p3->position - p1->position;
+
+        // texture offset p1->p2 and p1->p3
+        float sx = p2->uv.x - p1->uv.x, sy = p2->uv.y - p1->uv.y;
+        float tx = p3->uv.x - p1->uv.x, ty = p3->uv.y - p1->uv.y;
+        float dirCorrection = (tx * sy - ty * sx) < 0.0f ? -1.0f : 1.0f;
+        // when t1, t2, t3 in same position in UV space, just use default UV direction.
+        if (sx * ty == sy * tx) {
+            sx = 0.0; sy = 1.0;
+            tx = 1.0; ty = 0.0;
+        }
+
+        // tangent points in the direction where to positive X axis of the texture coord's would point in model space
+        // bitangent's points along the positive Y axis of the texture coord's, respectively
+        tangent.x = (w.x * sy - v.x * ty) * dirCorrection;
+        tangent.y = (w.y * sy - v.y * ty) * dirCorrection;
+        tangent.z = (w.z * sy - v.z * ty) * dirCorrection;
+        bitangent.x = (w.x * sx - v.x * tx) * dirCorrection;
+        bitangent.y = (w.y * sx - v.y * tx) * dirCorrection;
+        bitangent.z = (w.z * sx - v.z * tx) * dirCorrection;
+
+        // store for every vertex of that face
+        for (auto p : { p1,p2,p3 })
+        {
+            // project tangent and bitangent into the plane formed by the vertex' normal
+            localTangent = tangent - p->normal * (tangent * p->normal);
+            localBitangent = bitangent - p->normal * (bitangent * p->normal);
+
+            localTangent = glm::normalize(localTangent);
+            localBitangent = glm::normalize(localBitangent);
+
+            // and write it into the mesh.
+            p->tangent = localTangent;
+            p->bitangent = localBitangent;
+        }
+    }
 }
 
 std::shared_ptr<Mesh> CellMeshGenerator::BuildMesh()
