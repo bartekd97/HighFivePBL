@@ -34,6 +34,8 @@
     <ClCompile Include="MapGenerator\CellGenerator.cpp" />
     <ClCompile Include="MapGenerator\CellMeshGenerator.cpp" />
     <ClCompile Include="_stb_impl.cpp" />
+    <ClCompile Include="Rendering\Camera.cpp" />
+    <ClCompile Include="InputManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -87,5 +89,7 @@
     <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
     <ClInclude Include="MapGenerator\CellGenerator.h" />
     <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
+    <ClInclude Include="Rendering\Camera.h" />
+    <ClInclude Include="InputManager.h" />
   </ItemGroup>
 </Project>

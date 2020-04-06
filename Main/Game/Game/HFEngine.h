@@ -2,6 +2,7 @@
 
 #include "ECS/ECSCore.h"
 #include "Rendering/RenderPipeline.h"
+#include "Rendering/Camera.h"
 
 namespace HFEngine
 {
@@ -10,6 +11,8 @@ namespace HFEngine
 
 	extern ECSCore ECS;
 	extern RenderPipeline Renderer;
+	extern Camera MainCamera;
+	
 	extern int RENDER_WIDTH;
 	extern int RENDER_HEIGHT;
 }
