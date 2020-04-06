@@ -168,7 +168,7 @@ ModelLibrary::ModelLibrary(std::string name) : name(name)
 		return;
 	}
 
-	std::string materialLibraryName = nullabeString(root->Attribute("materialLibrary"));
+	std::string materialLibraryName = nullableString(root->Attribute("materialLibrary"));
 	if (materialLibraryName.size() > 0)
 	{
 		if (materialLibraryName == "this")

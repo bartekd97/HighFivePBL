@@ -1,0 +1,26 @@
+<prefab defaultScale="2.0,2.0,2.0">
+    <component name="MeshRenderer">
+        <property name="model" value="Sample:spaceship"/> <!-- LibraryName:ModelName-->
+    </component>
+
+    <children>
+
+        <child name="sampleChild" position="0,20,0" rotation="0,90,0" scale="1,1,1">
+
+            <component name="MeshRenderer">
+                <property name="model" value="Sample:spaceship"/>
+            </component>
+            <component name="Gravity">
+                <property name="force" value="0.0,0.98,0.0"/>
+            </component>
+
+            <children>
+                <child name="sampleChildDeep" position="0,0,20" rotation="90,0,0" scale="1,1,1">
+                    <!-- no components -->>
+                </child>
+            </children>
+
+        </child>
+
+    </children>
+</prefab>
