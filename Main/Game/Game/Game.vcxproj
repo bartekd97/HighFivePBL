@@ -118,7 +118,7 @@
     <ClCompile Include="Utility\Utility.cpp" />
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
-    <ClCompile Include="_stb_image.cpp" />
+    <ClCompile Include="_stb_impl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ECS\ComponentArray.h" />

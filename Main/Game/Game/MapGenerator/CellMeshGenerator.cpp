@@ -1,3 +1,4 @@
+#include <stb_perlin.h>
 #include "CellMeshGenerator.h"
 #include "Utility/Utility.h"
 
@@ -49,14 +50,20 @@ void CellMeshGenerator::PrepareBaseMeshStructure()
             float noiseLevel = 1.0f - glm::clamp((1.0f - coRatio) / (1.0f - config.noiseCenterRatio), 0.0f, 1.0f);
             if (noiseLevel > 0.0f)
             {
+                float pn = stb_perlin_noise3(
+                    vpos.x * config.noiseScale,
+                    vpos.y * config.noiseScale,
+                    0.0f,
+                    0,0,0
+                    );
                 /*
                 float pn = Mathf.PerlinNoise(
                     vpos.x * config.noiseScale,
                     vpos.y * config.noiseScale
                     );
                     */
-                float pn = 0.5f;
-                pn = (pn * 2.0f - 1.0f);
+                //pn = 0.5f;
+                //pn = (pn * 2.0f - 1.0f);
                 pn = pn * noiseLevel * innerLevel;
 
                 glm::vec2 noiseDir = glm::normalize(vpos);
