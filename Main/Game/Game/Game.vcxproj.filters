@@ -36,6 +36,9 @@
     <ClCompile Include="_stb_impl.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Resourcing\PrefabManager.cpp" />
+    <ClCompile Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.cpp" />
+    <ClCompile Include="Resourcing\Prefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -92,5 +95,8 @@
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Rendering\Lights.h" />
+    <ClInclude Include="Resourcing\Prefab.h" />
+    <ClInclude Include="Resourcing\PrefabManager.h" />
+    <ClInclude Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.h" />
   </ItemGroup>
 </Project>

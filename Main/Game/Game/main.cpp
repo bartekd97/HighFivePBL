@@ -13,6 +13,7 @@
 #include "Resourcing/Material.h"
 #include "Resourcing/Model.h"
 #include "Resourcing/Shader.h"
+#include "Resourcing/Prefab.h"
 #include "Rendering/PrimitiveRenderer.h"
 #include "Utility/Logger.h"
 
@@ -74,6 +75,8 @@ int main()
 
 	float dt = 0.0f;
 
+	auto prefab = PrefabManager::GetPrefab("Sample");
+	prefab->Instantiate({100,10,100});
 	
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 25.0f, 100.0f });

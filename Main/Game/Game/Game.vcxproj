@@ -114,6 +114,9 @@
     <ClCompile Include="Resourcing\MaterialManager.cpp" />
     <ClCompile Include="Resourcing\MeshFileLoader.cpp" />
     <ClCompile Include="Resourcing\ModelManager.cpp" />
+    <ClCompile Include="Resourcing\Prefab.cpp" />
+    <ClCompile Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.cpp" />
+    <ClCompile Include="Resourcing\PrefabManager.cpp" />
     <ClCompile Include="Resourcing\ShaderManager.cpp" />
     <ClCompile Include="Resourcing\TextureManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
@@ -170,6 +173,9 @@
     <ClInclude Include="Resourcing\MeshFileLoader.h" />
     <ClInclude Include="Resourcing\Model.h" />
     <ClInclude Include="Resourcing\ModelManager.h" />
+    <ClInclude Include="Resourcing\Prefab.h" />
+    <ClInclude Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.h" />
+    <ClInclude Include="Resourcing\PrefabManager.h" />
     <ClInclude Include="Resourcing\Shader.h" />
     <ClInclude Include="Resourcing\ShaderManager.h" />
     <ClInclude Include="Resourcing\Texture.h" />
