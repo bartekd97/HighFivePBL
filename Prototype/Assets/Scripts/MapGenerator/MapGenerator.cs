@@ -9,6 +9,7 @@ public class MapGenerator : MonoBehaviour
     public DiagramLayout layout;
     //public MapFence fence;
     public CellMeshConfig cellMeshConfig;
+    public CellFenceConfig cellFenceConfig;
 
     public GameObject bridgePrefab;
     public float minEdgeLengthForBridge = 5.0f;
@@ -55,7 +56,11 @@ public class MapGenerator : MonoBehaviour
                 MapCell cell = cells.Find(c => c.CellSiteIndex == s.SiteIndex);
                 ConvexPolygon cellPolygon = new ConvexPolygon(s.Region(bounds), s.Coord);
                 CellGenerator generator = cell.gameObject.AddComponent<CellGenerator>();
-                generator.Generate(cellPolygon, cellMeshConfig);
+                generator.Generate(
+                    cellPolygon,
+                    cellMeshConfig,
+                    cellFenceConfig
+                );
             }
         }
 

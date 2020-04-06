@@ -5,7 +5,8 @@ using UnityEngine;
 public class Ghost : MonoBehaviour
 {
     public float damageToEnemies = 5.0f;
-
+    [SerializeField]
+    public GameObject lineGeneratorPrefab;
 
     public class GhostCrossing : System.IEquatable<GhostCrossing>
     {
@@ -25,7 +26,11 @@ public class Ghost : MonoBehaviour
         public List<Vector2> points;
         public List<GhostCrossing> crosings = new List<GhostCrossing>();
         public List<MiniGhost> ghosts;
+        public GameObject lineRend;
     }
+
+    public GameObject recordedLine;
+    List<Vector3> recordedLinePositions;
 
     public GameObject miniGhostPrefab;
     public float miniGhostSpawnDistance = 1.5f;
@@ -41,10 +46,26 @@ public class Ghost : MonoBehaviour
 
     List<MiniGhost> spawnedMiniGhostsCurrent;
 
+    public EnemyController enemyController;
+    public bool firstEnemyHit;
+    public int numberOfEnemyToHit;
+    public int numberOfEnemyHit;
+
+    public MonumentController monumentController;
+    public float lineSlow = 0.0f;
+    public float ghostFreezeTime = 0.0f;
+    public float dotTick = 0.0f;
+    public float dotDmg = 0.0f;
+
+    private float lastDotTick = 0.0f;
+
     public bool IsMarking { get; private set; }
     private void Awake()
     {
         IsMarking = false;
+        firstEnemyHit = false;
+        numberOfEnemyToHit = 1;
+        numberOfEnemyHit = 1;
     }
     private void Start()
     {
@@ -69,9 +90,14 @@ public class Ghost : MonoBehaviour
                     transform.position.x,
                     transform.position.z
                 ));
+                recordedLinePositions.Add(new Vector3(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z
+                ));
+                UpdateLineRenderer(recordedLinePositions);
                 distanceReached = 0.0f;
             }
-
             /*
             if (Vector3.Distance(lastMiniGhostSpawnPosition, transform.position)
                 >= miniGhostSpawnDistance)
@@ -86,6 +112,47 @@ public class Ghost : MonoBehaviour
             }
             */
         }
+
+        List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+        enemies.ForEach(enemy => enemy.GetComponent<EnemyController>().slow = 0.0f);
+
+        bool isTimeToStrikexD = false;
+        if (dotDmg > 0 && dotTick > 0)
+        {
+            if ((Time.time - lastDotTick) >= dotTick)
+            {
+                lastDotTick = Time.time;
+                isTimeToStrikexD = true;
+            }
+        }
+
+        //Slow + DoT
+        activeLines.ForEach(line =>
+        {
+            line.ghosts.ForEach(ghost =>
+            {
+                BoxCollider coll = ghost.GetComponentInParent<BoxCollider>();
+                enemies.ForEach(enemy =>
+                {
+                    BoxCollider enemyColl = enemy.GetComponent<BoxCollider>();
+                    if (coll.bounds.Intersects(enemyColl.bounds))
+                    {
+                        enemy.GetComponent<EnemyController>().slow = lineSlow;
+                        if (isTimeToStrikexD) enemy.GetComponent<EnemyController>().TakeDamage(dotDmg);
+                    }
+                });
+            });
+        });
+
+        //Freeze
+        enemies.ForEach(enemy =>
+        {
+            BoxCollider enemyColl = enemy.GetComponent<BoxCollider>();
+            if (enemyColl.bounds.Intersects(GetComponentInParent<BoxCollider>().bounds))
+            {
+                enemy.GetComponent<EnemyController>().frozenTo = Time.time + ghostFreezeTime;
+            }
+        });
     }
 
     public void Show(Transform start)
@@ -100,7 +167,6 @@ public class Ghost : MonoBehaviour
     public void StartMarking()
     {
         if (IsMarking) return;
-
         /*
         startPosition = new Vector2(
                 transform.position.x,
@@ -108,21 +174,29 @@ public class Ghost : MonoBehaviour
             );
             */
         recordedPositions = new List<Vector2>();
+        recordedLinePositions = new List<Vector3>();
         recordedPositions.Add(new Vector2(
                 transform.position.x,
                 transform.position.z
             ));
+        recordedLinePositions.Add(new Vector3(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z
+            ));
+        recordedLine = SpawnLineGenerator(recordedLinePositions);
         //lastMiniGhostSpawnPosition = transform.position;
         distanceReached = 0.0f;
         lastDistanceRecordPos = transform.position;
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
+        firstEnemyHit = true;
+        numberOfEnemyHit = 0;
     }
 
     public void EndMarking()
     {
         if (!IsMarking) return;
-
         /*
         Vector2 endPosition = new Vector2(
                 transform.position.x,
@@ -133,17 +207,30 @@ public class Ghost : MonoBehaviour
             transform.position.x,
             transform.position.z
         ));
+        recordedLinePositions.Add(new Vector3(
+                transform.position.x,
+                transform.position.y,
+                transform.position.z
+            ));
+        UpdateLineRenderer(recordedLinePositions);
 
         if (spawnedMiniGhostsCurrent.Count > 0)
+        {
             activeLines.Add(new GhostLine()
             {
                 //from = startPosition,
                 //to = endPosition,
                 points = recordedPositions,
-                ghosts = spawnedMiniGhostsCurrent
-            });
+                ghosts = spawnedMiniGhostsCurrent,
+                lineRend = recordedLine
 
+        });
+        }
+
+        //SpawnLineGenerator(recordedLinePositions);
+        recordedLine = null;
         recordedPositions = null;
+        recordedLinePositions = null;
         spawnedMiniGhostsCurrent = null;
 
         IsMarking = false;
@@ -151,8 +238,8 @@ public class Ghost : MonoBehaviour
         UpdateLineCrossings();
         CheckClosedLines();
 
-        if (activeLines.Count == maxActiveLines)
-            while (activeLines.Count > 0)
+        if (activeLines.Count > maxActiveLines)
+            //while (activeLines.Count > 0)
                 FadeOutLine(activeLines[0]);
     }
 
@@ -196,10 +283,11 @@ public class Ghost : MonoBehaviour
         }
     }
 
-    void FadeOutLine(GhostLine line)
+    void FadeOutLine(GhostLine ghostLine)
     {
-        line.ghosts.ForEach(g => g.FadeOut());
-        activeLines.Remove(line);
+        ghostLine.ghosts.ForEach(g => g.FadeOut());
+        Destroy(ghostLine.lineRend);
+        activeLines.Remove(ghostLine);
     }
 
     void AttackWithClosedFigure(List<GhostLine> lines, List<GhostCrossing> crossings)
@@ -213,8 +301,10 @@ public class Ghost : MonoBehaviour
         foreach(var line in lines)
         {
             line.ghosts.ForEach(g => g.DoAttack(center3));
+            Destroy(line.lineRend);
             activeLines.Remove(line);
         }
+
     }
 
     List<GhostCrossing> CalculateCrossings(GhostLine l1, GhostLine l2)
@@ -290,11 +380,42 @@ public class Ghost : MonoBehaviour
         if (!IsMarking)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument"))
             return;
 
-        EnemyController ec = other.GetComponent<EnemyController>();
-        if (ec != null)
-            ec.TakeDamage(damageToEnemies);
+        enemyController = other.GetComponent<EnemyController>();
+        if (enemyController != null && numberOfEnemyHit < numberOfEnemyToHit)
+        {
+            enemyController.TakeDamage(damageToEnemies);
+            numberOfEnemyHit++;
+            firstEnemyHit = false;
+        }
+        
+        monumentController = other.GetComponent<MonumentController>();
+        if (monumentController != null)
+        {
+            monumentController.ApplyDamageToMonument(damageToEnemies);
+        }
+    }
+
+    private GameObject SpawnLineGenerator(List<Vector3> linePoints)
+    {
+        Vector3[] linePointsV = linePoints.ToArray();
+        GameObject newLineGen = Instantiate(lineGeneratorPrefab);
+        LineRenderer IRend = newLineGen.GetComponent<LineRenderer>();
+
+        IRend.positionCount = linePointsV.Length;
+        IRend.SetPositions(linePointsV);
+        return newLineGen;
+        // Destroy(newLineGen);
+    }
+
+    private void UpdateLineRenderer(List<Vector3> linePoints)
+    {
+        Vector3[] linePointsV = linePoints.ToArray();
+        LineRenderer IRend = recordedLine.GetComponent<LineRenderer>();
+
+        IRend.positionCount = linePointsV.Length;
+        IRend.SetPositions(linePointsV);
     }
 }

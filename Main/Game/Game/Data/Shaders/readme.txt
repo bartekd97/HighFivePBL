@@ -1,0 +1,1 @@
+For syntax highlighting I suggest to use Visual Studio Code with extension: https://marketplace.visualstudio.com/items?itemName=slevesque.shader

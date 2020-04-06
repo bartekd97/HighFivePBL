@@ -1,0 +1,9 @@
+<materials textureLibrary="this">
+    <material name="mat">
+        <property name="albedoMap" value="albedo"/>
+        <property name="normalMap" value="norm"/>
+        <property name="metalnessMap" value="metal"/>
+        <property name="roughnessMap" value="rough"/>
+        <property name="emissiveMap" value="emis"/>
+    </material>
+</materials>

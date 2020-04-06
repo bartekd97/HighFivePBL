@@ -127,6 +127,19 @@ public class ConvexPolygon
     }
 
 
+    public ConvexPolygon ShellScaledBy(float mult)
+    {
+        float sumlen = 0.0f;
+        for (int i = 0; i < Points.Length; i++)
+            sumlen += Points[i].magnitude;
+        float moveBy = (1.0f - mult) * (sumlen / (float)Points.Length);
+
+        Vector2[] points = new Vector2[Points.Length];
+        for (int i = 0; i < Points.Length; i++)
+            points[i] = Points[i] - Points[i].normalized * moveBy;
+        return new ConvexPolygon(points);
+    }
+
     public ConvexPolygon ScaledBy(float mult)
     {
         Vector2[] points = new Vector2[Points.Length];

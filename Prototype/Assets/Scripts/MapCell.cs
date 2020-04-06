@@ -11,10 +11,13 @@ public class MapCell : MonoBehaviour
     {
         public CellBridge Bridge;
         public MapCell Cell;
+        public CellGate Gate;
     }
     public List<BridgeTo> Bridges = new List<BridgeTo>();
 
     public List<GameObject> Enemies = new List<GameObject>();
+
+    public List<GameObject> Monuments = new List<GameObject>();
 
 
     [HideInInspector]
