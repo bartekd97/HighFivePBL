@@ -38,6 +38,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Resourcing\PrefabManager.cpp" />
     <ClCompile Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.cpp" />
+    <ClCompile Include="Resourcing\Prefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />

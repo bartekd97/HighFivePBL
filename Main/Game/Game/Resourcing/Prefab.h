@@ -29,4 +29,8 @@ private:
 
 	Prefab(std::string& name, glm::vec3& defaultScale, PrefabComponents& components, std::vector<PrefabChild>& children)
 		: name(name), defaultScale(defaultScale), components(components), children(children) {}
+
+public:
+	GameObject Instantiate(glm::vec3 position = { 0,0,0 }, glm::vec3 rotation = { 0,0,0 }, glm::vec3 scale = { 1,1,1 });
+	GameObject Instantiate(GameObject parent, glm::vec3 position = { 0,0,0 }, glm::vec3 rotation = { 0,0,0 }, glm::vec3 scale = { 1,1,1 });
 };
