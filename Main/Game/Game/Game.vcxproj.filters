@@ -36,6 +36,7 @@
     <ClCompile Include="_stb_impl.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Event\EventManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -92,5 +93,8 @@
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Rendering\Lights.h" />
+    <ClInclude Include="Event\Event.h" />
+    <ClInclude Include="Event\Events.h" />
+    <ClInclude Include="Event\EventManager.h" />
   </ItemGroup>
 </Project>

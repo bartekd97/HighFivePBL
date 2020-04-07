@@ -19,6 +19,8 @@
 #include "HFEngine.h"
 #include "WindowManager.h"
 #include "InputManager.h"
+#include "Event/EventManager.h"
+#include "Event/Events.h"
 
 #include "MapGenerator/MapGenerator.h"
 
@@ -36,11 +38,15 @@ int main()
 		return -1;
 	}
 
-	GameObject cubeSpawner = HFEngine::ECS.CreateGameObject();
+	EventManager::AddListener(Events::Test::TICK, [](Event& event) {
+		LogInfo("Tick event fired!");
+	});
+
+	/*GameObject cubeSpawner = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.AddComponent<CubeSpawner>(
 		cubeSpawner,
 		{ 0.05f, 0.0f }
-	);
+	);*/
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
@@ -86,6 +92,7 @@ int main()
 		{
 			accum = 0.0f;
 			HFEngine::ECS.SetEnabledGameObject(ss2, !HFEngine::ECS.IsEnabledGameObject(ss2));
+			EventManager::FireEvent(Events::Test::TICK);
 		}
 
 		auto startTime = std::chrono::high_resolution_clock::now();

@@ -96,6 +96,7 @@
     <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
+    <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
@@ -150,6 +151,9 @@
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
+    <ClInclude Include="Event\Event.h" />
+    <ClInclude Include="Event\EventManager.h" />
+    <ClInclude Include="Event\Events.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="HFEngine.h" />
     <ClInclude Include="InputManager.h" />
