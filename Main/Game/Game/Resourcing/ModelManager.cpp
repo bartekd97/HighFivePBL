@@ -208,7 +208,7 @@ ModelLibrary::ModelLibrary(std::string name) : name(name)
 
 		LibraryEntity* entity = new LibraryEntity();
 		entity->meshFile = meshFilepath;
-		entity->materialName = node->Attribute("material");
+		entity->materialName = nullableString(node->Attribute("material"));
 
 		entities[modelName] = entity;
 	}
@@ -231,7 +231,7 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 	if (loader.ReadMeshData(vertices, indices))
 	{
 		auto mesh = ModelManager::CreateMesh(vertices, indices);
-		auto material = materialLibrary->GetMaterial(entity->materialName);
+		auto material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
 		ptr = std::shared_ptr<Model>(new Model(mesh, material));
 		LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
 	}
