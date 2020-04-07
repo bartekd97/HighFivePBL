@@ -37,6 +37,9 @@
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
+    <ClCompile Include="Resourcing\PrefabManager.cpp" />
+    <ClCompile Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.cpp" />
+    <ClCompile Include="Resourcing\Prefab.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -96,5 +99,8 @@
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\Events.h" />
     <ClInclude Include="Event\EventManager.h" />
+    <ClInclude Include="Resourcing\Prefab.h" />
+    <ClInclude Include="Resourcing\PrefabManager.h" />
+    <ClInclude Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.h" />
   </ItemGroup>
 </Project>

@@ -151,7 +151,7 @@ MaterialLibrary::MaterialLibrary(std::string name) : name(name)
 		return;
 	}
 	
-	std::string textureLibraryName = nullabeString(root->Attribute("textureLibrary"));
+	std::string textureLibraryName = nullableString(root->Attribute("textureLibrary"));
 	if (textureLibraryName.size() > 0)
 	{
 		if (textureLibraryName == "this")

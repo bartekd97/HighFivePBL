@@ -11,6 +11,7 @@
 #include "Resourcing/Material.h"
 #include "Resourcing/Model.h"
 #include "Resourcing/Shader.h"
+#include "Resourcing/Prefab.h"
 #include "Rendering/PrimitiveRenderer.h"
 #include "WindowManager.h"
 #include "InputManager.h"
@@ -64,6 +65,7 @@ namespace HFEngine
 		TextureManager::Initialize();
 		MaterialManager::Initialize();
 		ModelManager::Initialize();
+		PrefabManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);

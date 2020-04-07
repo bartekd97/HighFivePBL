@@ -15,6 +15,8 @@ namespace ShaderManager {
 	std::string VERTEX_PATH = "Data/Shaders/Vertex/";
 	std::string FRAGMENT_PATH = "Data/Shaders/Fragment/";
 
+	std::shared_ptr<Shader> NULL_SHADER;
+
 	bool Initialized = false;
 
 	std::unordered_map<std::string, std::shared_ptr<Shader>> ShaderContainer;
@@ -162,6 +164,8 @@ void ShaderManager::Initialize()
 		LogInfo("Initialized shader '{}'.", shaderName);
 	}
 
+	NULL_SHADER = std::shared_ptr<Shader>(new Shader(0));
+
 	Initialized = true;
 
 	LogInfo("ShaderManager initialized.");
@@ -176,6 +180,7 @@ std::shared_ptr<Shader> ShaderManager::GetShader(std::string name)
 	catch (std::out_of_range ex)
 	{
 		LogWarning("ShaderManager::GetShader(): Cannot find shader '{}'", name);
-		return nullptr;
+		ShaderContainer[name] = NULL_SHADER;
+		return NULL_SHADER;
 	}
 }
