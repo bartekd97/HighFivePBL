@@ -39,9 +39,9 @@ int main()
 		return -1;
 	}
 
-	EventManager::AddListener(Events::Test::TICK, [](Event& event) {
+	/*EventManager::AddListener(Events::Test::TICK, [](Event& event) {
 		LogInfo("Tick event fired!");
-	});
+	});*/
 
 	/*GameObject cubeSpawner = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.AddComponent<CubeSpawner>(

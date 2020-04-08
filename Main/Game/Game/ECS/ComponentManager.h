@@ -6,6 +6,8 @@
 
 #include "ComponentArray.h"
 #include "ECSTypes.h"
+#include "Components/ScriptComponent.h"
+#include "../Scripting/ScriptManager.h"
 
 class ComponentManager
 {
@@ -37,6 +39,14 @@ public:
 	void AddComponent(GameObject gameObject, T component)
 	{
 		GetComponentArray<T>()->InsertData(gameObject, component);
+	}
+
+	template<>
+	void AddComponent(GameObject gameObject, ScriptComponent component)
+	{
+		component.SetInstance(ScriptManager::InstantiateScript(gameObject, component.name));
+		GetComponentArray<ScriptComponent>()->InsertData(gameObject, component);
+		(component.GetInstance())->Start();
 	}
 
 	template<typename T>

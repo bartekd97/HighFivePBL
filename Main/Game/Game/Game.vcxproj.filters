@@ -40,6 +40,8 @@
     <ClCompile Include="Resourcing\PrefabManager.cpp" />
     <ClCompile Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.cpp" />
     <ClCompile Include="Resourcing\Prefab.cpp" />
+    <ClCompile Include="Scripting\ScriptManager.cpp" />
+    <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -102,5 +104,11 @@
     <ClInclude Include="Resourcing\Prefab.h" />
     <ClInclude Include="Resourcing\PrefabManager.h" />
     <ClInclude Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.h" />
+    <ClInclude Include="Scripting\Script.h" />
+    <ClInclude Include="Scripting\ScriptManager.h" />
+    <ClInclude Include="ECS\Components\ScriptComponent.h" />
+    <ClInclude Include="Scripting\Scripts\TestScript.h" />
+    <ClInclude Include="Scripting\Scripts\Scripts.h" />
+    <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
   </ItemGroup>
 </Project>
