@@ -37,10 +37,36 @@ namespace {
 		}
 	};
 
+	class ScriptComponentLoader : public IPrefabComponentLoader {
+	public:
+		std::string name;
+
+		void Preprocess(std::unordered_map<std::string, std::string>& properties) override {
+			if (!properties.contains("name"))
+			{
+				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
+			}
+			else
+			{
+				name = properties["name"];
+			}
+		}
+
+		void Create(GameObject target) override {
+			if (name.length() > 0)
+			{
+				ScriptComponent scriptComponent;
+				scriptComponent.name = name;
+				HFEngine::ECS.AddComponent<ScriptComponent>(target, scriptComponent);
+			}
+		}
+	};
+
 } // end of namespace
 
 
 void PrefabComponentLoader::RegisterLoaders()
 {
 	PrefabManager::RegisterComponentLoader("MeshRenderer", []() {return std::make_shared<MeshRendererLoader>();});
+	PrefabManager::RegisterComponentLoader("ScriptComponent", []() {return std::make_shared<ScriptComponentLoader>(); });
 }

@@ -13,6 +13,9 @@
             <component name="Gravity">
                 <property name="force" value="0.0,0.98,0.0"/>
             </component>
+            <component name="ScriptComponent">
+                <property name="name" value="TestScript"/>
+            </component>
 
             <children>
                 <child name="sampleChildDeep" position="0,0,10" rotation="90,0,0" scale="1,1,1">

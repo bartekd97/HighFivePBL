@@ -95,7 +95,9 @@
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
     <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
+    <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
@@ -119,6 +121,7 @@
     <ClCompile Include="Resourcing\PrefabManager.cpp" />
     <ClCompile Include="Resourcing\ShaderManager.cpp" />
     <ClCompile Include="Resourcing\TextureManager.cpp" />
+    <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
     <ClCompile Include="WindowManager.cpp" />
@@ -136,6 +139,7 @@
     <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
+    <ClInclude Include="ECS\Components\ScriptComponent.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
     <ClInclude Include="ECS\ECSCore.h" />
     <ClInclude Include="ECS\ECSTypes.h" />
@@ -151,8 +155,12 @@
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
     <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
+    <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
+    <ClInclude Include="Event\Event.h" />
+    <ClInclude Include="Event\EventManager.h" />
+    <ClInclude Include="Event\Events.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="HFEngine.h" />
     <ClInclude Include="InputManager.h" />
@@ -180,6 +188,10 @@
     <ClInclude Include="Resourcing\ShaderManager.h" />
     <ClInclude Include="Resourcing\Texture.h" />
     <ClInclude Include="Resourcing\TextureManager.h" />
+    <ClInclude Include="Scripting\Script.h" />
+    <ClInclude Include="Scripting\ScriptManager.h" />
+    <ClInclude Include="Scripting\Scripts\Scripts.h" />
+    <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />

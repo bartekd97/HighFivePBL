@@ -1,5 +1,7 @@
 #include "GameObjectManager.h"
 #include "GameObjectHierarchy.h"
+#include "../Event/EventManager.h"
+#include "../Event/Events.h"
 
 GameObjectManager::GameObjectManager()
 {
@@ -28,6 +30,10 @@ void GameObjectManager::DestroyGameObject(GameObject gameObject)
 	signatures[gameObject].reset();
 	availableGameObjects.push(gameObject);
 	--livingGameObjectCount;
+
+	Event ev(Events::GameObject::DESTROYED);
+	ev.SetParam<GameObject>(Events::GameObject::GameObject, gameObject);
+	EventManager::FireEvent(ev);
 }
 
 Signature GameObjectManager::SetEnabled(GameObject gameObject, bool enabled)
