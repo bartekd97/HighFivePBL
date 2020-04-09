@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Systems/ScriptStartSystem.h"
 #include "Systems/ScriptUpdateSystem.h"
 #include "Systems/LifeTimeSystem.h"
 #include "Systems/CubeSpawnerSystem.h"

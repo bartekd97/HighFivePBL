@@ -86,7 +86,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ECS\Components\ScriptContainer.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
@@ -96,6 +95,7 @@
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
     <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ScriptStartSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
@@ -156,6 +156,7 @@
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
     <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
+    <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />

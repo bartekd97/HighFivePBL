@@ -85,9 +85,9 @@ public:
 	}
 
 	template<typename T>
-	std::shared_ptr<T> RegisterSystem()
+	std::shared_ptr<T> RegisterSystem(bool autonomous = false)
 	{
-		return systemManager->RegisterSystem<T>();
+		return systemManager->RegisterSystem<T>(autonomous);
 	}
 
 	template<typename T>

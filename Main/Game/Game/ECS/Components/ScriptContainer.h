@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 
+#include "../../Scripting/ScriptManager.h"
 #include "ECS/ECSTypes.h"
 
 class Script;
@@ -10,9 +11,16 @@ class Script;
 class ScriptContainer
 {
 public:
-	void AddScript(GameObject gameObject, std::string name);
+	void AddScript(GameObject gameObject, std::string name)
+	{
+		ScriptManager::InstantiateScript(gameObject, name);
+		instances = ScriptManager::GetScripts(gameObject);
+	}
 
-	std::vector<std::shared_ptr<Script>>* GetInstances();
+	inline std::vector<std::shared_ptr<Script>>* GetInstances()
+	{
+		return instances;
+	}
 
 private:
 	std::vector<std::shared_ptr<Script>>* instances;

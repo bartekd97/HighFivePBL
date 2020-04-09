@@ -56,6 +56,13 @@ namespace ScriptManager
 		std::shared_ptr<Script> instance = provider->second();
 		instance->SetGameObject(gameObject);
 		instances[gameObject].push_back(instance);
+		instance->Awake();
+
+		Event ev(Events::GameObject::Script::ADDED);
+		ev.SetParam<GameObject>(Events::GameObject::GameObject, gameObject);
+		ev.SetParam<unsigned int>(Events::GameObject::Script::Index, instances[gameObject].size() - 1);
+		EventManager::FireEvent(ev);
+
 		return instance;
 	}
 

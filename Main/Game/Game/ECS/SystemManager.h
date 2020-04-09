@@ -13,7 +13,7 @@ class SystemManager
 {
 public:
 	template<typename T>
-	std::shared_ptr<T> RegisterSystem()
+	std::shared_ptr<T> RegisterSystem(bool autonomous)
 	{
 		const char* typeName = typeid(T).name();
 
@@ -21,7 +21,10 @@ public:
 
 		auto system = std::make_shared<T>();
 		system->Init();
-		systems.insert({ typeName, system });
+		if (!autonomous)
+		{
+			systems.insert({ typeName, system });
+		}
 		
 		if constexpr (std::is_base_of<SystemUpdate, T>::value)
 		{

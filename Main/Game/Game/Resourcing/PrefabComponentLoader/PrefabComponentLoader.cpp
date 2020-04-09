@@ -42,7 +42,8 @@ namespace {
 	public:
 		std::string name;
 
-		void Preprocess(std::unordered_map<std::string, std::string>& properties) override {
+		void Preprocess(std::unordered_map<std::string, std::string>& properties) override
+		{
 			if (!properties.contains("name"))
 			{
 				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
@@ -53,7 +54,8 @@ namespace {
 			}
 		}
 
-		void Create(GameObject target) override {
+		void Create(GameObject target) override
+		{
 			if (name.length() > 0)
 			{
 				if (!HFEngine::ECS.SearchComponent<ScriptContainer>(target))

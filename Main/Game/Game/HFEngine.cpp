@@ -7,6 +7,9 @@
 #include "ECS/Components.h"
 #include "ECS/Systems.h"
 
+#include "Event/EventManager.h"
+#include "Event/Events.h"
+
 #include "Scripting/ScriptManager.h"
 
 #include "Resourcing/Texture.h"
@@ -69,6 +72,7 @@ namespace HFEngine
 		ModelManager::Initialize();
 		PrefabManager::Initialize();
 		ScriptManager::Initialize();
+		EventManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
@@ -93,6 +97,7 @@ namespace HFEngine
 		ECS.RegisterComponent<CellGate>();
 		ECS.RegisterComponent<CellBridge>();
 
+		auto scriptStartSystem = ECS.RegisterSystem<ScriptStartSystem>(true);
 		auto scriptUpdateSystem = ECS.RegisterSystem<ScriptUpdateSystem>();
 		{
 			Signature signature;
