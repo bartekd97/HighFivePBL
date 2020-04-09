@@ -9,6 +9,15 @@
 #define deg2rad(x) ((x)/180.0f)*M_PI
 #define nullableString(s) s ? s : ""
 
+constexpr std::uint32_t fnv1a_32(char const* s, std::size_t count)
+{
+	return ((count ? fnv1a_32(s, count - 1) : 2166136261u) ^ s[count]) * 16777619u;
+}
+
+constexpr std::uint32_t operator "" _hash(char const* s, std::size_t count)
+{
+	return fnv1a_32(s, count);
+}
 
 namespace Utility {
 	bool ReadTextFile(std::string filename, std::string& content);
@@ -16,6 +25,8 @@ namespace Utility {
 
 	// 3 floats, coma separated
 	bool TryConvertStringToVec3(std::string& string, glm::vec3& vec);
+
+	std::uint32_t HashString(char const* s, std::size_t count);
 }
 
 

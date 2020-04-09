@@ -7,3 +7,4 @@
 #include "Components/Gravity.h"
 #include "Components/MeshRenderer.h"
 #include "Components/MapLayoutComponents.h"
+#include "Components/ScriptContainer.h"

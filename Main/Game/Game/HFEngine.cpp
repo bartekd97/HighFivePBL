@@ -7,6 +7,11 @@
 #include "ECS/Components.h"
 #include "ECS/Systems.h"
 
+#include "Event/EventManager.h"
+#include "Event/Events.h"
+
+#include "Scripting/ScriptManager.h"
+
 #include "Resourcing/Texture.h"
 #include "Resourcing/Material.h"
 #include "Resourcing/Model.h"
@@ -66,6 +71,8 @@ namespace HFEngine
 		MaterialManager::Initialize();
 		ModelManager::Initialize();
 		PrefabManager::Initialize();
+		ScriptManager::Initialize();
+		EventManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
@@ -84,11 +91,19 @@ namespace HFEngine
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
+		ECS.RegisterComponent<ScriptContainer>();
 		// map layout components
 		ECS.RegisterComponent<MapCell>();
 		ECS.RegisterComponent<CellGate>();
 		ECS.RegisterComponent<CellBridge>();
 
+		auto scriptStartSystem = ECS.RegisterSystem<ScriptStartSystem>(true);
+		auto scriptUpdateSystem = ECS.RegisterSystem<ScriptUpdateSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<ScriptContainer>());
+			ECS.SetSystemSignature<ScriptUpdateSystem>(signature);
+		}
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
 		{
 			Signature signature;

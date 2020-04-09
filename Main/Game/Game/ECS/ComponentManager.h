@@ -6,6 +6,7 @@
 
 #include "ComponentArray.h"
 #include "ECSTypes.h"
+#include "../Scripting/ScriptManager.h"
 
 class ComponentManager
 {
@@ -37,6 +38,12 @@ public:
 	void AddComponent(GameObject gameObject, T component)
 	{
 		GetComponentArray<T>()->InsertData(gameObject, component);
+	}
+
+	template<typename T>
+	bool SearchComponent(GameObject gameObject)
+	{
+		return GetComponentArray<T>()->SearchData(gameObject);
 	}
 
 	template<typename T>
