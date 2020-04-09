@@ -86,6 +86,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ECS\Components\ScriptContainer.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
@@ -139,7 +140,7 @@
     <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
-    <ClInclude Include="ECS\Components\ScriptComponent.h" />
+    <ClInclude Include="ECS\Components\ScriptContainer.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
     <ClInclude Include="ECS\ECSCore.h" />
     <ClInclude Include="ECS\ECSTypes.h" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
+    <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />

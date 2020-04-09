@@ -73,6 +73,12 @@ public:
 	}
 
 	template<typename T>
+	bool SearchComponent(GameObject gameObject)
+	{
+		return componentManager->SearchComponent<T>(gameObject);
+	}
+
+	template<typename T>
 	ComponentType GetComponentType()
 	{
 		return componentManager->GetComponentType<T>();

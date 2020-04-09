@@ -37,7 +37,8 @@ namespace {
 		}
 	};
 
-	class ScriptComponentLoader : public IPrefabComponentLoader {
+	class ScriptComponentLoader : public IPrefabComponentLoader
+	{
 	public:
 		std::string name;
 
@@ -55,9 +56,12 @@ namespace {
 		void Create(GameObject target) override {
 			if (name.length() > 0)
 			{
-				ScriptComponent scriptComponent;
-				scriptComponent.name = name;
-				HFEngine::ECS.AddComponent<ScriptComponent>(target, scriptComponent);
+				if (!HFEngine::ECS.SearchComponent<ScriptContainer>(target))
+				{
+					HFEngine::ECS.AddComponent<ScriptContainer>(target, {});
+				}
+				auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(target);
+				scriptContainer.AddScript(target, name);
 			}
 		}
 	};

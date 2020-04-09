@@ -5,7 +5,7 @@
 class Script
 {
 public:
-	virtual void Start() {};
+	virtual void Awake() {};
 	virtual void Update(float dt) {};
 
 	inline void SetGameObject(GameObject gameObject)

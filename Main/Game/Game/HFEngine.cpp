@@ -87,7 +87,7 @@ namespace HFEngine
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
-		ECS.RegisterComponent<ScriptComponent>();
+		ECS.RegisterComponent<ScriptContainer>();
 		// map layout components
 		ECS.RegisterComponent<MapCell>();
 		ECS.RegisterComponent<CellGate>();
@@ -96,7 +96,7 @@ namespace HFEngine
 		auto scriptUpdateSystem = ECS.RegisterSystem<ScriptUpdateSystem>();
 		{
 			Signature signature;
-			signature.set(ECS.GetComponentType<ScriptComponent>());
+			signature.set(ECS.GetComponentType<ScriptContainer>());
 			ECS.SetSystemSignature<ScriptUpdateSystem>(signature);
 		}
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();

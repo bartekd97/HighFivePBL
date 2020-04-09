@@ -16,6 +16,9 @@
             <component name="ScriptComponent">
                 <property name="name" value="TestScript"/>
             </component>
+            <component name="ScriptComponent">
+                <property name="name" value="TestScript2"/>
+            </component>
 
             <children>
                 <child name="sampleChildDeep" position="0,0,10" rotation="90,0,0" scale="1,1,1">

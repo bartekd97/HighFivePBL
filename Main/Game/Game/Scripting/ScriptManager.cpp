@@ -44,6 +44,7 @@ namespace ScriptManager
 	void Initialize()
 	{
 		REGISTER_SCRIPT(TestScript);
+		REGISTER_SCRIPT(TestScript2);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}
@@ -56,5 +57,15 @@ namespace ScriptManager
 		instance->SetGameObject(gameObject);
 		instances[gameObject].push_back(instance);
 		return instance;
+	}
+
+	std::vector<std::shared_ptr<Script>>* GetScripts(GameObject gameObject)
+	{
+		auto it = instances.find(gameObject);
+		if (it != instances.end())
+		{
+			return &it->second;
+		}
+		return nullptr;
 	}
 }
