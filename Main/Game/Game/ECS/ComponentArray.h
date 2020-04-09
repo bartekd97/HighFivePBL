@@ -54,6 +54,11 @@ public:
 		return componentArray[gameObjectToIndexMap[gameObject]];
 	}
 
+	bool SearchData(GameObject gameObject)
+	{
+		return gameObjectToIndexMap.find(gameObject) != gameObjectToIndexMap.end();
+	}
+
 	void GameObjectDestroyed(GameObject gameObject) override
 	{
 		if (gameObjectToIndexMap.find(gameObject) != gameObjectToIndexMap.end())

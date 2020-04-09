@@ -77,13 +77,13 @@ int main()
 
 	HFEngine::ECS.GetComponent<Transform>(ss1).SetScale({ 0.4f, 0.4f, 0.4f });
 
-	float enableTestInterval = 2.0f, accum = 0.0f;
+	float enableTestInterval = 5.0f, accum = 0.0f;
 
 	float dt = 0.0f;
 
 	auto prefab = PrefabManager::GetPrefab("Sample");
 	prefab->Instantiate({100,10,100});
-	
+
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 25.0f, 100.0f });
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -45.0f, 0.0f, 0.0f });

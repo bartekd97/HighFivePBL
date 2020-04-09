@@ -6,6 +6,12 @@
 class TestScript : public Script
 {
 public:
+	void Awake()
+	{
+		LogInfo("Test script Awake()");
+		EventManager::AddScriptListener(Events::Test::TICK, GetGameObject(), [](Event& ev) { LogInfo("TestScript TICK event test");  });
+	}
+
 	void Start()
 	{
 		LogInfo("Test script Start()");

@@ -37,11 +37,13 @@ namespace {
 		}
 	};
 
-	class ScriptComponentLoader : public IPrefabComponentLoader {
+	class ScriptComponentLoader : public IPrefabComponentLoader
+	{
 	public:
 		std::string name;
 
-		void Preprocess(std::unordered_map<std::string, std::string>& properties) override {
+		void Preprocess(std::unordered_map<std::string, std::string>& properties) override
+		{
 			if (!properties.contains("name"))
 			{
 				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
@@ -52,12 +54,16 @@ namespace {
 			}
 		}
 
-		void Create(GameObject target) override {
+		void Create(GameObject target) override
+		{
 			if (name.length() > 0)
 			{
-				ScriptComponent scriptComponent;
-				scriptComponent.name = name;
-				HFEngine::ECS.AddComponent<ScriptComponent>(target, scriptComponent);
+				if (!HFEngine::ECS.SearchComponent<ScriptContainer>(target))
+				{
+					HFEngine::ECS.AddComponent<ScriptContainer>(target, {});
+				}
+				auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(target);
+				scriptContainer.AddScript(target, name);
 			}
 		}
 	};
