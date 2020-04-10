@@ -1,0 +1,8 @@
+<models materialLibrary="this">
+    <model name="ConnectColumn" mesh="ConnectColumn.glb"    material="columnMaterial" />
+    <model name="GateColumn" mesh="GateColumn.glb"          material="columnMaterial" />
+
+    <model name="Gate" mesh="Gate.glb"                      material="fenceMaterial" />
+    <model name="HighFence" mesh="HighFence.glb"            material="fenceMaterial" />
+    <model name="LowFence" mesh="LowFence.glb"              material="fenceMaterial" />
+</models>

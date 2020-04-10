@@ -3,6 +3,7 @@
 #include "../Utility/Logger.h"
 #include "Material.h"
 #include "Shader.h"
+#include "Utility/Utility.h"
 
 #ifdef _DEBUG
 #define debugOnly(expression) expression
@@ -54,6 +55,14 @@ void Material::SetLibraryProperties(std::unordered_map<std::string, std::string>
 		albedoColor = { 1.0f, 1.0f, 1.0f };
 		debugOnly(debugProperties.erase(val->first));
 	}
+	if ((val = properties.find("albedoColor")) != properties.end())
+	{
+		if (!Utility::TryConvertStringToVec3((val->second), albedoColor))
+		{
+			LogWarning("Material::SetLibraryProperties(): Cannot parse albedoColor: '{}'", val->second);
+		}
+		debugOnly(debugProperties.erase(val->first));
+	}
 
 	if ((val = properties.find("normalMap")) != properties.end())
 	{
@@ -67,6 +76,14 @@ void Material::SetLibraryProperties(std::unordered_map<std::string, std::string>
 		metalnessValue = 1.0f;
 		debugOnly(debugProperties.erase(val->first));
 	}
+	if ((val = properties.find("metalnessValue")) != properties.end())
+	{
+		if (!Utility::TryConvertStringToFloat((val->second), metalnessValue))
+		{
+			LogWarning("Material::SetLibraryProperties(): Cannot parse metalnessValue: '{}'", val->second);
+		}
+		debugOnly(debugProperties.erase(val->first));
+	}
 
 	if ((val = properties.find("roughnessMap")) != properties.end())
 	{
@@ -74,11 +91,27 @@ void Material::SetLibraryProperties(std::unordered_map<std::string, std::string>
 		roughnessValue = 1.0f;
 		debugOnly(debugProperties.erase(val->first));
 	}
+	if ((val = properties.find("roughnessValue")) != properties.end())
+	{
+		if (!Utility::TryConvertStringToFloat((val->second), roughnessValue))
+		{
+			LogWarning("Material::SetLibraryProperties(): Cannot parse roughnessValue: '{}'", val->second);
+		}
+		debugOnly(debugProperties.erase(val->first));
+	}
 
 	if ((val = properties.find("emissiveMap")) != properties.end())
 	{
 		emissiveMap = textureLibrary->GetTexture(val->second);
 		emissiveColor = { 1.0f, 1.0f, 1.0f };
+		debugOnly(debugProperties.erase(val->first));
+	}
+	if ((val = properties.find("emissiveColor")) != properties.end())
+	{
+		if (!Utility::TryConvertStringToVec3((val->second), emissiveColor))
+		{
+			LogWarning("Material::SetLibraryProperties(): Cannot parse emissiveColor: '{}'", val->second);
+		}
 		debugOnly(debugProperties.erase(val->first));
 	}
 
