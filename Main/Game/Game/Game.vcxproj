@@ -196,6 +196,7 @@
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Utility\Logger.h" />
+    <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>

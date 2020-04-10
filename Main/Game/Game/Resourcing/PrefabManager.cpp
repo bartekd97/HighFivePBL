@@ -54,23 +54,7 @@ namespace PrefabManager {
 
 			auto loader = provider();
 
-			int j = 0;
-			std::unordered_map<std::string, std::string> properties;
-			for (XMLElement* property = node->FirstChildElement("property");
-				property != nullptr;
-				property = property->NextSiblingElement("property"), j++)
-			{
-				const char* propertyName = property->Attribute("name");
-				const char* propertyValue = property->Attribute("value");
-
-				if (propertyName == nullptr || propertyValue == nullptr)
-				{
-					LogWarning("PrefabManager::ReadPrefabComponents(): Invalid property node at #{} for '{}'", j, componentName);
-					continue;
-				}
-
-				properties[propertyName] = propertyValue;
-			}
+			PropertyReader properties(node);
 
 			loader->Preprocess(properties);
 			components.push_back(loader);

@@ -4,6 +4,7 @@
 #include <memory>
 #include <unordered_map>
 #include <glad/glad.h>
+#include "Utility/PropertyReader.h"
 
 class Material;
 class MaterialLibrary;
@@ -38,7 +39,8 @@ public:
 private:
 	struct LibraryEntity {
 		std::weak_ptr<Material> material;
-		std::unordered_map<std::string, std::string> properties;
+		//std::unordered_map<std::string, std::string> properties;
+		PropertyReader properties;
 	};
 	std::unordered_map<std::string, LibraryEntity*> entities;
 

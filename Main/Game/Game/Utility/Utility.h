@@ -39,5 +39,8 @@ namespace std {
 	inline string to_string(const char* val) {
 		return val;
 	}
+	inline string to_string(glm::vec3 val) {
+		return to_string(val.x) + "," + to_string(val.y) + "," + to_string(val.z);
+	}
 }
 #pragma endregion

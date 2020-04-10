@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "MaterialManager.h"
 #include "Shader.h"
+#include "Utility/PropertyReader.h"
 
 namespace MaterialBindingPoint {
 	extern const int ALBEDO_MAP;
@@ -33,7 +34,8 @@ public:
 	glm::vec3 emissiveColor;
 
 private:
-	void SetLibraryProperties(std::unordered_map<std::string, std::string>& properties, std::shared_ptr<TextureLibrary> textureLibrary);
+	void SetLibraryProperties(PropertyReader& properties, std::shared_ptr<TextureLibrary> textureLibrary);
+
 
 	Material();
 

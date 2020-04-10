@@ -113,5 +113,6 @@
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="ECS\Components\ScriptContainer.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
+    <ClInclude Include="Utility\PropertyReader.h" />
   </ItemGroup>
 </Project>
