@@ -5,14 +5,17 @@
 
 MeshFileLoader::MeshFileLoader(std::string filepath)
 {
-	const unsigned int aiFlags = aiProcess_Triangulate |
+	const unsigned int aiFlags =
+		aiProcess_Triangulate |
 		aiProcess_CalcTangentSpace |
 		aiProcess_GenSmoothNormals |
 		//aiProcess_PreTransformVertices |
 		//aiProcess_RemoveRedundantMaterials |
 		aiProcess_OptimizeMeshes |
 		aiProcess_OptimizeGraph |
-		aiProcess_GenBoundingBoxes; // for later usage
+		aiProcess_ImproveCacheLocality |
+		aiProcess_LimitBoneWeights | // for max 4 bones per vertex
+		aiProcess_GenBoundingBoxes; // for later usage (AABB bounding box)
 
 	if (importer.ReadFile(filepath, aiFlags) == NULL)
 	{
