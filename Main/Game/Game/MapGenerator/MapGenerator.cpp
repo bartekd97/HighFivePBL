@@ -54,7 +54,7 @@ void MapGenerator::Generate()
 	auto points = GeneratePoints(layout);
 
 	auto voronoi = DelaunayExt::VoronoiWithLloydRelaxation(points, bounds, layout.LloydRelaxIteraions);
-    auto edges = voronoi->edges();
+    edges = voronoi->edges();
 
     std::set<Delaunay::Site*> sites;
     for (auto edge : edges)
@@ -75,6 +75,8 @@ void MapGenerator::Generate()
     // create bridges and connect references
     GameObject bridgeContainer = HFEngine::ECS.CreateGameObject(MapObject, "Bridges");
     CreateBridges(cells, bridgeContainer);
+
+    // TODO: update transforms here
 
     // now generate real cells
     for (auto s : sites)
@@ -115,5 +117,51 @@ GameObject MapGenerator::CreateCell(Delaunay::Site* cell, GameObject parent)
 
 void MapGenerator::CreateBridges(std::vector<GameObject> cells, GameObject parent)
 {
-    // TODO
+    auto GetCell = [cells](Delaunay::Site* s) {
+        for (GameObject cell : cells)
+            if (HFEngine::ECS.GetComponent<MapCell>(cell).CellSiteIndex == s->index())
+                return cell;
+        return (GameObject)0;
+    };
+
+    for (auto edge : edges)
+    {
+        if (!edge->visible())
+            continue;
+
+        Delaunay::Point* leftVertex = edge->clippedEnds()[Delaunay::LR::LEFT];
+        Delaunay::Point* rightVertex = edge->clippedEnds()[Delaunay::LR::RIGHT];
+
+        if (Delaunay::Point::distance(leftVertex, rightVertex) < minEdgeLengthForBridge)
+            continue;
+
+        GameObject cellA = GetCell(edge->leftSite());
+        GameObject cellB = GetCell(edge->rightSite());
+        if (cellA == (GameObject)0 || cellB == (GameObject)0)
+            continue;
+
+        glm::vec3 position = glm::vec3(
+            (leftVertex->x + rightVertex->x) * 0.5f,
+            0.0f,
+            (leftVertex->y + rightVertex->y) * 0.5f
+            );
+
+        /*
+        GameObject bridgeObject = Instantiate(bridgePrefab, parent.transform);
+        bridgeObject.transform.position = position;
+        bridgeObject.transform.right = (new Vector3(rightVertex.x, 0.0f, rightVertex.y) - position).normalized;
+        */
+        GameObject bridgeObject = HFEngine::ECS.CreateGameObject(parent);
+        float rotation = rad2deg(glm::atan(rightVertex->x - position.x, rightVertex->y - position.z)) + 90; // + 90 for right
+        HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetPosition(position);
+        HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetRotation({ 0.0f, rotation, 0.0f });
+
+        CellBridge bridge;
+        bridge.CellA = cellA;
+        bridge.CellB = cellB;
+        HFEngine::ECS.AddComponent<CellBridge>(bridgeObject, bridge);
+
+        HFEngine::ECS.GetComponent<MapCell>(cellA).Bridges.push_back({ bridgeObject, cellB, (GameObject)0 });
+        HFEngine::ECS.GetComponent<MapCell>(cellB).Bridges.push_back({ bridgeObject, cellA, (GameObject)0 });
+    }
 }

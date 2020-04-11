@@ -37,6 +37,8 @@ private:
 		std::string meshFile;
 		std::string materialName;
 		std::weak_ptr<Model> model;
+		std::weak_ptr<Mesh> meshCache;
+		std::weak_ptr<Material> materialCache;
 	};
 	std::unordered_map<std::string, LibraryEntity*> entities;
 

@@ -27,6 +27,7 @@ namespace PrefabManager {
 		glm::vec3 defaultScale;
 		Prefab::PrefabComponents components;
 		std::vector<Prefab::PrefabChild> children;
+		PropertyReader properties;
 	};
 
 
@@ -134,6 +135,7 @@ namespace PrefabManager {
 			info.defaultScale = { 1.0f, 1.0f, 1.0f };
 		}
 
+		info.properties = PropertyReader(root);
 		ReadPrefabComponents(root, info.components);
 		ReadPrefabChildren(root, info.children);
 
@@ -154,7 +156,8 @@ void PrefabManager::Initialize()
 	glm::vec3 dScale = { 1.0f, 1.0f, 1.0f };
 	Prefab::PrefabComponents dComponents;
 	std::vector<Prefab::PrefabChild> dChildren;
-	GENERIC_PREFAB = std::shared_ptr<Prefab>(new Prefab(dName,dScale,dComponents,dChildren));
+	PropertyReader properties;
+	GENERIC_PREFAB = std::shared_ptr<Prefab>(new Prefab(dName,dScale,dComponents,dChildren,properties));
 
 	PrefabComponentLoader::RegisterLoaders();
 
@@ -175,7 +178,11 @@ std::shared_ptr<Prefab> PrefabManager::GetPrefab(std::string name)
 		std::shared_ptr<Prefab> ptr;
 		if (TryLoadPrefab(name, info))
 		{
-			ptr = std::shared_ptr<Prefab>(new Prefab(name, info.defaultScale, info.components, info.children));
+			auto pos = name.find_last_of("/");
+			auto prefabName = name;
+			if (pos != std::string::npos)
+				prefabName = name.substr(pos+1);
+			ptr = std::shared_ptr<Prefab>(new Prefab(prefabName, info.defaultScale, info.components, info.children, info.properties));
 			LogInfo("PrefabManager::GetPrefab(): Loaded '{}'", name);
 		}
 		else

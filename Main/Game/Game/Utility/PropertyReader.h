@@ -135,6 +135,6 @@ public:
 		}
 	}
 
-	inline std::unordered_map<std::string, std::string> GetRawCopy() { return raw; }
+	inline std::unordered_map<std::string, std::string> GetRawCopy() const { return raw; }
 };
 

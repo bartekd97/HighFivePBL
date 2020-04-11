@@ -104,6 +104,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapGenerator\CellFenceGenerator.cpp" />
     <ClCompile Include="MapGenerator\CellGenerator.cpp" />
     <ClCompile Include="MapGenerator\CellMeshGenerator.cpp" />
     <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="Global.h" />
     <ClInclude Include="HFEngine.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
     <ClInclude Include="MapGenerator\CellGenerator.h" />
     <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
     <ClInclude Include="MapGenerator\Config.h" />

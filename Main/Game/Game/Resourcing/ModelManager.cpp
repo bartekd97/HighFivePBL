@@ -223,25 +223,44 @@ ModelLibrary::~ModelLibrary()
 
 std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity* entity)
 {
-	std::shared_ptr<Model> ptr;
+	std::shared_ptr<Mesh> mesh;
+	std::shared_ptr<Material> material;
 
-	MeshFileLoader loader(entity->meshFile);
-	std::vector<Vertex> vertices;
-	std::vector<unsigned> indices;
-	if (loader.ReadMeshData(vertices, indices))
+	if (entity->meshCache.expired())
 	{
-		auto mesh = ModelManager::CreateMesh(vertices, indices);
-		auto material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
-		ptr = std::shared_ptr<Model>(new Model(mesh, material));
-		LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+		MeshFileLoader loader(entity->meshFile);
+		std::vector<Vertex> vertices;
+		std::vector<unsigned> indices;
+		if (loader.ReadMeshData(vertices, indices))
+		{
+			mesh = ModelManager::CreateMesh(vertices, indices);
+			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+		}
+		else
+		{
+			mesh = ModelManager::BLANK_MODEL->mesh;
+			LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
+		}
 	}
 	else
 	{
-		ptr = ModelManager::BLANK_MODEL;
-		LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
+		mesh = entity->meshCache.lock();
 	}
 
+	if (entity->materialCache.expired())
+	{
+		material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
+	}
+	else
+	{
+		material = entity->materialCache.lock();
+	}
+
+	std::shared_ptr<Model> ptr(new Model(mesh,material));
+
 	entity->model = ptr;
+	entity->meshCache = mesh;
+	entity->materialCache = material;
 	return ptr;
 }
 

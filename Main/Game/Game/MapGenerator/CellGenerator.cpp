@@ -1,5 +1,6 @@
 #include "CellGenerator.h"
 #include "CellMeshGenerator.h"
+#include "CellFenceGenerator.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/MeshRenderer.h"
 #include "HFEngine.h"
@@ -40,5 +41,37 @@ void CellGenerator::GenerateMesh(GameObject cell)
 
 void CellGenerator::GenerateFence(GameObject cell)
 {
-    // TODO
+    auto fencePolygon = HFEngine::ECS.GetComponent<MapCell>(cell).PolygonSmoothInner
+        .ShellScaledBy(fenceConfig.innerLevelFenceLocation);
+    CellFenceGenerator generator(fenceConfig, fencePolygon);
+
+    GameObject gateContainer = HFEngine::ECS.CreateGameObject(cell, "Gates");
+    MapCell& mapCell = HFEngine::ECS.GetComponent<MapCell>(cell);
+
+    for (int i=0; i<mapCell.Bridges.size(); i++)
+    {
+        GameObject gateObject = generator.CreateGate(mapCell.Bridges[i].Bridge, gateContainer);
+
+        CellGate gate;
+        gate.Cell = cell;
+        gate.Bridge = mapCell.Bridges[i].Bridge;
+        HFEngine::ECS.AddComponent<CellGate>(gateObject, gate);
+
+        mapCell.Bridges[i].Gate = gateObject;
+        CellBridge& bridge = HFEngine::ECS.GetComponent<CellBridge>(mapCell.Bridges[i].Bridge);
+
+        if (cell == bridge.CellA)
+            bridge.GateA = gateObject;
+        else if (cell == bridge.CellB)
+            bridge.GateB = gateObject;
+    }
+
+    GameObject fenceContainer = HFEngine::ECS.CreateGameObject(cell, "Fence");
+
+    generator.PrepareBrokenCurves();
+    generator.CreateSections();
+    //generator.TryFillGapsInSections();
+    //generator.MakeHoles();
+    generator.PrepareObjects();
+    generator.BuildSections(fenceContainer);
 }

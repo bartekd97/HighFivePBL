@@ -1,5 +1,7 @@
 #pragma once
-#include "glm/glm.hpp"
+#include <glm/glm.hpp>
+#include "Resourcing/Prefab.h"
+#include "Utility/PropertyReader.h"
 
 struct DiagramLayout
 {
@@ -33,10 +35,22 @@ struct CellMeshConfig
 // TODO: finish fence config
 struct CellFenceEntity
 {
-    //GameObject gameObject;
+    std::shared_ptr<Prefab> prefab;
     float length;
     float minForFill;
     float maxForFill;
+
+    CellFenceEntity()
+    {
+        prefab = PrefabManager::GENERIC_PREFAB;
+    }
+    inline void SetPrefab(std::string name)
+    {
+        prefab = PrefabManager::GetPrefab(name);
+        prefab->Properties().GetFloat("length", length, 1.0f);
+        prefab->Properties().GetFloat("minForFill", minForFill, 0.0f);
+        prefab->Properties().GetFloat("maxForFill", maxForFill, length);
+    }
 
     inline bool InFillRange(float gap)
     {
@@ -55,4 +69,12 @@ struct CellFenceConfig
     float gateDistance = 5.0f;
     int fragmentCount = 2;
     float innerLevelFenceLocation = 0.87f;
+
+    CellFenceConfig() 
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        gateEntity.SetPrefab("Fences/PrototypeSet/Gate");
+        fragmentEntity.SetPrefab("Fences/PrototypeSet/HighFence");
+        connectorEntity.SetPrefab("Fences/PrototypeSet/ConnectColumn");
+    }
 };
