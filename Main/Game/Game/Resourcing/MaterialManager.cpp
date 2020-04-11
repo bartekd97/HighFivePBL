@@ -183,21 +183,7 @@ MaterialLibrary::MaterialLibrary(std::string name) : name(name)
 
 		int j = 0;
 		LibraryEntity* entity = new LibraryEntity();
-		for (XMLElement* property = node->FirstChildElement("property");
-			property != nullptr;
-			property = property->NextSiblingElement("property"), j++)
-		{
-			const char* propertyName = property->Attribute("name");
-			const char* propertyValue = property->Attribute("value");
-
-			if (propertyName == nullptr || propertyValue == nullptr)
-			{
-				LogWarning("MaterialLibrary::MaterialLibrary(): Invalid property node at #{} for '{}'", j, materialName);
-				continue;
-			}
-
-			entity->properties[propertyName] = propertyValue;
-		}
+		entity->properties = PropertyReader(node);
 
 		entities[materialName] = entity;
 	}

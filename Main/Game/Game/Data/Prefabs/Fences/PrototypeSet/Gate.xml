@@ -1,0 +1,8 @@
+<prefab defaultScale="0.3,0.3,0.3">
+    <property name="length" value="5.12641" /> <!-- temporary-->
+
+    <!-- TODO-->
+    <component name="MeshRenderer">
+        <property name="model" value="Structures/Fences/PrototypeSet:Gate"/>
+    </component>
+</prefab>

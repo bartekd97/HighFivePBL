@@ -1,0 +1,6 @@
+<textures>
+    <texture name="columbAlbedo" file="prototypeColumnsSet_DefaultMaterial_BaseColor.png" format="srgb" />
+    <texture name="columnNormal" file="prototypeColumnsSet_DefaultMaterial_Normal.png" />
+    <texture name="columnMetal" file="prototypeColumnsSet_DefaultMaterial_Metallic.png" format="r" />
+    <texture name="columnRough" file="prototypeColumnsSet_DefaultMaterial_Roughness.png" format="r" />
+</textures>

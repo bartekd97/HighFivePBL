@@ -13,16 +13,17 @@ namespace {
 		bool useModel = false;
 		std::string libraryName, modelName;
 
-		void Preprocess(std::unordered_map<std::string,std::string>& properties) override {
-			if (properties.contains("model")) {
-				auto parts = Utility::StringSplit(properties["model"], ':');
+		void Preprocess(PropertyReader& properties) override {
+			static std::string model;
+			if (properties.GetString("model",model,"")) {
+				auto parts = Utility::StringSplit(model, ':');
 				if (parts.size() == 2) {
 					libraryName = parts[0];
 					modelName = parts[1];
 					useModel = true;
 				}
 				else {
-					LogWarning("MeshRendererLoader::Preprocess(): Cannot parse 'model' value: {}", properties["model"]);
+					LogWarning("MeshRendererLoader::Preprocess(): Cannot parse 'model' value: {}", model);
 				}
 			}
 		}
@@ -42,15 +43,11 @@ namespace {
 	public:
 		std::string name;
 
-		void Preprocess(std::unordered_map<std::string, std::string>& properties) override
+		void Preprocess(PropertyReader& properties) override
 		{
-			if (!properties.contains("name"))
+			if (!properties.GetString("name", name, ""))
 			{
 				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
-			}
-			else
-			{
-				name = properties["name"];
 			}
 		}
 

@@ -13,17 +13,15 @@ void ECSCore::Init()
 GameObject ECSCore::CreateGameObject(std::string name)
 {
 	auto created = gameObjectManager->CreateGameObject(name);
-	AddComponent<Transform>(
-		created,
-		{}
-	);
+	AddComponent<Transform>(created, Transform(created));
 	return created;
 }
 
 GameObject ECSCore::CreateGameObject(GameObject parent, std::string name)
 {
-	GameObject created = CreateGameObject(name);
+	auto created = gameObjectManager->CreateGameObject(name);
 	gameObjectHierarchy.AddGameObject(created, parent);
+	AddComponent<Transform>(created, Transform(created));
 	return created;
 }
 
@@ -34,11 +32,11 @@ void ECSCore::DestroyGameObject(GameObject gameObject)
 	systemManager->GameObjectDestroyed(gameObject);
 
 	auto children = gameObjectHierarchy.GetChildren(gameObject);
-	gameObjectHierarchy.RemoveGameObject(gameObject);
 	for (auto it = children.begin(); it != children.end(); it++)
 	{
 		DestroyGameObject(*it);
 	}
+	gameObjectHierarchy.RemoveGameObject(gameObject);
 }
 
 void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
