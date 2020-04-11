@@ -8,7 +8,6 @@
 #include "ext/LloydRelaxation.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
-#include "ECS/Helpers/TransformHelper.h"
 
 namespace {
 	std::vector<Delaunay::Point*> GeneratePoints(DiagramLayout layout)
@@ -76,8 +75,6 @@ void MapGenerator::Generate()
     // create bridges and connect references
     GameObject bridgeContainer = HFEngine::ECS.CreateGameObject(MapObject, "Bridges");
     CreateBridges(cells, bridgeContainer);
-
-    TransformHelper::UpdateFromRoot(MapObject);
 
     // now generate real cells
     for (auto s : sites)

@@ -5,8 +5,8 @@
 
 struct DiagramLayout
 {
-    float width = 240;
-    float height = 320;
+    float width = 300;
+    float height = 400;
 
     int columns = 5;
     int rows = 7;

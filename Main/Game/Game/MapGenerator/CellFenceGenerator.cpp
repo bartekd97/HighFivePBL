@@ -77,7 +77,7 @@ void CellFenceGenerator::PrepareBrokenCurves()
 
         // repalced startPoint with endPoint due to different transform space
         startPoint = fromGate->position - fromGate->direction * config.gateEntity.length * 0.5f;
-        endPoint = toGate->position -+ toGate->direction * config.gateEntity.length * 0.5f;
+        endPoint = toGate->position + toGate->direction * config.gateEntity.length * 0.5f;
 
         int fromIndex = 0, toIndex = 0;
         for (int j = 0; j < polygon.Points.size(); j++)

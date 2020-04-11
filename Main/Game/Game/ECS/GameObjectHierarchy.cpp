@@ -39,14 +39,15 @@ void GameObjectHierarchy::RemoveGameObject(GameObject gameObject)
 	}
 }
 
-std::vector<GameObject> GameObjectHierarchy::GetChildren(GameObject parent)
+std::vector<GameObject>& GameObjectHierarchy::GetChildren(GameObject parent)
 {
 	auto node = pointers[parent];
 	if (node != nullptr)
 	{
 		return node->children;
 	}
-	return std::vector<GameObject>();
+	static std::vector<GameObject> _empty;
+	return _empty;
 }
 
 std::optional<GameObject> GameObjectHierarchy::GetParent(GameObject child)
@@ -59,7 +60,7 @@ std::optional<GameObject> GameObjectHierarchy::GetParent(GameObject child)
 	return std::nullopt;
 }
 
-std::vector<GameObject> GameObjectHierarchy::GetRoot()
+std::vector<GameObject>& GameObjectHierarchy::GetRoot()
 {
 	return root;
 }

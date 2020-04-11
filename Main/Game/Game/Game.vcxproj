@@ -90,7 +90,6 @@
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
-    <ClCompile Include="ECS\Helpers\TransformHelper.cpp" />
     <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
@@ -98,7 +97,6 @@
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptStartSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
-    <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
@@ -148,7 +146,6 @@
     <ClInclude Include="ECS\ECSTypes.h" />
     <ClInclude Include="ECS\GameObjectHierarchy.h" />
     <ClInclude Include="ECS\GameObjectManager.h" />
-    <ClInclude Include="ECS\Helpers\TransformHelper.h" />
     <ClInclude Include="ECS\HierarchyNode.h" />
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemManager.h" />
@@ -161,7 +158,6 @@
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
-    <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\EventManager.h" />
