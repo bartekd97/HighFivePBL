@@ -3,6 +3,7 @@
 #include "HFEngine.h"
 #include "TransformUpdateSystem.h"
 #include "../GameObjectHierarchy.h"
+#include "../Helpers/TransformHelper.h"
 
 #include "../Components.h"
 

@@ -90,6 +90,7 @@
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
+    <ClCompile Include="ECS\Helpers\TransformHelper.cpp" />
     <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="ECS\ECSTypes.h" />
     <ClInclude Include="ECS\GameObjectHierarchy.h" />
     <ClInclude Include="ECS\GameObjectManager.h" />
+    <ClInclude Include="ECS\Helpers\TransformHelper.h" />
     <ClInclude Include="ECS\HierarchyNode.h" />
     <ClInclude Include="ECS\System.h" />
     <ClInclude Include="ECS\SystemManager.h" />
