@@ -46,11 +46,12 @@ void CellGenerator::GenerateFence(GameObject cell)
     CellFenceGenerator generator(fenceConfig, fencePolygon);
 
     GameObject gateContainer = HFEngine::ECS.CreateGameObject(cell, "Gates");
+    Transform& mapCellTransform = HFEngine::ECS.GetComponent<Transform>(cell);
     MapCell& mapCell = HFEngine::ECS.GetComponent<MapCell>(cell);
 
     for (int i=0; i<mapCell.Bridges.size(); i++)
     {
-        GameObject gateObject = generator.CreateGate(mapCell.Bridges[i].Bridge, gateContainer);
+        GameObject gateObject = generator.CreateGate(mapCell.Bridges[i].Bridge, gateContainer, mapCellTransform);
 
         CellGate gate;
         gate.Cell = cell;

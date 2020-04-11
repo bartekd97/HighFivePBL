@@ -162,7 +162,7 @@ bool Transform::Update(glm::mat4 parentWorldTransform, bool parentDirty)
 		localTransform = translateMat * rotateMat * scaleMat;
 		right = rotation * glm::vec3(1, 0, 0);
 		up = rotation * glm::vec3(0, 1, 0);
-		front = rotation * glm::vec3(0, 0, -1);
+		front = rotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
 	}
 
 	glm::vec3 skew;
@@ -184,7 +184,7 @@ bool Transform::Update(glm::mat4 parentWorldTransform, bool parentDirty)
 	);
 	worldRight = worldRotation * glm::vec3(1, 0, 0);
 	worldUp = worldRotation * glm::vec3(0, 1, 0);
-	worldFront = worldRotation * glm::vec3(0, 0, -1);
+	worldFront = worldRotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
 
 	dirty = false;
 	return true;

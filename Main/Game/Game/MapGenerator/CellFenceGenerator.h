@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include "Config.h"
 #include "ConvexPolygon.h"
+#include "ECS/Components/Transform.h"
 
 class CellFenceGenerator
 {
@@ -77,7 +78,7 @@ public:
         : config(config), polygon(polygon)
     {}
 
-    GameObject CreateGate(GameObject bridge, GameObject parent);
+    GameObject CreateGate(GameObject bridge, GameObject parent, Transform& parentTransform);
     void PrepareBrokenCurves();
     void CreateSections();
     void TryFillGapsInSections();

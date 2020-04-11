@@ -4,11 +4,12 @@
 #include "HFEngine.h"
 #include "ECS/Components.h"
 
-GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent)
+GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent, Transform& parentTransform)
 {
     glm::vec3 offsetPosition =
         HFEngine::ECS.GetComponent<Transform>(bridge).GetWorldPosition() -
-        HFEngine::ECS.GetComponent<Transform>(parent).GetWorldPosition();
+        parentTransform.GetWorldPosition();
+        //HFEngine::ECS.GetComponent<Transform>(parent).GetWorldPosition();
 
     glm::vec2 bridgePosition = glm::vec2(
         offsetPosition.x,
@@ -59,8 +60,9 @@ void CellFenceGenerator::PrepareBrokenCurves()
     std::sort(gates.begin(), gates.end(), [](std::shared_ptr<Gate> a, std::shared_ptr<Gate> b) {
         float angleA = glm::orientedAngle({ 0,1 }, glm::normalize(a->position));
         float angleB = glm::orientedAngle({ 0,1 }, glm::normalize(b->position));
-        return angleA > angleB;
+        return angleA < angleB;
         });
+    //std::reverse(gates.begin(), gates.end());
 
     std::vector<glm::vec2> outline;
     outline.insert(outline.end(), polygon.Points.begin(), polygon.Points.end());
@@ -73,8 +75,9 @@ void CellFenceGenerator::PrepareBrokenCurves()
         fromGate = gates[i];
         toGate = gates[i == gates.size() - 1 ? 0 : i + 1];
 
-        startPoint = fromGate->position + fromGate->direction * config.gateEntity.length * 0.5f;
-        endPoint = toGate->position - toGate->direction * config.gateEntity.length * 0.5f;
+        // repalced startPoint with endPoint due to different transform space
+        startPoint = fromGate->position - fromGate->direction * config.gateEntity.length * 0.5f;
+        endPoint = toGate->position -+ toGate->direction * config.gateEntity.length * 0.5f;
 
         int fromIndex = 0, toIndex = 0;
         for (int j = 0; j < polygon.Points.size(); j++)
@@ -154,7 +157,8 @@ void CellFenceGenerator::CreateSections()
     {
         int i = 0;
         int created = 0;
-        while (curve->HoleDistance() > minHoleGap || i < 2)
+        float holeDistance;
+        while ((holeDistance = curve->HoleDistance()) > minHoleGap || i < 2)
         {
             if (i % 2 == 0)
             {
