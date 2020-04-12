@@ -27,6 +27,8 @@ public:
 
 	void SetNameGameObject(GameObject gameObject, std::string name);
 
+	std::optional<GameObject> GetGameObjectByName(std::string name);
+
 	void DestroyGameObject(GameObject gameObject);
 
 	void UpdateSystems(float dt);

@@ -3,6 +3,7 @@
 #include <array>
 #include <cassert>
 #include <queue>
+#include <optional>
 
 #include "ECSTypes.h"
 
@@ -24,6 +25,8 @@ public:
 	const char* GetName(GameObject gameObject);
 
 	void SetName(GameObject gameObject, std::string name);
+
+	std::optional<GameObject> GetGameObjectByName(std::string name);
 
 	Signature GetSignature(GameObject gameObject);
 
