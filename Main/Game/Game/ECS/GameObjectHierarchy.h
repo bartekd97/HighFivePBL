@@ -10,9 +10,9 @@ class GameObjectHierarchy
 public:
 	void AddGameObject(GameObject child, GameObject parent);
 	void RemoveGameObject(GameObject gameObject);
-	std::vector<GameObject> GetChildren(GameObject parent);
+	std::vector<GameObject>& GetChildren(GameObject parent);
 	std::optional<GameObject> GetParent(GameObject child);
-	std::vector<GameObject> GetRoot();
+	std::vector<GameObject>& GetRoot();
 	bool IsPresent(GameObject gameObject);
 private:
 	std::vector<GameObject> root;

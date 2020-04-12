@@ -25,6 +25,7 @@ namespace Utility {
 
 	// 3 floats, coma separated
 	bool TryConvertStringToVec3(std::string& string, glm::vec3& vec);
+	bool TryConvertStringToFloat(std::string& string, float& value);
 
 	std::uint32_t HashString(char const* s, std::size_t count);
 }
@@ -37,6 +38,9 @@ namespace std {
 	}
 	inline string to_string(const char* val) {
 		return val;
+	}
+	inline string to_string(glm::vec3 val) {
+		return to_string(val.x) + "," + to_string(val.y) + "," + to_string(val.z);
 	}
 }
 #pragma endregion

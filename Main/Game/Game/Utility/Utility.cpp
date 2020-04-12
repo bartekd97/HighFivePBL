@@ -54,6 +54,13 @@ bool Utility::TryConvertStringToVec3(std::string& string, glm::vec3& vec)
 	return true;
 }
 
+bool Utility::TryConvertStringToFloat(std::string& string, float& value)
+{
+	try { value = std::stof(string.c_str(), NULL);}
+	catch (std::invalid_argument ex) { return false; }
+	return true;
+}
+
 std::uint32_t Utility::HashString(char const* s, std::size_t count)
 {
 	return fnv1a_32(s, count);

@@ -1,0 +1,13 @@
+<materials textureLibrary="this">
+    <material name="columnMaterial">
+        <property name="albedoMap" value="columbAlbedo"/>
+        <property name="normalMap" value="columnNormal"/>
+        <property name="metalnessMap" value="columnMetal"/>
+        <property name="roughnessMap" value="columnRough"/>
+    </material>
+    <material name="fenceMaterial">
+        <property name="albedoColor" value="0,0,0"/>
+        <property name="metalnessValue" value="0.9"/>
+        <property name="roughnessValue" value="0.1"/>
+    </material>
+</materials>

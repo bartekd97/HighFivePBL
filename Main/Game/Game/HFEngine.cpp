@@ -131,12 +131,6 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<ScriptContainer>());
 			ECS.SetSystemSignature<ScriptLateUpdateSystem>(signature);
 		}
-		auto transformUpdateSystem = ECS.RegisterSystem<TransformUpdateSystem>();
-		{
-			Signature signature;
-			signature.set(ECS.GetComponentType<Transform>());
-			ECS.SetSystemSignature<TransformUpdateSystem>(signature);
-		}
 
 		Renderer.Init();
 

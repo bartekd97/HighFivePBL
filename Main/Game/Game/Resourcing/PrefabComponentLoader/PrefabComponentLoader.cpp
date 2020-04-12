@@ -13,16 +13,17 @@ namespace {
 		bool useModel = false;
 		std::string libraryName, modelName;
 
-		void Preprocess(std::unordered_map<std::string,std::string>& properties) override {
-			if (properties.contains("model")) {
-				auto parts = Utility::StringSplit(properties["model"], ':');
+		void Preprocess(PropertyReader& properties) override {
+			static std::string model;
+			if (properties.GetString("model",model,"")) {
+				auto parts = Utility::StringSplit(model, ':');
 				if (parts.size() == 2) {
 					libraryName = parts[0];
 					modelName = parts[1];
 					useModel = true;
 				}
 				else {
-					LogWarning("MeshRendererLoader::Preprocess(): Cannot parse 'model' value: {}", properties["model"]);
+					LogWarning("MeshRendererLoader::Preprocess(): Cannot parse 'model' value: {}", model);
 				}
 			}
 		}
@@ -42,29 +43,31 @@ namespace {
 	public:
 		glm::vec3 velocity, acceleration;
 
-		void Preprocess(std::unordered_map<std::string, std::string>& properties) override
+		void Preprocess(PropertyReader& properties) override
 		{
+			static std::string tmpString;
+
 			velocity = glm::vec3(0.0f);
 			acceleration = glm::vec3(0.0f);
 
-			if (properties.contains("velocity"))
+			if (properties.GetString("velocity", tmpString, "0.0,0.0,0.0"))
 			{
-				auto parts = Utility::StringSplit(properties["velocity"], ',');
+				auto parts = Utility::StringSplit(tmpString, ',');
 				if (parts.size() == 3) {
 					velocity = glm::vec3(std::stof(parts[0]), std::stof(parts[1]), std::stof(parts[2]));
 				}
 				else {
-					LogWarning("RigidBodyLoader::Preprocess(): Cannot parse 'velocity' value: {}", properties["velocity"]);
+					LogWarning("RigidBodyLoader::Preprocess(): Cannot parse 'velocity' value: {}", tmpString);
 				}
 			}
-			if (properties.contains("acceleration"))
+			if (properties.GetString("acceleration", tmpString, "0.0,0.0,0.0"))
 			{
-				auto parts = Utility::StringSplit(properties["acceleration"], ',');
+				auto parts = Utility::StringSplit(tmpString, ',');
 				if (parts.size() == 3) {
 					acceleration = glm::vec3(std::stof(parts[0]), std::stof(parts[1]), std::stof(parts[2]));
 				}
 				else {
-					LogWarning("RigidBodyLoader::Preprocess(): Cannot parse 'acceleration' value: {}", properties["acceleration"]);
+					LogWarning("RigidBodyLoader::Preprocess(): Cannot parse 'acceleration' value: {}", tmpString);
 				}
 			}
 		}
@@ -83,13 +86,14 @@ namespace {
 	public:
 		float radius;
 
-		void Preprocess(std::unordered_map<std::string, std::string>& properties) override
+		void Preprocess(PropertyReader& properties) override
 		{
+			static std::string tmpString;
 			radius = 0.0f;
 
-			if (properties.contains("radius"))
+			if (properties.GetString("radius", tmpString, "0.0"))
 			{
-				radius = std::stof(properties["radius"]);
+				radius = std::stof(tmpString);
 			}
 		}
 
@@ -106,15 +110,11 @@ namespace {
 	public:
 		std::string name;
 
-		void Preprocess(std::unordered_map<std::string, std::string>& properties) override
+		void Preprocess(PropertyReader& properties) override
 		{
-			if (!properties.contains("name"))
+			if (!properties.GetString("name", name, ""))
 			{
 				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
-			}
-			else
-			{
-				name = properties["name"];
 			}
 		}
 

@@ -8,13 +8,14 @@
 #include <functional>
 #include <glm/glm.hpp>
 #include "ECS/ECSTypes.h"
+#include "Utility/PropertyReader.h"
 
 
 class Prefab;
 class IPrefabComponentLoader
 {
 public:
-	virtual void Preprocess(std::unordered_map<std::string,std::string>& properties) {}
+	virtual void Preprocess(PropertyReader& properties) {}
 	virtual void Create(GameObject target) = 0;
 };
 

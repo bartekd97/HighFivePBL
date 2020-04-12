@@ -3,6 +3,7 @@
 #include "../Utility/Logger.h"
 #include "Material.h"
 #include "Shader.h"
+#include "Utility/Utility.h"
 
 #ifdef _DEBUG
 #define debugOnly(expression) expression
@@ -40,57 +41,61 @@ Material::Material() {
 	emissiveColor = {0.0f, 0.0f, 0.0f};
 }
 
-void Material::SetLibraryProperties(std::unordered_map<std::string, std::string>& properties, std::shared_ptr<TextureLibrary> textureLibrary)
+void Material::SetLibraryProperties(PropertyReader& properties, std::shared_ptr<TextureLibrary> textureLibrary)
 {
-	std::unordered_map<std::string, std::string>::iterator val;
-
-#ifdef _DEBUG
-	std::unordered_map<std::string, std::string> debugProperties = properties;
-#endif
-
-	if ((val = properties.find("albedoMap")) != properties.end())
+	static std::string albedoMapTmp;
+	if (properties.GetString("albedoMap", albedoMapTmp, ""))
 	{
-		albedoMap = textureLibrary->GetTexture(val->second);
+		albedoMap = textureLibrary->GetTexture(albedoMapTmp);
 		albedoColor = { 1.0f, 1.0f, 1.0f };
-		debugOnly(debugProperties.erase(val->first));
 	}
+	properties.GetVec3("albedoColor", albedoColor, albedoColor);
 
-	if ((val = properties.find("normalMap")) != properties.end())
-	{
-		normalMap = textureLibrary->GetTexture(val->second);
-		debugOnly(debugProperties.erase(val->first));
-	}
+	static std::string normalMapTmp;
+	if (properties.GetString("normalMap", normalMapTmp, ""))
+		normalMap = textureLibrary->GetTexture(normalMapTmp);
 
-	if ((val = properties.find("metalnessMap")) != properties.end())
+	static std::string metalnessMapTmp;
+	if (properties.GetString("metalnessMap", metalnessMapTmp, ""))
 	{
-		metalnessMap = textureLibrary->GetTexture(val->second);
+		metalnessMap = textureLibrary->GetTexture(metalnessMapTmp);
 		metalnessValue = 1.0f;
-		debugOnly(debugProperties.erase(val->first));
 	}
+	properties.GetFloat("metalnessValue", metalnessValue, metalnessValue);
 
-	if ((val = properties.find("roughnessMap")) != properties.end())
+	static std::string roughnessMapTmp;
+	if (properties.GetString("roughnessMap", roughnessMapTmp, ""))
 	{
-		roughnessMap = textureLibrary->GetTexture(val->second);
+		roughnessMap = textureLibrary->GetTexture(roughnessMapTmp);
 		roughnessValue = 1.0f;
-		debugOnly(debugProperties.erase(val->first));
 	}
+	properties.GetFloat("roughnessValue", roughnessValue, roughnessValue);
 
-	if ((val = properties.find("emissiveMap")) != properties.end())
+	static std::string emissiveMapTmp;
+	if (properties.GetString("emissiveMap", emissiveMapTmp, ""))
 	{
-		emissiveMap = textureLibrary->GetTexture(val->second);
+		emissiveMap = textureLibrary->GetTexture(emissiveMapTmp);
 		emissiveColor = { 1.0f, 1.0f, 1.0f };
-		debugOnly(debugProperties.erase(val->first));
 	}
+	properties.GetVec3("emissiveColor", emissiveColor, emissiveColor);
 
-	// TODO: More properties
 
 #ifdef _DEBUG
+	auto debugProperties = properties.GetRawCopy();
+	debugProperties.erase("albedoMap");
+	debugProperties.erase("albedoColor");
+	debugProperties.erase("normalMap");
+	debugProperties.erase("metalnessMap");
+	debugProperties.erase("metalnessValue");
+	debugProperties.erase("roughnessMap");
+	debugProperties.erase("roughnessValue");
+	debugProperties.erase("emissiveMap");
+	debugProperties.erase("emissiveColor");
 	for (auto leftover : debugProperties)
 	{
 		LogWarning("Material::SetLibraryProperties(): Unknown property: '{}' = '{}'", leftover.first, leftover.second);
 	}
 #endif
-
 }
 
 void Material::apply(std::shared_ptr<Shader> shader)
