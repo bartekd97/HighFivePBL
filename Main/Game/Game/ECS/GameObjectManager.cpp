@@ -93,3 +93,19 @@ int GameObjectManager::GetLivingGameObjectCount()
 {
 	return livingGameObjectCount;
 }
+
+std::optional<GameObject> GameObjectManager::GetGameObjectByName(std::string name)
+{
+	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
+	{
+		if (name.compare(names[i]) == 0)
+		{
+			if (signatures[i].count() > 0)
+			{
+				return i;
+			}
+		}
+	}
+
+	return std::nullopt;
+}

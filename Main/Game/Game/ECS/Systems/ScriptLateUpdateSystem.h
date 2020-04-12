@@ -2,11 +2,8 @@
 
 #include "../SystemUpdate.h"
 
-class PhysicsSystem : public SystemUpdate
+class ScriptLateUpdateSystem : public SystemUpdate
 {
 public:
-	void Init() override;
 	void Update(float dt) override;
-private:
-	float step;
 };

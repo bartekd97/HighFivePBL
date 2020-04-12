@@ -70,6 +70,11 @@ void ECSCore::SetNameGameObject(GameObject gameObject, std::string name)
 	gameObjectManager->SetName(gameObject, name);
 }
 
+std::optional<GameObject> ECSCore::GetGameObjectByName(std::string name)
+{
+	return gameObjectManager->GetGameObjectByName(name);
+}
+
 void ECSCore::UpdateSystems(float dt)
 {
 	for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)
