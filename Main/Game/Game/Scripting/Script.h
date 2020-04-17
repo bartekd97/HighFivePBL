@@ -8,6 +8,7 @@ public:
 	virtual void Awake() {};
 	virtual void Start() {};
 	virtual void Update(float dt) {};
+	virtual void LateUpdate(float dt) {};
 
 	inline void SetGameObject(GameObject gameObject)
 	{

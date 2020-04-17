@@ -1,0 +1,15 @@
+<prefab defaultScale="1.0,1.0,1.0">
+    <component name="MeshRenderer">
+        <property name="model" value="Sample:spaceship"/> <!-- LibraryName:ModelName-->
+    </component>
+    <component name="RigidBody">
+        <property name="velocity" value="0.0,0.0,0.0"/>
+        <property name="acceleration" value="0.0,0.0,0.0"/>
+    </component>
+    <component name="CircleCollider">
+        <property name="radius" value="4.5"/>
+    </component>
+
+    <children>
+    </children>
+</prefab>

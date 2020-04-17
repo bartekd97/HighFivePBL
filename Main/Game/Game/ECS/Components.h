@@ -8,3 +8,4 @@
 #include "Components/MeshRenderer.h"
 #include "Components/MapLayoutComponents.h"
 #include "Components/ScriptContainer.h"
+#include "Components/CircleCollider.h"
