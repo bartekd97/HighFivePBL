@@ -9,3 +9,4 @@
 #include "Components/MapLayoutComponents.h"
 #include "Components/ScriptContainer.h"
 #include "Components/CircleCollider.h"
+#include "Components/Collider.h"

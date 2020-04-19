@@ -134,7 +134,9 @@
     <ClInclude Include="ECS\ComponentArray.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
     <ClInclude Include="ECS\Components.h" />
+    <ClInclude Include="ECS\Components\Base\BaseCollider.h" />
     <ClInclude Include="ECS\Components\CircleCollider.h" />
+    <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\CubeRenderer.h" />
     <ClInclude Include="ECS\Components\CubeSpawner.h" />
     <ClInclude Include="ECS\Components\Gravity.h" />

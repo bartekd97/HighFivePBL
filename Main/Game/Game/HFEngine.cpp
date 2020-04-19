@@ -85,6 +85,7 @@ namespace HFEngine
 		ECS.RegisterComponent<Transform>();
 		ECS.RegisterComponent<RigidBody>();
 		ECS.RegisterComponent<Gravity>();
+		ECS.RegisterComponent<Collider>();
 		ECS.RegisterComponent<CircleCollider>();
 		// render components
 		ECS.RegisterComponent<CubeRenderer>();
@@ -116,7 +117,7 @@ namespace HFEngine
 			Signature signature;
 			signature.set(ECS.GetComponentType<Transform>());
 			signature.set(ECS.GetComponentType<RigidBody>());
-			signature.set(ECS.GetComponentType<CircleCollider>());
+			signature.set(ECS.GetComponentType<Collider>());
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
 		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();

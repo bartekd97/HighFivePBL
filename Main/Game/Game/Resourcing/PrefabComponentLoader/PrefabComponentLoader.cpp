@@ -99,8 +99,13 @@ namespace {
 
 		void Create(GameObject target) override
 		{
+			//TODO: load collider from file
+			Collider collider;
+			collider.type = Collider::ColliderTypes::DYNAMIC;
+			collider.shape = Collider::ColliderShapes::CIRCLE;
 			CircleCollider cc;
 			cc.radius = radius;
+			HFEngine::ECS.AddComponent<Collider>(target, collider);
 			HFEngine::ECS.AddComponent<CircleCollider>(target, cc);
 		}
 	};
