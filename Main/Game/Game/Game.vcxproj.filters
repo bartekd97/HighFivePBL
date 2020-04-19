@@ -44,6 +44,8 @@
     <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
     <ClCompile Include="MapGenerator\CellFenceGenerator.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
+    <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -118,7 +120,13 @@
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
-    <ClInclude Include="ECS\Components\Base\BaseCollider.h" />
     <ClInclude Include="ECS\Components\Collider.h" />
+    <ClInclude Include="ECS\Components\BoxCollider.h" />
+    <ClInclude Include="ECS\Systems\ColliderCollectorSystem.h" />
+    <ClInclude Include="ECS\Systems\BoxColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
   </ItemGroup>
 </Project>

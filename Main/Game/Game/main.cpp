@@ -73,6 +73,11 @@ int main()
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 2.0f, 100.0f });
 	prefab->Instantiate({ 80.0f, 2.0f, 100.0f });
 
+	auto boxColliderTest = PrefabManager::GetPrefab("BoxTest");
+	boxColliderTest->Instantiate({ 90.0f, 2.0f, 90.0f });
+	auto angledBox = boxColliderTest->Instantiate({ 105.0f, 2.0f, 90.0f });
+	HFEngine::ECS.GetComponent<Transform>(angledBox).RotateSelf(45, glm::vec3(0.0f, 1.0f, 0.0f));
+
 	HFEngine::ECS.AddComponent<ScriptContainer>(movableTestObject, {});
 	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(movableTestObject);
 	scriptContainer.AddScript(movableTestObject, "CharControllerTest");

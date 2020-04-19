@@ -10,7 +10,8 @@ struct Collider
 
 	enum ColliderShapes
 	{
-		CIRCLE
+		CIRCLE,
+		BOX
 	};
 
 	ColliderTypes type;
