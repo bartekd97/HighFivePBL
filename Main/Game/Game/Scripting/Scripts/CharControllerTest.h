@@ -35,6 +35,9 @@ public:
 		if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
 		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 
+		if (InputManager::GetKeyStatus(GLFW_KEY_SPACE)) speed = 1120.0f;
+		else speed = 20.0f;
+
 		if (glm::length2(direction) > 0.5f)
 		{
 			transform.SetRotation(glm::vec3(0.0f, std::atan2(direction.x, direction.z) * 180.0 / M_PI, 0.0f));

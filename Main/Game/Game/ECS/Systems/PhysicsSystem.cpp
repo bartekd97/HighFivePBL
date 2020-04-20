@@ -11,7 +11,7 @@
 
 void PhysicsSystem::Init()
 {
-	step = 0.05f;
+	step = 0.25f;
 }
 
 /*
@@ -47,7 +47,7 @@ void PhysicsSystem::Update(float dt)
 
 		float length = sqrt((displacement.x * displacement.x) + (displacement.z * displacement.z));
 
-        if (islessequal(length, step)) continue;
+        //if (islessequal(length, step)) continue;
         int steps = std::max(1, (int)std::round(length / step));
 		glm::vec3 moveStep = displacement / (float)steps;
         glm::vec3 tempPosition = transform.GetPosition();
@@ -62,6 +62,7 @@ void PhysicsSystem::Update(float dt)
             transform.SetPosition(tempPosition);
             
             collided = false;
+
             // get gameObjects from colliderCollectingSystem
             for (auto const& otherObject : colliderCollectorSystem->gameObjects)
             {
@@ -91,26 +92,27 @@ void PhysicsSystem::Update(float dt)
 
                     if (localCollided)
                     {
-                        if (otherCollider.type == Collider::ColliderTypes::DYNAMIC)
+                        if (otherCollider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
                         {
                             sepVector *= 0.5f; // mass?
-                            //auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
+                            auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
                             otherTransform.SetPosition(otherPosition - sepVector); // rb move?
-                            //otherRb.velocity.x -= sepVector.x / dt;
-                            //otherRb.velocity.z -= sepVector.y / dt;
+                            otherRb.velocity.x -= sepVector.x / dt;
+                            otherRb.velocity.z -= sepVector.z / dt;
                         }
 
                         tempPosition += sepVector;
                         rigidBody.velocity.x += sepVector.x / dt;
-                        rigidBody.velocity.z += sepVector.y / dt;
+                        rigidBody.velocity.z += sepVector.z / dt;
                     }
                 }
             }
-            if (collided) break;
+            //if (collided) break;
         }
         transform.SetPosition(tempPosition);
-        //if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;
-        //if (rigidBody.velocity.z * oldVelocity.z < 0) rigidBody.velocity.z = 0.0f;
+        if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;
+        if (rigidBody.velocity.z * oldVelocity.z < 0) rigidBody.velocity.z = 0.0f;
+        rigidBody.velocity *= 0.75f;
         rigidBody.moved = false;
 	}
 }
@@ -131,6 +133,7 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
 
 bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const float& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
 {
+    // TODO: refaktor. maybe cache?
     float tbx1, tby1, tbx2, tby2;
     tbx1 = -c2.width / 2.0f;
     tby1 = -c2.height / 2.0f;
