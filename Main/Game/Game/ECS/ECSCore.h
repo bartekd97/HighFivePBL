@@ -56,21 +56,6 @@ public:
 		systemManager->GameObjectSignatureChanged(gameObject, signature);
 	}
 
-	// TODO: ref
-	/*template<>
-	void AddComponent(GameObject gameObject, CircleColliderComponent component)
-	{
-		componentManager->AddComponent<CircleColliderComponent>(gameObject, component);
-
-		auto signature = gameObjectManager->GetSignature(gameObject);
-		signature.set(componentManager->GetComponentType<CircleColliderComponent>(), true);
-		gameObjectManager->SetSignature(gameObject, signature);
-
-		systemManager->GameObjectSignatureChanged(gameObject, signature);
-
-		Physics::AddCollider(gameObject, CircleColliderTest(component));
-	}*/
-
 	template<typename T>
 	void RemoveComponent(GameObject gameObject)
 	{

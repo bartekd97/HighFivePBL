@@ -42,6 +42,7 @@ namespace {
 	{
 	public:
 		glm::vec3 velocity, acceleration;
+		float mass;
 
 		void Preprocess(PropertyReader& properties) override
 		{
@@ -49,6 +50,7 @@ namespace {
 
 			velocity = glm::vec3(0.0f);
 			acceleration = glm::vec3(0.0f);
+			mass = 10.0f;
 
 			if (properties.GetString("velocity", tmpString, "0.0,0.0,0.0"))
 			{
@@ -70,6 +72,10 @@ namespace {
 					LogWarning("RigidBodyLoader::Preprocess(): Cannot parse 'acceleration' value: {}", tmpString);
 				}
 			}
+			if (properties.GetString("mass", tmpString, "0.0"))
+			{
+				mass = std::stof(tmpString);
+			}
 		}
 
 		void Create(GameObject target) override
@@ -77,6 +83,7 @@ namespace {
 			RigidBody rb;
 			rb.velocity = velocity;
 			rb.acceleration = acceleration;
+			rb.mass = mass;
 			HFEngine::ECS.AddComponent<RigidBody>(target, rb);
 		}
 	};

@@ -73,6 +73,9 @@ int main()
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 2.0f, 100.0f });
 	prefab->Instantiate({ 80.0f, 2.0f, 100.0f });
 
+	auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");
+	bigPrefab->Instantiate({ 90.0f, 2.0f, 120.0f });
+
 	auto boxColliderTest = PrefabManager::GetPrefab("BoxTest");
 	boxColliderTest->Instantiate({ 90.0f, 2.0f, 90.0f });
 	auto angledBox = boxColliderTest->Instantiate({ 105.0f, 2.0f, 90.0f });

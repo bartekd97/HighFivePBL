@@ -59,7 +59,7 @@ void PhysicsSystem::Update(float dt)
         for (int s = 0; s < steps; s++)
         {
             tempPosition += moveStep;
-            transform.SetPosition(tempPosition);
+            //transform.SetPosition(tempPosition);
             
             collided = false;
 
@@ -94,11 +94,12 @@ void PhysicsSystem::Update(float dt)
                     {
                         if (otherCollider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
                         {
-                            sepVector *= 0.5f; // mass?
                             auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
-                            otherTransform.SetPosition(otherPosition - sepVector); // rb move?
-                            otherRb.velocity.x -= sepVector.x / dt;
-                            otherRb.velocity.z -= sepVector.z / dt;
+                            float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
+                            otherTransform.SetPosition(otherPosition - (sepVector * massFactor));
+                            otherRb.velocity.x -= sepVector.x / dt * massFactor;
+                            otherRb.velocity.z -= sepVector.z / dt * massFactor;
+                            sepVector *= 1.0f - massFactor;
                         }
 
                         tempPosition += sepVector;
