@@ -11,9 +11,3 @@ const ComponentType MAX_COMPONENTS = 32;
 using Signature = std::bitset<MAX_COMPONENTS>;
 const unsigned int MAX_GAMEOBJECT_NAME_LENGTH = 16;
 
-enum ColliderType
-{
-	STATIC,
-	DYNAMIC,
-	TRIGGER
-};

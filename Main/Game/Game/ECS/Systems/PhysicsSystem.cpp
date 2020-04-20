@@ -18,8 +18,8 @@ void PhysicsSystem::Init()
  * TODO LIST:
  * -refactor
  * -what about transform scale?
- * -what about moving dynamic colliders into another colliders (no collision detection when moved inside loops)?
- * -what about rigidBody requirement?
+ * -caching?
+ * -check only colliders on same cell
  */
 void PhysicsSystem::Update(float dt)
 {
