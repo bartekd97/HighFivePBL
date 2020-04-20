@@ -23,7 +23,9 @@ void CircleColliderRenderSystem::Render()
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 
-		glm::mat4 modelMat = transform.GetWorldTransform();
+		glm::mat4 modelMat(1.0f);
+		modelMat = glm::translate(modelMat, transform.GetPosition());
+		modelMat *= glm::mat4_cast(transform.GetRotation());
 		modelMat = glm::scale(modelMat, glm::vec3(circleCollider.radius, 1.0f, circleCollider.radius));
 		shader->setMat4("gModel", modelMat);
 
