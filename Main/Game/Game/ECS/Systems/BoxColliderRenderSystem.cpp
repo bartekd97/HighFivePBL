@@ -23,8 +23,14 @@ void BoxColliderRenderSystem::Render()
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto& boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
 
-		glm::mat4 modelMat = transform.GetWorldTransform();
-		modelMat = glm::scale(modelMat, glm::vec3(boxCollider.width, 0.0f, boxCollider.height));
+		//glm::mat4 modelMat = transform.GetWorldTransform();
+		//modelMat = glm::scale(modelMat, glm::vec3(boxCollider.width, 0.0f, boxCollider.height));
+		glm::mat4 modelMat(1.0f);
+
+		modelMat = glm::translate(modelMat, transform.GetPosition());
+		modelMat *= glm::mat4_cast(transform.GetRotation());
+		modelMat = glm::scale(modelMat, glm::vec3(boxCollider.width, 1.0f, boxCollider.height));
+		//modelMat *= transform.GetWorldTransform();
 		shader->setMat4("gModel", modelMat);
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -40,12 +46,12 @@ void BoxColliderRenderSystem::Init()
 
 	std::vector<glm::vec3> vertices =
 	{
-		glm::vec3(-1.0f, 5.0f, -1.0f),
-		glm::vec3(1.0f, 5.0f, -1.0f),
-		glm::vec3(1.0f, 5.0f, 1.0f),
-		glm::vec3(1.0f, 5.0f, 1.0f),
-		glm::vec3(-1.0f, 5.0f, 1.0f),
-		glm::vec3(-1.0f, 5.0f, -1.0f)
+		glm::vec3(-0.5f, 1.0f, -0.5f),
+		glm::vec3(0.5f, 1.0f, -0.5f),
+		glm::vec3(0.5f, 1.0f, 0.5f),
+		glm::vec3(0.5f, 1.0f, 0.5f),
+		glm::vec3(-0.5f, 1.0f, 0.5f),
+		glm::vec3(-0.5f, 1.0f, -0.5f)
 	};
 
 	glGenVertexArrays(1, &vao);

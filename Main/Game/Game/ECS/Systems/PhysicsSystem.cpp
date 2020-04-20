@@ -130,6 +130,119 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
 
 bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const float& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
 {
+    // TODO: VERY VERY DYRTI
+    float tbx1, tby1, tbx2, tby2;
+    //float bx1, by1, bx2, by2;
+    tbx1 = -c2.width / 2.0f;
+    tby1 = -c2.height / 2.0f;
+    tbx2 = c2.width / 2.0f;
+    tby2 = c2.height / 2.0f;
+
+    /*bx1 = (tbx1 * cos(rotation2)) - (tby1 * sin(rotation2)) + pos2.x;
+    by1 = (tbx1 * sin(rotation2)) + (tby1 * cos(rotation2)) + pos2.z;
+    bx2 = (tbx2 * cos(rotation2)) - (tby2 * sin(rotation2)) + pos2.x;
+    by2 = (tbx2 * sin(rotation2)) + (tby2 * cos(rotation2)) + pos2.z;*/
+
+    glm::vec2 circlePoints[2] = {
+        { pos1.x - c1.radius, pos1.y - c1.radius },
+        { pos1.x + c1.radius, pos1.y + c1.radius }
+    };
+    glm::vec2 boxPoints[4] = {
+        { (tbx1 * cos(rotation2)) - (tby1 * sin(rotation2)) + pos2.x, (tbx1 * sin(rotation2)) + (tby1 * cos(rotation2)) + pos2.z },
+        { (tbx2 * cos(rotation2)) - (tby1 * sin(rotation2)) + pos2.x, (tbx2 * sin(rotation2)) + (tby1 * cos(rotation2)) + pos2.z },
+        { (tbx2 * cos(rotation2)) - (tby2 * sin(rotation2)) + pos2.x, (tbx2 * sin(rotation2)) + (tby2 * cos(rotation2)) + pos2.z },
+        { (tbx1 * cos(rotation2)) - (tby2 * sin(rotation2)) + pos2.x, (tbx1 * sin(rotation2)) + (tby2 * cos(rotation2)) + pos2.z }
+    };
+    glm::vec2 circleCenter(pos1.x, pos1.z);
+    glm::vec2 tmpVec = boxPoints[0] - circleCenter;
+    float tmpLen;
+
+    int index = 0;
+    float min_distance = veclen(tmpVec);
+    for (int i = 1; i < 4; i++)
+    {
+        tmpVec = boxPoints[i] - circleCenter;
+        tmpLen = veclen(tmpVec);
+        if (tmpLen < min_distance)
+        {
+            min_distance = tmpLen;
+            index = i;
+        }
+    }
+
+    glm::vec2 axis[3] = {
+        { boxPoints[1].x - boxPoints[0].x, boxPoints[1].y - boxPoints[0].y },
+        { boxPoints[1].x - boxPoints[2].x, boxPoints[1].y - boxPoints[2].y },
+        { boxPoints[index].x - circleCenter.x, boxPoints[index].y - circleCenter.y }
+    };
+
+    float box_min = 0.f, box_max = 0.f;
+    float circle_min = 0.f, circle_max = 0.f;
+
+    float smallestOverlap = std::numeric_limits<float>::max();
+    glm::vec2 MTVAxis(0.0f);
+
+    for (int i = 0; i < 3; i++)
+    {
+        box_min = glm::dot(boxPoints[0], axis[i]);
+        box_max = box_min;
+
+        for (int j = 0; j < 4; j++)
+        {
+            float projection = glm::dot(boxPoints[j], axis[i]);
+            if (projection < box_min) box_min = projection;
+            if (projection > box_max) box_max = projection;
+        }
+
+        float angle = atan(axis[i].y / axis[i].x);
+        glm::vec2 pointPerimeters[2] = {
+            { circleCenter.x - c1.radius * cos(angle), circleCenter.y - c1.radius * sin(angle) },
+            { circleCenter.x + c1.radius * cos(angle), circleCenter.y + c1.radius * sin(angle) }
+        };
+
+        float circle_1_projection = glm::dot(pointPerimeters[0], axis[i]);
+        float circle_2_projection = glm::dot(pointPerimeters[1], axis[i]);
+
+        if (circle_1_projection < circle_2_projection)
+        {
+            circle_min = circle_1_projection;
+            circle_max = circle_2_projection;
+        }
+        else
+        {
+            circle_min = circle_2_projection;
+            circle_max = circle_1_projection;
+        }
+
+        auto min1 = std::min(circle_max, box_max);
+        auto max1 = std::max(circle_min, box_min);
+        auto diff = min1 - max1;
+        auto overlap = std::max(0.0f, diff);
+        //if (overlap == 0) return false;
+
+        if (!((circle_min <= box_max) && (circle_max >= box_min)))
+            return false;
+
+        if (overlap < smallestOverlap)
+        {
+            smallestOverlap = overlap;
+            MTVAxis = axis[i];
+        }
+    }
+
+    auto p2top1 = glm::vec2(pos2.x - pos1.x, pos2.z - pos1.z);
+    if (glm::dot(MTVAxis, p2top1) >= 0)
+    {
+        MTVAxis *= -1.0f;
+    }
+    sepVector.x = MTVAxis.x * smallestOverlap;
+    sepVector.z = MTVAxis.y * smallestOverlap;
+
+    return true;
+}
+
+/*bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const float& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
+{
     float tbx1, tby1, tbx2, tby2;
     float bx1, by1, bx2, by2;
     tbx1 = -c2.width / 2.0f;
@@ -174,7 +287,15 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
         sepVector.z = (cf.y / dist) * (c1.radius - dist);
     }
 
-    return true;
+    //var penetrationDepth = circle.r - dist;
+    //var penetrationVector = dist.normalise().mult(penetrationDepth);
+
+    /*auto penDepth = c1.radius - dist;
+    auto penVec = glm::normalize(cf) * dist;
+    sepVector.x = penVec.x;
+    sepVector.z = penVec.y;*/
+
+    //return true;
 
     // If the distance is less than the circle's radius, an intersection occurs
     /*float distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
@@ -186,7 +307,7 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
         return true;
     }
     return false;*/
-}
+//}
 
 void PhysicsSystem::SetCollector(std::shared_ptr<ColliderCollectorSystem> colliderCollectorSystem)
 {

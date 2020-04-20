@@ -24,7 +24,7 @@ void CircleColliderRenderSystem::Render()
 		auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 
 		glm::mat4 modelMat = transform.GetWorldTransform();
-		modelMat = glm::scale(modelMat, glm::vec3(circleCollider.radius, 0.0f, circleCollider.radius));
+		modelMat = glm::scale(modelMat, glm::vec3(circleCollider.radius, 1.0f, circleCollider.radius));
 		shader->setMat4("gModel", modelMat);
 
 		glDrawArrays(GL_LINE_LOOP, 0, size);
@@ -44,7 +44,7 @@ std::vector<glm::vec3> CreateCircleArray(float radius, int fragments)
 
 	for (float currAngle = 0.0f; currAngle <= 2.0f * PI; currAngle += increment)
 	{
-		result.push_back(glm::vec3(radius * cos(currAngle), 5.0f, radius * sin(currAngle)));
+		result.push_back(glm::vec3(radius * cos(currAngle), 1.0f, radius * sin(currAngle)));
 	}
 
 	return result;
