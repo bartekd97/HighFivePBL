@@ -99,9 +99,50 @@ namespace {
 
 		void Create(GameObject target) override
 		{
+			//TODO: load collider from file
+			Collider collider;
+			collider.type = Collider::ColliderTypes::DYNAMIC;
+			collider.shape = Collider::ColliderShapes::CIRCLE;
 			CircleCollider cc;
 			cc.radius = radius;
+			HFEngine::ECS.AddComponent<Collider>(target, collider);
 			HFEngine::ECS.AddComponent<CircleCollider>(target, cc);
+		}
+	};
+
+	class BoxColliderLoader : public IPrefabComponentLoader
+	{
+	public:
+		float width;
+		float height;
+
+		void Preprocess(PropertyReader& properties) override
+		{
+			static std::string tmpString;
+			width = 0.0f;
+			height = 0.0f;
+
+			if (properties.GetString("width", tmpString, "0.0"))
+			{
+				width = std::stof(tmpString);
+			}
+			if (properties.GetString("height", tmpString, "0.0"))
+			{
+				height = std::stof(tmpString);
+			}
+		}
+
+		void Create(GameObject target) override
+		{
+			//TODO: load collider from file
+			Collider collider;
+			collider.type = Collider::ColliderTypes::STATIC;
+			collider.shape = Collider::ColliderShapes::BOX;
+			BoxCollider bc;
+			bc.width = width;
+			bc.height = height;
+			HFEngine::ECS.AddComponent<Collider>(target, collider);
+			HFEngine::ECS.AddComponent<BoxCollider>(target, bc);
 		}
 	};
 
@@ -140,5 +181,6 @@ void PrefabComponentLoader::RegisterLoaders()
 	PrefabManager::RegisterComponentLoader("MeshRenderer", []() { return std::make_shared<MeshRendererLoader>(); });
 	PrefabManager::RegisterComponentLoader("RigidBody", []() { return std::make_shared<RigidBodyLoader>(); });
 	PrefabManager::RegisterComponentLoader("CircleCollider", []() { return std::make_shared<CircleColliderLoader>(); });
+	PrefabManager::RegisterComponentLoader("BoxCollider", []() { return std::make_shared<BoxColliderLoader>(); });
 	PrefabManager::RegisterComponentLoader("ScriptComponent", []() { return std::make_shared<ScriptComponentLoader>(); });
 }
