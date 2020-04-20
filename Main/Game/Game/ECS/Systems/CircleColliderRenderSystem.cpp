@@ -44,7 +44,7 @@ std::vector<glm::vec3> CreateCircleArray(float radius, int fragments)
 
 	for (float currAngle = 0.0f; currAngle <= 2.0f * PI; currAngle += increment)
 	{
-		result.push_back(glm::vec3(radius * cos(currAngle), 1.0f, radius * sin(currAngle)));
+		result.push_back(glm::vec3(radius * cos(currAngle), 0.0f, radius * sin(currAngle)));
 	}
 
 	return result;

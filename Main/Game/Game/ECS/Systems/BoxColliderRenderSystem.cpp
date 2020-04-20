@@ -33,7 +33,7 @@ void BoxColliderRenderSystem::Render()
 		//modelMat *= transform.GetWorldTransform();
 		shader->setMat4("gModel", modelMat);
 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawArrays(GL_LINE_STRIP, 0, 5);
 	}
 
 	glBindVertexArray(0);
@@ -46,12 +46,17 @@ void BoxColliderRenderSystem::Init()
 
 	std::vector<glm::vec3> vertices =
 	{
-		glm::vec3(-0.5f, 1.0f, -0.5f),
-		glm::vec3(0.5f, 1.0f, -0.5f),
-		glm::vec3(0.5f, 1.0f, 0.5f),
-		glm::vec3(0.5f, 1.0f, 0.5f),
-		glm::vec3(-0.5f, 1.0f, 0.5f),
-		glm::vec3(-0.5f, 1.0f, -0.5f)
+		/*glm::vec3(-0.5f, 0.0f, -0.5f),
+		glm::vec3(0.5f, 0.0f, -0.5f),
+		glm::vec3(0.5f, 0.0f, 0.5f),
+		glm::vec3(0.5f, 0.0f, 0.5f),
+		glm::vec3(-0.5f, 0.0f, 0.5f),
+		glm::vec3(-0.5f, 0.0f, -0.5f)*/
+		glm::vec3(0.5f, 0.0f, -0.5f),
+		glm::vec3(0.5f, 0.0f, 0.5f),
+		glm::vec3(-0.5f, 0.0f, 0.5f),
+		glm::vec3(-0.5f, 0.0f, -0.5f),
+		glm::vec3(0.5f, 0.0f, -0.5f)
 	};
 
 	glGenVertexArrays(1, &vao);
