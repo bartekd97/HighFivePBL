@@ -91,6 +91,7 @@ namespace HFEngine
 		// render components
 		ECS.RegisterComponent<CubeRenderer>();
 		ECS.RegisterComponent<MeshRenderer>();
+		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();

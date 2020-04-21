@@ -67,10 +67,10 @@ namespace ModelManager {
 			GL_STATIC_DRAW);
 
 		// pos attrib
-		glVertexAttribIPointer(0, 3, GL_INT, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, bones));
+		glVertexAttribIPointer(5, 4, GL_INT, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, bones));
 		glEnableVertexAttribArray(5);
 		// uv attrib
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, weights));
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, weights));
 		glEnableVertexAttribArray(6);
 
 		return bvbo;
@@ -106,7 +106,7 @@ void ModelManager::Initialize()
 	std::vector<Vertex> vertices0; vertices0.push_back(Vertex());
 	std::vector<unsigned> indices0; indices0.push_back(0);
 	std::shared_ptr<Mesh> mesh0 = CreateMesh(vertices0, indices0);
-	BLANK_MODEL = std::shared_ptr<Model>(new Model(mesh0, MaterialManager::BLANK_MATERIAL));
+	BLANK_MODEL = std::shared_ptr<Model>(new Model(mesh0, MaterialManager::BLANK_MATERIAL, nullptr));
 
 	Initialized = true;
 

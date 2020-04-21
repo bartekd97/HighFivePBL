@@ -76,9 +76,9 @@ int main()
 	prefab->Instantiate({ 80.0f, 2.0f, 100.0f });
 
 	auto demon = ModelManager::GetModel("Characters/Player", "Demon");
-	MeshRenderer demonRenderer = { demon->mesh, demon->material, true };
+	SkinnedMeshRenderer demonRenderer = { demon->mesh, demon->material, demon->skinningData, true };
 	HFEngine::ECS.RemoveComponent<MeshRenderer>(movableTestObject);
-	HFEngine::ECS.AddComponent<MeshRenderer>(movableTestObject, demonRenderer);
+	HFEngine::ECS.AddComponent<SkinnedMeshRenderer>(movableTestObject, demonRenderer);
 	//HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(0.01f));
 
 	auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");

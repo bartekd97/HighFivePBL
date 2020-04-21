@@ -100,6 +100,7 @@
     <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptStartSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
+    <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
     <ClInclude Include="ECS\Components\ScriptContainer.h" />
+    <ClInclude Include="ECS\Components\SkinnedMeshRenderer.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
     <ClInclude Include="ECS\ECSCore.h" />
     <ClInclude Include="ECS\ECSTypes.h" />
@@ -168,6 +170,7 @@
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
+    <ClInclude Include="ECS\Systems\SkinnedMeshRendererSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\EventManager.h" />

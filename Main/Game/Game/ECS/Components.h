@@ -6,6 +6,7 @@
 #include "Components/RigidBody.h"
 #include "Components/Gravity.h"
 #include "Components/MeshRenderer.h"
+#include "Components/SkinnedMeshRenderer.h"
 #include "Components/MapLayoutComponents.h"
 #include "Components/ScriptContainer.h"
 #include "Components/CircleCollider.h"
