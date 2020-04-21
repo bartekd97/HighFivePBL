@@ -16,6 +16,7 @@ namespace ModelManager {
 	std::shared_ptr<ModelLibrary> GENERIC_LIBRARY;
 	std::shared_ptr<Model> BLANK_MODEL;
 
+	std::vector<std::shared_ptr<Model>> CacheHolder;
 
 	bool Initialized = false;
 
@@ -52,6 +53,27 @@ namespace ModelManager {
 		glEnableVertexAttribArray(4);
 
 		return vbo;
+	}
+
+	GLuint MakeAndSetupBoneVBO(std::vector<VertexBoneData>& boneData)
+	{
+		GLuint bvbo;
+		glGenBuffers(1, &bvbo);
+
+		glBindBuffer(GL_ARRAY_BUFFER, bvbo);
+		glBufferData(GL_ARRAY_BUFFER,
+			sizeof(VertexBoneData) * boneData.size(),
+			&boneData[0],
+			GL_STATIC_DRAW);
+
+		// pos attrib
+		glVertexAttribIPointer(0, 3, GL_INT, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, bones));
+		glEnableVertexAttribArray(5);
+		// uv attrib
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, weights));
+		glEnableVertexAttribArray(6);
+
+		return bvbo;
 	}
 
 	GLuint MakeAndSetupEBO(std::vector<unsigned>& indices)
@@ -104,7 +126,22 @@ std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, st
 
 	glBindVertexArray(0);
 
-	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, ebo, indices.size()));
+	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, 0, ebo, indices.size()));
+}
+
+std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData)
+{
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	GLuint vbo = MakeAndSetupVBO(vertices);
+	GLuint bvbo = MakeAndSetupBoneVBO(boneData);
+	GLuint ebo = MakeAndSetupEBO(indices);
+
+	glBindVertexArray(0);
+
+	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, bvbo, ebo, indices.size()));
 }
 
 std::shared_ptr<ModelLibrary> ModelManager::GetLibrary(std::string name)
@@ -143,6 +180,28 @@ std::shared_ptr<Model> ModelManager::GetModel(std::string libraryName, std::stri
 {
 	return ModelManager::GetLibrary(libraryName)->GetModel(modelName);
 }
+
+
+
+void ModelManager::UnloadUnused()
+{
+	int i = 0;
+	for (; i < CacheHolder.size(); i++)
+	{
+		const auto& model = CacheHolder.at(i);
+
+		if (model.use_count() > 1)
+			continue;
+
+		if (model->material.use_count() > 1 ||
+			model->mesh.use_count() > 1)
+			continue;
+
+		CacheHolder.erase(CacheHolder.begin() + i);
+		i--;
+	}
+}
+
 
 
 // classes
@@ -209,6 +268,7 @@ ModelLibrary::ModelLibrary(std::string name) : name(name)
 		LibraryEntity* entity = new LibraryEntity();
 		entity->meshFile = meshFilepath;
 		entity->materialName = nullableString(node->Attribute("material"));
+		entity->skinned = node->Attribute("skinned", "true") != NULL;
 
 		entities[modelName] = entity;
 	}
@@ -226,41 +286,26 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
 
-	if (entity->meshCache.expired())
+	MeshFileLoader loader(entity->meshFile);
+	std::vector<Vertex> vertices;
+	std::vector<unsigned> indices;
+	if (loader.ReadMeshData(vertices, indices))
 	{
-		MeshFileLoader loader(entity->meshFile);
-		std::vector<Vertex> vertices;
-		std::vector<unsigned> indices;
-		if (loader.ReadMeshData(vertices, indices))
-		{
-			mesh = ModelManager::CreateMesh(vertices, indices);
-			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
-		}
-		else
-		{
-			mesh = ModelManager::BLANK_MODEL->mesh;
-			LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
-		}
+		mesh = ModelManager::CreateMesh(vertices, indices);
+		LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
 	}
 	else
 	{
-		mesh = entity->meshCache.lock();
+		mesh = ModelManager::BLANK_MODEL->mesh;
+		LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
 	}
+	material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
 
-	if (entity->materialCache.expired())
-	{
-		material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
-	}
-	else
-	{
-		material = entity->materialCache.lock();
-	}
 
 	std::shared_ptr<Model> ptr(new Model(mesh,material));
 
 	entity->model = ptr;
-	entity->meshCache = mesh;
-	entity->materialCache = material;
+	ModelManager::CacheHolder.push_back(ptr);
 	return ptr;
 }
 

@@ -25,6 +25,8 @@
 
 #include "MapGenerator/MapGenerator.h"
 
+#include "Resourcing/MeshFileLoader.h"
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -51,9 +53,9 @@ int main()
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
+
 	MapGenerator generator;
 	generator.Generate();
-
 
 	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
 	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material, true };
@@ -72,6 +74,12 @@ int main()
 	auto prefab = PrefabManager::GetPrefab("CircleTest");
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 2.0f, 100.0f });
 	prefab->Instantiate({ 80.0f, 2.0f, 100.0f });
+
+	auto demon = ModelManager::GetModel("Characters/Player", "Demon");
+	MeshRenderer demonRenderer = { demon->mesh, demon->material, true };
+	HFEngine::ECS.RemoveComponent<MeshRenderer>(movableTestObject);
+	HFEngine::ECS.AddComponent<MeshRenderer>(movableTestObject, demonRenderer);
+	//HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(0.01f));
 
 	HFEngine::ECS.AddComponent<ScriptContainer>(movableTestObject, {});
 	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(movableTestObject);
@@ -97,6 +105,8 @@ int main()
 		HFEngine::Renderer.Render();
 
 		glfwSwapBuffers(window);
+
+		ModelManager::UnloadUnused();
 		
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();

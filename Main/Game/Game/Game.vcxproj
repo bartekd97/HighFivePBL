@@ -180,6 +180,7 @@
     <ClInclude Include="Rendering\Lights.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
+    <ClInclude Include="Resourcing\SkinningData.h" />
     <ClInclude Include="Resourcing\Material.h" />
     <ClInclude Include="Resourcing\MaterialManager.h" />
     <ClInclude Include="Resourcing\Mesh.h" />

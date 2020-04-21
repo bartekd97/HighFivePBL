@@ -9,7 +9,9 @@
 class Material;
 class MaterialLibrary;
 struct Vertex;
+struct VertexBoneData;
 class Mesh;
+class SkinningData;
 class Model;
 class ModelLibrary;
 
@@ -21,8 +23,11 @@ namespace ModelManager {
 	extern std::shared_ptr<Model> BLANK_MODEL; // 1 zero vertex mesh with blank material
 
 	std::shared_ptr<Mesh> CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices);
+	std::shared_ptr<Mesh> CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData);
 	std::shared_ptr<ModelLibrary> GetLibrary(std::string name);
 	std::shared_ptr<Model> GetModel(std::string libraryName, std::string modelName);
+
+	void UnloadUnused(); // call only once per some time
 }
 
 class ModelLibrary {
@@ -36,9 +41,8 @@ private:
 	struct LibraryEntity {
 		std::string meshFile;
 		std::string materialName;
+		bool skinned;
 		std::weak_ptr<Model> model;
-		std::weak_ptr<Mesh> meshCache;
-		std::weak_ptr<Material> materialCache;
 	};
 	std::unordered_map<std::string, LibraryEntity*> entities;
 

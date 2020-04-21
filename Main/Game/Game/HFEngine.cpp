@@ -76,8 +76,8 @@ namespace HFEngine
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
-		//MainCamera.SetScale(0.015625f); // 1/64
-		MainCamera.SetScale(0.0625f); // 1/16
+		MainCamera.SetScale(0.015625f); // 1/64
+		//MainCamera.SetScale(0.0625f); // 1/16
 
 		ECS.Init();
 

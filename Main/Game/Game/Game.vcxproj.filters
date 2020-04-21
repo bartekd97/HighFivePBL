@@ -118,5 +118,6 @@
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
+    <ClInclude Include="Resourcing\SkinningData.h" />
   </ItemGroup>
 </Project>
