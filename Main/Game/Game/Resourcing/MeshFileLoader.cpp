@@ -77,8 +77,8 @@ MeshFileLoader::MeshFileLoader(std::string filepath)
 		aiProcess_GenSmoothNormals |
 		//aiProcess_PreTransformVertices |
 		//aiProcess_RemoveRedundantMaterials |
-		//aiProcess_OptimizeMeshes |
-		//aiProcess_OptimizeGraph |
+		aiProcess_OptimizeMeshes |
+		aiProcess_OptimizeGraph |
 		aiProcess_ImproveCacheLocality |
 		aiProcess_LimitBoneWeights | // for max 4 bones per vertex
 		aiProcess_GenBoundingBoxes; // for later usage (AABB bounding box)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ModelManager.h"
-#include "Mesh.h"
 
 class Model {
 	friend void ModelManager::Initialize();
@@ -10,8 +9,9 @@ class Model {
 public:
 	const std::shared_ptr<Mesh> mesh;
 	const std::shared_ptr<Material> material;
+	const std::shared_ptr<SkinningData> skinningData;
 
 private:
-	Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material) :
-		mesh(mesh), material(material) {}
+	Model(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material, std::shared_ptr<SkinningData> skinningData) :
+		mesh(mesh), material(material), skinningData(skinningData) {}
 };

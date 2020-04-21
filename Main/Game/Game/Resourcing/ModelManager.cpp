@@ -285,14 +285,32 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 {
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
+	std::shared_ptr<SkinningData> skinningData;
 
 	MeshFileLoader loader(entity->meshFile);
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
 	if (loader.ReadMeshData(vertices, indices))
 	{
-		mesh = ModelManager::CreateMesh(vertices, indices);
-		LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+		if (entity->skinned)
+		{
+			std::vector<VertexBoneData> boneData;
+			if (loader.ReadBoneData(boneData, skinningData))
+			{
+				mesh = ModelManager::CreateMesh(vertices, indices, boneData);
+				LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+			}
+			else
+			{
+				mesh = ModelManager::BLANK_MODEL->mesh;
+				LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
+			}
+		}
+		else
+		{
+			mesh = ModelManager::CreateMesh(vertices, indices);
+			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+		}
 	}
 	else
 	{
@@ -302,7 +320,7 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 	material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
 
 
-	std::shared_ptr<Model> ptr(new Model(mesh,material));
+	std::shared_ptr<Model> ptr(new Model(mesh,material,skinningData));
 
 	entity->model = ptr;
 	ModelManager::CacheHolder.push_back(ptr);
