@@ -397,6 +397,7 @@ void CellFenceGenerator::PrepareObjectsForSection(std::vector<std::shared_ptr<Se
 
 void CellFenceGenerator::BuildSections(GameObject parent)
 {
+    //if (parent > 50) return;
     GameObject element, container;
     for (int i = 0; i < brokenCurves.size(); i++)
     {

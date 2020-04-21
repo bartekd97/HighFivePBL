@@ -81,6 +81,18 @@ int main()
 	HFEngine::ECS.AddComponent<MeshRenderer>(movableTestObject, demonRenderer);
 	//HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(0.01f));
 
+	auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");
+	bigPrefab->Instantiate({ 90.0f, 2.0f, 120.0f });
+
+	auto boxColliderTest = PrefabManager::GetPrefab("BoxTest");
+	boxColliderTest->Instantiate({ 90.0f, 2.0f, 90.0f });
+	auto angledBox = boxColliderTest->Instantiate({ 105.0f, 2.0f, 90.0f });
+	auto angledBox2 = boxColliderTest->Instantiate({ 100.0f, 2.0f, 75.0f });
+	auto angledBox3 = boxColliderTest->Instantiate({ 80.0f, 2.0f, 75.0f });
+	HFEngine::ECS.GetComponent<Transform>(angledBox).RotateSelf(45, glm::vec3(0.0f, 1.0f, 0.0f));
+	HFEngine::ECS.GetComponent<Transform>(angledBox2).RotateSelf(90, glm::vec3(0.0f, 1.0f, 0.0f));
+	HFEngine::ECS.GetComponent<Transform>(angledBox3).RotateSelf(134, glm::vec3(0.0f, 1.0f, 0.0f));
+
 	HFEngine::ECS.AddComponent<ScriptContainer>(movableTestObject, {});
 	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(movableTestObject);
 	scriptContainer.AddScript(movableTestObject, "CharControllerTest");

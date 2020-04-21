@@ -90,6 +90,8 @@
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
+    <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
@@ -134,7 +136,9 @@
     <ClInclude Include="ECS\ComponentArray.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
     <ClInclude Include="ECS\Components.h" />
+    <ClInclude Include="ECS\Components\BoxCollider.h" />
     <ClInclude Include="ECS\Components\CircleCollider.h" />
+    <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\CubeRenderer.h" />
     <ClInclude Include="ECS\Components\CubeSpawner.h" />
     <ClInclude Include="ECS\Components\Gravity.h" />
@@ -153,6 +157,9 @@
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
+    <ClInclude Include="ECS\Systems\BoxColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\ColliderCollectorSystem.h" />
     <ClInclude Include="ECS\Systems\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
@@ -204,6 +211,9 @@
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
