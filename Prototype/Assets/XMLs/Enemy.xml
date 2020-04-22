@@ -1,1 +1,1 @@
-<prefab>elo<children><children><children>HealthBar (HealthBar)HealthBar (Billboard)<children></children></children></children></children></prefab>
+<prefab>Enemy (Properties)elo<children><child><children><child></child><child></child><child></child><child></child><child><children><child>HealthBar (Properties)HealthBar (HealthBar)HealthBar (Billboard)<children><child></child><child></child></children></child></children></child></children></child></children></prefab>
