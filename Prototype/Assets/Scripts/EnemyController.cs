@@ -177,4 +177,9 @@ public class EnemyController : MonoBehaviour
             SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
         }
     }
+
+    public override string ToString()
+    {
+        return "elo";
+    }
 }
