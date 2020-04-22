@@ -10,6 +10,7 @@ public class PrefabExporter : MonoBehaviour
 
     public List<GameObject> prefabs;
     public List<Component> components;
+    string content;
 
     public void Generate()
     {
@@ -20,12 +21,13 @@ public class PrefabExporter : MonoBehaviour
         foreach (GameObject prefab in prefabs)
         {
             //open stream
-
+            content += "<prefab>";
             AddComponentAndChildren(prefab);
-
+            content += "</prefab>";
             //Serialize(prefab, "test.xml");
-            
+
             //close stream
+            CreateFile(prefab.name);
         }
 
     }
@@ -39,11 +41,13 @@ public class PrefabExporter : MonoBehaviour
 
             if(component.GetType().ToString().Substring(0, 5) != "Unity")
             {
-                Debug.Log(component.ToString());
+                content += component.ToString();
+                //Debug.Log(component.GetInstanceID());
                 //Debug.Log(component.GetType());
                 //component.Kamil();
             }
-
+            //Debug.Log(component.GetType());
+            //Debug.Log(component.GetInstanceID());
             //Debug.Log(component.ToString());
             //string componentFun = component.GetType().ToString() + ".Kamil()";
             //component.Invoke("Kamil", 0.0f);
@@ -52,14 +56,21 @@ public class PrefabExporter : MonoBehaviour
             //adding to stream info about component
         }
 
-        foreach (Transform child in transform)
+        if (prefab.transform.childCount != 0)
         {
-            //adding to stream info about child
+            content += "<children>";
+            foreach (Transform child in prefab.transform)
+            {
+                //adding to stream info about child
+                content += "<child>";
+                AddComponentAndChildren(child.gameObject);
+                content += "</child>";
+            }
+            content += "</children>";
 
-            AddComponentAndChildren(prefab);
         }
 
-        Debug.Log(components.Count);
+        Debug.Log(prefab.transform.childCount);
     }
 
     //void Save(GameObject rootObject, string filename)
@@ -80,7 +91,6 @@ public class PrefabExporter : MonoBehaviour
     //    writer.Close();
     //}
 
-
     private void AddPrefabs()
     {
         prefabs = new List<GameObject>();
@@ -91,6 +101,19 @@ public class PrefabExporter : MonoBehaviour
 
             prefabs.Add(lo);
         }
+    }
+
+    void CreateFile(string filename)
+    {
+        string path = Application.dataPath + "/XMLs/" + filename + ".xml";
+
+        File.WriteAllText(path, content);
+
+        content = null;
+
+        //string content = "<elo></elo>";
+
+        //File.AppendAllText(path, content);
     }
 
 }
