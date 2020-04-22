@@ -106,7 +106,7 @@ void ModelManager::Initialize()
 	std::vector<Vertex> vertices0; vertices0.push_back(Vertex());
 	std::vector<unsigned> indices0; indices0.push_back(0);
 	std::shared_ptr<Mesh> mesh0 = CreateMesh(vertices0, indices0);
-	BLANK_MODEL = std::shared_ptr<Model>(new Model(mesh0, MaterialManager::BLANK_MATERIAL, nullptr));
+	BLANK_MODEL = std::shared_ptr<Model>(new Model(mesh0, MaterialManager::BLANK_MATERIAL));
 
 	Initialized = true;
 
@@ -194,7 +194,8 @@ void ModelManager::UnloadUnused()
 			continue;
 
 		if (model->material.use_count() > 1 ||
-			model->mesh.use_count() > 1)
+			model->mesh.use_count() > 1 ||
+			model->skinningData.use_count() > 1)
 			continue;
 
 		CacheHolder.erase(CacheHolder.begin() + i);
@@ -270,6 +271,23 @@ ModelLibrary::ModelLibrary(std::string name) : name(name)
 		entity->materialName = nullableString(node->Attribute("material"));
 		entity->skinned = node->Attribute("skinned", "true") != NULL;
 
+		int j = 0;
+		for (tinyxml2::XMLElement* animation = node->FirstChildElement("animation");
+			animation != nullptr;
+			animation = animation->NextSiblingElement("animation"), j++)
+		{
+			const char* animationName = animation->Attribute("name");
+			const char* animationClip = animation->Attribute("clip");
+
+			if (animationName == nullptr || animationClip == nullptr)
+			{
+				LogWarning("ModelLibrary::ModelLibrary(): Invalid animation node at #{}/{}", i, j);
+				continue;
+			}
+
+			entity->animations.push_back({ std::string(animationName), std::string(libraryFolder + animationClip) });
+		}
+
 		entities[modelName] = entity;
 	}
 	LogInfo("ModelLibrary::ModelLibrary(): Initialized '{}' library with {} entities", name, entities.size());
@@ -286,6 +304,7 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 	std::shared_ptr<Mesh> mesh;
 	std::shared_ptr<Material> material;
 	std::shared_ptr<SkinningData> skinningData;
+	Model::Animations animations;
 
 	MeshFileLoader loader(entity->meshFile);
 	std::vector<Vertex> vertices;
@@ -317,10 +336,27 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 		mesh = ModelManager::BLANK_MODEL->mesh;
 		LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
 	}
+	
 	material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
 
+	for (auto& ae : entity->animations)
+	{
+		std::shared_ptr<Animation> animation;
+		MeshFileLoader animFile(ae.clip);
+		if (animFile.ReadAnimation(animation))
+		{
+			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' animation for '{}' in '{}'", ae.name, name, this->name);
+		}
+		else
+		{
+			animation = Animation::Create(1.0f, 1.0f);
+			LogError("ModelLibrary::LoadEntity(): Failed loading animation '{}' for '{}' in '{}'", ae.name, name, this->name);
+		}
 
-	std::shared_ptr<Model> ptr(new Model(mesh,material,skinningData));
+		animations[ae.name] = animation;
+	}
+
+	std::shared_ptr<Model> ptr(new Model(mesh,material,skinningData, animations));
 
 	entity->model = ptr;
 	ModelManager::CacheHolder.push_back(ptr);

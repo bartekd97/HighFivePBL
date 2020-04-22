@@ -129,6 +129,7 @@
     <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
     <ClInclude Include="ECS\Components\SkinnedMeshRenderer.h" />
     <ClInclude Include="ECS\Systems\SkinnedMeshRendererSystem.h" />
+    <ClInclude Include="Resourcing\Animation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

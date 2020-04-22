@@ -12,6 +12,7 @@ struct Vertex;
 struct VertexBoneData;
 class Mesh;
 class SkinningData;
+class Animation;
 class Model;
 class ModelLibrary;
 
@@ -38,10 +39,15 @@ public:
 	const std::string name;
 
 private:
+	struct AnimEntry {
+		std::string name;
+		std::string clip;
+	};
 	struct LibraryEntity {
 		std::string meshFile;
 		std::string materialName;
 		bool skinned;
+		std::vector<AnimEntry> animations;
 		std::weak_ptr<Model> model;
 	};
 	std::unordered_map<std::string, LibraryEntity*> entities;
