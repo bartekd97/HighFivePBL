@@ -472,6 +472,12 @@ GameObject:
   - component: {fileID: 2004475492696947480}
   - component: {fileID: 6778357959507337015}
   - component: {fileID: 4011550119053882671}
+  - component: {fileID: 6043660811794649063}
+  - component: {fileID: 2431406466040421561}
+  - component: {fileID: 5761601563662810570}
+  - component: {fileID: 1408528238816549064}
+  - component: {fileID: 530515934820480340}
+  - component: {fileID: 3602344427456066010}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Enemy
@@ -536,6 +542,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lenght: 0
+  minForFill: 0
+  maxForFill: 0
 --- !u!114 &4011550119053882671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -561,6 +570,92 @@ MonoBehaviour:
   healthBar: {fileID: 3995673256348405370}
   pushBackForceAfterAttack: 2
   damage: 3
+--- !u!114 &6043660811794649063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff07da345cbb7c74bb7d185cd7bf2bb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 17.54
+  height: 7.95
+--- !u!114 &2431406466040421561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afaa307ed0bbb64469ec716ee7f958fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 2.49
+--- !u!114 &5761601563662810570
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f5fb629646d79a4aafcdb1fa063588a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
+  shape: 1
+--- !u!114 &1408528238816549064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: Sample
+  model: spaceship
+--- !u!114 &530515934820480340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5af531245a3ce9448dc77e5212556fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocity: {x: 0.72, y: 1.32, z: 1.5}
+  acceleration: {x: -1.5, y: -1.49, z: 1.86}
+  movePosition: {x: 1.32, y: 1.45, z: 0.84}
+  mass: -3.72
+--- !u!114 &3602344427456066010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69985610078484140980d6baba71b631, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0.93, y: 0, z: 0}
+  localRotation: {x: 0, y: 1.62, z: 0}
+  localScale: {x: 0, y: 0, z: 1.56}
 --- !u!1001 &9088025645858012889
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -568,11 +663,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6074166212550871928}
     m_Modifications:
-    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
-        type: 3}
-      propertyPath: m_Name
-      value: HealthBar
-      objectReference: {fileID: 0}
     - target: {fileID: 5290705387214696610, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -677,6 +767,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthBar
       objectReference: {fileID: 0}
     - target: {fileID: 5290705387946340837, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}

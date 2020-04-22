@@ -1,1 +1,1 @@
-<prefab>Player (CharController)<children><children></children></children></prefab>
+<prefab>Player (Properties)Player (CharController)<children><child><children><child></child><child></child><child></child><child></child></children></child></children></prefab>

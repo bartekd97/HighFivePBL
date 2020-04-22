@@ -1,1 +1,1 @@
-<prefab>HealthBar (HealthBar)<children></children></prefab>
+<prefab>HealthBar (Properties)HealthBar (HealthBar)<children><child></child><child></child></children></prefab>
