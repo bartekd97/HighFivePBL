@@ -356,6 +356,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3375344697600657612}
   - component: {fileID: 3375344697600657613}
+  - component: {fileID: 348335750938578890}
   - component: {fileID: 7151322014271017354}
   m_Layer: 0
   m_Name: MiniGhost
@@ -392,6 +393,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &348335750938578890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375344697600657614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &7151322014271017354
 MonoBehaviour:
   m_ObjectHideFlags: 0
