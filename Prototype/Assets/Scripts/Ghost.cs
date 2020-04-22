@@ -418,4 +418,15 @@ public class Ghost : MonoBehaviour
         IRend.positionCount = linePointsV.Length;
         IRend.SetPositions(linePointsV);
     }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
+    }
 }

@@ -14,7 +14,7 @@ public class Gravity : MonoBehaviour
         output = "";
         output += "<component name=\"Gravity\">";
 
-        if (force != Vector3.zero)
+        if (true)
         {
             string forceX = force.x.ToString("F2");
             string forceY = force.y.ToString("F2");

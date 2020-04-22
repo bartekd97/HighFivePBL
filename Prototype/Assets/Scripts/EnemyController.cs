@@ -178,8 +178,14 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    string output;
+
     public override string ToString()
     {
-        return "elo";
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }

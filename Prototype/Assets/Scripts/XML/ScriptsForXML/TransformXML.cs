@@ -16,6 +16,11 @@ public class TransformXML : MonoBehaviour
         output = "";
         output += "<component name=\"Transform\">";
 
+        localPosition = this.transform.position;
+        localRotation = this.transform.rotation.eulerAngles;
+        localScale = this.transform.localScale;
+
+
         if (localPosition != Vector3.zero)
         {
             string localPositionX = localPosition.x.ToString("F2");

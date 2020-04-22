@@ -14,10 +14,11 @@ public class RigidBodyXML : MonoBehaviour
 
     public override string ToString()
     {
+        mass = GetComponent<Rigidbody>().mass;
         output = "";
         output += "<component name=\"RigidBody\">";
 
-        if (velocity != Vector3.zero)
+        if (true)
         {
             string velocityX = velocity.x.ToString("F2");
             string velocityY = velocity.y.ToString("F2");
@@ -29,7 +30,7 @@ public class RigidBodyXML : MonoBehaviour
 
             output += "<property value=\"" + velocityXX + "," + velocityYY + "," + velocityZZ + "\" name=\"velocity\"/>";
         }
-        if (acceleration != Vector3.zero)
+        if (true)
         {
             string accelerationX = acceleration.x.ToString("F2");
             string accelerationY = acceleration.y.ToString("F2");
@@ -41,7 +42,7 @@ public class RigidBodyXML : MonoBehaviour
 
             output += "<property value=\"" + accelerationXX + "," + accelerationYY + "," + accelerationZZ + "\" name=\"acceleration\"/>";
         }
-        if (movePosition != Vector3.zero)
+        if (true)
         {
             string movePositionX = movePosition.x.ToString("F2");
             string movePositionY = movePosition.y.ToString("F2");
@@ -53,7 +54,7 @@ public class RigidBodyXML : MonoBehaviour
 
             output += "<property value=\"" + movePositionXX + "," + movePositionYY + "," + movePositionZZ + "\" name=\"movePosition\"/>";
         }
-        if (mass != 0.0f)
+        if (mass < 0.0f)
         {
             output += "<property value=\"" + mass + "\" name=\"mass\"/>";
         }

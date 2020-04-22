@@ -14,11 +14,11 @@ public class BoxColliderXML : MonoBehaviour
         output = "";
         output += "<component name=\"BoxCollider\">";
 
-        if (width != 0.0f)
+        if (width < 0.0f)
         {
             output += "<property value=\"" + width + "\" name=\"width\"/>";
         }
-        if (height != 0.0f)
+        if (height < 0.0f)
         {
             output += "<property value=\"" + height + "\" name=\"height\"/>";
         }
