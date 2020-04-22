@@ -16,12 +16,10 @@ public class PrefabExporter : MonoBehaviour
     {
         AddPrefabs();
 
-        Debug.Log(prefabs.Count);
 
         foreach (GameObject prefab in prefabs)
         {
             //open stream
-            content += "<prefab>";
             AddComponentAndChildren(prefab);
             content += "</prefab>";
             //Serialize(prefab, "test.xml");
@@ -62,15 +60,12 @@ public class PrefabExporter : MonoBehaviour
             foreach (Transform child in prefab.transform)
             {
                 //adding to stream info about child
-                content += "<child>";
                 AddComponentAndChildren(child.gameObject);
                 content += "</child>";
             }
             content += "</children>";
 
         }
-
-        Debug.Log(prefab.transform.childCount);
     }
 
     //void Save(GameObject rootObject, string filename)
@@ -111,7 +106,6 @@ public class PrefabExporter : MonoBehaviour
 
         content = null;
 
-        //string content = "<elo></elo>";
 
         //File.AppendAllText(path, content);
     }

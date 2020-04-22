@@ -14,7 +14,7 @@ public class CircleCollider : MonoBehaviour
         output = "";
         output += "<component name=\"CircleCollider\">";
 
-        if (radius != 0.0f)
+        if (radius < 0.0f)
         {
             output += "<property value=\"" + radius + "\" name=\"radius\"/>";
         }

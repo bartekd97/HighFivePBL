@@ -69,4 +69,15 @@ public class MonumentController : MonoBehaviour
             SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
         }
     }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
+    }
 }
