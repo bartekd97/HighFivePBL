@@ -206,7 +206,7 @@ bool MeshFileLoader::ReadBoneData(std::vector<VertexBoneData>& data, std::shared
 }
 
 
-bool MeshFileLoader::ReadAnimation(std::shared_ptr<Animation>& animation)
+bool MeshFileLoader::ReadAnimation(std::shared_ptr<AnimationClip>& animation)
 {
 	const aiScene* scene = importer.GetScene();
 	if (scene == NULL)
@@ -220,14 +220,14 @@ bool MeshFileLoader::ReadAnimation(std::shared_ptr<Animation>& animation)
 	aiAnimation* anim = scene->mAnimations[0];
 
 	float framerate = anim->mTicksPerSecond == 0.0f ? 25.0f : anim->mTicksPerSecond;
-	animation = Animation::Create(framerate, anim->mDuration);
+	animation = AnimationClip::Create(framerate, anim->mDuration);
 
-	std::vector<Animation::Channel::KeyVec3> positions;
-	std::vector<Animation::Channel::KeyQuat> rotations;
-	std::vector<Animation::Channel::KeyVec3> scales;
-	positions.reserve(Animation::Channel::MAX_KEYS);
-	rotations.reserve(Animation::Channel::MAX_KEYS);
-	scales.reserve(Animation::Channel::MAX_KEYS);
+	std::vector<AnimationClip::Channel::KeyVec3> positions;
+	std::vector<AnimationClip::Channel::KeyQuat> rotations;
+	std::vector<AnimationClip::Channel::KeyVec3> scales;
+	positions.reserve(AnimationClip::Channel::MAX_KEYS);
+	rotations.reserve(AnimationClip::Channel::MAX_KEYS);
+	scales.reserve(AnimationClip::Channel::MAX_KEYS);
 
 	for (int i = 0; i < anim->mNumChannels; i++)
 	{
@@ -245,7 +245,7 @@ bool MeshFileLoader::ReadAnimation(std::shared_ptr<Animation>& animation)
 		for (k = 0; k < channel->mNumScalingKeys; k++)
 			scales.push_back({ (float)channel->mScalingKeys[k].mTime, vec3_cast(channel->mScalingKeys[k].mValue) });
 	
-		auto aChannel = Animation::Channel::Create(positions, rotations, scales);
+		auto aChannel = AnimationClip::Channel::Create(positions, rotations, scales);
 		animation->AddChannel(std::string(channel->mNodeName.C_Str()), aChannel);
 	}
 

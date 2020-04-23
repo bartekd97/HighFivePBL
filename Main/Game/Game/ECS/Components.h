@@ -5,6 +5,7 @@
 #include "Components/CubeSpawner.h"
 #include "Components/RigidBody.h"
 #include "Components/Gravity.h"
+#include "Components/SkinAnimator.h"
 #include "Components/MeshRenderer.h"
 #include "Components/SkinnedMeshRenderer.h"
 #include "Components/MapLayoutComponents.h"

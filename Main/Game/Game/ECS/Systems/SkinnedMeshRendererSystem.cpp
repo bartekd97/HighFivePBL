@@ -31,6 +31,12 @@ void SkinnedMeshRendererSystem::RenderToGBuffer()
 		glm::mat4 modelMat = transform.GetWorldTransform();
 		toGBufferShader->setMat4("gModel", modelMat);
 
+		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
+		{
+			auto mat = renderer.boneMatrices[i];
+			toGBufferShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
+		}
+
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
 		renderer.mesh->draw();

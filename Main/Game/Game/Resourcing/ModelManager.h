@@ -12,7 +12,7 @@ struct Vertex;
 struct VertexBoneData;
 class Mesh;
 class SkinningData;
-class Animation;
+class AnimationClip;
 class Model;
 class ModelLibrary;
 

@@ -341,7 +341,7 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 
 	for (auto& ae : entity->animations)
 	{
-		std::shared_ptr<Animation> animation;
+		std::shared_ptr<AnimationClip> animation;
 		MeshFileLoader animFile(ae.clip);
 		if (animFile.ReadAnimation(animation))
 		{
@@ -349,7 +349,7 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 		}
 		else
 		{
-			animation = Animation::Create(1.0f, 1.0f);
+			animation = AnimationClip::Create(1.0f, 1.0f);
 			LogError("ModelLibrary::LoadEntity(): Failed loading animation '{}' for '{}' in '{}'", ae.name, name, this->name);
 		}
 

@@ -47,6 +47,7 @@
     <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -129,7 +130,9 @@
     <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
     <ClInclude Include="ECS\Components\SkinnedMeshRenderer.h" />
     <ClInclude Include="ECS\Systems\SkinnedMeshRendererSystem.h" />
-    <ClInclude Include="Resourcing\Animation.h" />
+    <ClInclude Include="ECS\Components\SkinAnimator.h" />
+    <ClInclude Include="Resourcing\AnimationClip.h" />
+    <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

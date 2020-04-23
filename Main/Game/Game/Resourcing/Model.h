@@ -6,7 +6,7 @@ class Model {
 	friend void ModelManager::Initialize();
 	friend class ModelLibrary;
 
-	typedef std::unordered_map<std::string, std::shared_ptr<Animation>> Animations;
+	typedef std::unordered_map<std::string, std::shared_ptr<AnimationClip>> Animations;
 
 public:
 	const std::shared_ptr<Mesh> mesh;
