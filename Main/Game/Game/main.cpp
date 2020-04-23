@@ -25,6 +25,8 @@
 
 #include "MapGenerator/MapGenerator.h"
 
+#include "Resourcing/MeshFileLoader.h"
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -51,9 +53,9 @@ int main()
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
+
 	MapGenerator generator;
 	generator.Generate();
-
 
 	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
 	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material, true };
@@ -72,6 +74,15 @@ int main()
 	auto prefab = PrefabManager::GetPrefab("CircleTest");
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 2.0f, 100.0f });
 	prefab->Instantiate({ 80.0f, 2.0f, 100.0f });
+
+	auto demon = ModelManager::GetModel("Characters/Player", "Demon");
+	SkinnedMeshRenderer demonRenderer = { demon->mesh, demon->material, demon->skinningData };
+	HFEngine::ECS.RemoveComponent<MeshRenderer>(movableTestObject);
+	HFEngine::ECS.AddComponent<SkinnedMeshRenderer>(movableTestObject, demonRenderer);
+	HFEngine::ECS.AddComponent<SkinAnimator>(movableTestObject, SkinAnimator());
+	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).clips = demon->animations;
+	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).SetAnimation("running");
+	HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(3.0f));
 
 	auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");
 	bigPrefab->Instantiate({ 90.0f, 2.0f, 120.0f });
@@ -109,6 +120,8 @@ int main()
 		HFEngine::Renderer.Render();
 
 		glfwSwapBuffers(window);
+
+		ModelManager::UnloadUnused();
 		
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();

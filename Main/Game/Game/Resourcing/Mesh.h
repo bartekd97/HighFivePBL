@@ -14,18 +14,25 @@ struct Vertex {
 	glm::vec3 bitangent = { 0,0,0 };
 };
 
+struct VertexBoneData {
+	unsigned int bones[4] = { 0,0,0,0 };
+	float weights[4] = { 0.0f,0.0f,0.0f,0.0f };
+};
+
 class Mesh
 {
 	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices);
+	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData);
 
 private:
 	GLuint VAO;
 	GLuint VBO;
+	GLuint bVBO; // bone data
 	GLuint EBO;
 	int indicesSize;
 
-	Mesh(GLuint VAO, GLuint VBO, GLuint EBO, int indicesSize) :
-		VAO(VAO), VBO(VBO), EBO(EBO), indicesSize(indicesSize) {}
+	Mesh(GLuint VAO, GLuint VBO, GLuint bVBO, GLuint EBO, int indicesSize) :
+		VAO(VAO), VBO(VBO), bVBO(bVBO), EBO(EBO), indicesSize(indicesSize) {}
 
 public:
 	inline void bind() { glBindVertexArray(VAO); }
@@ -40,6 +47,10 @@ public:
 	~Mesh() {
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
+		if (bVBO != 0)
+		{
+			glDeleteBuffers(1, &bVBO);
+		}
 		glDeleteBuffers(1, &EBO);
 	}
 };
