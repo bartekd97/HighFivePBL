@@ -11,3 +11,5 @@
 #include "Systems/CubeRenderSystem.h"
 #include "Systems/MeshRendererSystem.h"
 #include "Systems/BoxColliderRenderSystem.h"
+#include "Systems/MapCellCollectorSystem.h"
+

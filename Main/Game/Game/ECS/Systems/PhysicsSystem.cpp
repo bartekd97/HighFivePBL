@@ -50,7 +50,7 @@ void PhysicsSystem::Update(float dt)
         //if (islessequal(length, step)) continue;
         int steps = std::max(1, (int)std::round(length / step));
 		glm::vec3 moveStep = displacement / (float)steps;
-        glm::vec3 tempPosition = transform.GetPosition();
+        glm::vec3 tempPosition = transform.GetWorldPosition();
         glm::vec3 sepVector(0.0f);
         glm::vec3 oldVelocity = rigidBody.velocity;
 
@@ -70,23 +70,39 @@ void PhysicsSystem::Update(float dt)
                 {
                     auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
                     auto const& otherCollider = HFEngine::ECS.GetComponent<Collider>(otherObject);
-                    auto const& otherPosition = otherTransform.GetPosition();
+                    auto const& otherPosition = otherTransform.GetWorldPosition();
+
+                    auto dist = tempPosition - otherPosition;
+                    float distLen = veclen(dist);
 
                     localCollided = false;
 
                     if (collider.shape == Collider::ColliderShapes::CIRCLE && otherCollider.shape == Collider::ColliderShapes::CIRCLE)
                     {
-                        if (DetectCollision(tempPosition, HFEngine::ECS.GetComponent<CircleCollider>(gameObject), otherPosition, HFEngine::ECS.GetComponent<CircleCollider>(otherObject), sepVector))
+                        auto cc1 = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
+                        auto cc2 = HFEngine::ECS.GetComponent<CircleCollider>(otherObject);
+                        if (distLen <= (cc1.radius + cc2.radius))
                         {
-                            collided = true;
-                            localCollided = true;
+                            if (DetectCollision(tempPosition, cc1, otherPosition, cc2, sepVector))
+                            {
+                                collided = true;
+                                localCollided = true;
+                            }
                         }
                     } else if (collider.shape == Collider::ColliderShapes::CIRCLE && otherCollider.shape == Collider::ColliderShapes::BOX)
                     {
-                        if (DetectCollision(tempPosition, HFEngine::ECS.GetComponent<CircleCollider>(gameObject), otherPosition, -glm::angle(otherTransform.GetRotation()), HFEngine::ECS.GetComponent<BoxCollider>(otherObject), sepVector))
+                        auto cc1 = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
+                        auto bc2 = HFEngine::ECS.GetComponent<BoxCollider>(otherObject);
+                        if (distLen <= (cc1.radius + std::max(bc2.width, bc2.height)))
                         {
-                            collided = true;
-                            localCollided = true;
+                            auto angle = otherTransform.GetWorldRotation();
+                            auto ax = glm::axis(otherTransform.GetWorldRotation());
+                            if (DetectCollision(tempPosition, cc1, otherPosition, angle, bc2, sepVector))
+                            {
+                                auto xD = glm::angle(otherTransform.GetWorldRotation());
+                                collided = true;
+                                localCollided = true;
+                            }
                         }
                     }
 
@@ -96,7 +112,8 @@ void PhysicsSystem::Update(float dt)
                         {
                             auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
                             float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
-                            otherTransform.SetPosition(otherPosition - (sepVector * massFactor));
+                            //otherTransform.SetPosition(otherPosition - (sepVector * massFactor));
+                            otherTransform.TranslateSelf(- (sepVector * massFactor));
                             otherRb.velocity.x -= sepVector.x / dt * massFactor;
                             otherRb.velocity.z -= sepVector.z / dt * massFactor;
                             sepVector *= 1.0f - massFactor;
@@ -110,7 +127,8 @@ void PhysicsSystem::Update(float dt)
             }
             //if (collided) break;
         }
-        transform.SetPosition(tempPosition);
+        //transform.SetPosition(tempPosition);
+        transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
         if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;
         if (rigidBody.velocity.z * oldVelocity.z < 0) rigidBody.velocity.z = 0.0f;
         rigidBody.velocity *= 0.75f;
@@ -132,7 +150,7 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
     return true;
 }
 
-bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const float& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
+bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
 {
     // TODO: refaktor. maybe cache?
     float tbx1, tby1, tbx2, tby2;
@@ -141,16 +159,20 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
     tbx2 = c2.width / 2.0f;
     tby2 = c2.height / 2.0f;
 
-    glm::vec2 boxPoints[4] = {
-        { tbx1, tby1 },
-        { tbx2, tby1 },
-        { tbx2, tby2 },
-        { tbx1, tby2 }
+    glm::vec3 boxBPoints[4] = {
+        { tbx1, 0.0f, tby1 },
+        { tbx2, 0.0f, tby1 },
+        { tbx2, 0.0f, tby2 },
+        { tbx1, 0.0f, tby2 }
     };
+    glm::vec2 boxPoints[4];
     glm::vec2 boxPos(pos2.x, pos2.z);
     for (int i = 0; i < 4; i++)
     {
-        boxPoints[i] = glm::rotate(boxPoints[i], rotation2) + boxPos;
+        //boxPoints[i] = glm::rotate(boxPoints[i], rotation2) + boxPos;
+        boxBPoints[i] = rotation2 * boxBPoints[i];
+        boxPoints[i].x = boxBPoints[i].x + boxPos.x;
+        boxPoints[i].y = boxBPoints[i].z + boxPos.y;
     }
 
     glm::vec2 circleCenter(pos1.x, pos1.z);
@@ -181,7 +203,7 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
     float overlap;
     float minCircle, maxCircle, minBox, maxBox;
     float tempProjection;
-    int mtvAxisIndex;
+    int mtvAxisIndex = -1; //TODO: DEV -1
     float minOverlap = std::numeric_limits<float>::max();
 
     for (int i = 0; i < 5; i++)
@@ -212,6 +234,8 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
         }
 
     }
+
+    if (mtvAxisIndex == -1) return false; //TODO: DEV
 
     auto p2top1 = glm::vec2(pos2.x - pos1.x, pos2.z - pos1.z);
     if (glm::dot(axes[mtvAxisIndex], p2top1) >= 0)

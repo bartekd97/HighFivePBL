@@ -163,6 +163,7 @@
     <ClInclude Include="ECS\Systems\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
+    <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
     <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
+    <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />

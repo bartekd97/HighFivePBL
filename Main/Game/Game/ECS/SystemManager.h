@@ -71,6 +71,17 @@ public:
 		}
 	}
 
+	std::shared_ptr<System> GetSystemByTypeName(const char* typeName)
+	{
+		auto system = systems.find(typeName);
+		if (system != systems.end())
+		{
+			return system->second;
+		}
+
+		return nullptr;
+	}
+
 	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
 private:
 	std::unordered_map<const char*, Signature> signatures{};

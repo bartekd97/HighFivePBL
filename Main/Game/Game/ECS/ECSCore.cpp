@@ -75,6 +75,11 @@ std::optional<GameObject> ECSCore::GetGameObjectByName(std::string name)
 	return gameObjectManager->GetGameObjectByName(name);
 }
 
+std::shared_ptr<System> ECSCore::GetSystemByTypeName(const char* typeName)
+{
+	return systemManager->GetSystemByTypeName(typeName);
+}
+
 void ECSCore::UpdateSystems(float dt)
 {
 	for (auto it = systemManager->updateQueue.begin(); it != systemManager->updateQueue.end(); ++it)

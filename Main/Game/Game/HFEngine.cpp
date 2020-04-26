@@ -100,6 +100,13 @@ namespace HFEngine
 		ECS.RegisterComponent<CellGate>();
 		ECS.RegisterComponent<CellBridge>();
 
+		auto mapCellCollectorSystem = ECS.RegisterSystem<MapCellCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<MapCell>());
+			ECS.SetSystemSignature<MapCellCollectorSystem>(signature);
+		}
+
 		auto scriptStartSystem = ECS.RegisterSystem<ScriptStartSystem>(true);
 		auto scriptUpdateSystem = ECS.RegisterSystem<ScriptUpdateSystem>();
 		{

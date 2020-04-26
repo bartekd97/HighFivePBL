@@ -6,4 +6,8 @@
     <component name="MeshRenderer">
         <property name="model" value="Structures/Fences/PrototypeSet:HighFence"/>
     </component>
+  <component name="BoxCollider">
+    <property name="width" value="3.0"/>
+    <property name="height" value="0.5"/>
+  </component>
 </prefab>

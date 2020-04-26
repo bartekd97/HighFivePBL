@@ -24,7 +24,7 @@ void BoxColliderRenderSystem::Render()
 		auto& boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
 
 		glm::mat4 modelMat(1.0f);
-		modelMat = glm::translate(modelMat, transform.GetPosition());
+		modelMat = glm::translate(modelMat, transform.GetWorldPosition() * glm::vec3(1.0f, 0.0f, 1.0f));
 		modelMat *= glm::mat4_cast(transform.GetRotation());
 		modelMat = glm::scale(modelMat, glm::vec3(boxCollider.width, 1.0f, boxCollider.height));
 		shader->setMat4("gModel", modelMat);
