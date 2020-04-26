@@ -16,4 +16,5 @@ struct Collider
 
 	ColliderTypes type;
 	ColliderShapes shape;
+	bool frozen = false;
 };

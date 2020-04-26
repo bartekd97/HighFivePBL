@@ -92,6 +92,7 @@
     <ClCompile Include="ECS\GameObjectManager.cpp" />
     <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
@@ -114,6 +115,7 @@
     <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
     <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
+    <ClCompile Include="Physics\PhysicsCache.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
@@ -167,6 +169,7 @@
     <ClInclude Include="ECS\Systems\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
+    <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
     <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
@@ -188,6 +191,8 @@
     <ClInclude Include="MapGenerator\ConvexPolygon.h" />
     <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
     <ClInclude Include="MapGenerator\MapGenerator.h" />
+    <ClInclude Include="Physics\CacheNode.h" />
+    <ClInclude Include="Physics\PhysicsCache.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\Lights.h" />
@@ -211,6 +216,7 @@
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
+    <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />

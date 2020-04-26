@@ -1,4 +1,4 @@
-<prefab defaultScale="1.0,1.0,1.0">
+<prefab defaultScale="0.5,0.5,0.5">
     <component name="MeshRenderer">
         <property name="model" value="Sample:spaceship"/> <!-- LibraryName:ModelName-->
     </component>
@@ -8,7 +8,7 @@
         <property name="mass" value="10.0"/>
     </component>
     <component name="CircleCollider">
-        <property name="radius" value="4.5"/>
+        <property name="radius" value="2.25"/>
     </component>
 
     <children>
