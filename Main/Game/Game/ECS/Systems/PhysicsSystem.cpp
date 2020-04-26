@@ -49,20 +49,17 @@ void PhysicsSystem::Update(float dt)
 
 		float length = sqrt((displacement.x * displacement.x) + (displacement.z * displacement.z));
 
-        //if (islessequal(length, step)) continue;
         int steps = std::max(1, (int)std::round(length / step));
 		glm::vec3 moveStep = displacement / (float)steps;
         glm::vec3 tempPosition = transform.GetWorldPosition();
         glm::vec3 sepVector(0.0f);
         glm::vec3 oldVelocity = rigidBody.velocity;
 
-        //auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
         auto& cacheNode = PhysicsCache::nodes[gameObject];
 
         for (int s = 0; s < steps; s++)
         {
             tempPosition += moveStep;
-            //transform.SetPosition(tempPosition);
             
             collided = false;
 
@@ -122,7 +119,6 @@ void PhysicsSystem::Update(float dt)
             }
             //if (collided) break;
         }
-        //transform.SetPosition(tempPosition);
         transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
         cacheNode.position = transform.GetWorldPosition();
         if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;

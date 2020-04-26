@@ -46,6 +46,8 @@
     <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
+    <ClCompile Include="Physics\PhysicsCache.cpp" />
+    <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -128,8 +130,6 @@
     <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Physics\CacheNode.h" />
-    <ClInclude Include="Physics\CircleCacheNode.h" />
-    <ClInclude Include="Physics\BoxCacheNode.h" />
     <ClInclude Include="Physics\PhysicsCache.h" />
   </ItemGroup>
   <ItemGroup>
