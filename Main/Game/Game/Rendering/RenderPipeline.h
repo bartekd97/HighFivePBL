@@ -2,6 +2,7 @@
 
 #include "FrameBuffer.h"
 #include "ECS/Systems/MeshRendererSystem.h"
+#include "ECS/Systems/SkinnedMeshRendererSystem.h"
 #include "ECS/Systems/CubeRenderSystem.h"
 #include "ECS/Systems/BoxColliderRenderSystem.h"
 #include "ECS/Systems/CircleColliderRenderSystem.h"
@@ -27,6 +28,7 @@ public:
 	};
 	struct RenderSystemsStruct {
 		std::shared_ptr<MeshRendererSystem> meshRenderer;
+		std::shared_ptr<SkinnedMeshRendererSystem> skinnedMeshRender;
 		std::shared_ptr<CubeRenderSystem> cubeRenderer;
 		std::shared_ptr<BoxColliderRenderSystem> boxColliderRenderer;
 		std::shared_ptr<CircleColliderRenderSystem> circleColliderRenderer;

@@ -1,0 +1,5 @@
+<materials textureLibrary="this">
+    <material name="DemonMat">
+        <property name="albedoMap" value="albedo"/>
+    </material>
+</materials>

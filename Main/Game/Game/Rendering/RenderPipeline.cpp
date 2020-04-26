@@ -34,28 +34,30 @@ void RenderPipeline::InitRenderSystems()
 	RenderSystems.meshRenderer = HFEngine::ECS.RegisterSystem<MeshRendererSystem>();
 	{
 		Signature signature;
-		signature.set(HFEngine::ECS.GetComponentType<Transform>());
 		signature.set(HFEngine::ECS.GetComponentType<MeshRenderer>());
 		HFEngine::ECS.SetSystemSignature<MeshRendererSystem>(signature);
+	}
+	RenderSystems.skinnedMeshRender = HFEngine::ECS.RegisterSystem<SkinnedMeshRendererSystem>();
+	{
+		Signature signature;
+		signature.set(HFEngine::ECS.GetComponentType<SkinnedMeshRenderer>());
+		HFEngine::ECS.SetSystemSignature<SkinnedMeshRendererSystem>(signature);
 	}
 	RenderSystems.cubeRenderer = HFEngine::ECS.RegisterSystem<CubeRenderSystem>();
 	{
 		Signature signature;
-		signature.set(HFEngine::ECS.GetComponentType<Transform>());
 		signature.set(HFEngine::ECS.GetComponentType<CubeRenderer>());
 		HFEngine::ECS.SetSystemSignature<CubeRenderSystem>(signature);
 	}
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
 	{
 		Signature signature;
-		signature.set(HFEngine::ECS.GetComponentType<Transform>());
 		signature.set(HFEngine::ECS.GetComponentType<BoxCollider>());
 		HFEngine::ECS.SetSystemSignature<BoxColliderRenderSystem>(signature);
 	}
 	RenderSystems.circleColliderRenderer = HFEngine::ECS.RegisterSystem<CircleColliderRenderSystem>();
 	{
 		Signature signature;
-		signature.set(HFEngine::ECS.GetComponentType<Transform>());
 		signature.set(HFEngine::ECS.GetComponentType<CircleCollider>());
 		HFEngine::ECS.SetSystemSignature<CircleColliderRenderSystem>(signature);
 	}
@@ -93,6 +95,7 @@ void RenderPipeline::Render()
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	RenderSystems.meshRenderer->RenderToGBuffer();
+	RenderSystems.skinnedMeshRender->RenderToGBuffer();
 	//RenderSystems.cubeRenderer->Render();
 
 	// combine gbuffer

@@ -77,7 +77,8 @@ namespace HFEngine
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
 		//MainCamera.SetScale(0.015625f); // 1/64
-		MainCamera.SetScale(0.0625f); // 1/16
+		MainCamera.SetScale(0.03125f); // 1/32
+		//MainCamera.SetScale(0.0625f); // 1/16
 
 		ECS.Init();
 
@@ -88,9 +89,11 @@ namespace HFEngine
 		ECS.RegisterComponent<Collider>();
 		ECS.RegisterComponent<CircleCollider>();
 		ECS.RegisterComponent<BoxCollider>();
+		ECS.RegisterComponent<SkinAnimator>();
 		// render components
 		ECS.RegisterComponent<CubeRenderer>();
 		ECS.RegisterComponent<MeshRenderer>();
+		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
@@ -113,6 +116,15 @@ namespace HFEngine
 			Signature signature;
 			signature.set(ECS.GetComponentType<ScriptContainer>());
 			ECS.SetSystemSignature<ScriptUpdateSystem>(signature);
+		}
+
+
+		auto skinAnimatorSystem = ECS.RegisterSystem<SkinAnimatorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<SkinAnimator>());
+			signature.set(ECS.GetComponentType<SkinnedMeshRenderer>());
+			ECS.SetSystemSignature<SkinAnimatorSystem>(signature);
 		}
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
 		{
@@ -140,6 +152,8 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
 		}
+
+
 		auto scriptLateUpdateSystem = ECS.RegisterSystem<ScriptLateUpdateSystem>();
 		{
 			Signature signature;
