@@ -127,6 +127,10 @@
     <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
+    <ClInclude Include="Physics\CacheNode.h" />
+    <ClInclude Include="Physics\CircleCacheNode.h" />
+    <ClInclude Include="Physics\BoxCacheNode.h" />
+    <ClInclude Include="Physics\PhysicsCache.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

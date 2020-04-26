@@ -183,6 +183,10 @@
     <ClInclude Include="MapGenerator\ConvexPolygon.h" />
     <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
     <ClInclude Include="MapGenerator\MapGenerator.h" />
+    <ClInclude Include="Physics\BoxCacheNode.h" />
+    <ClInclude Include="Physics\CacheNode.h" />
+    <ClInclude Include="Physics\CircleCacheNode.h" />
+    <ClInclude Include="Physics\PhysicsCache.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\Lights.h" />

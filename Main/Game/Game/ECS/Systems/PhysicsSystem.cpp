@@ -4,6 +4,7 @@
 #include "PhysicsSystem.h"
 #include "HFEngine.h"
 
+#include "../../Physics/PhysicsCache.h"
 #include "../Components.h"
 
 #define clamp(x,min,max) x > min ? (x < max ? x : max) : min
@@ -23,6 +24,7 @@ void PhysicsSystem::Init()
  */
 void PhysicsSystem::Update(float dt)
 {
+    PhysicsCache::ProcessGameObjects(colliderCollectorSystem->gameObjects);
     bool collided, localCollided;
 	for (auto const& gameObject : gameObjects)
 	{
@@ -54,7 +56,8 @@ void PhysicsSystem::Update(float dt)
         glm::vec3 sepVector(0.0f);
         glm::vec3 oldVelocity = rigidBody.velocity;
 
-        auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
+        //auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
+        auto& cacheNode = PhysicsCache::nodes[gameObject];
 
         for (int s = 0; s < steps; s++)
         {
@@ -68,38 +71,29 @@ void PhysicsSystem::Update(float dt)
             {
                 if (gameObject != otherObject)
                 {
-                    auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
-                    auto const& otherCollider = HFEngine::ECS.GetComponent<Collider>(otherObject);
-                    auto const& otherPosition = otherTransform.GetWorldPosition();
+                    auto& otherCacheNode = PhysicsCache::nodes[otherObject];
 
-                    auto dist = tempPosition - otherPosition;
+                    auto dist = tempPosition - otherCacheNode.position;
                     float distLen = veclen(dist);
 
                     localCollided = false;
 
-                    if (collider.shape == Collider::ColliderShapes::CIRCLE && otherCollider.shape == Collider::ColliderShapes::CIRCLE)
+                    if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.collider.shape == Collider::ColliderShapes::CIRCLE)
                     {
-                        auto cc1 = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
-                        auto cc2 = HFEngine::ECS.GetComponent<CircleCollider>(otherObject);
-                        if (distLen <= (cc1.radius + cc2.radius))
+                        if (distLen <= (cacheNode.circleCollider.radius + otherCacheNode.circleCollider.radius))
                         {
-                            if (DetectCollision(tempPosition, cc1, otherPosition, cc2, sepVector))
+                            if (DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode.position, otherCacheNode.circleCollider, sepVector))
                             {
                                 collided = true;
                                 localCollided = true;
                             }
                         }
-                    } else if (collider.shape == Collider::ColliderShapes::CIRCLE && otherCollider.shape == Collider::ColliderShapes::BOX)
+                    } else if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.collider.shape == Collider::ColliderShapes::BOX)
                     {
-                        auto cc1 = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
-                        auto bc2 = HFEngine::ECS.GetComponent<BoxCollider>(otherObject);
-                        if (distLen <= (cc1.radius + std::max(bc2.width, bc2.height)))
+                        if (distLen <= (cacheNode.circleCollider.radius + std::max(otherCacheNode.boxCollider.width, otherCacheNode.boxCollider.height)))
                         {
-                            auto angle = otherTransform.GetWorldRotation();
-                            auto ax = glm::axis(otherTransform.GetWorldRotation());
-                            if (DetectCollision(tempPosition, cc1, otherPosition, angle, bc2, sepVector))
+                            if (DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode.position, otherCacheNode.rotation, otherCacheNode.boxCollider, sepVector))
                             {
-                                auto xD = glm::angle(otherTransform.GetWorldRotation());
                                 collided = true;
                                 localCollided = true;
                             }
@@ -108,12 +102,13 @@ void PhysicsSystem::Update(float dt)
 
                     if (localCollided)
                     {
-                        if (otherCollider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
+                        if (otherCacheNode.collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
                         {
                             auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
+                            auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
                             float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
-                            //otherTransform.SetPosition(otherPosition - (sepVector * massFactor));
                             otherTransform.TranslateSelf(- (sepVector * massFactor));
+                            otherCacheNode.position = otherTransform.GetWorldPosition();
                             otherRb.velocity.x -= sepVector.x / dt * massFactor;
                             otherRb.velocity.z -= sepVector.z / dt * massFactor;
                             sepVector *= 1.0f - massFactor;
@@ -129,6 +124,7 @@ void PhysicsSystem::Update(float dt)
         }
         //transform.SetPosition(tempPosition);
         transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
+        cacheNode.position = transform.GetWorldPosition();
         if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;
         if (rigidBody.velocity.z * oldVelocity.z < 0) rigidBody.velocity.z = 0.0f;
         rigidBody.velocity *= 0.75f;
