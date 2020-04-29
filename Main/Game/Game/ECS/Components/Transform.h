@@ -122,6 +122,10 @@ public:
 		this->position += direction * distance;
 		UpdateSelf();
 	}
+	inline void TranslateSelf(glm::vec3 vector) {
+		this->position += vector;
+		UpdateSelf();
+	}
 	inline void RotateSelf(float angle, glm::vec3 axis) {
 		this->rotation = glm::rotate(this->rotation, glm::radians(angle), axis * this->rotation);
 		this->rotationEuler = glm::vec3(

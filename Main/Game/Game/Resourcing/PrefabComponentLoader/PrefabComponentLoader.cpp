@@ -141,10 +141,11 @@ namespace {
 
 		void Create(GameObject target) override
 		{
-			//TODO: load collider from file
+			// TODO: load collider from file
 			Collider collider;
 			collider.type = Collider::ColliderTypes::STATIC;
 			collider.shape = Collider::ColliderShapes::BOX;
+			collider.frozen = true; // TODO: load this property from file too
 			BoxCollider bc;
 			bc.width = width;
 			bc.height = height;

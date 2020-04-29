@@ -16,15 +16,13 @@ void CircleColliderRenderSystem::Render()
 	glm::vec3 color(1.0f, 0.0f, 0.0f);
 	shader->setVector3F("uColor", color);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	for (auto const& gameObject : gameObjects)
 	{
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 
 		glm::mat4 modelMat(1.0f);
-		modelMat = glm::translate(modelMat, transform.GetPosition());
+		modelMat = glm::translate(modelMat, transform.GetWorldPosition() * glm::vec3(1.0f, 0.0f, 1.0f));
 		modelMat *= glm::mat4_cast(transform.GetRotation());
 		modelMat = glm::scale(modelMat, glm::vec3(circleCollider.radius, 1.0f, circleCollider.radius));
 		shader->setMat4("gModel", modelMat);
@@ -33,7 +31,6 @@ void CircleColliderRenderSystem::Render()
 	}
 
 	glBindVertexArray(0);
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
 std::vector<glm::vec3> CreateCircleArray(float radius, int fragments)

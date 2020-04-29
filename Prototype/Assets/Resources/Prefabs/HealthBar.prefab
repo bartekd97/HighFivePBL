@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5290705386840047426}
   - component: {fileID: 5290705386840047424}
   - component: {fileID: 5290705386840047427}
+  - component: {fileID: 6854453441347935568}
   m_Layer: 5
   m_Name: Border
   m_TagString: Untagged
@@ -73,6 +74,23 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6854453441347935568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290705386840047429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
+  localScale: {x: 0, y: 0, z: 0}
+  isChild: 1
+  isParent: 0
 --- !u!1 &5290705387214696613
 GameObject:
   m_ObjectHideFlags: 0
@@ -83,6 +101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5290705387214696610}
   - component: {fileID: 5290705387214696608}
+  - component: {fileID: 7129074643236375964}
   - component: {fileID: 5290705387214696611}
   m_Layer: 5
   m_Name: HealthBar
@@ -162,6 +181,23 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7129074643236375964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290705387214696613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
+  localScale: {x: 0, y: 0, z: 0}
+  isChild: 1
+  isParent: 0
 --- !u!114 &5290705387214696611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,6 +252,7 @@ GameObject:
   - component: {fileID: 5290705387946340837}
   - component: {fileID: 5290705387946340835}
   - component: {fileID: 5290705387946340834}
+  - component: {fileID: 1028807215930558835}
   m_Layer: 5
   m_Name: Fill
   m_TagString: Untagged
@@ -278,3 +315,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1028807215930558835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290705387946340836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
+  localScale: {x: 0, y: 0, z: 0}
+  isChild: 1
+  isParent: 0

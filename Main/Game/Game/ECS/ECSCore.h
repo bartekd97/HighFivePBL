@@ -33,6 +33,8 @@ public:
 
 	void UpdateSystems(float dt);
 
+	std::shared_ptr<System> GetSystemByTypeName(const char* typeName);
+
 	inline int GetLivingGameObjectsCount()
 	{
 		return gameObjectManager->GetLivingGameObjectCount();
