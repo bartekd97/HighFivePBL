@@ -108,13 +108,13 @@ namespace {
 			}
 			if (properties.GetString("frozen", tmpString))
 			{
-				if (tmpString == "true") frozen = true;
+				if (tmpString.compare("true") == 0) frozen = true;
 			}
 			if (properties.GetString("type", tmpString))
 			{
-				if (tmpString == "STATIC") type = Collider::ColliderTypes::STATIC;
-				else if (tmpString == "TRIGGER") type = Collider::ColliderTypes::TRIGGER;
-				else if (tmpString != "DYNAMIC") LogWarning("CircleColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
+				if (tmpString.compare("STATIC") == 0) type = Collider::ColliderTypes::STATIC;
+				else if (tmpString.compare("TRIGGER") == 0) type = Collider::ColliderTypes::TRIGGER;
+				else if (tmpString.compare("DYNAMIC") != 0) LogWarning("BoxColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
 			}
 		}
 
@@ -157,13 +157,14 @@ namespace {
 			}
 			if (properties.GetString("frozen", tmpString))
 			{
-				if (tmpString == "true") frozen = true;
+				auto xD = tmpString.compare("true");
+				if (tmpString.compare("true") == 0) frozen = true;
 			}
 			if (properties.GetString("type", tmpString))
 			{
-				if (tmpString == "STATIC") type = Collider::ColliderTypes::STATIC;
-				else if (tmpString == "TRIGGER") type = Collider::ColliderTypes::TRIGGER;
-				else if (tmpString != "DYNAMIC") LogWarning("BoxColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
+				if (tmpString.compare("STATIC") == 0) type = Collider::ColliderTypes::STATIC;
+				else if (tmpString.compare("TRIGGER") == 0) type = Collider::ColliderTypes::TRIGGER;
+				else if (tmpString.compare("DYNAMIC") != 0) LogWarning("BoxColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
 			}
 		}
 
