@@ -92,24 +92,38 @@ namespace {
 	{
 	public:
 		float radius;
+		bool frozen;
+		Collider::ColliderTypes type;
 
 		void Preprocess(PropertyReader& properties) override
 		{
 			static std::string tmpString;
 			radius = 0.0f;
+			frozen = false;
+			type = Collider::ColliderTypes::DYNAMIC;
 
 			if (properties.GetString("radius", tmpString, "0.0"))
 			{
 				radius = std::stof(tmpString);
 			}
+			if (properties.GetString("frozen", tmpString))
+			{
+				if (tmpString == "true") frozen = true;
+			}
+			if (properties.GetString("type", tmpString))
+			{
+				if (tmpString == "STATIC") type = Collider::ColliderTypes::STATIC;
+				else if (tmpString == "TRIGGER") type = Collider::ColliderTypes::TRIGGER;
+				else if (tmpString != "DYNAMIC") LogWarning("CircleColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
+			}
 		}
 
 		void Create(GameObject target) override
 		{
-			//TODO: load collider from file
 			Collider collider;
-			collider.type = Collider::ColliderTypes::DYNAMIC;
+			collider.type = type;
 			collider.shape = Collider::ColliderShapes::CIRCLE;
+			collider.frozen = frozen;
 			CircleCollider cc;
 			cc.radius = radius;
 			HFEngine::ECS.AddComponent<Collider>(target, collider);
@@ -122,12 +136,16 @@ namespace {
 	public:
 		float width;
 		float height;
+		bool frozen;
+		Collider::ColliderTypes type;
 
 		void Preprocess(PropertyReader& properties) override
 		{
 			static std::string tmpString;
 			width = 0.0f;
 			height = 0.0f;
+			frozen = false;
+			type = Collider::ColliderTypes::DYNAMIC;
 
 			if (properties.GetString("width", tmpString, "0.0"))
 			{
@@ -137,15 +155,24 @@ namespace {
 			{
 				height = std::stof(tmpString);
 			}
+			if (properties.GetString("frozen", tmpString))
+			{
+				if (tmpString == "true") frozen = true;
+			}
+			if (properties.GetString("type", tmpString))
+			{
+				if (tmpString == "STATIC") type = Collider::ColliderTypes::STATIC;
+				else if (tmpString == "TRIGGER") type = Collider::ColliderTypes::TRIGGER;
+				else if (tmpString != "DYNAMIC") LogWarning("BoxColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
+			}
 		}
 
 		void Create(GameObject target) override
 		{
-			// TODO: load collider from file
 			Collider collider;
-			collider.type = Collider::ColliderTypes::STATIC;
+			collider.type = type;
 			collider.shape = Collider::ColliderShapes::BOX;
-			collider.frozen = true; // TODO: load this property from file too
+			collider.frozen = frozen;
 			BoxCollider bc;
 			bc.width = width;
 			bc.height = height;

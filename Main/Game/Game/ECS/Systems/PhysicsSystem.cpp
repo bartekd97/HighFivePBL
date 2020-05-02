@@ -97,23 +97,52 @@ void PhysicsSystem::Update(float dt)
                         }
                     }
 
-                    if (localCollided)
+                    if (otherCacheNode.collider.type == Collider::ColliderTypes::TRIGGER)
                     {
-                        if (otherCacheNode.collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
+                        auto it = cacheNode.triggers.find(otherObject);
+                        if (localCollided)
                         {
-                            auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
-                            auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
-                            float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
-                            otherTransform.TranslateSelf(- (sepVector * massFactor));
-                            otherCacheNode.position = otherTransform.GetWorldPosition();
-                            otherRb.velocity.x -= sepVector.x / dt * massFactor;
-                            otherRb.velocity.z -= sepVector.z / dt * massFactor;
-                            sepVector *= 1.0f - massFactor;
+                            if (it == cacheNode.triggers.end())
+                            {
+                                cacheNode.triggers.insert(otherObject);
+                                if (otherCacheNode.collider.OnTriggerEnter)
+                                {
+                                    otherCacheNode.collider.OnTriggerEnter(gameObject);
+                                }
+                            }
                         }
+                        else
+                        {
+                            if (it != cacheNode.triggers.end())
+                            {
+                                cacheNode.triggers.erase(it);
+                                if (otherCacheNode.collider.OnTriggerExit)
+                                {
+                                    otherCacheNode.collider.OnTriggerExit(gameObject);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (localCollided)
+                        {
+                            if (otherCacheNode.collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
+                            {
+                                auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
+                                auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
+                                float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
+                                otherTransform.TranslateSelf(-(sepVector * massFactor));
+                                otherCacheNode.position = otherTransform.GetWorldPosition();
+                                otherRb.velocity.x -= sepVector.x / dt * massFactor;
+                                otherRb.velocity.z -= sepVector.z / dt * massFactor;
+                                sepVector *= 1.0f - massFactor;
+                            }
 
-                        tempPosition += sepVector;
-                        rigidBody.velocity.x += sepVector.x / dt;
-                        rigidBody.velocity.z += sepVector.z / dt;
+                            tempPosition += sepVector;
+                            rigidBody.velocity.x += sepVector.x / dt;
+                            rigidBody.velocity.z += sepVector.z / dt;
+                        }
                     }
                 }
             }

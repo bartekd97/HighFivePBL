@@ -139,6 +139,8 @@
     <ClInclude Include="ECS\Components\SkinAnimator.h" />
     <ClInclude Include="Resourcing\AnimationClip.h" />
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
+    <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
+    <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

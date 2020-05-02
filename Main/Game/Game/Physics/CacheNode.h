@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "../ECS/Components.h"
 
 struct CacheNode
@@ -12,4 +14,5 @@ struct CacheNode
 	Collider collider;
 	BoxCollider boxCollider;
 	CircleCollider circleCollider;
+	std::set<GameObject> triggers;
 };
