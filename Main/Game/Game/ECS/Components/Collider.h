@@ -7,14 +7,14 @@
 
 struct Collider
 {
-	enum ColliderTypes
+	enum class ColliderTypes
 	{
 		DYNAMIC,
 		STATIC,
 		TRIGGER
 	};
 
-	enum ColliderShapes
+	enum class ColliderShapes
 	{
 		CIRCLE,
 		BOX

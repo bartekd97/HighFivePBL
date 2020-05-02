@@ -91,9 +91,6 @@ int main()
 	auto triggerColliderTest = PrefabManager::GetPrefab("TriggerTest");
 	auto triggerBox = triggerColliderTest->Instantiate({ 105.0f, 0.0f, 90.0f });
 	HFEngine::ECS.GetComponent<Transform>(triggerBox).RotateSelf(45, glm::vec3(0.0f, 1.0f, 0.0f));
-	HFEngine::ECS.AddComponent<ScriptContainer>(triggerBox, {});
-	auto& triggerBoxSC = HFEngine::ECS.GetComponent<ScriptContainer>(triggerBox);
-	triggerBoxSC.AddScript(triggerBox, "TriggerTest");
 
 	HFEngine::ECS.AddComponent<ScriptContainer>(movableTestObject, {});
 	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(movableTestObject);

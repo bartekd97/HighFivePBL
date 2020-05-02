@@ -7,6 +7,11 @@
 class TriggerTest : public Script
 {
 public:
+	TriggerTest()
+	{
+		RegisterFloatParameter("testParam", &testParam);
+	}
+
 	void Awake()
 	{
 		if (HFEngine::ECS.SearchComponent<Collider>(GetGameObject()))
@@ -30,11 +35,13 @@ public:
 
 	void OnTriggerEnter(GameObject other)
 	{
-		LogInfo("TriggerTestScript:: OnTriggerEnter()");
+		LogInfo("TriggerTestScript:: OnTriggerEnter(), testParam value: {}",  testParam);
 	}
 
 	void OnTriggerExit(GameObject other)
 	{
 		LogInfo("TriggerTestScript:: OnTriggerExit()");
 	}
+
+	float testParam;
 };

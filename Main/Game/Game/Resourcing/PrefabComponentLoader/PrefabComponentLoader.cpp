@@ -185,6 +185,7 @@ namespace {
 	{
 	public:
 		std::string name;
+		std::unordered_map<std::string, std::string> rawProperties;
 
 		void Preprocess(PropertyReader& properties) override
 		{
@@ -192,6 +193,8 @@ namespace {
 			{
 				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
 			}
+			rawProperties = properties.GetRawCopy();
+			rawProperties.erase("name");
 		}
 
 		void Create(GameObject target) override
@@ -203,8 +206,31 @@ namespace {
 					HFEngine::ECS.AddComponent<ScriptContainer>(target, {});
 				}
 				auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(target);
-				scriptContainer.AddScript(target, name);
+				auto script = scriptContainer.AddScript(target, name);
+				for (auto property : rawProperties)
+				{
+					bool set = false;
+					if (IsFloat(property.second)) set = script->SetFloat(property.first, stof(property.second));
+					if (!set) set = script->SetString(property.first, property.second);
+					if (!set)
+					{
+						LogWarning("ScriptComponentLoader::Create(): script {} has no property named {}", name, property.first);
+					}
+				}
+				if (script->GetUnsettedParams() > 0)
+				{
+					LogWarning("ScriptComponentLoader::Create(): script {} has unsetted parameters", name);
+				}
 			}
+		}
+	private:
+		bool IsFloat(const std::string& str)
+		{
+			if (str.empty()) return false;
+
+			char* ptr;
+			strtof(str.c_str(), &ptr);
+			return (*ptr) == '\0';
 		}
 	};
 
