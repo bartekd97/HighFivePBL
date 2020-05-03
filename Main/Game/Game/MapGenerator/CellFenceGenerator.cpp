@@ -160,7 +160,7 @@ void CellFenceGenerator::CreateSections()
         int i = 0;
         int created = 0;
         float holeDistance;
-        while ((holeDistance = curve->HoleDistance()) > minHoleGap || i < 2)
+        while ((holeDistance = curve->HoleDistance()) > minHoleGap || created < 2)
         {
             if (i % 2 == 0)
             {
@@ -363,7 +363,7 @@ void CellFenceGenerator::PrepareObjects()
         curve->objects.clear();
         PrepareObjectsForSection(curve->forawrdSegments, curve->objects, false);
         PrepareObjectsForSection(curve->backwardSegments, curve->objects, true);
-        if (curve->filler.size() == 0)
+        if (curve->filler.size() > 0)
             curve->objects.insert(curve->objects.end(), curve->filler.begin(), curve->filler.end());
     }
 }

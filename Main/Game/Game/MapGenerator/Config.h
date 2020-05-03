@@ -16,7 +16,7 @@ struct DiagramLayout
 
 struct CellMeshConfig
 {
-    float mainScale = 0.97f;
+    float mainScale = 0.94f;
     float depth = 5.0f;
     float depthMax = 10.0f;
     float innerScale = 0.92f;
@@ -25,7 +25,7 @@ struct CellMeshConfig
     float nextOutlineScaleMultiplier = 0.97f;
     float vertexBevel = 0.1f;
     int vertexBevelSteps = 3;
-    int circularSegments = 32;
+    int circularSegments = 64;
     float noiseCenterRatio = 0.9f;
     float noiseScale = 0.1f;
     glm::vec2 noiseForce = { 5, 5 };
@@ -58,7 +58,7 @@ struct CellFenceEntity
     }
     inline bool InFillRange(float gap, int segments)
     {
-        return InFillRange(gap - (segments - 1) * length);
+        return InFillRange(gap - ((float)((segments - 1)) * length));
     }
 };
 struct CellFenceConfig
@@ -66,7 +66,7 @@ struct CellFenceConfig
     CellFenceEntity gateEntity;
     CellFenceEntity fragmentEntity;
     CellFenceEntity connectorEntity;
-    float gateDistance = 5.0f;
+    float gateDistance = 6.5f;
     int fragmentCount = 2;
     float innerLevelFenceLocation = 0.87f;
 
@@ -86,7 +86,7 @@ struct MapGeneratorConig
     CellFenceConfig cellFenceConfig;
 
     std::shared_ptr<Prefab> bridgePrefab;
-    float minEdgeLengthForBridge = 10.0f;
+    float minEdgeLengthForBridge = 20.0f;
 
     MapGeneratorConig()
     {

@@ -70,8 +70,8 @@ void CellGenerator::GenerateFence(GameObject cell)
 
     generator.PrepareBrokenCurves();
     generator.CreateSections();
-    //generator.TryFillGapsInSections();
-    //generator.MakeHoles();
+    generator.TryFillGapsInSections();
+    generator.MakeHoles();
     generator.PrepareObjects();
     generator.BuildSections(fenceContainer);
 }

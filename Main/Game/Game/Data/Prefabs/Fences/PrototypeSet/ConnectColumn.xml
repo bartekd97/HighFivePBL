@@ -1,7 +1,7 @@
 <prefab defaultScale="0.3,0.3,0.3">
     <property name="length" value="0.441666" />
     <property name="minForFill" value="0.0" />
-    <property name="maxForFill" value="0.55" />
+    <property name="maxForFill" value="0.75" />
 
     <component name="MeshRenderer">
         <property name="model" value="Structures/Fences/PrototypeSet:ConnectColumn"/> <!-- LibraryName:ModelName-->
