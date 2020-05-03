@@ -4,11 +4,11 @@
 #include "HFEngine.h"
 #include "ECS/Components.h"
 
-GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent, Transform& parentTransform)
+GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent)
 {
     glm::vec3 offsetPosition =
         HFEngine::ECS.GetComponent<Transform>(bridge).GetWorldPosition() -
-        parentTransform.GetWorldPosition();
+        HFEngine::ECS.GetComponent<Transform>(parent).GetWorldPosition();
         //HFEngine::ECS.GetComponent<Transform>(parent).GetWorldPosition();
 
     glm::vec2 bridgePosition = glm::vec2(
@@ -32,7 +32,9 @@ GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent, 
 
     glm::vec2 gatePosition = bridgePosition + frontDirection * config.gateDistance;
 
-    GameObject element = HFEngine::ECS.CreateGameObject(parent);
+    float rotation = rad2deg(glm::atan(gateDirection.x, gateDirection.y)) + 90; // + 90 for right
+    //GameObject element = HFEngine::ECS.CreateGameObject(parent);
+    GameObject element = config.gateEntity.prefab->Instantiate(parent, { gatePosition.x, 0.0f, gatePosition.y }, {0.0f, rotation, 0.0f});
     /*
     element.transform.parent = parent.transform;
     element.transform.localPosition = new glm::vec3(

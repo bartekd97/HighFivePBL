@@ -78,3 +78,19 @@ struct CellFenceConfig
         connectorEntity.SetPrefab("Fences/PrototypeSet/ConnectColumn");
     }
 };
+
+struct MapGeneratorConig
+{
+    DiagramLayout layout;
+    CellMeshConfig cellMeshConfig;
+    CellFenceConfig cellFenceConfig;
+
+    std::shared_ptr<Prefab> bridgePrefab;
+    float minEdgeLengthForBridge = 10.0f;
+
+    MapGeneratorConig()
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        bridgePrefab = PrefabManager::GetPrefab("Bridges/Bridge1");
+    }
+};

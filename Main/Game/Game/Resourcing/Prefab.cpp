@@ -1,10 +1,7 @@
 #include "Prefab.h"
 #include "HFEngine.h"
 
-#define SetupGameObject(object, position, rotation, scale) Transform& __trans = HFEngine::ECS.GetComponent<Transform>(object); \
-	__trans.SetPosition(position); \
-	__trans.SetRotation(rotation); \
-	__trans.SetScale(scale);
+#define SetupGameObject(object, position, rotation, scale) HFEngine::ECS.GetComponent<Transform>(object).SetPositionRotationScale(position, rotation, scale)
 
 namespace {
 	inline void SetupComponents(GameObject object, Prefab::PrefabComponents& components)
