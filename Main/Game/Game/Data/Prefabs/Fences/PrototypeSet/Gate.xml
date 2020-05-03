@@ -41,5 +41,14 @@
                 </child>
             </children>
         </child>
+
+        <child name="Trigger" position="0,0,7.5" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="6.5"/>
+                <property name="height" value="2.0"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
     </children>
 </prefab>
