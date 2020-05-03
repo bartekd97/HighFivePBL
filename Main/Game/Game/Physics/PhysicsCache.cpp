@@ -14,7 +14,7 @@ namespace PhysicsCache
 				auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 				auto const& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
 				nodes[gameObject] = CacheNode(transform, collider);
-				if (collider.type == Collider::ColliderShapes::BOX)
+				if (collider.shape == Collider::ColliderShapes::BOX)
 				{
 					nodes[gameObject].boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
 				}

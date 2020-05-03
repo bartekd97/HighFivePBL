@@ -11,10 +11,11 @@ class Script;
 class ScriptContainer
 {
 public:
-	void AddScript(GameObject gameObject, std::string name)
+	std::shared_ptr<Script> AddScript(GameObject gameObject, std::string name)
 	{
-		ScriptManager::InstantiateScript(gameObject, name);
+		auto ptr = ScriptManager::InstantiateScript(gameObject, name);
 		instances = ScriptManager::GetScripts(gameObject);
+		return ptr;
 	}
 
 	inline std::vector<std::shared_ptr<Script>>* GetInstances()

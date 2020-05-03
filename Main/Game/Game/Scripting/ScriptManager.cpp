@@ -47,6 +47,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(TestScript2);
 		REGISTER_SCRIPT(CharControllerTest);
 		REGISTER_SCRIPT(MapCellOptimizer);
+		REGISTER_SCRIPT(TriggerTest);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}

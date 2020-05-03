@@ -92,24 +92,38 @@ namespace {
 	{
 	public:
 		float radius;
+		bool frozen;
+		Collider::ColliderTypes type;
 
 		void Preprocess(PropertyReader& properties) override
 		{
 			static std::string tmpString;
 			radius = 0.0f;
+			frozen = false;
+			type = Collider::ColliderTypes::DYNAMIC;
 
 			if (properties.GetString("radius", tmpString, "0.0"))
 			{
 				radius = std::stof(tmpString);
 			}
+			if (properties.GetString("frozen", tmpString))
+			{
+				if (tmpString.compare("true") == 0) frozen = true;
+			}
+			if (properties.GetString("type", tmpString))
+			{
+				if (tmpString.compare("STATIC") == 0) type = Collider::ColliderTypes::STATIC;
+				else if (tmpString.compare("TRIGGER") == 0) type = Collider::ColliderTypes::TRIGGER;
+				else if (tmpString.compare("DYNAMIC") != 0) LogWarning("BoxColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
+			}
 		}
 
 		void Create(GameObject target) override
 		{
-			//TODO: load collider from file
 			Collider collider;
-			collider.type = Collider::ColliderTypes::DYNAMIC;
+			collider.type = type;
 			collider.shape = Collider::ColliderShapes::CIRCLE;
+			collider.frozen = frozen;
 			CircleCollider cc;
 			cc.radius = radius;
 			HFEngine::ECS.AddComponent<Collider>(target, collider);
@@ -122,12 +136,16 @@ namespace {
 	public:
 		float width;
 		float height;
+		bool frozen;
+		Collider::ColliderTypes type;
 
 		void Preprocess(PropertyReader& properties) override
 		{
 			static std::string tmpString;
 			width = 0.0f;
 			height = 0.0f;
+			frozen = false;
+			type = Collider::ColliderTypes::DYNAMIC;
 
 			if (properties.GetString("width", tmpString, "0.0"))
 			{
@@ -137,15 +155,25 @@ namespace {
 			{
 				height = std::stof(tmpString);
 			}
+			if (properties.GetString("frozen", tmpString))
+			{
+				auto xD = tmpString.compare("true");
+				if (tmpString.compare("true") == 0) frozen = true;
+			}
+			if (properties.GetString("type", tmpString))
+			{
+				if (tmpString.compare("STATIC") == 0) type = Collider::ColliderTypes::STATIC;
+				else if (tmpString.compare("TRIGGER") == 0) type = Collider::ColliderTypes::TRIGGER;
+				else if (tmpString.compare("DYNAMIC") != 0) LogWarning("BoxColliderLoader::Preprocess(): unknown collider type: {}", tmpString);
+			}
 		}
 
 		void Create(GameObject target) override
 		{
-			// TODO: load collider from file
 			Collider collider;
-			collider.type = Collider::ColliderTypes::STATIC;
+			collider.type = type;
 			collider.shape = Collider::ColliderShapes::BOX;
-			collider.frozen = true; // TODO: load this property from file too
+			collider.frozen = frozen;
 			BoxCollider bc;
 			bc.width = width;
 			bc.height = height;
@@ -158,6 +186,7 @@ namespace {
 	{
 	public:
 		std::string name;
+		std::unordered_map<std::string, std::string> rawProperties;
 
 		void Preprocess(PropertyReader& properties) override
 		{
@@ -165,6 +194,8 @@ namespace {
 			{
 				LogWarning("ScriptComponentLoader::Preprocess(): script name empty");
 			}
+			rawProperties = properties.GetRawCopy();
+			rawProperties.erase("name");
 		}
 
 		void Create(GameObject target) override
@@ -176,8 +207,31 @@ namespace {
 					HFEngine::ECS.AddComponent<ScriptContainer>(target, {});
 				}
 				auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(target);
-				scriptContainer.AddScript(target, name);
+				auto script = scriptContainer.AddScript(target, name);
+				for (auto property : rawProperties)
+				{
+					bool set = false;
+					if (IsFloat(property.second)) set = script->SetFloat(property.first, stof(property.second));
+					if (!set) set = script->SetString(property.first, property.second);
+					if (!set)
+					{
+						LogWarning("ScriptComponentLoader::Create(): script {} has no property named {}", name, property.first);
+					}
+				}
+				if (script->GetUnsettedParams() > 0)
+				{
+					LogWarning("ScriptComponentLoader::Create(): script {} has unsetted parameters", name);
+				}
 			}
+		}
+	private:
+		bool IsFloat(const std::string& str)
+		{
+			if (str.empty()) return false;
+
+			char* ptr;
+			strtof(str.c_str(), &ptr);
+			return (*ptr) == '\0';
 		}
 	};
 

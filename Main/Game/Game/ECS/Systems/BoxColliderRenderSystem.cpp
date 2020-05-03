@@ -13,15 +13,19 @@ void BoxColliderRenderSystem::Render()
 	glBindVertexArray(vao);
 
 	HFEngine::MainCamera.Use(shader);
-	glm::vec3 color(1.0f, 0.0f, 0.0f);
-	shader->setVector3F("uColor", color);
+	glm::vec3 dynamicColor(1.0f, 0.0f, 0.0f), staticColor(0.0f, 0.0f, 1.0f), triggerColor(1.0f, 1.0f, 0.0f);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	for (auto const& gameObject : gameObjects)
 	{
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+		auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
 		auto& boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
+
+		if (collider.type == Collider::ColliderTypes::DYNAMIC) shader->setVector3F("uColor", dynamicColor);
+		else if (collider.type == Collider::ColliderTypes::STATIC) shader->setVector3F("uColor", staticColor);
+		else shader->setVector3F("uColor", triggerColor);
 
 		glm::mat4 modelMat(1.0f);
 		modelMat = glm::translate(modelMat, transform.GetWorldPosition() * glm::vec3(1.0f, 0.0f, 1.0f));
