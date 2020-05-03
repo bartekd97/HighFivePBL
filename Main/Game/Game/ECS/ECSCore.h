@@ -29,6 +29,8 @@ public:
 
 	std::optional<GameObject> GetGameObjectByName(std::string name);
 
+	std::vector<GameObject> GetByNameInChildren(GameObject parent, std::string name);
+
 	void DestroyGameObject(GameObject gameObject);
 
 	void UpdateSystems(float dt);
