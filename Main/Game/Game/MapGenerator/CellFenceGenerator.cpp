@@ -4,11 +4,11 @@
 #include "HFEngine.h"
 #include "ECS/Components.h"
 
-GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent, Transform& parentTransform)
+GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent)
 {
     glm::vec3 offsetPosition =
         HFEngine::ECS.GetComponent<Transform>(bridge).GetWorldPosition() -
-        parentTransform.GetWorldPosition();
+        HFEngine::ECS.GetComponent<Transform>(parent).GetWorldPosition();
         //HFEngine::ECS.GetComponent<Transform>(parent).GetWorldPosition();
 
     glm::vec2 bridgePosition = glm::vec2(
@@ -32,7 +32,9 @@ GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent, 
 
     glm::vec2 gatePosition = bridgePosition + frontDirection * config.gateDistance;
 
-    GameObject element = HFEngine::ECS.CreateGameObject(parent);
+    float rotation = rad2deg(glm::atan(gateDirection.x, gateDirection.y)) + 90; // + 90 for right
+    //GameObject element = HFEngine::ECS.CreateGameObject(parent);
+    GameObject element = config.gateEntity.prefab->Instantiate(parent, { gatePosition.x, 0.0f, gatePosition.y }, {0.0f, rotation, 0.0f});
     /*
     element.transform.parent = parent.transform;
     element.transform.localPosition = new glm::vec3(
@@ -158,7 +160,7 @@ void CellFenceGenerator::CreateSections()
         int i = 0;
         int created = 0;
         float holeDistance;
-        while ((holeDistance = curve->HoleDistance()) > minHoleGap || i < 2)
+        while ((holeDistance = curve->HoleDistance()) > minHoleGap || created < 2)
         {
             if (i % 2 == 0)
             {
@@ -361,7 +363,7 @@ void CellFenceGenerator::PrepareObjects()
         curve->objects.clear();
         PrepareObjectsForSection(curve->forawrdSegments, curve->objects, false);
         PrepareObjectsForSection(curve->backwardSegments, curve->objects, true);
-        if (curve->filler.size() == 0)
+        if (curve->filler.size() > 0)
             curve->objects.insert(curve->objects.end(), curve->filler.begin(), curve->filler.end());
     }
 }

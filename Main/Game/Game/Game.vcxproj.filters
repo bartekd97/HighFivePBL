@@ -50,6 +50,8 @@
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
+    <ClCompile Include="MapGenerator\CellMeshPainter.cpp" />
+    <ClCompile Include="MapGenerator\CellSetuper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -141,6 +143,8 @@
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="MapGenerator\CellMeshPainter.h" />
+    <ClInclude Include="MapGenerator\CellSetuper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

@@ -1,19 +1,9 @@
 #include "FrameBuffer.h"
 #include "../Utility/Logger.h"
 
-std::shared_ptr<FrameBuffer> FrameBuffer::Create(
-	int width, int height,
-	std::vector<ColorAttachement> colorAttachements,
-	FrameBuffer::DepthAttachement depthAttachment)
+void FrameBuffer::rebindColorAttachements()
 {
-	// create framebuffer
-	auto fb = std::shared_ptr<FrameBuffer>(new FrameBuffer(width, height));
-
-	glGenFramebuffers(1, &fb->frameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, fb->frameBuffer);
-
-	// assign color attachemnts
-	if (colorAttachements.size() == 0)
+	if (colorAttachementTextures.size() == 0)
 	{
 		glDrawBuffer(GL_NONE);
 		glReadBuffer(GL_NONE);
@@ -21,23 +11,43 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 	else
 	{
 		std::vector<unsigned int> attachementsIDs;
-		for (auto ca : colorAttachements)
+		int tid = 0;
+		for (auto ct : colorAttachementTextures)
 		{
-			auto texture = TextureManager::CreateEmptyTexture(width, height, ca.dataFormat, ca.dataType, ca.internalFormat, GL_LINEAR);
-
-			unsigned int attachementId = GL_COLOR_ATTACHMENT0 + fb->colorAttachementTextures.size();
+			unsigned int attachementId = GL_COLOR_ATTACHMENT0 + tid;
 			glFramebufferTexture2D(
 				GL_FRAMEBUFFER,
 				attachementId,
 				GL_TEXTURE_2D,
-				texture->id(),
+				ct->id(),
 				0
-			);
+				);
 			attachementsIDs.push_back(attachementId);
-			fb->colorAttachementTextures.push_back(texture);
+			tid++;
 		}
 		glDrawBuffers(attachementsIDs.size(), &attachementsIDs[0]);
 	}
+}
+
+std::shared_ptr<FrameBuffer> FrameBuffer::Create(
+	int width, int height,
+	const std::vector<ColorAttachement>& colorAttachements,
+	FrameBuffer::DepthAttachement depthAttachment)
+{
+	// create framebuffer
+	auto fb = std::shared_ptr<FrameBuffer>(new FrameBuffer(width, height));
+	fb->colorAttachementsConfig = colorAttachements;
+
+	glGenFramebuffers(1, &fb->frameBuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, fb->frameBuffer);
+
+	// assign color attachemnts
+	for (auto ca : colorAttachements)
+	{
+		auto texture = TextureManager::CreateEmptyTexture(width, height, ca.dataFormat, ca.dataType, ca.internalFormat, GL_LINEAR);
+		fb->colorAttachementTextures.push_back(texture);
+	}
+	fb->rebindColorAttachements();
 
 	// create depth buffer
 	switch (depthAttachment)
@@ -84,6 +94,18 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	return fb;
+}
+
+std::shared_ptr<Texture> FrameBuffer::popColorAttachement(int index)
+{
+	assert(index < colorAttachementTextures.size() && "out of range");
+
+	auto current = colorAttachementTextures[index];
+	auto ca = colorAttachementsConfig[index];
+	auto replacement = TextureManager::CreateEmptyTexture(width, height, ca.dataFormat, ca.dataType, ca.internalFormat, GL_LINEAR);
+	colorAttachementTextures[index] = replacement;
+	rebindColorAttachements();
+	return current;
 }
 
 void FrameBuffer::BlitDepth(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to)

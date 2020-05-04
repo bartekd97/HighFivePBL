@@ -98,8 +98,8 @@ int main()
 	scriptContainer.AddScript(movableTestObject, "MapCellOptimizer");
 
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 25.0f, 120.0f });
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -45.0f, 0.0f, 0.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 30.0f, 120.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -50.0f, 0.0f, 0.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 200.0f, 100.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -90.0f, 0.0f, 0.0f });
 

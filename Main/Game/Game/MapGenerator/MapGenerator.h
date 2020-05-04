@@ -9,12 +9,7 @@
 class MapGenerator
 {
 public:
-    DiagramLayout layout;
-    CellMeshConfig cellMeshConfig;
-    CellFenceConfig cellFenceConfig;
-
-    //GameObject bridgePrefab;
-    float minEdgeLengthForBridge = 10.0f;
+    MapGeneratorConig config;
 
 private:
     Delaunay::Rectangle bounds;

@@ -78,7 +78,7 @@ public:
         : config(config), polygon(polygon)
     {}
 
-    GameObject CreateGate(GameObject bridge, GameObject parent, Transform& parentTransform);
+    GameObject CreateGate(GameObject bridge, GameObject parent);
     void PrepareBrokenCurves();
     void CreateSections();
     void TryFillGapsInSections();

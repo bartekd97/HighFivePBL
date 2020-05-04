@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "MapGenerator.h"
 #include "CellGenerator.h"
+#include "CellSetuper.h"
 #include "ext/LloydRelaxation.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
@@ -50,10 +51,10 @@ namespace {
 
 void MapGenerator::Generate()
 {
-	bounds = GetBounds(layout);
-	auto points = GeneratePoints(layout);
+	bounds = GetBounds(config.layout);
+	auto points = GeneratePoints(config.layout);
 
-	auto voronoi = DelaunayExt::VoronoiWithLloydRelaxation(points, bounds, layout.LloydRelaxIteraions);
+	auto voronoi = DelaunayExt::VoronoiWithLloydRelaxation(points, bounds, config.layout.LloydRelaxIteraions);
     edges = voronoi->edges();
 
     std::set<Delaunay::Site*> sites;
@@ -77,6 +78,7 @@ void MapGenerator::Generate()
     CreateBridges(cells, bridgeContainer);
 
     // now generate real cells
+    std::vector<GameObject> cellObjects;
     for (auto s : sites)
     {
         if (!IsBorderCell(s))
@@ -84,12 +86,20 @@ void MapGenerator::Generate()
             GameObject cell = *std::find_if(cells.begin(), cells.end(), [s](GameObject go) {
                 return HFEngine::ECS.GetComponent<MapCell>(go).CellSiteIndex == s->index();
                 });
+            cellObjects.push_back(cell);
             ConvexPolygon cellPolygon = CreateLocalPolygon(s, bounds);
-            CellGenerator generator(cellMeshConfig, cellFenceConfig);
+            CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
             generator.Generate(cellPolygon, cell);
         }
     }
 
+
+    // and setup those cells
+    for (auto co : cellObjects)
+    {
+        CellSetuper setuper(config.cellStructuresConfig);
+        setuper.Setup(co);
+    }
 }
 
 
@@ -97,7 +107,7 @@ void MapGenerator::Generate()
 bool MapGenerator::IsBorderCell(Delaunay::Site* cell)
 {
     for (auto p : cell->region(bounds))
-        if (p->x == 0 || p->x == layout.width || p->y == 0 || p->y == layout.height)
+        if (p->x == 0 || p->x == config.layout.width || p->y == 0 || p->y == config.layout.height)
             return true;
     return false;
 }
@@ -130,7 +140,7 @@ void MapGenerator::CreateBridges(std::vector<GameObject> cells, GameObject paren
         Delaunay::Point* leftVertex = edge->clippedEnds()[Delaunay::LR::LEFT];
         Delaunay::Point* rightVertex = edge->clippedEnds()[Delaunay::LR::RIGHT];
 
-        if (Delaunay::Point::distance(leftVertex, rightVertex) < minEdgeLengthForBridge)
+        if (Delaunay::Point::distance(leftVertex, rightVertex) < config.minEdgeLengthForBridge)
             continue;
 
         GameObject cellA = GetCell(edge->leftSite());
@@ -149,10 +159,11 @@ void MapGenerator::CreateBridges(std::vector<GameObject> cells, GameObject paren
         bridgeObject.transform.position = position;
         bridgeObject.transform.right = (new Vector3(rightVertex.x, 0.0f, rightVertex.y) - position).normalized;
         */
-        GameObject bridgeObject = HFEngine::ECS.CreateGameObject(parent);
+        //GameObject bridgeObject = HFEngine::ECS.CreateGameObject(parent);
         float rotation = rad2deg(glm::atan(rightVertex->x - position.x, rightVertex->y - position.z)) + 90; // + 90 for right
-        HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetPosition(position);
-        HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetRotation({ 0.0f, rotation, 0.0f });
+        GameObject bridgeObject = config.bridgePrefab->Instantiate(parent, position, { 0.0f, rotation, 0.0f });
+        //HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetPosition(position);
+        //HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetRotation({ 0.0f, rotation, 0.0f });
 
         CellBridge bridge;
         bridge.CellA = cellA;

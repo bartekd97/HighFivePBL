@@ -28,13 +28,16 @@ private:
 	GLuint depthRenderBuffer = 0;
 
 	std::vector<std::shared_ptr<Texture>> colorAttachementTextures;
+	std::vector<ColorAttachement> colorAttachementsConfig;
 	std::shared_ptr<Texture> depthAttachementTexture;
+
+	void rebindColorAttachements();
 
 	FrameBuffer(int width, int height) : width(width), height(height) {}
 public:
 	static std::shared_ptr<FrameBuffer> Create(
 		int width, int height,
-		std::vector<ColorAttachement> colorAttachements,
+		const std::vector<ColorAttachement>& colorAttachements,
 		DepthAttachement depthAttachment);
 
 
@@ -54,6 +57,9 @@ public:
 	inline std::shared_ptr<Texture> getDepthAttachement() {
 		return depthAttachementTexture;
 	}
+
+	// return color attachement as independent texture, replacing it with new one
+	std::shared_ptr<Texture> popColorAttachement(int index);
 
 	static void BlitDepth(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to = nullptr);
 
