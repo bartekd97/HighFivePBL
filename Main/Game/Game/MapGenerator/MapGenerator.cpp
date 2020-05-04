@@ -5,6 +5,7 @@
 #include <glm/glm.hpp>
 #include "MapGenerator.h"
 #include "CellGenerator.h"
+#include "CellSetuper.h"
 #include "ext/LloydRelaxation.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
@@ -77,6 +78,7 @@ void MapGenerator::Generate()
     CreateBridges(cells, bridgeContainer);
 
     // now generate real cells
+    std::vector<GameObject> cellObjects;
     for (auto s : sites)
     {
         if (!IsBorderCell(s))
@@ -84,12 +86,20 @@ void MapGenerator::Generate()
             GameObject cell = *std::find_if(cells.begin(), cells.end(), [s](GameObject go) {
                 return HFEngine::ECS.GetComponent<MapCell>(go).CellSiteIndex == s->index();
                 });
+            cellObjects.push_back(cell);
             ConvexPolygon cellPolygon = CreateLocalPolygon(s, bounds);
             CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
             generator.Generate(cellPolygon, cell);
         }
     }
 
+
+    // and setup those cells
+    for (auto co : cellObjects)
+    {
+        CellSetuper setuper(config.cellStructuresConfig);
+        setuper.Setup(co);
+    }
 }
 
 

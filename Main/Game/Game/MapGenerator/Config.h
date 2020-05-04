@@ -97,12 +97,31 @@ struct CellTerrainConfig
     }
 };
 
+
+
+
+struct CellStructuresConfig
+{
+    std::shared_ptr<Prefab> mainStatuePrefab;
+
+    CellStructuresConfig()
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        mainStatuePrefab = PrefabManager::GetPrefab("Statues/Goth");
+    }
+};
+
+
+
+
 struct MapGeneratorConig
 {
     DiagramLayout layout;
     CellMeshConfig cellMeshConfig;
     CellFenceConfig cellFenceConfig;
     CellTerrainConfig cellTerrainConfig;
+
+    CellStructuresConfig cellStructuresConfig;
 
     std::shared_ptr<Prefab> bridgePrefab;
     float minEdgeLengthForBridge = 20.0f;

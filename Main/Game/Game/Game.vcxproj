@@ -113,6 +113,7 @@
     <ClCompile Include="MapGenerator\CellGenerator.cpp" />
     <ClCompile Include="MapGenerator\CellMeshGenerator.cpp" />
     <ClCompile Include="MapGenerator\CellMeshPainter.cpp" />
+    <ClCompile Include="MapGenerator\CellSetuper.cpp" />
     <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
     <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="MapGenerator\CellGenerator.h" />
     <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
     <ClInclude Include="MapGenerator\CellMeshPainter.h" />
+    <ClInclude Include="MapGenerator\CellSetuper.h" />
     <ClInclude Include="MapGenerator\Config.h" />
     <ClInclude Include="MapGenerator\ConvexPolygon.h" />
     <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
