@@ -1,3 +1,4 @@
+
 #include <stb_perlin.h>
 #include "CellMeshGenerator.h"
 #include "Utility/Utility.h"
@@ -135,7 +136,7 @@ void CellMeshGenerator::CalculateNormals()
     }
 }
 
-void CellMeshGenerator::GenerateUV()
+CellMeshGenerator::UVData CellMeshGenerator::GenerateUV()
 {
     // TODO: maybe better generation? more proportional, according to Y value?
     glm::vec2 uvmin = { 0,0 }, uvmax = { 0,0 };
@@ -155,6 +156,24 @@ void CellMeshGenerator::GenerateUV()
         v->vert.uv /= range;
         v->vert.uv.y = 1.0f - v->vert.uv.y; // flip y for openGL
     }
+
+    // generate output data
+    std::vector<glm::vec2> uvPolygonPoints;
+    uvPolygonPoints.reserve(PolygonSmooth.Points.size());
+    for (auto p : PolygonSmooth.Points)
+    {
+        glm::vec2 uvp = (p - uvmin) / range;
+        uvp.y = 1.0f - uvp.y; // flip y for openGL
+        uvPolygonPoints.push_back(uvp);
+    }
+    
+    CellMeshGenerator::UVData data;
+    data.uvPolygon = ConvexPolygon(uvPolygonPoints);
+    data.uvCenter = (-uvmin) / range;
+    data.uvCenter.y = 1.0f - data.uvCenter.y; // flip y for openGL
+    data.offset = uvmin;
+    data.range = range;
+    return data;
 }
 // tangent calculation code taken from Assimp aiProcess_CalcTangentSpace code
 void CellMeshGenerator::CalculateTangents()

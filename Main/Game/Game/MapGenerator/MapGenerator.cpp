@@ -85,7 +85,7 @@ void MapGenerator::Generate()
                 return HFEngine::ECS.GetComponent<MapCell>(go).CellSiteIndex == s->index();
                 });
             ConvexPolygon cellPolygon = CreateLocalPolygon(s, bounds);
-            CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig);
+            CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
             generator.Generate(cellPolygon, cell);
         }
     }

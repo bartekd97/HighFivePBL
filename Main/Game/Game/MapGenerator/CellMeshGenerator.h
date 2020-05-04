@@ -42,6 +42,13 @@ private:
     std::vector<ConvexPolygon> outlines;
 
 public:
+    struct UVData {
+        ConvexPolygon uvPolygon;
+        glm::vec2 uvCenter;
+        glm::vec2 offset;
+        glm::vec2 range;
+    };
+
     CellMeshGenerator(CellMeshConfig& config, ConvexPolygon& polygon)
         : config(config), originalPolygon(polygon),
         PolygonBase(polygon),
@@ -52,7 +59,7 @@ public:
     void PrepareBaseMeshStructure();
 
     void CalculateNormals();
-    void GenerateUV();
+    CellMeshGenerator::UVData GenerateUV();
     void CalculateTangents();
 
     std::shared_ptr<Mesh> BuildMesh();

@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Resourcing/Prefab.h"
+#include "Resourcing/Texture.h"
 #include "Utility/PropertyReader.h"
 
 struct DiagramLayout
@@ -25,14 +26,13 @@ struct CellMeshConfig
     float nextOutlineScaleMultiplier = 0.97f;
     float vertexBevel = 0.1f;
     int vertexBevelSteps = 3;
-    int circularSegments = 64;
+    int circularSegments = 32;
     float noiseCenterRatio = 0.9f;
     float noiseScale = 0.1f;
     glm::vec2 noiseForce = { 5, 5 };
 };
 
 
-// TODO: finish fence config
 struct CellFenceEntity
 {
     std::shared_ptr<Prefab> prefab;
@@ -79,11 +79,30 @@ struct CellFenceConfig
     }
 };
 
+struct CellTerrainConfig
+{
+    std::shared_ptr<Texture> grassTexture;
+    float grassTiling = 1.0f;
+    std::shared_ptr<Texture> roadTexture;
+    float roadTiling = 4.0f;
+    std::shared_ptr<Texture> cliffTexture;
+    float cliffTiling = 1.0f;
+
+    CellTerrainConfig()
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        grassTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Grass");
+        roadTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Road");
+        cliffTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Cliff");
+    }
+};
+
 struct MapGeneratorConig
 {
     DiagramLayout layout;
     CellMeshConfig cellMeshConfig;
     CellFenceConfig cellFenceConfig;
+    CellTerrainConfig cellTerrainConfig;
 
     std::shared_ptr<Prefab> bridgePrefab;
     float minEdgeLengthForBridge = 20.0f;
