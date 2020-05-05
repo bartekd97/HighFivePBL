@@ -232,10 +232,18 @@ std::shared_ptr<Mesh> CellMeshGenerator::BuildMesh()
     std::vector<Vertex> _vertices;
     std::vector<unsigned int> _indices;
 
+    AABBStruct AABB = {glm::vec3(0.0f), glm::vec3(0.0f) };
+
     unsigned int vI = 0;
     for (auto v : vertices)
     {
         v->index = vI++;
+        AABB.min.x = glm::min(AABB.min.x, v->vert.position.x);
+        AABB.min.y = glm::min(AABB.min.y, v->vert.position.y);
+        AABB.min.z = glm::min(AABB.min.z, v->vert.position.z);
+        AABB.max.x = glm::max(AABB.max.x, v->vert.position.x);
+        AABB.max.y = glm::max(AABB.max.y, v->vert.position.y);
+        AABB.max.z = glm::max(AABB.max.z, v->vert.position.z);
         _vertices.push_back(v->vert);
     }
 
@@ -246,5 +254,5 @@ std::shared_ptr<Mesh> CellMeshGenerator::BuildMesh()
         _indices.push_back(tri->c->index);
     }
 
-    return ModelManager::CreateMesh(_vertices, _indices);
+    return ModelManager::CreateMesh(_vertices, _indices, AABB);
 }

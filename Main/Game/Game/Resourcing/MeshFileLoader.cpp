@@ -91,7 +91,7 @@ MeshFileLoader::MeshFileLoader(std::string filepath)
 	this->filepath = filepath;
 }
 
-bool MeshFileLoader::ReadMeshData(std::vector<Vertex>& vertices, std::vector<unsigned>& indices)
+bool MeshFileLoader::ReadMeshData(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, AABBStruct& AABB)
 {
 	const aiScene* scene = importer.GetScene();
 	if (scene == NULL)
@@ -134,6 +134,9 @@ bool MeshFileLoader::ReadMeshData(std::vector<Vertex>& vertices, std::vector<uns
 		indices.push_back(mesh->mFaces[i].mIndices[1]);
 		indices.push_back(mesh->mFaces[i].mIndices[2]);
 	}
+
+	AABB.min = vec3_cast(mesh->mAABB.mMin);
+	AABB.max = vec3_cast(mesh->mAABB.mMax);
 
 	return true;
 }
