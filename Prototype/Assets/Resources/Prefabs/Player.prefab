@@ -88,6 +88,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d1be2237f695a40990fd7fb77705dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  smokePush: {fileID: 956251751214397156, guid: 20a77b65edc037149bab874b596139ca,
+    type: 3}
   ghost: {fileID: 0}
   healthBar: {fileID: 0}
   defaultColor: {r: 0, g: 0.49019608, b: 0.09803922, a: 0}
