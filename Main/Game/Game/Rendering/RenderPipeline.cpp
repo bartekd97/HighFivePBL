@@ -4,6 +4,7 @@
 #include "../Utility/Logger.h"
 #include "../ECS/Components.h"
 #include "PrimitiveRenderer.h"
+#include "InputManager.h"
 
 void RenderPipeline::InitGBuffer()
 {
@@ -43,6 +44,8 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<SkinnedMeshRenderer>());
 		HFEngine::ECS.SetSystemSignature<SkinnedMeshRendererSystem>(signature);
 	}
+
+#ifdef _DEBUG
 	RenderSystems.cubeRenderer = HFEngine::ECS.RegisterSystem<CubeRenderSystem>();
 	{
 		Signature signature;
@@ -61,6 +64,7 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<CircleCollider>());
 		HFEngine::ECS.SetSystemSignature<CircleColliderRenderSystem>(signature);
 	}
+#endif //  _DEBUG
 }
 
 void RenderPipeline::Init()
@@ -112,6 +116,18 @@ void RenderPipeline::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	PrimitiveRenderer::DrawScreenQuad();
 
-	RenderSystems.boxColliderRenderer->Render();
-	RenderSystems.circleColliderRenderer->Render();
+	// debug rendering
+#ifdef _DEBUG
+	static bool colliderRendering = false;
+	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
+		colliderRendering = !colliderRendering;
+		LogInfo("[DEBUG] Collider Rendering set to: {}", colliderRendering);
+	}
+
+	if (colliderRendering)
+	{
+		RenderSystems.boxColliderRenderer->Render();
+		RenderSystems.circleColliderRenderer->Render();
+	}
+#endif //  _DEBUG
 }

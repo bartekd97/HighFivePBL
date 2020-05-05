@@ -32,6 +32,9 @@ namespace InputManager
 			LogError("InputManager::Initialize(): WindowManager must be initialized first");
 			return;
 		}
+
+		// register callbacks
+		glfwSetKeyCallback(window, key_callback);
 	}
 
 	void PollEvents()
