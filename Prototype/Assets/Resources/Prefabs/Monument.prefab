@@ -95,6 +95,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &7354424597800043285
 MonoBehaviour:
@@ -219,6 +225,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &5386450281229079001
 MonoBehaviour:
@@ -367,6 +379,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 1
 --- !u!114 &-6711076882560999157
 MonoBehaviour:
@@ -429,6 +447,10 @@ MonoBehaviour:
   dmgAnimationDuration: 0.5
   maxMonumentHealth: 20
   healthBar: {fileID: 4431763044092605764}
+  breakingEffect: {fileID: 638328674496841341, guid: 41466dfdcb5e4e9438a0f97c17bbfb1b,
+    type: 3}
+  destroyingEffect: {fileID: 638328674496841341, guid: 882e0ae22423f46488668872fce147a1,
+    type: 3}
 --- !u!1 &5058164865257003887
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,6 +546,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &4970778733510807787
 MonoBehaviour:
@@ -655,6 +683,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!1001 &8425273408412616167
 PrefabInstance:
@@ -663,6 +697,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1379547820636518431}
     m_Modifications:
+    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthBar
+      objectReference: {fileID: 0}
     - target: {fileID: 5290705387214696610, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -767,11 +806,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
-        type: 3}
-      propertyPath: m_Name
-      value: HealthBar
       objectReference: {fileID: 0}
     - target: {fileID: 5290705387946340837, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
