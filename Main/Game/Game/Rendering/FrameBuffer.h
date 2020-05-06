@@ -3,8 +3,8 @@
 #include <glad/glad.h>
 #include <vector>
 #include <memory>
-#include "../Resourcing/Texture.h"
-#include "../WindowManager.h"
+#include "Resourcing/Texture.h"
+#include "WindowManager.h"
 
 class FrameBuffer
 {

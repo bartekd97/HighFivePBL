@@ -58,6 +58,12 @@ public:
 		return GetComponentArray<T>()->GetData(gameObject);
 	}
 
+	template<typename T>
+	std::span<T> GetAllComponents()
+	{
+		return GetComponentArray<T>()->GetAll();
+	}
+
 	void GameObjectDestroyed(GameObject gameObject)
 	{
 		for (auto const& pair : componentArrays)

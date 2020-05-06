@@ -1,18 +1,19 @@
 #include "HFEngine.h"
-#include "MeshRendererSystem.h"
-#include "../../Resourcing/Material.h"
-#include "../../Resourcing/Mesh.h"
+#include "SkinnedMeshRendererSystem.h"
+#include "Resourcing/Material.h"
+#include "Resourcing/Mesh.h"
 
-#include "../Components.h"
+#include "ECS/Components/Transform.h"
+#include "ECS/Components/SkinnedMeshRenderer.h"
 
-void MeshRendererSystem::Init()
+void SkinnedMeshRendererSystem::Init()
 {
-	toGBufferShader = ShaderManager::GetShader("ToGBuffer");
+	toGBufferShader = ShaderManager::GetShader("ToGBufferSkinned");
 	toGBufferShader->use();
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
 }
 
-void MeshRendererSystem::RenderToGBuffer()
+void SkinnedMeshRendererSystem::RenderToGBuffer()
 {
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
@@ -23,13 +24,19 @@ void MeshRendererSystem::RenderToGBuffer()
 	for (auto const& gameObject : gameObjects)
 	{
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
-		auto const& renderer = HFEngine::ECS.GetComponent<MeshRenderer>(gameObject);
+		auto const& renderer = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(gameObject);
 
 		if (!renderer.enabled)
 			continue;
 
 		glm::mat4 modelMat = transform.GetWorldTransform();
 		toGBufferShader->setMat4("gModel", modelMat);
+
+		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
+		{
+			auto mat = renderer.boneMatrices[i];
+			toGBufferShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
+		}
 
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();

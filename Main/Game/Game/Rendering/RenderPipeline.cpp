@@ -1,5 +1,10 @@
 #include <glad/glad.h>
 #include "RenderPipeline.h"
+#include "ECS/Systems/Rendering/MeshRendererSystem.h"
+#include "ECS/Systems/Rendering/SkinnedMeshRendererSystem.h"
+#include "ECS/Systems/Rendering/CubeRenderSystem.h"
+#include "ECS/Systems/Rendering/BoxColliderRenderSystem.h"
+#include "ECS/Systems/Rendering/CircleColliderRenderSystem.h"
 #include "HFEngine.h"
 #include "../Utility/Logger.h"
 #include "../ECS/Components.h"

@@ -13,10 +13,13 @@ class Transform
 {
 private:
 	GameObject gameObject;
+	FrameCounter lastFrameUpdate = 0;
 
 public:
 	Transform();
 	Transform(GameObject gameObject);
+
+	inline FrameCounter LastFrameUpdate() { return lastFrameUpdate; }
 
 	inline glm::vec3 GetPosition() { return this->position; }
 	inline glm::quat GetRotation() { return this->rotation; }

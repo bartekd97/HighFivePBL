@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../System.h"
-#include "../../Resourcing/Shader.h"
+#include "ECS/System.h"
+#include "Resourcing/Shader.h"
 
 // require SkinnedMeshRenderer component
 class SkinnedMeshRendererSystem : public System

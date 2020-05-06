@@ -8,10 +8,8 @@
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
-    <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
-    <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
@@ -44,14 +42,17 @@
     <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
     <ClCompile Include="MapGenerator\CellFenceGenerator.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
-    <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
-    <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
     <ClCompile Include="Physics\PhysicsCache.cpp" />
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
-    <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
     <ClCompile Include="MapGenerator\CellMeshPainter.cpp" />
     <ClCompile Include="MapGenerator\CellSetuper.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\CubeRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
+    <ClCompile Include="Rendering\Frustum.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -75,10 +76,8 @@
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
-    <ClInclude Include="ECS\Systems\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
-    <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
@@ -130,14 +129,11 @@
     <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\BoxCollider.h" />
     <ClInclude Include="ECS\Systems\ColliderCollectorSystem.h" />
-    <ClInclude Include="ECS\Systems\BoxColliderRenderSystem.h" />
-    <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Physics\CacheNode.h" />
     <ClInclude Include="Physics\PhysicsCache.h" />
     <ClInclude Include="ECS\Components\SkinnedMeshRenderer.h" />
-    <ClInclude Include="ECS\Systems\SkinnedMeshRendererSystem.h" />
     <ClInclude Include="ECS\Components\SkinAnimator.h" />
     <ClInclude Include="Resourcing\AnimationClip.h" />
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
@@ -145,6 +141,13 @@
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
     <ClInclude Include="MapGenerator\CellMeshPainter.h" />
     <ClInclude Include="MapGenerator\CellSetuper.h" />
+    <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CubeRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
+    <ClInclude Include="Rendering\Frustum.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
