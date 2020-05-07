@@ -7,6 +7,7 @@
 class System
 {
 public:
+	virtual ~System() {};
 	virtual void Init() {};
 	std::set<GameObject> gameObjects;
 };

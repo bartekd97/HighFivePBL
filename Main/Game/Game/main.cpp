@@ -58,7 +58,7 @@ int main()
 	generator.Generate();
 
 	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
-	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material, true };
+	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material };
 
 	/*GameObject ss1 = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.GetComponent<Transform>(ss1).SetPosition({ 100.0f, 2.0f, 100.0f });
@@ -111,12 +111,9 @@ int main()
 
 		//doCameraMovement(cameraObject, dt);
 
-		HFEngine::ECS.UpdateSystems(dt);
+		HFEngine::ProcessGameFrame(dt);
+
 		ReportGameObjects(dt);
-
-		HFEngine::MainCamera.SetView(HFEngine::ECS.GetComponent<Transform>(cameraObject));
-
-		HFEngine::Renderer.Render();
 
 		glfwSwapBuffers(window);
 

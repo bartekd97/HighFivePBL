@@ -11,8 +11,8 @@
 
 #include "Systems/ScriptLateUpdateSystem.h"
 
-#include "Systems/CubeRenderSystem.h"
-#include "Systems/MeshRendererSystem.h"
-#include "Systems/BoxColliderRenderSystem.h"
+#include "Systems/Rendering/CubeRenderSystem.h"
+#include "Systems/Rendering/MeshRendererSystem.h"
+#include "Systems/Rendering/BoxColliderRenderSystem.h"
 #include "Systems/MapCellCollectorSystem.h"
 

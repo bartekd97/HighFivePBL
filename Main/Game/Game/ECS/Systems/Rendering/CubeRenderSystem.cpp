@@ -3,9 +3,9 @@
 
 #include "HFEngine.h"
 #include "CubeRenderSystem.h"
-#include "../../Resourcing/Shader.h"
+#include "Resourcing/Shader.h"
 
-#include "../Components.h"
+#include "ECS/Components.h"
 
 void CubeRenderSystem::Render()
 {

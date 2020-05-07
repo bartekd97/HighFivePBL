@@ -50,6 +50,7 @@ public:
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
 		auto& camTransform = HFEngine::ECS.GetComponent<Transform>(cameraObject);
 		camTransform.SetPosition(transform.GetPosition() - cameraOffset);
+		HFEngine::MainCamera.SetView(camTransform);
 	}
 
 private:

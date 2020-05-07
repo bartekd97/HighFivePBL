@@ -2,12 +2,12 @@
 #include <vector>
 
 #include "HFEngine.h"
-#include "BoxColliderRenderSystem.h"
-#include "../../Resourcing/Shader.h"
+#include "CircleColliderRenderSystem.h"
+#include "Resourcing/Shader.h"
 
-#include "../Components.h"
+#include "ECS/Components.h"
 
-void BoxColliderRenderSystem::Render()
+void CircleColliderRenderSystem::Render()
 {
 	shader->use();
 	glBindVertexArray(vao);
@@ -15,13 +15,11 @@ void BoxColliderRenderSystem::Render()
 	HFEngine::MainCamera.Use(shader);
 	glm::vec3 dynamicColor(1.0f, 0.0f, 0.0f), staticColor(0.0f, 0.0f, 1.0f), triggerColor(1.0f, 1.0f, 0.0f);
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
 	for (auto const& gameObject : gameObjects)
 	{
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
-		auto& boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
+		auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 
 		if (collider.type == Collider::ColliderTypes::DYNAMIC) shader->setVector3F("uColor", dynamicColor);
 		else if (collider.type == Collider::ColliderTypes::STATIC) shader->setVector3F("uColor", staticColor);
@@ -29,29 +27,38 @@ void BoxColliderRenderSystem::Render()
 
 		glm::mat4 modelMat(1.0f);
 		modelMat = glm::translate(modelMat, transform.GetWorldPosition() * glm::vec3(1.0f, 0.0f, 1.0f));
-		modelMat *= glm::mat4_cast(transform.GetWorldRotation());
-		modelMat = glm::scale(modelMat, glm::vec3(boxCollider.width, 1.0f, boxCollider.height));
+		modelMat *= glm::mat4_cast(transform.GetRotation());
+		modelMat = glm::scale(modelMat, glm::vec3(circleCollider.radius, 1.0f, circleCollider.radius));
 		shader->setMat4("gModel", modelMat);
 
-		glDrawArrays(GL_LINE_STRIP, 0, 5);
+		glDrawArrays(GL_LINE_LOOP, 0, size);
 	}
 
 	glBindVertexArray(0);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
-void BoxColliderRenderSystem::Init()
+std::vector<glm::vec3> CreateCircleArray(float radius, int fragments)
+{
+	const float PI = 3.1415926f;
+
+	std::vector<glm::vec3> result;
+
+	float increment = 2.0f * PI / fragments;
+
+	for (float currAngle = 0.0f; currAngle <= 2.0f * PI; currAngle += increment)
+	{
+		result.push_back(glm::vec3(radius * cos(currAngle), 0.0f, radius * sin(currAngle)));
+	}
+
+	return result;
+}
+
+void CircleColliderRenderSystem::Init()
 {
 	shader = ShaderManager::GetShader("CubeShader");
 
-	std::vector<glm::vec3> vertices =
-	{
-		glm::vec3(0.5f, 0.0f, -0.5f),
-		glm::vec3(0.5f, 0.0f, 0.5f),
-		glm::vec3(-0.5f, 0.0f, 0.5f),
-		glm::vec3(-0.5f, 0.0f, -0.5f),
-		glm::vec3(0.5f, 0.0f, -0.5f)
-	};
+	std::vector<glm::vec3> vertices = CreateCircleArray(1.0f, 36);
+	size = vertices.size();
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);

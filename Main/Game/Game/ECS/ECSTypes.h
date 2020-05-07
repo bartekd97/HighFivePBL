@@ -10,4 +10,5 @@ using ComponentType = std::uint8_t;
 const ComponentType MAX_COMPONENTS = 32;
 using Signature = std::bitset<MAX_COMPONENTS>;
 const unsigned int MAX_GAMEOBJECT_NAME_LENGTH = 16;
+using FrameCounter = std::uint64_t;
 

@@ -2,11 +2,11 @@
 
 #include <glad/glad.h>
 
-#include "../../Resourcing/ShaderManager.h"
-#include "../SystemRender.h"
+#include "../../../Resourcing/ShaderManager.h"
+#include "../../SystemRender.h"
 
 // TEST SYSTEM
-class CubeRenderSystem : public SystemRender
+class CircleColliderRenderSystem : public SystemRender
 {
 public:
 	void Init() override;
@@ -15,5 +15,5 @@ private:
 	std::shared_ptr<Shader> shader;
 	GLuint vao{};
 	GLuint vboVertices{};
-	GLuint vboNormals{};
+	int size;
 };

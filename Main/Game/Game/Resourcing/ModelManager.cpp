@@ -105,7 +105,7 @@ void ModelManager::Initialize()
 
 	std::vector<Vertex> vertices0; vertices0.push_back(Vertex());
 	std::vector<unsigned> indices0; indices0.push_back(0);
-	std::shared_ptr<Mesh> mesh0 = CreateMesh(vertices0, indices0);
+	std::shared_ptr<Mesh> mesh0 = CreateMesh(vertices0, indices0, {});
 	BLANK_MODEL = std::shared_ptr<Model>(new Model(mesh0, MaterialManager::BLANK_MATERIAL));
 
 	Initialized = true;
@@ -115,7 +115,7 @@ void ModelManager::Initialize()
 
 
 
-std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices)
+std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, AABBStruct AABB)
 {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -126,10 +126,10 @@ std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, st
 
 	glBindVertexArray(0);
 
-	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, 0, ebo, indices.size()));
+	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, 0, ebo, indices.size(), AABB));
 }
 
-std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData)
+std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData, AABBStruct AABB)
 {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -141,7 +141,7 @@ std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, st
 
 	glBindVertexArray(0);
 
-	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, bvbo, ebo, indices.size()));
+	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, bvbo, ebo, indices.size(), AABB));
 }
 
 std::shared_ptr<ModelLibrary> ModelManager::GetLibrary(std::string name)
@@ -196,6 +196,18 @@ void ModelManager::UnloadUnused()
 		if (model->material.use_count() > 1 ||
 			model->mesh.use_count() > 1 ||
 			model->skinningData.use_count() > 1)
+			continue;
+
+		bool cont = false;
+		for (const auto& ac : model->animations)
+		{
+			if (ac.second.use_count() > 1)
+			{
+				cont = true;
+				break;
+			}
+		}
+		if (cont)
 			continue;
 
 		CacheHolder.erase(CacheHolder.begin() + i);
@@ -309,14 +321,15 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 	MeshFileLoader loader(entity->meshFile);
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
-	if (loader.ReadMeshData(vertices, indices))
+	AABBStruct AABB;
+	if (loader.ReadMeshData(vertices, indices, AABB))
 	{
 		if (entity->skinned)
 		{
 			std::vector<VertexBoneData> boneData;
 			if (loader.ReadBoneData(boneData, skinningData))
 			{
-				mesh = ModelManager::CreateMesh(vertices, indices, boneData);
+				mesh = ModelManager::CreateMesh(vertices, indices, boneData, AABB);
 				LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
 			}
 			else
@@ -327,7 +340,7 @@ std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity
 		}
 		else
 		{
-			mesh = ModelManager::CreateMesh(vertices, indices);
+			mesh = ModelManager::CreateMesh(vertices, indices, AABB);
 			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
 		}
 	}

@@ -57,6 +57,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -75,6 +76,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,19 +92,19 @@
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
-    <ClCompile Include="ECS\Systems\BoxColliderRenderSystem.cpp" />
-    <ClCompile Include="ECS\Systems\CircleColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
-    <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
-    <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptStartSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
-    <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="HFEngine.cpp" />
@@ -120,6 +122,7 @@
     <ClCompile Include="Physics\PhysicsCache.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
+    <ClCompile Include="Rendering\Frustum.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Resourcing\Material.cpp" />
@@ -148,6 +151,7 @@
     <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\CubeRenderer.h" />
     <ClInclude Include="ECS\Components\CubeSpawner.h" />
+    <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Components\Gravity.h" />
     <ClInclude Include="ECS\Components\LifeTime.h" />
     <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
@@ -166,20 +170,21 @@
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
-    <ClInclude Include="ECS\Systems\BoxColliderRenderSystem.h" />
-    <ClInclude Include="ECS\Systems\CircleColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\ColliderCollectorSystem.h" />
-    <ClInclude Include="ECS\Systems\CubeRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
     <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
-    <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
-    <ClInclude Include="ECS\Systems\SkinnedMeshRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\EventManager.h" />
@@ -200,6 +205,7 @@
     <ClInclude Include="Physics\PhysicsCache.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
+    <ClInclude Include="Rendering\Frustum.h" />
     <ClInclude Include="Rendering\Lights.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
@@ -226,6 +232,7 @@
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="Utility\TaskPool.h" />
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\Utility.h" />
