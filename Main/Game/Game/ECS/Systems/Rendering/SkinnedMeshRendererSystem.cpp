@@ -19,18 +19,19 @@ void SkinnedMeshRendererSystem::RenderToGBuffer()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
+	Frustum frustum = HFEngine::MainCamera.GetFrustum();
+	ScheduleCulling(frustum);
+	FinishCulling();
+
 	HFEngine::MainCamera.Use(toGBufferShader);
 
-	for (auto const& gameObject : gameObjects)
+	auto renderers = HFEngine::ECS.GetAllComponents<SkinnedMeshRenderer>();
+	for (auto const& renderer : renderers)
 	{
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
-		auto const& renderer = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(gameObject);
-
-		if (!renderer.enabled)
+		if (!renderer.cullingData.visibleByMainCamera)
 			continue;
 
-		glm::mat4 modelMat = transform.GetWorldTransform();
-		toGBufferShader->setMat4("gModel", modelMat);
+		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
 
 		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
 		{

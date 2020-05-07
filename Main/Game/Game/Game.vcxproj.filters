@@ -146,8 +146,10 @@
     <ClInclude Include="ECS\Systems\Rendering\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
-    <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
     <ClInclude Include="Rendering\Frustum.h" />
+    <ClInclude Include="ECS\Components\CulledRenderer.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
+    <ClInclude Include="Utility\TaskPool.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

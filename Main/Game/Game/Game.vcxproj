@@ -151,6 +151,7 @@
     <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\CubeRenderer.h" />
     <ClInclude Include="ECS\Components\CubeSpawner.h" />
+    <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Components\Gravity.h" />
     <ClInclude Include="ECS\Components\LifeTime.h" />
     <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
@@ -231,6 +232,7 @@
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="Utility\TaskPool.h" />
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\Utility.h" />

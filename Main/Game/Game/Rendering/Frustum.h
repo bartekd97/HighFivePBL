@@ -11,7 +11,7 @@ private:
 public:
 	Frustum(glm::mat4 matrix);
 
-	inline bool CheckIntersection(AABBStruct AABB)
+	inline bool CheckIntersection(const AABBStruct& AABB)
 	{
 		glm::vec3 vmin, vmax;
 		for (int k = 0; k < 6; ++k)

@@ -1,110 +1,56 @@
 #pragma once
 
-#include <thread>
-#include <concurrent_queue.h>
-
 #include "HFEngine.h"
 #include "ECS/System.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/CulledRenderer.h"
 #include "Rendering/Frustum.h"
+#include "Utility/TaskPool.h"
 
-template<typename RenderedComponent>
+template<typename RenderedComponent, size_t _WorksersCount>
 class CulledRendererSystem : public System
 {
-public:
+private:
+	TaskPool<_WorksersCount> cullingWorkers;
 	concurrency::concurrent_queue<GameObject> gameObjectsQueue;
-	std::array<std::thread, 4> workers;
-	std::uint32_t business;
 
-	bool exitWorker = false;
-
-	Frustum* workerViewFrustum;
-	inline void CullWorker(uint32_t bitflag)
+private:
+	inline void CullingTask(Frustum viewFrustum)
 	{
 		GameObject gameObject;
-		while (!exitWorker)
-		{
-			if (gameObjectsQueue.empty()) {
-				business ^= bitflag;
-				std::this_thread::yield();
-			}
-			else {
-				business |= bitflag;
-				if (!gameObjectsQueue.try_pop(gameObject))
-					continue;
-
-				Frustum viewFrustum = *workerViewFrustum;
-
-				Transform& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
-				RenderedComponent& renderer = HFEngine::ECS.GetComponent<RenderedComponent>(gameObject);
-
-				if (!renderer.enabled)
-					continue;
-
-				if (transform.LastFrameUpdate() > renderer.lastAABBUpdate)
-				{
-					renderer.worldAABB = RecalculateWorldAABB(renderer.mesh->AABB, transform);
-					renderer.worldTransform = transform.GetWorldTransform();
-				}
-				renderer.lastAABBUpdate = HFEngine::CURRENT_FRAME_NUMBER;
-
-				renderer.visibleByMainCamera = viewFrustum.CheckIntersection(renderer.worldAABB);
-			}
-		}
-	}
-
-public:
-
-	virtual ~CulledRendererSystem() {
-		exitWorker = true;
-		for (uint32_t i = 0; i < workers.size(); i++)
-		{
-			workers[i].join();
-		}
-	};
-
-	inline void InitWorkers()
-	{
-		for (uint32_t i = 0; i < workers.size(); i++)
-		{
-			workers[i] = std::thread(&CulledRendererSystem<RenderedComponent>::CullWorker, this, 1 << i);
-		}
-		business = 0;
-	}
-
-	inline void Cull(Frustum& viewFrustum)
-	{
-		workerViewFrustum = &viewFrustum;
-
-		for (auto const& gameObject : gameObjects)
-			gameObjectsQueue.push(gameObject);
-
-		do {
-			std::this_thread::yield();
-		} while (business != 0);
-
-		/*
-		for (auto const& gameObject : gameObjects)
+		while (gameObjectsQueue.try_pop(gameObject))
 		{
 			Transform& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 			RenderedComponent& renderer = HFEngine::ECS.GetComponent<RenderedComponent>(gameObject);
-			
-			if (!renderer.enabled)
-				continue;
+			CulledRenderer& cullingData = renderer.cullingData;
 
-			if (transform.LastFrameUpdate() > renderer.lastAABBUpdate)
+			if (transform.LastFrameUpdate() > cullingData.lastUpdate)
 			{
-				renderer.worldAABB = RecalculateWorldAABB(renderer.mesh->AABB, transform);
-				
-				renderer.worldTransform = transform.GetWorldTransform();
+				cullingData.worldAABB = RecalculateWorldAABB(GetLocalAABB(renderer), transform);
+				cullingData.worldTransform = transform.GetWorldTransform();
 			}
-			renderer.lastAABBUpdate = HFEngine::CURRENT_FRAME_NUMBER;
+			cullingData.lastUpdate = HFEngine::CURRENT_FRAME_NUMBER;
 
-			renderer.visibleByMainCamera = viewFrustum.CheckIntersection(renderer.worldAABB);
-		}*/
+			cullingData.visibleByMainCamera = viewFrustum.CheckIntersection(cullingData.worldAABB);
+		}
 	}
 
-	inline AABBStruct RecalculateWorldAABB(AABBStruct localAABB, Transform& transform)
+public:
+
+	inline void ScheduleCulling(Frustum& viewFrustum)
+	{
+		for (auto const& gameObject : gameObjects)
+			gameObjectsQueue.push(gameObject);
+
+		cullingWorkers.FillWorkers([this, &viewFrustum]() {this->CullingTask(viewFrustum);});
+	}
+	inline void FinishCulling()
+	{
+		cullingWorkers.WaitForAll();
+	}
+
+	inline virtual const AABBStruct& GetLocalAABB(RenderedComponent& component) = 0;
+	inline virtual AABBStruct RecalculateWorldAABB(const AABBStruct& localAABB, Transform& transform)
 	{
 		glm::mat4 model = transform.GetWorldTransform();
 		glm::vec3 points[] =
@@ -139,8 +85,4 @@ public:
 		}
 		return { wMin, wMax };
 	}
-
-
-	// keep virtuality
-	virtual void Init() {};
 };

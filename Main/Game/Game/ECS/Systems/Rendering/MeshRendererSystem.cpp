@@ -14,19 +14,20 @@ void MeshRendererSystem::Init()
 	toGBufferShader = ShaderManager::GetShader("ToGBuffer");
 	toGBufferShader->use();
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
-	InitWorkers();
 }
 
 void MeshRendererSystem::RenderToGBuffer()
 {
-	auto start = std::chrono::high_resolution_clock::now();
+	//auto start = std::chrono::high_resolution_clock::now();
 
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
 	Frustum frustum = HFEngine::MainCamera.GetFrustum();
-	Cull(frustum);
+	ScheduleCulling(frustum);
+	FinishCulling();
+
 	HFEngine::MainCamera.Use(toGBufferShader);
 
 	int visCount = 0, invisCount = 0;
@@ -37,21 +38,21 @@ void MeshRendererSystem::RenderToGBuffer()
 	{
 		//auto const& renderer = HFEngine::ECS.GetComponent<MeshRenderer>(gameObject);
 
-		if (renderer.lastAABBUpdate != currentFrame || !renderer.enabled)
+		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
 
 		
-		if (renderer.visibleByMainCamera)
+		if (!renderer.cullingData.visibleByMainCamera)
 		{
-			visCount++;
+			//invisCount++;
+			continue;
 		}
 		else
 		{
-			invisCount++;
-			continue;
+			//visCount++;
 		}
 		
-		toGBufferShader->setMat4("gModel", renderer.worldTransform);
+		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
 
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
@@ -60,7 +61,7 @@ void MeshRendererSystem::RenderToGBuffer()
 
 	glDisable(GL_CULL_FACE);
 
-	auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	long us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-	LogInfo("RENDERING: Vis: {}    Invis: {}    Elapsed: {} us", visCount, invisCount, us);
+	//auto elapsed = std::chrono::high_resolution_clock::now() - start;
+	//long us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+	//LogInfo("RENDERING: Vis: {}    Invis: {}    Elapsed: {} us", visCount, invisCount, us);
 }
