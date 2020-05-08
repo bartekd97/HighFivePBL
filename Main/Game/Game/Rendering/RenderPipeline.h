@@ -17,15 +17,20 @@ public:
 		POSITION = 1,
 		NORMAL,
 		ALBEDO,
-		METALNESS_ROUGHNESS,
+		METALNESS_ROUGHNESS_SHADOW,
 		EMISSIVE
 	};
 	struct GBufferStruct {
 		std::shared_ptr<Texture> position;
 		std::shared_ptr<Texture> normal;
 		std::shared_ptr<Texture> albedo;
-		std::shared_ptr<Texture> metalnessRoughness;
+		std::shared_ptr<Texture> metalnessRoughnessShadow;
 		std::shared_ptr<Texture> emissive;
+
+		std::shared_ptr<FrameBuffer> frameBuffer;
+	};
+	struct ShadowmapStruct {
+		std::shared_ptr<Texture> depthmap;
 
 		std::shared_ptr<FrameBuffer> frameBuffer;
 	};
@@ -41,12 +46,14 @@ public:
 
 private:
 	GBufferStruct GBuffer;
+	ShadowmapStruct Shadowmap;
 	RenderSystemsStruct RenderSystems;
 
 	bool initialized = false;
 	std::shared_ptr<Shader> combineGBufferShader;
 
 	void InitGBuffer();
+	void InitShadowmap();
 	void InitRenderSystems();
 
 public:

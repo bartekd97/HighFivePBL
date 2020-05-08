@@ -31,6 +31,7 @@ namespace HFEngine
 	int RENDER_WIDTH;
 	int RENDER_HEIGHT;
 	FrameCounter CURRENT_FRAME_NUMBER = 1;
+	int SHADOWMAP_SIZE = 1024;
 
 	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
 	{

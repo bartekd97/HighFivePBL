@@ -11,12 +11,39 @@
 
 void MeshRendererSystem::Init()
 {
+	toShadowmapShader = ShaderManager::GetShader("ToShadowmap");
 	toGBufferShader = ShaderManager::GetShader("ToGBuffer");
 	toGBufferShader->use();
+	toGBufferShader->setInt("shadowmap", 0);
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
 }
 
-void MeshRendererSystem::RenderToGBuffer()
+void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
+{
+	toShadowmapShader->use();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	lightCamera.Use(toShadowmapShader);
+	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
+	auto renderers = HFEngine::ECS.GetAllComponents<MeshRenderer>();
+	for (auto const& renderer : renderers)
+	{
+		if (renderer.cullingData.lastUpdate != currentFrame)
+			continue;
+
+		if (!renderer.cullingData.visibleByLightCamera)
+			continue;
+
+		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
+
+		renderer.mesh->bind();
+		renderer.mesh->draw();
+	}
+	glDisable(GL_CULL_FACE);
+}
+
+void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
 {
 	//auto start = std::chrono::high_resolution_clock::now();
 
@@ -24,13 +51,12 @@ void MeshRendererSystem::RenderToGBuffer()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	Frustum frustum = HFEngine::MainCamera.GetFrustum();
-	ScheduleCulling(frustum);
-	FinishCulling();
+	viewCamera.Use(toGBufferShader);
+	glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
+	toGBufferShader->setMat4("gLightViewProjection", lightViewProjection);
+	shadowmap->bind(0);
 
-	HFEngine::MainCamera.Use(toGBufferShader);
-
-	int visCount = 0, invisCount = 0;
+	//int visCount = 0, invisCount = 0;
 
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
 	auto renderers = HFEngine::ECS.GetAllComponents<MeshRenderer>();
@@ -42,7 +68,7 @@ void MeshRendererSystem::RenderToGBuffer()
 			continue;
 
 		
-		if (!renderer.cullingData.visibleByMainCamera)
+		if (!renderer.cullingData.visibleByViewCamera)
 		{
 			//invisCount++;
 			continue;
