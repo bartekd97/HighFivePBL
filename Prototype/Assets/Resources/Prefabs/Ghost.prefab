@@ -64,6 +64,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 1
 --- !u!114 &6457871779731179120
 MonoBehaviour:
@@ -121,6 +127,8 @@ MonoBehaviour:
   ghostFreezeTime: 0
   dotTick: 0
   dotDmg: 0
+  sparkCrossing: {fileID: 2013512863233674821, guid: 32802a0221a69b245bd9bf69e15745c6,
+    type: 3}
 --- !u!1 &8393135772255878134
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,6 +224,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &1830440362741705273
 MonoBehaviour:
@@ -327,6 +341,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &2697769272121845876
 MonoBehaviour:
@@ -393,6 +413,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!1 &8393135772680682869
 GameObject:
@@ -489,6 +515,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &1207245305556767368
 MonoBehaviour:
@@ -600,6 +632,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &8440150438756367363
 MonoBehaviour:
