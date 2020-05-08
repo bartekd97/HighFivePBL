@@ -9,6 +9,6 @@ struct CulledRenderer
 	glm::mat4 worldTransform;
 	FrameCounter lastUpdate = 0;
 
-	bool visibleByMainCamera = true;
+	bool visibleByViewCamera = true;
 	bool visibleByLightCamera = true;
 };

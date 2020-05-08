@@ -102,10 +102,24 @@ void Camera::SetSize(float width, float height)
 	dirty = true;
 }
 
+void Camera::SetSize(glm::vec2 size)
+{
+	this->width = size.x;
+	this->height = size.y;
+	dirty = true;
+}
+
 void Camera::SetClipPlane(float nearPlane, float farPlane)
 {
 	this->nearPlane = nearPlane;
 	this->farPlane = farPlane;
+	dirty = true;
+}
+
+void Camera::SetClipPlane(glm::vec2 planes)
+{
+	this->nearPlane = planes.x;
+	this->farPlane = planes.y;
 	dirty = true;
 }
 
@@ -118,6 +132,31 @@ void Camera::SetScale(float scale)
 {
 	this->scale = scale;
 	dirty = true;
+}
+
+Camera::Mode Camera::GetMode()
+{
+	return this->mode;
+}
+
+glm::vec2 Camera::GetSize()
+{
+	return { this->width, this->height };
+}
+
+glm::vec2 Camera::GetClipPlane()
+{
+	return { this->nearPlane, this->farPlane };
+}
+
+float Camera::GetFOV()
+{
+	return this->fov;
+}
+
+float Camera::GetScale()
+{
+	return this->scale;
 }
 
 

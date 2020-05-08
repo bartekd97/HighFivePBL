@@ -15,7 +15,7 @@ private:
 	concurrency::concurrent_queue<GameObject> gameObjectsQueue;
 
 private:
-	inline void CullingTask(Frustum viewFrustum)
+	inline void CullingTask(Frustum viewFrustum, Frustum lightFrustum)
 	{
 		GameObject gameObject;
 		while (gameObjectsQueue.try_pop(gameObject))
@@ -31,18 +31,19 @@ private:
 			}
 			cullingData.lastUpdate = HFEngine::CURRENT_FRAME_NUMBER;
 
-			cullingData.visibleByMainCamera = viewFrustum.CheckIntersection(cullingData.worldAABB);
+			cullingData.visibleByViewCamera = viewFrustum.CheckIntersection(cullingData.worldAABB);
+			cullingData.visibleByLightCamera = lightFrustum.CheckIntersection(cullingData.worldAABB);
 		}
 	}
 
 public:
 
-	inline void ScheduleCulling(Frustum& viewFrustum)
+	inline void ScheduleCulling(Frustum& viewFrustum, Frustum& lightFrustum)
 	{
 		for (auto const& gameObject : gameObjects)
 			gameObjectsQueue.push(gameObject);
 
-		cullingWorkers.FillWorkers([this, &viewFrustum]() {this->CullingTask(viewFrustum);});
+		cullingWorkers.FillWorkers([this, &viewFrustum, &lightFrustum]() {this->CullingTask(viewFrustum, lightFrustum);});
 	}
 	inline void FinishCulling()
 	{

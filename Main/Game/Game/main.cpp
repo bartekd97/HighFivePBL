@@ -72,7 +72,7 @@ int main()
 	//prefab->Instantiate({100,10,100});
 
 	auto prefab = PrefabManager::GetPrefab("CircleTest");
-	auto movableTestObject = prefab->Instantiate({ 100.0f, 1.0f, 100.0f });
+	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 	prefab->Instantiate({ 80.0f, 1.0f, 100.0f });
 

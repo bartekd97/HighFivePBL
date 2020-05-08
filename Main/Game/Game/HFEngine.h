@@ -21,4 +21,6 @@ namespace HFEngine
 	extern int RENDER_HEIGHT;
 
 	extern FrameCounter CURRENT_FRAME_NUMBER;
+
+	extern int SHADOWMAP_SIZE;
 }

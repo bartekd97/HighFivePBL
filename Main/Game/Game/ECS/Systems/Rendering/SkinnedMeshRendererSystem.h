@@ -9,6 +9,7 @@ class SkinnedMeshRendererSystem : public CulledRendererSystem<SkinnedMeshRendere
 {
 private:
 	std::shared_ptr<Shader> toGBufferShader;
+	std::shared_ptr<Shader> toShadowmapShader;
 
 public:
 	inline virtual const AABBStruct& GetLocalAABB(SkinnedMeshRenderer& component)
@@ -22,5 +23,6 @@ public:
 	};
 
 	void Init() override;
-	void RenderToGBuffer();
+	void RenderToShadowmap(Camera& lightCamera);
+	void RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap);
 };

@@ -51,11 +51,19 @@ public:
 
 	void SetMode(Mode mode);
 	void SetSize(float width, float height);
+	void SetSize(glm::vec2 size);
 	void SetClipPlane(float nearPlane, float farPlane);
+	void SetClipPlane(glm::vec2 planes);
 	// FOV only for perspective
 	void SetFOV(float fov);
 	// scale only for orthographic
 	void SetScale(float scale);
+
+	Mode GetMode();
+	glm::vec2 GetSize();
+	glm::vec2 GetClipPlane();
+	float GetFOV();
+	float GetScale();
 
 	void Use(std::shared_ptr<Shader> shader);
 
