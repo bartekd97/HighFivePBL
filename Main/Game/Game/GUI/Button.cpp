@@ -82,8 +82,6 @@ Button::Button()
 void Button::Update(const glm::vec2& mousePosition)
 {
 	bool isOver = IsMouseOver(mousePosition);
-	//LogInfo("xD {}", isOver);
-	//LogInfo("xD {} {}", mousePosition.x, mousePosition.y);
 	bool isClicked = InputManager::GetMouseButtonState(GLFW_MOUSE_BUTTON_LEFT);
 
 	if (!isOver)
@@ -94,11 +92,11 @@ void Button::Update(const glm::vec2& mousePosition)
 	{
 		if (isClicked)
 		{
-			if (state == STATE::HOVER)
+			if (state == STATE::HOVER && OnClickListener)
 			{
-				state = STATE::PRESSED;
-				//onClick
+				OnClickListener();
 			}
+			state = STATE::PRESSED;
 		}
 		else
 		{

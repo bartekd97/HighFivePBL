@@ -23,6 +23,8 @@ public:
 	STATE state;
 	// TODO: tutaj te¿ wyjeb t¹ mapê i zrób coœ normalnego jak ju¿ bêdziesz ogarnia³  te enumy zjebane
 	std::unordered_map<STATE, TextureColor> textureColors;
+
+	std::function<void()> OnClickListener;
 private:
 	static std::shared_ptr<Shader> shader;
 	static GLuint vao;

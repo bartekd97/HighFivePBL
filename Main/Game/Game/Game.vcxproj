@@ -198,6 +198,7 @@
     <ClInclude Include="GUI\GUIManager.h" />
     <ClInclude Include="GUI\TextureColor.h" />
     <ClInclude Include="GUI\Widget.h" />
+    <ClInclude Include="GUI\Widgets.h" />
     <ClInclude Include="HFEngine.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
@@ -237,6 +238,7 @@
     <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
+    <ClInclude Include="Scripting\Scripts\TestGUIScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />

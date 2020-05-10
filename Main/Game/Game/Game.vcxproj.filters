@@ -158,6 +158,8 @@
     <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
     <ClInclude Include="Utility\TaskPool.h" />
+    <ClInclude Include="Scripting\Scripts\TestGUIScript.h" />
+    <ClInclude Include="GUI\Widgets.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

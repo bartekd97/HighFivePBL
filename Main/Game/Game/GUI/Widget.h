@@ -33,15 +33,12 @@ public:
 
 	std::shared_ptr<Widget> parent;
 	std::vector<std::shared_ptr<Widget>> children;
-
-	std::function<void()> OnClickListener;
 protected:
 	Widget()
 	{
 		anchor = Anchor::TOPLEFT;
 	}
 
-	void OnClick() {};
 	bool IsMouseOver(const glm::vec2& mousePosition)
 	{
 		if (mousePosition.x < position.x) return false;

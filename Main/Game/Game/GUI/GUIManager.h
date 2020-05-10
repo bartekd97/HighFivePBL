@@ -5,6 +5,8 @@
 #include "Widget.h"
 #include "../Resourcing/Texture.h"
 
+#define GUI_METHOD_POINTER(method) std::bind(&method, this)
+
 namespace GUIManager
 {
 	extern std::shared_ptr<Texture> defaultTexture;
