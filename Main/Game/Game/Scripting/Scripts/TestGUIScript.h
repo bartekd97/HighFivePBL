@@ -16,7 +16,7 @@ public:
 		panel->SetSize(glm::vec2(250.0f, 200.0f));
 		panel->textureColor.color = glm::vec4(1.0f, 0.0f, 0.0f, 0.3f);
 
-		GUIManager::AddWidget(panel);
+		GUIManager::AddWidget(panel, nullptr);
 
 		std::shared_ptr<Label> label = std::make_shared<Label>();
 		label->SetText("Test label");

@@ -19,5 +19,5 @@ namespace GUIManager
 	void Update();
 	void Draw();
 
-	void AddWidget(std::shared_ptr<Widget> widget, std::shared_ptr<Widget> parent = nullptr);
+	void AddWidget(std::shared_ptr<Widget> widget, std::shared_ptr<Widget> parent = nullptr, int zIndex = 0);
 };

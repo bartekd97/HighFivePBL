@@ -9,7 +9,7 @@
 namespace GUIManager
 {
 	std::vector<std::shared_ptr<Widget>> root;
-	std::vector<std::shared_ptr<Widget>> allWidgets;
+	std::map<int, std::vector<std::shared_ptr<Widget>>> indexedWidgets;
 	std::shared_ptr<Shader> guiShader;
 	std::shared_ptr<Texture> defaultTexture;
 	bool initialized = false;
@@ -50,16 +50,18 @@ namespace GUIManager
 
 		TextRenderer::UpdateProjection();
 
-		//TODO: z-index
-		for (auto widget : allWidgets)
+		for (auto it = indexedWidgets.begin(); it != indexedWidgets.end(); it++)
 		{
-			widget->Draw();
+			for (auto widget : it->second)
+			{
+				widget->Draw();
+			}
 		}
 
 		glDisable(GL_BLEND);
 	}
 
-	void AddWidget(std::shared_ptr<Widget> widget, std::shared_ptr<Widget> parent)
+	void AddWidget(std::shared_ptr<Widget> widget, std::shared_ptr<Widget> parent, int zIndex)
 	{
 		if (parent == nullptr)
 		{
@@ -70,6 +72,6 @@ namespace GUIManager
 			widget->parent = parent;
 			parent->AddChild(widget);
 		}
-		allWidgets.push_back(widget);
+		indexedWidgets[zIndex].push_back(widget);
 	}
 }
