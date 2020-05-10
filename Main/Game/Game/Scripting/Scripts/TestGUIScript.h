@@ -14,6 +14,7 @@ public:
 		std::shared_ptr<Panel> panel = std::make_shared<Panel>();
 		panel->SetPosition(glm::vec3(150.0f, 50.0f, 0.0f));
 		panel->SetSize(glm::vec2(250.0f, 200.0f));
+		panel->SetClipping(true);
 		panel->textureColor.color = glm::vec4(1.0f, 0.0f, 0.0f, 0.3f);
 
 		GUIManager::AddWidget(panel, nullptr);
@@ -28,7 +29,7 @@ public:
 		std::shared_ptr<Button> button = std::make_shared<Button>();
 		button->SetSize(glm::vec2(150.0f, 100.0f));
 		button->SetPivot(Anchor::CENTER);
-		button->SetPositionAnchor(glm::vec3(0.0f, 0.0f, 0.0f), Anchor::CENTER);
+		button->SetPositionAnchor(glm::vec3(0.0f, 0.0f, 0.0f), Anchor::BOTTOMRIGHT);
 
 		button->textureColors[Button::STATE::NORMAL].color.a = 0.5f;
 		button->textureColors[Button::STATE::HOVER].color.a = 0.7f;

@@ -2,16 +2,19 @@
 
 #include <glm/glm.hpp>
 #include <functional>
+#include <set>
 
 #include "Anchor.h"
 
 //TODO: obcinanie? mo¿e zmienna, a potem sprawdzanie czy parent ma j¹ ustawion¹ i wtedy opengl scissors
-class Widget
+class Widget : public std::enable_shared_from_this<Widget>
 {
 public:
 	virtual void Draw() = 0;
 	virtual void Update(const glm::vec2& mousePosition);
 
+	void PreDraw();
+	void PostDraw();
 	void SetPosition(glm::vec3 position);
 	void SetAnchor(Anchor anchor);
 	void SetPositionAnchor(glm::vec3 position, Anchor anchor);
@@ -23,16 +26,21 @@ public:
 	Anchor GetAnchor();
 	Anchor GetPivot();
 	void AddChild(std::shared_ptr<Widget> child);
+	void SetClipping(bool clipping);
 	
 	bool useWorldSpace;
 
 	std::shared_ptr<Widget> parent;
 	std::vector<std::shared_ptr<Widget>> children;
+	std::set<std::shared_ptr<Widget>> clippingWidgets;
 
 protected:
 	Widget();
 	bool IsMouseOver(const glm::vec2& mousePosition);
 	void CalculateAbsolutePosition();
+	void UpdateClipping(bool clipping, std::shared_ptr<Widget> clippingWidget);
+	int GetLevel(); // TODO: potrzebne?
+	void SetLevel(int level);
 
 private:
 	void UpdateChildrenWorldPosition();
@@ -40,8 +48,12 @@ private:
 	Anchor anchor;
 	Anchor pivot;
 
+	glm::vec4 clippingArea;
 	glm::vec3 position;
 	glm::vec3 absolutePosition;
 	glm::vec3 worldPosition;
 	glm::vec2 size;
+	bool isClipping;
+	bool isClipped;
+	int level;
 };

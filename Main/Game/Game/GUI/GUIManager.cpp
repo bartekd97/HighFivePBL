@@ -54,7 +54,9 @@ namespace GUIManager
 		{
 			for (auto widget : it->second)
 			{
+				widget->PreDraw();
 				widget->Draw();
+				widget->PostDraw();
 			}
 		}
 
