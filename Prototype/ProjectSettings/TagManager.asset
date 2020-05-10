@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Gate
   - Monument
+  - Spark
   layers:
   - Default
   - TransparentFX

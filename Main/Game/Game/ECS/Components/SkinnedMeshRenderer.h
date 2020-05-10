@@ -2,9 +2,9 @@
 
 #include <array>
 #include <glm/glm.hpp>
-#include "../../Resourcing/Mesh.h"
 #include "../../Resourcing/Material.h"
 #include "../../Resourcing/SkinningData.h"
+#include "CulledRenderer.h"
 
 struct SkinnedMeshRenderer
 {
@@ -15,6 +15,9 @@ struct SkinnedMeshRenderer
 	std::shared_ptr<SkinningData> skinningData;
 
 	std::array<glm::mat4, MAX_BONES> boneMatrices{};
+	AABBStruct extendedLocalAABB;
 
-	bool enabled = true;
+	bool castShadows = true;
+
+	CulledRenderer cullingData;
 };

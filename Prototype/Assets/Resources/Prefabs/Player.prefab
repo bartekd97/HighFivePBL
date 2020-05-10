@@ -69,6 +69,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 1
 --- !u!114 &7091947314756690524
 MonoBehaviour:
@@ -82,6 +88,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30d1be2237f695a40990fd7fb77705dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  smokePush: {fileID: 956251751214397156, guid: 20a77b65edc037149bab874b596139ca,
+    type: 3}
   ghost: {fileID: 0}
   healthBar: {fileID: 0}
   defaultColor: {r: 0, g: 0.49019608, b: 0.09803922, a: 0}
@@ -250,6 +258,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &8520161647193162422
 MonoBehaviour:
@@ -361,6 +375,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &1082807007786822363
 MonoBehaviour:
@@ -472,6 +492,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &6108638290341678197
 MonoBehaviour:
@@ -583,6 +609,12 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0
 --- !u!114 &328439546121165166
 MonoBehaviour:
@@ -649,4 +681,10 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 0, y: 0, z: 0}
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
   isParent: 0

@@ -16,7 +16,7 @@ private:
 public:
 	MeshFileLoader(std::string filepath);
 
-	bool ReadMeshData(std::vector<Vertex>& vertices, std::vector<unsigned>& indices);
+	bool ReadMeshData(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, AABBStruct& AABB);
 	bool ReadBoneData(std::vector<VertexBoneData>& data, std::shared_ptr<SkinningData>& skinning);
 	bool ReadAnimation(std::shared_ptr<AnimationClip>& animation);
 };

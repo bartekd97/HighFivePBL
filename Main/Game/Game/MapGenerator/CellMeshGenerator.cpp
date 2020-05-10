@@ -1,3 +1,4 @@
+
 #include <stb_perlin.h>
 #include "CellMeshGenerator.h"
 #include "Utility/Utility.h"
@@ -135,7 +136,7 @@ void CellMeshGenerator::CalculateNormals()
     }
 }
 
-void CellMeshGenerator::GenerateUV()
+CellMeshGenerator::UVData CellMeshGenerator::GenerateUV()
 {
     // TODO: maybe better generation? more proportional, according to Y value?
     glm::vec2 uvmin = { 0,0 }, uvmax = { 0,0 };
@@ -155,6 +156,24 @@ void CellMeshGenerator::GenerateUV()
         v->vert.uv /= range;
         v->vert.uv.y = 1.0f - v->vert.uv.y; // flip y for openGL
     }
+
+    // generate output data
+    std::vector<glm::vec2> uvPolygonPoints;
+    uvPolygonPoints.reserve(PolygonSmooth.Points.size());
+    for (auto p : PolygonSmooth.Points)
+    {
+        glm::vec2 uvp = (p - uvmin) / range;
+        uvp.y = 1.0f - uvp.y; // flip y for openGL
+        uvPolygonPoints.push_back(uvp);
+    }
+    
+    CellMeshGenerator::UVData data;
+    data.uvPolygon = ConvexPolygon(uvPolygonPoints);
+    data.uvCenter = (-uvmin) / range;
+    data.uvCenter.y = 1.0f - data.uvCenter.y; // flip y for openGL
+    data.offset = uvmin;
+    data.range = range;
+    return data;
 }
 // tangent calculation code taken from Assimp aiProcess_CalcTangentSpace code
 void CellMeshGenerator::CalculateTangents()
@@ -213,10 +232,18 @@ std::shared_ptr<Mesh> CellMeshGenerator::BuildMesh()
     std::vector<Vertex> _vertices;
     std::vector<unsigned int> _indices;
 
+    AABBStruct AABB = {glm::vec3(0.0f), glm::vec3(0.0f) };
+
     unsigned int vI = 0;
     for (auto v : vertices)
     {
         v->index = vI++;
+        AABB.min.x = glm::min(AABB.min.x, v->vert.position.x);
+        AABB.min.y = glm::min(AABB.min.y, v->vert.position.y);
+        AABB.min.z = glm::min(AABB.min.z, v->vert.position.z);
+        AABB.max.x = glm::max(AABB.max.x, v->vert.position.x);
+        AABB.max.y = glm::max(AABB.max.y, v->vert.position.y);
+        AABB.max.z = glm::max(AABB.max.z, v->vert.position.z);
         _vertices.push_back(v->vert);
     }
 
@@ -227,5 +254,5 @@ std::shared_ptr<Mesh> CellMeshGenerator::BuildMesh()
         _indices.push_back(tri->c->index);
     }
 
-    return ModelManager::CreateMesh(_vertices, _indices);
+    return ModelManager::CreateMesh(_vertices, _indices, AABB);
 }

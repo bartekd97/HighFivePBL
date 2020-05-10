@@ -49,6 +49,9 @@ namespace InputManager
 			LogError("InputManager::Initialize(): WindowManager must be initialized first");
 			return;
 		}
+		
+		// register callbacks
+		glfwSetKeyCallback(window, key_callback);
 		glfwSetCursorPosCallback(window, cursor_position_callback);
 		glfwSetMouseButtonCallback(window, mouse_button_callback);
 	}

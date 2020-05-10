@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Frustum.h"
 
 Camera::Camera()
 {
@@ -77,6 +78,16 @@ glm::mat4 Camera::GetInvProjectionMatrix()
 }
 
 
+Frustum Camera::GetFrustum()
+{
+	if (dirty)
+	{
+		Update();
+	}
+	return Frustum(projection * view);
+}
+
+
 
 void Camera::SetMode(Mode mode)
 {
@@ -91,10 +102,24 @@ void Camera::SetSize(float width, float height)
 	dirty = true;
 }
 
+void Camera::SetSize(glm::vec2 size)
+{
+	this->width = size.x;
+	this->height = size.y;
+	dirty = true;
+}
+
 void Camera::SetClipPlane(float nearPlane, float farPlane)
 {
 	this->nearPlane = nearPlane;
 	this->farPlane = farPlane;
+	dirty = true;
+}
+
+void Camera::SetClipPlane(glm::vec2 planes)
+{
+	this->nearPlane = planes.x;
+	this->farPlane = planes.y;
 	dirty = true;
 }
 
@@ -109,6 +134,31 @@ void Camera::SetScale(float scale)
 	dirty = true;
 }
 
+Camera::Mode Camera::GetMode()
+{
+	return this->mode;
+}
+
+glm::vec2 Camera::GetSize()
+{
+	return { this->width, this->height };
+}
+
+glm::vec2 Camera::GetClipPlane()
+{
+	return { this->nearPlane, this->farPlane };
+}
+
+float Camera::GetFOV()
+{
+	return this->fov;
+}
+
+float Camera::GetScale()
+{
+	return this->scale;
+}
+
 
 
 
@@ -116,27 +166,7 @@ void Camera::Use(std::shared_ptr<Shader> shader)
 {
 	if (dirty)
 	{
-		if (mode == PERSPECTIVE)
-		{
-			projection = glm::perspective(
-				glm::radians(fov),
-				width / height,
-				nearPlane, farPlane);
-		}
-		else if (mode == ORTHOGRAPHIC)
-		{
-			projection = glm::ortho(
-				(-width / 2.0f) * scale, (width / 2.0f) * scale,
-				(-height / 2.0f) * scale, (height / 2.0f) * scale,
-				nearPlane, farPlane);
-		}
-
-		view = glm::lookAt(position, target, up);
-
-		invView = glm::inverse(view);
-		invProjection = glm::inverse(projection);
-
-		dirty = false;
+		Update();
 	}
 
 	shader->setMat4("gProjection", projection);
@@ -144,4 +174,29 @@ void Camera::Use(std::shared_ptr<Shader> shader)
 	shader->setMat4("gInvProjection", invProjection);
 	shader->setMat4("gInvView", invView);
 	shader->setVector3F("gCameraPosition", position);
+}
+
+void Camera::Update()
+{
+	if (mode == PERSPECTIVE)
+	{
+		projection = glm::perspective(
+			glm::radians(fov),
+			width / height,
+			nearPlane, farPlane);
+	}
+	else if (mode == ORTHOGRAPHIC)
+	{
+		projection = glm::ortho(
+		(-width / 2.0f) * scale, (width / 2.0f) * scale,
+			(-height / 2.0f) * scale, (height / 2.0f) * scale,
+			nearPlane, farPlane);
+	}
+
+	view = glm::lookAt(position, target, up);
+
+	invView = glm::inverse(view);
+	invProjection = glm::inverse(projection);
+
+	dirty = false;
 }

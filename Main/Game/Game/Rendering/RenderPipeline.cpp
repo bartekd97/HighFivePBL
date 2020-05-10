@@ -1,9 +1,39 @@
 #include <glad/glad.h>
 #include "RenderPipeline.h"
+#include "ECS/Systems/Rendering/MeshRendererSystem.h"
+#include "ECS/Systems/Rendering/SkinnedMeshRendererSystem.h"
+#include "ECS/Systems/Rendering/CubeRenderSystem.h"
+#include "ECS/Systems/Rendering/BoxColliderRenderSystem.h"
+#include "ECS/Systems/Rendering/CircleColliderRenderSystem.h"
 #include "HFEngine.h"
 #include "../Utility/Logger.h"
 #include "../ECS/Components.h"
 #include "PrimitiveRenderer.h"
+#include "InputManager.h"
+
+namespace {
+	void CalculateLightCamera(Camera& viewCamera, Camera& lightCamera)
+	{
+		glm::vec3 mainCameraPosition = viewCamera.GetPosition();
+		glm::vec3 mainCameraDirection = viewCamera.GetViewDiorection();
+
+		float stepsToZero = -(mainCameraPosition.y / mainCameraDirection.y);
+		glm::vec3 zeroPos = mainCameraPosition + (mainCameraDirection * stepsToZero);
+
+		glm::vec3 lightDirection = glm::normalize(HFEngine::WorldLight.direction);
+		glm::vec3 lightPosition = zeroPos - (lightDirection * stepsToZero);
+
+		lightCamera.SetMode(Camera::ORTHOGRAPHIC);
+		lightCamera.SetClipPlane(viewCamera.GetClipPlane());
+		glm::vec2 camSize = viewCamera.GetSize();
+		float camSizeMax = glm::max(camSize.x, camSize.y);
+		lightCamera.SetSize(camSizeMax, camSizeMax);
+		lightCamera.SetScale(viewCamera.GetScale() * 1.25f);
+		lightCamera.SetView(lightPosition, lightPosition + lightDirection);
+	}
+}
+
+
 
 void RenderPipeline::InitGBuffer()
 {
@@ -12,7 +42,7 @@ void RenderPipeline::InitGBuffer()
 		{GL_RGB16F, GL_RGB, GL_FLOAT},		// position
 		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
-		{GL_RG, GL_RG, GL_UNSIGNED_BYTE},	// metalness roughness
+		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE}	// emissive
 	};
 
@@ -26,8 +56,22 @@ void RenderPipeline::InitGBuffer()
 	GBuffer.position = gbufferTextures[0];
 	GBuffer.normal = gbufferTextures[1];
 	GBuffer.albedo = gbufferTextures[2];
-	GBuffer.metalnessRoughness = gbufferTextures[3];
+	GBuffer.metalnessRoughnessShadow = gbufferTextures[3];
 	GBuffer.emissive = gbufferTextures[4];
+}
+void RenderPipeline::InitShadowmap()
+{
+	const std::vector<FrameBuffer::ColorAttachement> noColorAttachements = {};
+	Shadowmap.frameBuffer = FrameBuffer::Create(
+		HFEngine::SHADOWMAP_SIZE, HFEngine::SHADOWMAP_SIZE,
+		noColorAttachements,
+		FrameBuffer::DepthAttachement::CREATE_TEXTURE
+		);
+	Shadowmap.depthmap = Shadowmap.frameBuffer->getDepthAttachement();
+	Shadowmap.depthmap->setFiltering(GL_NEAREST, GL_NEAREST);
+	Shadowmap.depthmap->setCompare(GL_COMPARE_REF_TO_TEXTURE, GL_LEQUAL);
+	Shadowmap.depthmap->setEdges(GL_CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER);
+	Shadowmap.depthmap->setBorderColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
 void RenderPipeline::InitRenderSystems()
 {
@@ -43,6 +87,8 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<SkinnedMeshRenderer>());
 		HFEngine::ECS.SetSystemSignature<SkinnedMeshRendererSystem>(signature);
 	}
+
+#ifdef _DEBUG
 	RenderSystems.cubeRenderer = HFEngine::ECS.RegisterSystem<CubeRenderSystem>();
 	{
 		Signature signature;
@@ -61,6 +107,7 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<CircleCollider>());
 		HFEngine::ECS.SetSystemSignature<CircleColliderRenderSystem>(signature);
 	}
+#endif //  _DEBUG
 }
 
 void RenderPipeline::Init()
@@ -72,6 +119,7 @@ void RenderPipeline::Init()
 	}
 
 	InitGBuffer();
+	InitShadowmap();
 	InitRenderSystems();
 
 	combineGBufferShader = ShaderManager::GetShader("CombineGBuffer");
@@ -79,7 +127,7 @@ void RenderPipeline::Init()
 	combineGBufferShader->setInt("gPosition", (int)GBufferBindingPoint::POSITION);
 	combineGBufferShader->setInt("gNormal", (int)GBufferBindingPoint::NORMAL);
 	combineGBufferShader->setInt("gAlbedo", (int)GBufferBindingPoint::ALBEDO);
-	combineGBufferShader->setInt("gMetalnessRoughness", (int)GBufferBindingPoint::METALNESS_ROUGHNESS);
+	combineGBufferShader->setInt("gMetalnessRoughnessShadow", (int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	combineGBufferShader->setInt("gEmissive", (int)GBufferBindingPoint::EMISSIVE);
 
 	initialized = true;
@@ -89,13 +137,40 @@ void RenderPipeline::Init()
 
 void RenderPipeline::Render()
 {
+	// prepare cameras
+	static Camera lightCamera;
+	Camera& viewCamera = HFEngine::MainCamera;
+	CalculateLightCamera(viewCamera, lightCamera);
+
+	Frustum viewFrustum = viewCamera.GetFrustum();
+	Frustum lightFrustum = lightCamera.GetFrustum();
+
+	//auto start = std::chrono::high_resolution_clock::now();
+	// schedule culling
+	RenderSystems.meshRenderer->ScheduleCulling(viewFrustum, lightFrustum);
+	RenderSystems.skinnedMeshRender->ScheduleCulling(viewFrustum, lightFrustum);
+
+	// wait for culling
+	RenderSystems.meshRenderer->FinishCulling();
+	RenderSystems.skinnedMeshRender->FinishCulling();
+	//auto elapsed = std::chrono::high_resolution_clock::now() - start;
+	//long us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+	//LogInfo("RENDERING: Culling time: {} us", us);
+
+	// draw to shadowmap
+	Shadowmap.frameBuffer->bind();
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
+	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
+
 	// draw to gbuffer
 	GBuffer.frameBuffer->bind();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	RenderSystems.meshRenderer->RenderToGBuffer();
-	RenderSystems.skinnedMeshRender->RenderToGBuffer();
+	RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
+	RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	//RenderSystems.cubeRenderer->Render();
 
 	// combine gbuffer
@@ -106,12 +181,26 @@ void RenderPipeline::Render()
 	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
 	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
 	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);
-	GBuffer.metalnessRoughness->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS);
+	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	PrimitiveRenderer::DrawScreenQuad();
 
-	RenderSystems.boxColliderRenderer->Render();
-	RenderSystems.circleColliderRenderer->Render();
+	// debug rendering
+#ifdef _DEBUG
+	static bool colliderRendering = false;
+	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
+		colliderRendering = !colliderRendering;
+		LogInfo("[DEBUG] Collider Rendering set to: {}", colliderRendering);
+	}
+
+	if (colliderRendering)
+	{
+		RenderSystems.boxColliderRenderer->Render();
+		RenderSystems.circleColliderRenderer->Render();
+	}
+#endif //  _DEBUG
+
+	//HFEngine::MainCamera = mCamera;
 }

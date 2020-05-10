@@ -62,7 +62,7 @@ int main()
 	generator.Generate();
 
 	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
-	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material, true };
+	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material };
 
 	/*GameObject ss1 = HFEngine::ECS.CreateGameObject();
 	HFEngine::ECS.GetComponent<Transform>(ss1).SetPosition({ 100.0f, 2.0f, 100.0f });
@@ -76,7 +76,7 @@ int main()
 	//prefab->Instantiate({100,10,100});
 
 	auto prefab = PrefabManager::GetPrefab("CircleTest");
-	auto movableTestObject = prefab->Instantiate({ 100.0f, 1.0f, 100.0f });
+	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 	prefab->Instantiate({ 80.0f, 1.0f, 100.0f });
 
@@ -102,8 +102,8 @@ int main()
 	scriptContainer.AddScript(movableTestObject, "MapCellOptimizer");
 
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 25.0f, 120.0f });
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -45.0f, 0.0f, 0.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 30.0f, 120.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -50.0f, 0.0f, 0.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 200.0f, 100.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -90.0f, 0.0f, 0.0f });
 
@@ -114,16 +114,11 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
-		GUIManager::Update();
 		//doCameraMovement(cameraObject, dt);
 
-		HFEngine::ECS.UpdateSystems(dt);
+		HFEngine::ProcessGameFrame(dt);
+
 		ReportGameObjects(dt);
-
-		HFEngine::MainCamera.SetView(HFEngine::ECS.GetComponent<Transform>(cameraObject));
-
-		HFEngine::Renderer.Render();
-		GUIManager::Draw();
 
 		glfwSwapBuffers(window);
 

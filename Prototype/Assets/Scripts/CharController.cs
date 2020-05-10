@@ -8,6 +8,7 @@ public class CharController : MonoBehaviour
 {
     public bool ghostMovement { get; private set; }
 
+    public ParticleSystem smokePush;
 
     public Ghost ghost;
     public HealthBar healthBar;
@@ -120,6 +121,20 @@ public class CharController : MonoBehaviour
 
     void PushEnemiesBack()
     {
+        smokePush.transform.eulerAngles = new Vector3(
+            transform.eulerAngles.x - 90,
+            transform.eulerAngles.y,
+            transform.eulerAngles.z
+        );
+
+        smokePush.transform.position = new Vector3(
+            transform.position.x,
+            transform.position.y + 0.5f,
+            transform.position.z
+        );
+
+        Instantiate(smokePush, smokePush.transform.position, smokePush.transform.rotation);
+
         foreach (EnemyController ec in FindObjectsOfType<EnemyController>())
         {
             Vector3 dir = ec.transform.position - transform.position;

@@ -46,20 +46,20 @@ public:
 		glUniform4f(glGetUniformLocation(program, name), x, y, z, w);
 	}
 
-	inline void setVector2F(const char* name, glm::vec2 &vec) {
+	inline void setVector2F(const char* name, glm::vec2 vec) {
 		BREAK_IF_SHADER_IS_NOT_ACTIVE();
 		glUniform2f(glGetUniformLocation(program, name), vec.x, vec.y);
 	}
-	inline void setVector3F(const char* name, glm::vec3 &vec) {
+	inline void setVector3F(const char* name, glm::vec3 vec) {
 		BREAK_IF_SHADER_IS_NOT_ACTIVE();
 		glUniform3f(glGetUniformLocation(program, name), vec.x, vec.y, vec.z);
 	}
-	inline void setVector4F(const char* name, glm::vec4 &vec) {
+	inline void setVector4F(const char* name, glm::vec4 vec) {
 		BREAK_IF_SHADER_IS_NOT_ACTIVE();
 		glUniform4f(glGetUniformLocation(program, name), vec.x, vec.y, vec.z, vec.w);
 	}
 
-	inline void setMat4(const char* name, glm::mat4 &mat) {
+	inline void setMat4(const char* name, glm::mat4 mat) {
 		BREAK_IF_SHADER_IS_NOT_ACTIVE();
 		glUniformMatrix4fv(glGetUniformLocation(program, name), 1, GL_FALSE, glm::value_ptr(mat));
 	}

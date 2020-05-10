@@ -19,10 +19,18 @@ struct VertexBoneData {
 	float weights[4] = { 0.0f,0.0f,0.0f,0.0f };
 };
 
+struct AABBStruct {
+	glm::vec3 min;
+	glm::vec3 max;
+};
+
 class Mesh
 {
-	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices);
-	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData);
+	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, AABBStruct AABB);
+	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData, AABBStruct AABB);
+
+public:
+	const AABBStruct AABB;
 
 private:
 	GLuint VAO;
@@ -31,8 +39,8 @@ private:
 	GLuint EBO;
 	int indicesSize;
 
-	Mesh(GLuint VAO, GLuint VBO, GLuint bVBO, GLuint EBO, int indicesSize) :
-		VAO(VAO), VBO(VBO), bVBO(bVBO), EBO(EBO), indicesSize(indicesSize) {}
+	Mesh(GLuint VAO, GLuint VBO, GLuint bVBO, GLuint EBO, int indicesSize, AABBStruct AABB) :
+		VAO(VAO), VBO(VBO), bVBO(bVBO), EBO(EBO), indicesSize(indicesSize), AABB(AABB) {}
 
 public:
 	inline void bind() { glBindVertexArray(VAO); }

@@ -14,9 +14,12 @@ uniform mat4 gView;
 uniform mat4 gProjection;
 uniform mat4 gBones[MAX_BONES];
 
+uniform mat4 gLightViewProjection;
+
 out VS_OUT {
     vec3 FragPos;
     //vec3 FragPosView;
+    vec4 LightSpacePos;
     vec2 TexCoords;
     mat3 TBN;
 } vs_out;
@@ -28,12 +31,12 @@ void main()
     BoneTransform += gBones[aBoneIDs[2]] * aWeights[2];
     BoneTransform += gBones[aBoneIDs[3]] * aWeights[3];
 
-    vec4 BonedPosition = BoneTransform * vec4(aPosition, 1.0f);
+    vec4 worldBonedPosition = gModel * BoneTransform * vec4(aPosition, 1.0f);
+    gl_Position = gProjection * gView * worldBonedPosition;  
 
-    gl_Position = gProjection * gView * gModel * BonedPosition;  
-
-    vs_out.FragPos = vec3(gModel * BonedPosition);
+    vs_out.FragPos = vec3(worldBonedPosition);
     //vs_out.FragPosView = vec3(gView * vec4(vs_out.FragPos, 1.0));
+    vs_out.LightSpacePos = gLightViewProjection * worldBonedPosition;  
     vs_out.TexCoords = aTexCoord;
 
     vec3 T = normalize(vec3(gModel * BoneTransform * vec4(aTangent, 0.0)));

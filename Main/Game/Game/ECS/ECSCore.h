@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <span>
 
 #include "ComponentManager.h"
 #include "GameObjectManager.h"
@@ -76,6 +77,12 @@ public:
 	T& GetComponent(GameObject gameObject)
 	{
 		return componentManager->GetComponent<T>(gameObject);
+	}
+
+	template<typename T>
+	std::span<T> GetAllComponents()
+	{
+		return componentManager->GetAllComponents<T>();
 	}
 
 	template<typename T>

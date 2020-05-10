@@ -8,7 +8,7 @@ in vec2 TexCoords;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
-uniform sampler2D gMetalnessRoughness;
+uniform sampler2D gMetalnessRoughnessShadow;
 uniform sampler2D gEmissive;
 
 uniform vec3 gCameraPosition;
@@ -18,6 +18,7 @@ struct DirectionalLight
     vec3 Direction;
     vec3 Color;
     vec3 Ambient;
+    float ShadowIntensity;
 };
 uniform DirectionalLight gDirectionalLight;
 
@@ -36,11 +37,12 @@ void main()
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
     vec3 Normal = texture(gNormal, TexCoords).rgb;
     vec3 Albedo = texture(gAlbedo, TexCoords).rgb;
-    vec2 MetlnessRoughness = texture(gMetalnessRoughness, TexCoords).rg;
+    vec3 MetlnessRoughnessShadow = texture(gMetalnessRoughnessShadow, TexCoords).rgb;
     vec3 Emissive = texture(gEmissive, TexCoords).rgb;
 
-    float metalness = MetlnessRoughness.r;
-    float roughness = MetlnessRoughness.g;
+    float metalness = MetlnessRoughnessShadow.r;
+    float roughness = MetlnessRoughnessShadow.g;
+    float shadow = MetlnessRoughnessShadow.b * gDirectionalLight.ShadowIntensity;
 
 
     vec3 viewDir = normalize(gCameraPosition - FragPos);
@@ -75,7 +77,7 @@ void main()
     vec3 color = vec3(0.0);
 
     color += Ambient;
-    color += Lo;
+    color += Lo * (1.0f - shadow);
     color += Emissive;
 
     // tone mappimg

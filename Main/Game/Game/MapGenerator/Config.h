@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "Resourcing/Prefab.h"
+#include "Resourcing/Texture.h"
 #include "Utility/PropertyReader.h"
 
 struct DiagramLayout
@@ -16,7 +17,7 @@ struct DiagramLayout
 
 struct CellMeshConfig
 {
-    float mainScale = 0.97f;
+    float mainScale = 0.94f;
     float depth = 5.0f;
     float depthMax = 10.0f;
     float innerScale = 0.92f;
@@ -32,7 +33,6 @@ struct CellMeshConfig
 };
 
 
-// TODO: finish fence config
 struct CellFenceEntity
 {
     std::shared_ptr<Prefab> prefab;
@@ -58,7 +58,7 @@ struct CellFenceEntity
     }
     inline bool InFillRange(float gap, int segments)
     {
-        return InFillRange(gap - (segments - 1) * length);
+        return InFillRange(gap - ((float)((segments - 1)) * length));
     }
 };
 struct CellFenceConfig
@@ -66,7 +66,7 @@ struct CellFenceConfig
     CellFenceEntity gateEntity;
     CellFenceEntity fragmentEntity;
     CellFenceEntity connectorEntity;
-    float gateDistance = 5.0f;
+    float gateDistance = 6.5f;
     int fragmentCount = 2;
     float innerLevelFenceLocation = 0.87f;
 
@@ -76,5 +76,59 @@ struct CellFenceConfig
         gateEntity.SetPrefab("Fences/PrototypeSet/Gate");
         fragmentEntity.SetPrefab("Fences/PrototypeSet/HighFence");
         connectorEntity.SetPrefab("Fences/PrototypeSet/ConnectColumn");
+    }
+};
+
+struct CellTerrainConfig
+{
+    std::shared_ptr<Texture> grassTexture;
+    float grassTiling = 1.0f;
+    std::shared_ptr<Texture> roadTexture;
+    float roadTiling = 4.0f;
+    std::shared_ptr<Texture> cliffTexture;
+    float cliffTiling = 1.0f;
+
+    CellTerrainConfig()
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        grassTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Grass");
+        roadTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Road");
+        cliffTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Cliff");
+    }
+};
+
+
+
+
+struct CellStructuresConfig
+{
+    std::shared_ptr<Prefab> mainStatuePrefab;
+
+    CellStructuresConfig()
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        mainStatuePrefab = PrefabManager::GetPrefab("Statues/Goth");
+    }
+};
+
+
+
+
+struct MapGeneratorConig
+{
+    DiagramLayout layout;
+    CellMeshConfig cellMeshConfig;
+    CellFenceConfig cellFenceConfig;
+    CellTerrainConfig cellTerrainConfig;
+
+    CellStructuresConfig cellStructuresConfig;
+
+    std::shared_ptr<Prefab> bridgePrefab;
+    float minEdgeLengthForBridge = 20.0f;
+
+    MapGeneratorConig()
+    {
+        // TODO: make it with cleaner way, with possibility to use different configs for different cells
+        bridgePrefab = PrefabManager::GetPrefab("Bridges/Bridge1");
     }
 };

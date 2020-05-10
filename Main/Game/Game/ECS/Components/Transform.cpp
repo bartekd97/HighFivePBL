@@ -53,6 +53,9 @@ void Transform::UpdateSelf() {
 		worldFront = worldRotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
 	}
 
+	// update frame number
+	lastFrameUpdate = HFEngine::CURRENT_FRAME_NUMBER;
+
 	// update children
 	{
 		auto children = gameObjectHierarchy.GetChildren(gameObject);
