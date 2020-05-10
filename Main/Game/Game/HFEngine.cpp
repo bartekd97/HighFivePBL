@@ -180,6 +180,7 @@ namespace HFEngine
 			return;
 		}
 		glfwTerminate();
+		GUIManager::Terminate();
 	}
 
 	void ProcessGameFrame(float dt)

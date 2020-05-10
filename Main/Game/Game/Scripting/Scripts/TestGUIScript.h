@@ -19,6 +19,11 @@ public:
 
 		GUIManager::AddWidget(panel);
 
+		std::shared_ptr<Label> label = std::make_shared<Label>();
+		label->SetText("Test label");
+		label->SetPositionAnchor(glm::vec3(0.0f), Anchor::CENTER);
+
+		GUIManager::AddWidget(label, panel);
 
 		std::shared_ptr<Button> button = std::make_shared<Button>();
 		button->SetPositionAnchor(glm::vec3(20.0f, 10.0f, 0.0f), Anchor::TOPRIGHT);

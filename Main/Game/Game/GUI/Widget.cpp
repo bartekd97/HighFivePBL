@@ -80,7 +80,6 @@ void Widget::UpdateChildrenWorldPosition()
 
 void Widget::CalculateAbsolutePosition()
 {
-	// TODO: anchor
 	// TODO: maybe percentage position?
 	glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
 	absolutePosition = worldPosition;

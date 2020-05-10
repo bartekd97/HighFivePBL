@@ -57,6 +57,9 @@
     <ClCompile Include="Rendering\Frustum.cpp" />
     <ClCompile Include="GUI\Panel.cpp" />
     <ClCompile Include="GUI\Widget.cpp" />
+    <ClCompile Include="GUI\Text\TextRenderer.cpp" />
+    <ClCompile Include="GUI\Text\Font.cpp" />
+    <ClCompile Include="GUI\Label.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -163,9 +166,15 @@
     <ClInclude Include="Scripting\Scripts\TestGUIScript.h" />
     <ClInclude Include="GUI\Widgets.h" />
     <ClInclude Include="GUI\Panel.h" />
+    <ClInclude Include="GUI\Text\TextRenderer.h" />
+    <ClInclude Include="Data\Shaders\Vertex\Text.glsl" />
+    <ClInclude Include="GUI\Text\Font.h" />
+    <ClInclude Include="GUI\Text\Character.h" />
+    <ClInclude Include="GUI\Label.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
     <None Include="Data\Shaders\Fragment\GUI.glsl" />
+    <None Include="Data\Shaders\Fragment\Text.glsl" />
   </ItemGroup>
 </Project>

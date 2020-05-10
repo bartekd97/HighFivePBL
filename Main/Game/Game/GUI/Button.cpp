@@ -2,6 +2,7 @@
 #include "../InputManager.h"
 #include "../WindowManager.h"
 #include "../Utility/Logger.h"
+#include "Text/TextRenderer.h"
 
 #include "GUIManager.h"
 

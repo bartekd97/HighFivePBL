@@ -35,9 +35,7 @@ private:
 
 	Anchor anchor;
 
-	glm::vec3 position; // relatywna pozycja anchor
+	glm::vec3 position;
 	glm::vec3 absolutePosition;
-	glm::vec3 worldPosition; // w sensie absolutna pozycja rodzica
-
-
+	glm::vec3 worldPosition;
 };

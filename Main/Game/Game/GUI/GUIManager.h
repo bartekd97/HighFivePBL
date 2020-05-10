@@ -14,6 +14,7 @@ namespace GUIManager
 	extern std::shared_ptr<Shader> guiShader;
 
 	void Initialize();
+	void Terminate();
 
 	void Update();
 	void Draw();
