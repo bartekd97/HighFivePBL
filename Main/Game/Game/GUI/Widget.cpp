@@ -29,6 +29,18 @@ void Widget::SetPositionAnchor(glm::vec3 position, Anchor anchor)
 	CalculateAbsolutePosition();
 }
 
+void Widget::SetPivot(Anchor pivot)
+{
+	this->pivot = pivot;
+	CalculateAbsolutePosition();
+}
+
+void Widget::SetSize(glm::vec2 size)
+{
+	this->size = size;
+	CalculateAbsolutePosition();
+}
+
 const glm::vec3& Widget::GetPosition()
 {
 	return position;
@@ -39,9 +51,19 @@ const glm::vec3& Widget::GetAbsolutePosition()
 	return absolutePosition;
 }
 
+const glm::vec2& Widget::GetSize()
+{
+	return size;
+}
+
 Anchor Widget::GetAnchor()
 {
 	return anchor;
+}
+
+Anchor Widget::GetPivot()
+{
+	return pivot;
 }
 
 void Widget::AddChild(std::shared_ptr<Widget> child)
@@ -53,6 +75,7 @@ void Widget::AddChild(std::shared_ptr<Widget> child)
 Widget::Widget()
 {
 	anchor = Anchor::TOPLEFT;
+	pivot = Anchor::TOPLEFT;
 	worldPosition = glm::vec3(0.0f);
 	position = glm::vec3(0.0f);
 	absolutePosition = glm::vec3(0.0f);
@@ -82,32 +105,43 @@ void Widget::CalculateAbsolutePosition()
 {
 	// TODO: maybe percentage position?
 	glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
-	absolutePosition = worldPosition;
+	absolutePosition = worldPosition + position;
 	if (parent != nullptr)
 	{
 		parentSize = parent->size;
 	}
 
-	if (anchor == Anchor::TOPLEFT)
+	if (anchor == Anchor::CENTER)
 	{
-		absolutePosition.x += position.x;
-		absolutePosition.y += position.y;
-	} else if (anchor == Anchor::CENTER)
+		absolutePosition.x += parentSize.x / 2.0f;
+		absolutePosition.y += parentSize.y / 2.0f;
+	}
+	else
 	{
-		absolutePosition.x += parentSize.x / 2.0f + position.x;
-		absolutePosition.y += parentSize.y / 2.0f + position.y;
-	} else if (anchor == Anchor::TOPRIGHT)
-	{
-		absolutePosition.x += parentSize.x - size.x - position.x;
-		absolutePosition.y += position.y;
-	} else if (anchor == Anchor::BOTTOMLEFT)
-	{
-		absolutePosition.x += position.x;
-		absolutePosition.y += parentSize.y - size.y - position.y;
-	} else if (anchor == Anchor::BOTTOMRIGHT)
-	{
-		absolutePosition.x += parentSize.x - size.x - position.x;
-		absolutePosition.y += parentSize.y - size.y - position.y;
+		if (anchor == Anchor::TOPRIGHT || anchor == Anchor::BOTTOMRIGHT)
+		{
+			absolutePosition.x += parentSize.x;
+		}
+		if (anchor == Anchor::BOTTOMLEFT || anchor == Anchor::BOTTOMRIGHT)
+		{
+			absolutePosition.y += parentSize.y;
+		}
 	}
 
+	if (pivot == Anchor::CENTER)
+	{
+		absolutePosition.x -= size.x / 2.0f;
+		absolutePosition.y -= size.y / 2.0f;
+	}
+	else
+	{
+		if (pivot == Anchor::TOPRIGHT || pivot == Anchor::BOTTOMRIGHT)
+		{
+			absolutePosition.x -= size.x;
+		}
+		if (pivot == Anchor::BOTTOMLEFT || pivot == Anchor::BOTTOMRIGHT)
+		{
+			absolutePosition.y -= size.y;
+		}
+	}
 }

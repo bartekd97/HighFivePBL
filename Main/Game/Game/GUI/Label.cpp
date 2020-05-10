@@ -11,14 +11,13 @@ Label::Label()
 
 void Label::Draw()
 {
-	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - size.y, (float)fontSize / TextRenderer::GetCurrentFont()->GetSize(), color);
+	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - GetSize().y, (float)fontSize / TextRenderer::GetCurrentFont()->GetSize(), color);
 }
 
 void Label::Update(const glm::vec2& mousePosition)
 {
 	Widget::Update(mousePosition);
 }
-
 
 void Label::SetText(std::string text)
 {
@@ -42,7 +41,7 @@ void Label::CalculateSize()
 	float scale = (float)fontSize / TextRenderer::GetCurrentFont()->GetSize();
 	auto currentFont = TextRenderer::GetCurrentFont();
 
-	size = glm::vec2(0.0f);
+	glm::vec2 tmpSize = glm::vec2(0.0f);
 
 	float tmp;
 	std::string::const_iterator c;
@@ -50,12 +49,12 @@ void Label::CalculateSize()
 	{
 		Character ch = currentFont->GetCharacter(*c);
 		
-		size.x += (ch.Advance >> 6)* scale;
+		tmpSize.x += (ch.Advance >> 6)* scale;
 		tmp = ch.Size.y * scale;
-		if (tmp > size.y)
+		if (tmp > tmpSize.y)
 		{
-			size.y = tmp;
+			tmpSize.y = tmp;
 		}
 	}
-	CalculateAbsolutePosition();
+	SetSize(tmpSize);
 }

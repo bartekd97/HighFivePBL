@@ -14,13 +14,16 @@ public:
 	void SetPosition(glm::vec3 position);
 	void SetAnchor(Anchor anchor);
 	void SetPositionAnchor(glm::vec3 position, Anchor anchor);
+	void SetPivot(Anchor pivot);
+	void SetSize(glm::vec2 size);
 	const glm::vec3& GetPosition();
 	const glm::vec3& GetAbsolutePosition();
+	const glm::vec2& GetSize();
 	Anchor GetAnchor();
+	Anchor GetPivot();
 	void AddChild(std::shared_ptr<Widget> child);
 	
 	bool useWorldSpace; // w sensie 2d czy 3d
-	glm::vec2 size; //width height
 
 	std::shared_ptr<Widget> parent;
 	std::vector<std::shared_ptr<Widget>> children;
@@ -34,8 +37,10 @@ private:
 	void UpdateChildrenWorldPosition();
 
 	Anchor anchor;
+	Anchor pivot;
 
 	glm::vec3 position;
 	glm::vec3 absolutePosition;
 	glm::vec3 worldPosition;
+	glm::vec2 size;
 };
