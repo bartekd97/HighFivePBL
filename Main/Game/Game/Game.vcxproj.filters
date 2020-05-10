@@ -56,6 +56,7 @@
     <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
     <ClCompile Include="GUI\Panel.cpp" />
+    <ClCompile Include="GUI\Widget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />

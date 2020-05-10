@@ -21,7 +21,7 @@ public:
 
 
 		std::shared_ptr<Button> button = std::make_shared<Button>();
-		button->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+		button->SetPositionAnchor(glm::vec3(20.0f, 10.0f, 0.0f), Anchor::TOPRIGHT);
 		button->size.x = 150.0f;
 		button->size.y = 100.0f;
 

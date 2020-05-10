@@ -110,6 +110,7 @@
     <ClCompile Include="GUI\Button.cpp" />
     <ClCompile Include="GUI\GUIManager.cpp" />
     <ClCompile Include="GUI\Panel.cpp" />
+    <ClCompile Include="GUI\Widget.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="InputManager.cpp" />
