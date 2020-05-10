@@ -2,6 +2,7 @@
 
 #include "Widget.h"
 
+// TODO: possibility of setting font instead of default one?
 class Label : public Widget
 {
 public:
@@ -13,6 +14,9 @@ public:
 	void SetFontSize(int size);
 	int GetFontSize();
 private:
+	void CalculateSize();
+
 	std::string text;
 	int fontSize;
+	glm::vec3 color;
 };

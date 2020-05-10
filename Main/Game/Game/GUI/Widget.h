@@ -28,10 +28,10 @@ public:
 protected:
 	Widget();
 	bool IsMouseOver(const glm::vec2& mousePosition);
+	void CalculateAbsolutePosition();
 
 private:
 	void UpdateChildrenWorldPosition();
-	void CalculateAbsolutePosition();
 
 	Anchor anchor;
 

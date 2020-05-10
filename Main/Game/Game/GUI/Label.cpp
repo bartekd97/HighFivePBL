@@ -6,12 +6,12 @@ Label::Label()
 {
 	this->text = "";
 	SetFontSize(48); //TODO: ??
+	color = glm::vec3(0.0f);
 }
 
 void Label::Draw()
 {
-	glm::vec3 color(0.0f);
-	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y, 1.0f, color); // TODO: scale
+	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - size.y, (float)fontSize / TextRenderer::GetCurrentFont()->GetSize(), color);
 }
 
 void Label::Update(const glm::vec2& mousePosition)
@@ -23,16 +23,39 @@ void Label::Update(const glm::vec2& mousePosition)
 void Label::SetText(std::string text)
 {
 	this->text = text;
-	// calc
+	CalculateSize();
 }
 
 void Label::SetFontSize(int size)
 {
 	fontSize = size;
-	// calc
+	CalculateSize();
 }
 
 int Label::GetFontSize()
 {
 	return fontSize;
+}
+
+void Label::CalculateSize()
+{
+	float scale = (float)fontSize / TextRenderer::GetCurrentFont()->GetSize();
+	auto currentFont = TextRenderer::GetCurrentFont();
+
+	size = glm::vec2(0.0f);
+
+	float tmp;
+	std::string::const_iterator c;
+	for (c = text.begin(); c != text.end(); c++)
+	{
+		Character ch = currentFont->GetCharacter(*c);
+		
+		size.x += (ch.Advance >> 6)* scale;
+		tmp = ch.Size.y * scale;
+		if (tmp > size.y)
+		{
+			size.y = tmp;
+		}
+	}
+	CalculateAbsolutePosition();
 }

@@ -21,7 +21,8 @@ public:
 
 		std::shared_ptr<Label> label = std::make_shared<Label>();
 		label->SetText("Test label");
-		label->SetPositionAnchor(glm::vec3(0.0f), Anchor::CENTER);
+		label->SetFontSize(24);
+		label->SetPositionAnchor(glm::vec3(0.0f), Anchor::TOPLEFT);
 
 		GUIManager::AddWidget(label, panel);
 
