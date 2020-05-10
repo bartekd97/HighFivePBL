@@ -22,16 +22,20 @@
 #include "InputManager.h"
 #include "Event/EventManager.h"
 #include "Event/Events.h"
+#include "GUI/GUIManager.h"
 
 #include "MapGenerator/MapGenerator.h"
 
 #include "Resourcing/MeshFileLoader.h"
+
+#include "GUI/Button.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 void ReportGameObjects(float dt);
 void doCameraMovement(GameObject cameraObject, float dt);
+void TestGUI();
 
 int main()
 {
@@ -103,12 +107,14 @@ int main()
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 200.0f, 100.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -90.0f, 0.0f, 0.0f });
 
+	TestGUI();
+
 	while (!glfwWindowShouldClose(window))
 	{
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
-
+		GUIManager::Update();
 		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ECS.UpdateSystems(dt);
@@ -117,6 +123,7 @@ int main()
 		HFEngine::MainCamera.SetView(HFEngine::ECS.GetComponent<Transform>(cameraObject));
 
 		HFEngine::Renderer.Render();
+		GUIManager::Draw();
 
 		glfwSwapBuffers(window);
 
@@ -179,4 +186,19 @@ void doCameraMovement(GameObject cameraObject, float dt)
 	if (input.getKeyStatus(GLFW_KEY_PAGE_DOWN))
 		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, -1));
 		*/
+}
+
+void TestGUI()
+{
+	std::shared_ptr<Button> button = std::make_shared<Button>();
+	button->SetPosition(glm::vec3(300.0f, 200.0f, 0.0f));
+	button->size.x = 150.0f;
+	button->size.y = 100.0f;
+
+	button->textureColors[Button::STATE::NORMAL].color.a = 0.5f;
+	button->textureColors[Button::STATE::HOVER].color.a = 0.7f;
+	button->textureColors[Button::STATE::PRESSED].color.a = 0.9f;
+
+
+	GUIManager::AddWidget(button);
 }

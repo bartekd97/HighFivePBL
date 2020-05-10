@@ -8,6 +8,8 @@ namespace InputManager
 	GLFWwindow* window = nullptr;
 	std::map<int, bool> currentlyPressed;
 	std::map<int, bool> currentlyReleased;
+	glm::vec2 mousePosition;
+	int mouseButtonStates[2];
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
@@ -17,6 +19,16 @@ namespace InputManager
 			currentlyReleased[key] = true;
 	}
 
+	void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+	{
+		mousePosition.x = xpos;
+		mousePosition.y = ypos;
+	}
+
+	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+	{
+		mouseButtonStates[button] = action;
+	}
 
 	void Initialize()
 	{
@@ -26,12 +38,19 @@ namespace InputManager
 			return;
 		}
 
+		for (int i = 0; i < 2; i++)
+		{
+			mouseButtonStates[i] = GLFW_RELEASE;
+		}
+
 		window = WindowManager::GetWindow();
 		if (window == nullptr)
 		{
 			LogError("InputManager::Initialize(): WindowManager must be initialized first");
 			return;
 		}
+		glfwSetCursorPosCallback(window, cursor_position_callback);
+		glfwSetMouseButtonCallback(window, mouse_button_callback);
 	}
 
 	void PollEvents()
@@ -57,4 +76,14 @@ namespace InputManager
 		return currentlyPressed.find(key) != currentlyPressed.end();
 	}
 
+	const glm::vec2& GetMousePosition()
+	{
+		return mousePosition;
+	}
+
+	int GetMouseButtonState(int button)
+	{
+		// TODO: assert?
+		return mouseButtonStates[button];
+	}
 }

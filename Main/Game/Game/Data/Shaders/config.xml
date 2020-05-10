@@ -4,4 +4,5 @@
     <shader name="ToGBuffer" vertex="GeometryPass.glsl" fragment="ToGBuffer.glsl"/>
     <shader name="ToGBufferSkinned" vertex="SkinnedGeometryPass.glsl" fragment="ToGBuffer.glsl"/>
     <shader name="CombineGBuffer" vertex="ScreenPass.glsl" fragment="CombineGBuffer.glsl"/>
+    <shader name="GUIShader" vertex="GUI.glsl" fragment="GUI.glsl"/>
 </shaders>

@@ -105,6 +105,8 @@
     <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="GUI\Button.cpp" />
+    <ClCompile Include="GUI\GUIManager.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="InputManager.cpp" />
@@ -138,6 +140,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
+    <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
     <ClInclude Include="ECS\ComponentArray.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
     <ClInclude Include="ECS\Components.h" />
@@ -183,6 +186,11 @@
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="Event\Events.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="GUI\Anchor.h" />
+    <ClInclude Include="GUI\Button.h" />
+    <ClInclude Include="GUI\GUIManager.h" />
+    <ClInclude Include="GUI\TextureColor.h" />
+    <ClInclude Include="GUI\Widget.h" />
     <ClInclude Include="HFEngine.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
@@ -229,6 +237,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
+    <None Include="Data\Shaders\Fragment\GUI.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -20,6 +20,7 @@
 #include "Rendering/PrimitiveRenderer.h"
 #include "WindowManager.h"
 #include "InputManager.h"
+#include "GUI/GUIManager.h"
 
 namespace HFEngine
 {
@@ -73,6 +74,7 @@ namespace HFEngine
 		PrefabManager::Initialize();
 		ScriptManager::Initialize();
 		EventManager::Initialize();
+		GUIManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);

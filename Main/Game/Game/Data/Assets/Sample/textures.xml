@@ -4,4 +4,5 @@
     <texture name="metal" file="metalness.jpg" format="r" />
     <texture name="rough" file="roughness.jpg" format="r" />
     <texture name="emis" file="emissive.jpg" format="srgb" />
+    <texture name="GUI_blank" file="gui_blank.jpg" format="srgb" />
 </textures>

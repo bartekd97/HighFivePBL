@@ -50,6 +50,8 @@
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
+    <ClCompile Include="GUI\GUIManager.cpp" />
+    <ClCompile Include="GUI\Button.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -141,8 +143,15 @@
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="GUI\GUIManager.h" />
+    <ClInclude Include="GUI\Widget.h" />
+    <ClInclude Include="GUI\Button.h" />
+    <ClInclude Include="GUI\Anchor.h" />
+    <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
+    <ClInclude Include="GUI\TextureColor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
+    <None Include="Data\Shaders\Fragment\GUI.glsl" />
   </ItemGroup>
 </Project>
