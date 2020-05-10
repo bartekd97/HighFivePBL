@@ -1,12 +1,10 @@
 #include "Button.h"
 #include "../InputManager.h"
-#include "../Resourcing/ShaderManager.h"
 #include "../WindowManager.h"
 #include "../Utility/Logger.h"
 
 #include "GUIManager.h"
 
-std::shared_ptr<Shader> Button::shader = nullptr;
 GLuint Button::vao;
 GLuint Button::vboVertices;
 
@@ -16,8 +14,6 @@ Button::Button()
 
 	if (!initialized)
 	{
-		shader = ShaderManager::GetShader("GUIShader");
-
 		float vertices[] = {
 			/*-0.5f, 0.5f, 0.0f,  0.0f, 0.0f,
 			0.5f, 0.5f, 0.0f,  0.0f, 1.0f,
@@ -104,29 +100,21 @@ void Button::Update(const glm::vec2& mousePosition)
 		}
 	}
 
-	//Widget::Update(mousePosition);
+	Widget::Update(mousePosition);
 }
 
 void Button::Draw()
 {
-	shader->use();
+	GUIManager::guiShader->use();
 
-	//glm::vec3 screenPos(2.0f * (GetPosition().x / WindowManager::SCREEN_WIDTH) - 1.0f, 2.0f * (1.0f - GetPosition().y / WindowManager::SCREEN_HEIGHT) - 1.0f, 0.0f);
-	//glm::vec3 screenPos((2.0f * GetPosition().x + 1.0f) / WindowManager::SCREEN_WIDTH - 1.0f, (2.0f * GetPosition().y + 1.0f) / WindowManager::SCREEN_HEIGHT, 0.0f);
-	glm::vec3 screenPos((GetPosition().x / WindowManager::SCREEN_WIDTH) * 2.0f, -(GetPosition().y / WindowManager::SCREEN_HEIGHT) * 2.0f, 0.0f);
+	glm::vec3 screenPos((GetAbsolutePosition().x / WindowManager::SCREEN_WIDTH) * 2.0f - 1.0f, -(GetAbsolutePosition().y / WindowManager::SCREEN_HEIGHT) * 2.0f + 1.0f, 0.0f);
 	glm::vec2 screenSize(size.x / WindowManager::SCREEN_WIDTH, size.y / WindowManager::SCREEN_HEIGHT);
 
 	glm::mat4 mat(1.0f);
-
-	if (GetAnchor() == Anchor::TOPLEFT)
-	{
-		mat = glm::translate(mat, glm::vec3(-1.0f, 1.0f, 0.0f));
-	}
-
 	mat = glm::translate(mat, screenPos);
 	mat = glm::scale(mat, glm::vec3(screenSize.x * 2.0f, screenSize.y * 2.0f, 1.0f));
-	shader->setVector4F("uColor", textureColors[state].color);
-	shader->setMat4("model", mat);
+	GUIManager::guiShader->setVector4F("uColor", textureColors[state].color);
+	GUIManager::guiShader->setMat4("model", mat);
 
 	if (textureColors[state].texture != nullptr)
 	{

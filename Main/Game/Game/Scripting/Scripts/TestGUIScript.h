@@ -11,8 +11,17 @@ class TestGUIScript : public Script
 public:
 	void Awake()
 	{
+		std::shared_ptr<Panel> panel = std::make_shared<Panel>();
+		panel->SetPosition(glm::vec3(150.0f, 50.0f, 0.0f));
+		panel->size.x = 250.0f;
+		panel->size.y = 200.0f;
+		panel->textureColor.color = glm::vec4(1.0f, 0.0f, 0.0f, 0.3f);
+
+		GUIManager::AddWidget(panel);
+
+
 		std::shared_ptr<Button> button = std::make_shared<Button>();
-		button->SetPosition(glm::vec3(300.0f, 200.0f, 0.0f));
+		button->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 		button->size.x = 150.0f;
 		button->size.y = 100.0f;
 
@@ -22,8 +31,7 @@ public:
 
 		button->OnClickListener = GUI_METHOD_POINTER(TestGUIScript::OnButtonClick);
 
-
-		GUIManager::AddWidget(button);
+		GUIManager::AddWidget(button, panel);
 	}
 
 	void OnButtonClick()

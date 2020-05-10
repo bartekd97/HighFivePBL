@@ -26,7 +26,6 @@ public:
 
 	std::function<void()> OnClickListener;
 private:
-	static std::shared_ptr<Shader> shader;
 	static GLuint vao;
 	static GLuint vboVertices;
 };

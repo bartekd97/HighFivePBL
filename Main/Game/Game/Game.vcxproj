@@ -109,6 +109,7 @@
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="GUI\Button.cpp" />
     <ClCompile Include="GUI\GUIManager.cpp" />
+    <ClCompile Include="GUI\Panel.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="InputManager.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="GUI\Anchor.h" />
     <ClInclude Include="GUI\Button.h" />
     <ClInclude Include="GUI\GUIManager.h" />
+    <ClInclude Include="GUI\Panel.h" />
     <ClInclude Include="GUI\TextureColor.h" />
     <ClInclude Include="GUI\Widget.h" />
     <ClInclude Include="GUI\Widgets.h" />

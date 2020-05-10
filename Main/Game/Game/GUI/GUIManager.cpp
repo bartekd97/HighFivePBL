@@ -2,15 +2,18 @@
 
 #include "GUIManager.h"
 #include "../InputManager.h"
+#include "../Resourcing/ShaderManager.h"
 
 namespace GUIManager
 {
 	std::vector<std::shared_ptr<Widget>> root;
 	std::vector<std::shared_ptr<Widget>> allWidgets;
+	std::shared_ptr<Shader> guiShader;
 	std::shared_ptr<Texture> defaultTexture;
 
 	void Initialize()
 	{
+		guiShader = ShaderManager::GetShader("GUIShader");
 		defaultTexture = TextureManager::GetLibrary("Sample")->GetTexture("GUI_blank");
 	}
 
@@ -45,7 +48,7 @@ namespace GUIManager
 		else
 		{
 			widget->parent = parent;
-			parent->children.push_back(widget);
+			parent->AddChild(widget);
 		}
 		allWidgets.push_back(widget);
 	}

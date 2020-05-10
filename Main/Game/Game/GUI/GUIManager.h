@@ -4,12 +4,14 @@
 
 #include "Widget.h"
 #include "../Resourcing/Texture.h"
+#include "../Resourcing/Shader.h"
 
 #define GUI_METHOD_POINTER(method) std::bind(&method, this)
 
 namespace GUIManager
 {
 	extern std::shared_ptr<Texture> defaultTexture;
+	extern std::shared_ptr<Shader> guiShader;
 
 	void Initialize();
 

@@ -55,6 +55,7 @@
     <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
+    <ClCompile Include="GUI\Panel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -160,6 +161,7 @@
     <ClInclude Include="Utility\TaskPool.h" />
     <ClInclude Include="Scripting\Scripts\TestGUIScript.h" />
     <ClInclude Include="GUI\Widgets.h" />
+    <ClInclude Include="GUI\Panel.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
