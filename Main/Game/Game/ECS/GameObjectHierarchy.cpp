@@ -1,6 +1,7 @@
 #include <algorithm>
 
 #include "GameObjectHierarchy.h"
+#include  "../HFEngine.h"
 
 #include "../Utility/Logger.h"
 
@@ -48,6 +49,32 @@ std::vector<GameObject>& GameObjectHierarchy::GetChildren(GameObject parent)
 	}
 	static std::vector<GameObject> _empty;
 	return _empty;
+}
+
+std::vector<GameObject> GameObjectHierarchy::GetByNameInChildren(GameObject parent, std::string name)
+{
+	auto node = pointers[parent];
+	if (node != nullptr)
+	{
+		std::vector<GameObject> result;
+		this->GetByNameInChildren(parent, name, result);
+		return result;
+	}
+	static std::vector<GameObject> _empty;
+	return _empty;
+}
+
+void GameObjectHierarchy::GetByNameInChildren(GameObject parent, std::string name, std::vector<GameObject>& result)
+{
+	auto node = pointers[parent];
+	if (node != nullptr)
+	{
+		if (name.compare(HFEngine::ECS.GetNameGameObject(parent)) == 0) result.push_back(parent);
+		for (auto child : node->children)
+		{
+			GetByNameInChildren(child, name, result);
+		}
+	}
 }
 
 std::optional<GameObject> GameObjectHierarchy::GetParent(GameObject child)

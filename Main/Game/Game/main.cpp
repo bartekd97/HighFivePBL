@@ -27,6 +27,8 @@
 
 #include "Resourcing/MeshFileLoader.h"
 
+#include "GUI/Button.h"
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -97,6 +99,11 @@ int main()
 	scriptContainer.AddScript(movableTestObject, "CharControllerTest");
 	scriptContainer.AddScript(movableTestObject, "MapCellOptimizer");
 
+	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
+	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
+	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
+	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
+
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 30.0f, 120.0f });
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -50.0f, 0.0f, 0.0f });
@@ -108,7 +115,6 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
-
 		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);

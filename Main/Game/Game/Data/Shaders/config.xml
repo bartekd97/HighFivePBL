@@ -8,6 +8,7 @@
     <shader name="ToGBufferSkinned" vertex="SkinnedGeometryPass.glsl" fragment="ToGBuffer.glsl"/>
 
     <shader name="CombineGBuffer" vertex="ScreenPass.glsl" fragment="CombineGBuffer.glsl"/>
-
+    <shader name="GUIShader" vertex="GUI.glsl" fragment="GUI.glsl"/>
     <shader name="PaintCellTerrain" vertex="ScreenPass.glsl" fragment="PaintCellTerrain.glsl"/>
+    <shader name="TextShader" vertex="Text.glsl" fragment="Text.glsl"/>
 </shaders>
