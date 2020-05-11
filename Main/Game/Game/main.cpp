@@ -102,7 +102,6 @@ int main()
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
-	tgScriptContainer.AddScript(testGuiObject, "TestGUIScript");
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");

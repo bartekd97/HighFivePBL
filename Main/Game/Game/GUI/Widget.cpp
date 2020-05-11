@@ -35,7 +35,10 @@ void Widget::Update(const glm::vec2& mousePosition)
 
 	for (auto& child : children)
 	{
-		child->Update(mousePosition);
+		if (child->GetEnabled())
+		{
+			child->Update(mousePosition);
+		}
 	}
 }
 
@@ -118,6 +121,7 @@ Widget::Widget()
 	size = glm::vec2(0.0f);
 	useWorldSpace = false;
 	isClipping = false;
+	enabled = true;
 	level = 0;
 }
 
@@ -249,4 +253,21 @@ void Widget::PreDraw()
 void Widget::PostDraw()
 {
 	glDisable(GL_SCISSOR_TEST);
+}
+
+void Widget::SetEnabled(bool enabled)
+{
+	if (this->enabled != enabled)
+	{
+		this->enabled = enabled;
+		for (auto& child : children)
+		{
+			child->SetEnabled(enabled);
+		}
+	}
+}
+
+bool Widget::GetEnabled()
+{
+	return enabled;
 }

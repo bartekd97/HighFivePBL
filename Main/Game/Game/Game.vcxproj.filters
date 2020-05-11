@@ -163,7 +163,6 @@
     <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
     <ClInclude Include="Utility\TaskPool.h" />
-    <ClInclude Include="Scripting\Scripts\TestGUIScript.h" />
     <ClInclude Include="GUI\Widgets.h" />
     <ClInclude Include="GUI\Panel.h" />
     <ClInclude Include="GUI\Text\TextRenderer.h" />

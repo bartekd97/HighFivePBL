@@ -27,6 +27,8 @@ public:
 	Anchor GetPivot();
 	void AddChild(std::shared_ptr<Widget> child);
 	void SetClipping(bool clipping);
+	void SetEnabled(bool enabled);
+	bool GetEnabled();
 	
 	bool useWorldSpace;
 
@@ -55,5 +57,6 @@ private:
 	glm::vec2 size;
 	bool isClipping;
 	bool isClipped;
+	bool enabled;
 	int level;
 };

@@ -15,6 +15,7 @@ public:
 	void Awake()
 	{
 		hidden = false;
+		enabled = true;
 		expandTexture = TextureManager::GetLibrary("GUI")->GetTexture("expand");
 		collapseTexture = TextureManager::GetLibrary("GUI")->GetTexture("collapse");
 
@@ -42,7 +43,7 @@ public:
 
 		for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
 		{
-			hideShowButton->textureColors[(Button::STATE)i].texture = expandTexture;
+			hideShowButton->textureColors[(Button::STATE)i].texture = collapseTexture;
 			hideShowButton->textureColors[(Button::STATE)i].color = glm::vec4(glm::vec3(0.6f + (i * 0.2f)), 1.0f);
 		}
 
@@ -67,18 +68,24 @@ public:
 
 	void Update(float dt)
 	{
-		static int frames = 0;
-		static float accumulator = 0.0f;
-		accumulator += dt;
-		frames += 1;
-		if (isgreaterequal(accumulator, reportInterval))
+		if (InputManager::GetKeyDown(GLFW_KEY_F2))
 		{
-			std::stringstream ss;
-			ss << std::fixed << std::setprecision(4) << frames / accumulator;
-			fpsLabel->SetText(fpsPrefix + ss.str());
-			gameObjectCountLabel->SetText(GOCountPrefix + std::to_string(HFEngine::ECS.GetLivingGameObjectsCount()));
-			accumulator = 0.0f;
-			frames = 0;
+			SwitchEnabled();
+		}
+
+		if (enabled)
+		{
+			accumulator += dt;
+			frames += 1;
+			if (isgreaterequal(accumulator, reportInterval))
+			{
+				std::stringstream ss;
+				ss << std::fixed << std::setprecision(4) << frames / accumulator;
+				fpsLabel->SetText(fpsPrefix + ss.str());
+				gameObjectCountLabel->SetText(GOCountPrefix + std::to_string(HFEngine::ECS.GetLivingGameObjectsCount()));
+				accumulator = 0.0f;
+				frames = 0;
+			}
 		}
 	}
 
@@ -86,7 +93,7 @@ public:
 	{
 		for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
 		{
-			hideShowButton->textureColors[(Button::STATE)i].texture = hidden ? expandTexture : collapseTexture;
+			hideShowButton->textureColors[(Button::STATE)i].texture = hidden ? collapseTexture : expandTexture;
 		}
 		if (hidden)
 		{
@@ -101,6 +108,21 @@ public:
 	}
 
 private:
+	void SwitchEnabled()
+	{
+		if (enabled)
+		{
+			enabled = false;
+			accumulator = 0.0f;
+			frames = 0;
+		}
+		else
+		{
+			enabled = true;
+		}
+		panel->SetEnabled(enabled);
+	}
+
 	const float panelFullHeight = 300.0f;
 	const float panelHiddenHeight = 35.0f;
 	const float reportInterval = 1.0f;
@@ -113,4 +135,8 @@ private:
 	std::shared_ptr<Label> fpsLabel;
 	std::shared_ptr<Label> gameObjectCountLabel;
 	bool hidden;
+	bool enabled;
+
+	float accumulator;
+	int frames;
 };

@@ -5,5 +5,4 @@
 #include "CharControllerTest.h"
 #include "MapCellOptimizer.h"
 #include "TriggerTest.h"
-#include "TestGUIScript.h"
 #include "GUIStatistics.h"

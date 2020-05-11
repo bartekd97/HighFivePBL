@@ -39,7 +39,10 @@ namespace GUIManager
 		glm::vec2 mousePosition = InputManager::GetMousePosition();
 		for (auto widget : root)
 		{
-			widget->Update(mousePosition);
+			if (widget->GetEnabled())
+			{
+				widget->Update(mousePosition);
+			}
 		}
 	}
 
@@ -54,9 +57,12 @@ namespace GUIManager
 		{
 			for (auto widget : it->second)
 			{
-				widget->PreDraw();
-				widget->Draw();
-				widget->PostDraw();
+				if (widget->GetEnabled())
+				{
+					widget->PreDraw();
+					widget->Draw();
+					widget->PostDraw();
+				}
 			}
 		}
 
