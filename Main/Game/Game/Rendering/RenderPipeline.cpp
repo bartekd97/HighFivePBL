@@ -11,6 +11,9 @@
 #include "PrimitiveRenderer.h"
 #include "InputManager.h"
 
+#include "Postprocessing/RiverFogEffect.h"
+
+
 namespace {
 	void CalculateLightCamera(Camera& viewCamera, Camera& lightCamera)
 	{
@@ -49,7 +52,7 @@ void RenderPipeline::InitGBuffer()
 	GBuffer.frameBuffer = FrameBuffer::Create(
 		HFEngine::RENDER_WIDTH, HFEngine::RENDER_HEIGHT,
 		gbufferComponents,
-		FrameBuffer::DepthAttachement::DEFAULT
+		FrameBuffer::DepthAttachement::CREATE_TEXTURE
 		);
 
 	auto gbufferTextures = GBuffer.frameBuffer->getColorAttachements();
@@ -58,6 +61,7 @@ void RenderPipeline::InitGBuffer()
 	GBuffer.albedo = gbufferTextures[2];
 	GBuffer.metalnessRoughnessShadow = gbufferTextures[3];
 	GBuffer.emissive = gbufferTextures[4];
+	GBuffer.depth = GBuffer.frameBuffer->getDepthAttachement();
 }
 void RenderPipeline::InitShadowmap()
 {
@@ -110,6 +114,32 @@ void RenderPipeline::InitRenderSystems()
 #endif //  _DEBUG
 }
 
+void RenderPipeline::InitPostprocessingEffects()
+{
+	// init swap buffers
+	const std::vector<FrameBuffer::ColorAttachement> colorAttachement = {
+		// internalFormat, dataFormat, dataType
+		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+	};
+
+	PostprocessingSwapBuffers[0] = FrameBuffer::Create(
+		HFEngine::RENDER_WIDTH, HFEngine::RENDER_HEIGHT,
+		colorAttachement,
+		FrameBuffer::DepthAttachement::DEFAULT
+		);
+	PostprocessingSwapBuffers[1] = FrameBuffer::Create(
+		HFEngine::RENDER_WIDTH, HFEngine::RENDER_HEIGHT,
+		colorAttachement,
+		FrameBuffer::DepthAttachement::DEFAULT
+		);
+
+	// init effects
+	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
+	
+	for (auto fx : postprocessingEffects)
+		fx->Init();
+}
+
 void RenderPipeline::Init()
 {
 	if (initialized)
@@ -121,6 +151,7 @@ void RenderPipeline::Init()
 	InitGBuffer();
 	InitShadowmap();
 	InitRenderSystems();
+	InitPostprocessingEffects();
 
 	combineGBufferShader = ShaderManager::GetShader("CombineGBuffer");
 	combineGBufferShader->use();
@@ -174,7 +205,11 @@ void RenderPipeline::Render()
 	//RenderSystems.cubeRenderer->Render();
 
 	// combine gbuffer
-	FrameBuffer::BindDefaultScreen();
+	//FrameBuffer::BindDefaultScreen();
+	FrameBuffer::BlitDepth(GBuffer.frameBuffer, PostprocessingSwapBuffers[0]);
+	FrameBuffer::BlitDepth(GBuffer.frameBuffer, PostprocessingSwapBuffers[1]);
+	PostprocessingSwapBuffers[0]->bind();
+
 	combineGBufferShader->use();
 	HFEngine::MainCamera.Use(combineGBufferShader); // for gCameraPosition
 	HFEngine::WorldLight.Apply(combineGBufferShader); // for gDirectionalLight struct
@@ -184,8 +219,26 @@ void RenderPipeline::Render()
 	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
 	glDisable(GL_DEPTH_TEST);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
+	glDisable(GL_BLEND);
+
+	// apply post processing
+	glDepthMask(GL_FALSE);
+	for (auto fx : postprocessingEffects)
+	{
+		bool swap = postprocessingEffects[0]->Process(
+			PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1], GBuffer
+			);
+		if (swap)
+			std::swap(PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1]);
+	}
+	glDepthMask(GL_TRUE);
+
+	// show rendered
+	FrameBuffer::BlitColor(PostprocessingSwapBuffers[0], nullptr, 0);
 
 	// debug rendering
 #ifdef _DEBUG

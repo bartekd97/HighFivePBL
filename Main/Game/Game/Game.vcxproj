@@ -123,6 +123,7 @@
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Resourcing\Material.cpp" />
@@ -207,6 +208,8 @@
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\Frustum.h" />
     <ClInclude Include="Rendering\Lights.h" />
+    <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
     <ClInclude Include="Resourcing\AnimationClip.h" />

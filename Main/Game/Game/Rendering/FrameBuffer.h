@@ -45,6 +45,13 @@ public:
 		glViewport(0,0,width,height);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 	}
+	inline void bindRead() {
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer);
+	}
+	inline void bindDraw() {
+		glViewport(0, 0, width, height);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBuffer);
+	}
 
 	static inline void BindDefaultScreen() {
 		glViewport(0, 0, WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
@@ -54,6 +61,9 @@ public:
 	inline std::vector<std::shared_ptr<Texture>> getColorAttachements() {
 		return colorAttachementTextures;
 	}
+	inline std::shared_ptr<Texture> getColorAttachement(int index) {
+		return colorAttachementTextures[index];
+	}
 	inline std::shared_ptr<Texture> getDepthAttachement() {
 		return depthAttachementTexture;
 	}
@@ -62,6 +72,7 @@ public:
 	std::shared_ptr<Texture> popColorAttachement(int index);
 
 	static void BlitDepth(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to = nullptr);
+	static void BlitColor(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to = nullptr, int readIndex = 0);
 
 	~FrameBuffer()
 	{

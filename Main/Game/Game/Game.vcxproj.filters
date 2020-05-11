@@ -53,6 +53,7 @@
     <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -150,6 +151,8 @@
     <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
     <ClInclude Include="Utility\TaskPool.h" />
+    <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
