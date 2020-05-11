@@ -45,6 +45,8 @@
     <ClCompile Include="Physics\PhysicsCache.cpp" />
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
+    <ClCompile Include="GUI\GUIManager.cpp" />
+    <ClCompile Include="GUI\Button.cpp" />
     <ClCompile Include="MapGenerator\CellMeshPainter.cpp" />
     <ClCompile Include="MapGenerator\CellSetuper.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
@@ -53,6 +55,11 @@
     <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
+    <ClCompile Include="GUI\Panel.cpp" />
+    <ClCompile Include="GUI\Widget.cpp" />
+    <ClCompile Include="GUI\Text\TextRenderer.cpp" />
+    <ClCompile Include="GUI\Text\Font.cpp" />
+    <ClCompile Include="GUI\Label.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -140,6 +147,12 @@
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="GUI\GUIManager.h" />
+    <ClInclude Include="GUI\Widget.h" />
+    <ClInclude Include="GUI\Button.h" />
+    <ClInclude Include="GUI\Anchor.h" />
+    <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
+    <ClInclude Include="GUI\TextureColor.h" />
     <ClInclude Include="MapGenerator\CellMeshPainter.h" />
     <ClInclude Include="MapGenerator\CellSetuper.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
@@ -151,10 +164,20 @@
     <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
     <ClInclude Include="Utility\TaskPool.h" />
+    <ClInclude Include="GUI\Widgets.h" />
+    <ClInclude Include="GUI\Panel.h" />
+    <ClInclude Include="GUI\Text\TextRenderer.h" />
+    <ClInclude Include="Data\Shaders\Vertex\Text.glsl" />
+    <ClInclude Include="GUI\Text\Font.h" />
+    <ClInclude Include="GUI\Text\Character.h" />
+    <ClInclude Include="GUI\Label.h" />
+    <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
+    <None Include="Data\Shaders\Fragment\GUI.glsl" />
+    <None Include="Data\Shaders\Fragment\Text.glsl" />
   </ItemGroup>
 </Project>

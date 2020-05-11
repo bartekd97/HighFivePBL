@@ -20,6 +20,7 @@
 #include "Rendering/PrimitiveRenderer.h"
 #include "WindowManager.h"
 #include "InputManager.h"
+#include "GUI/GUIManager.h"
 
 namespace HFEngine
 {
@@ -75,6 +76,7 @@ namespace HFEngine
 		PrefabManager::Initialize();
 		ScriptManager::Initialize();
 		EventManager::Initialize();
+		GUIManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
@@ -178,13 +180,16 @@ namespace HFEngine
 			return;
 		}
 		glfwTerminate();
+		GUIManager::Terminate();
 	}
 
 	void ProcessGameFrame(float dt)
 	{
 		CURRENT_FRAME_NUMBER++;
 
+		GUIManager::Update();
 		HFEngine::ECS.UpdateSystems(dt);
 		HFEngine::Renderer.Render();
+		GUIManager::Draw();
 	}
 }
