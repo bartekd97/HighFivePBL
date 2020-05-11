@@ -16,13 +16,13 @@ public:
 	{}
 
 	template<typename T>
-	void SetParam(EventId id, T value)
+	void SetParam(ParamId id, T value)
 	{
 		data[id] = value;
 	}
 
 	template<typename T>
-	T GetParam(EventId id)
+	T GetParam(ParamId id)
 	{
 		return std::any_cast<T>(data[id]);
 	}
@@ -34,5 +34,5 @@ public:
 
 private:
 	EventId type{};
-	std::unordered_map<EventId, std::any> data{};
+	std::unordered_map<ParamId, std::any> data{};
 };
