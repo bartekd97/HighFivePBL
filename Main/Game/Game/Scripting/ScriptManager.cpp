@@ -49,6 +49,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(TriggerTest);
 		REGISTER_SCRIPT(TestGUIScript);
+		REGISTER_SCRIPT(GUIStatistics);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}

@@ -171,6 +171,7 @@
     <ClInclude Include="GUI\Text\Font.h" />
     <ClInclude Include="GUI\Text\Character.h" />
     <ClInclude Include="GUI\Label.h" />
+    <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

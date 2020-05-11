@@ -26,7 +26,7 @@ namespace GUIManager
 		TextRenderer::SetFont("Arial");
 
 		guiShader = ShaderManager::GetShader("GUIShader");
-		defaultTexture = TextureManager::GetLibrary("Sample")->GetTexture("GUI_blank");
+		defaultTexture = TextureManager::GetLibrary("GUI")->GetTexture("blank");
 	}
 
 	void Terminate()

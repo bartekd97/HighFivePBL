@@ -247,6 +247,7 @@
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
+    <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\TestGUIScript.h" />

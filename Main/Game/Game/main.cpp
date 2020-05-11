@@ -103,6 +103,7 @@ int main()
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "TestGUIScript");
+	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 30.0f, 120.0f });
