@@ -8,9 +8,17 @@
 #define METHOD_LISTENER(EventType, Listener) EventType, std::bind(&Listener, this, std::placeholders::_1)
 #define FUNCTION_LISTENER(EventType, Listener) EventType, std::bind(&Listener, std::placeholders::_1)
 
+// EVENTS
+
 namespace Events::Test
 {
 	const EventId TICK = "Events::Test::TICK"_hash;
+}
+
+namespace Events::General
+{
+	const EventId UPDATE = "Events::General::UPDATE"_hash;
+	const EventId LATE_UPDATE = "Events::General::LATE_UPDATE"_hash;
 }
 
 namespace Events::GameObject
@@ -20,6 +28,13 @@ namespace Events::GameObject
 	{
 		const EventId ADDED = "Events::GameObject::Script::ADDED"_hash;
 	}
+}
+
+// PARAMS
+
+namespace Events::General
+{
+	const ParamId DELTA_TIME = "Events::General::DELTA_TIME"_hash;
 }
 
 namespace Events::GameObject

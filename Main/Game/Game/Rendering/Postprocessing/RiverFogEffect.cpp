@@ -3,6 +3,17 @@
 #include "Resourcing/Mesh.h"
 #include "Resourcing/Shader.h"
 #include "HFEngine.h"
+#include "Event/Events.h"
+#include "Event/EventManager.h"
+
+void RiverFogEffect::LateUpdateNoise(Event& event)
+{
+	float dt = event.GetParam<float>(Events::General::DELTA_TIME);
+
+	noiseOffsets[0] += noiseSpeeds[0] * dt;
+	noiseOffsets[1] += noiseSpeeds[1] * dt;
+	noiseOffsets[2] += noiseSpeeds[2] * dt;
+}
 
 void RiverFogEffect::Init()
 {
@@ -46,6 +57,8 @@ void RiverFogEffect::Init()
 	shader->use();
 	shader->setInt("depthMap", 0);
 	shader->setInt("noiseMap", 1);
+
+	EventManager::AddListener(METHOD_LISTENER(Events::General::LATE_UPDATE, RiverFogEffect::LateUpdateNoise));
 }
 
 bool RiverFogEffect::Process(
@@ -63,11 +76,6 @@ bool RiverFogEffect::Process(
 	glm::vec2 camSize = viewCamera.GetSize() * 0.55f;
 	float viewSize = glm::max(camSize.x, camSize.y) * viewCamera.GetScale();
 	glm::mat4 model = glm::translate(glm::mat4(1.0), fogPos) * glm::scale(glm::mat4(1.0), glm::vec3(viewSize));
-
-	// TODO make it better and time-dependend
-	noiseOffsets[0] += glm::vec2(0.001f, 0.0f);
-	noiseOffsets[1] += glm::vec2(0.005f, 0.001f);
-	noiseOffsets[2] += glm::vec2(0.0f, -0.001f);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);

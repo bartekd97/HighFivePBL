@@ -5,6 +5,7 @@
 
 class Shader;
 class Mesh;
+class Event;
 
 class RiverFogEffect : public IPostprocessingEffect
 {
@@ -16,8 +17,16 @@ private:
 	std::shared_ptr<Mesh> fogPlane;
 	std::shared_ptr<Texture> noise;
 
-public:
 	glm::vec2 noiseOffsets[3];
+
+	void LateUpdateNoise(Event& event);
+
+public:
+	glm::vec2 noiseSpeeds[3] = {
+		glm::vec2(0.015f, 0.0f),
+		glm::vec2(0.075f, 0.015f),
+		glm::vec2(0.0f, -0.015f)
+	};
 
 	virtual void Init() override;
 	virtual bool Process(
