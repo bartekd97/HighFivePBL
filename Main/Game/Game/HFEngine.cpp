@@ -188,7 +188,17 @@ namespace HFEngine
 		CURRENT_FRAME_NUMBER++;
 
 		GUIManager::Update();
+
+		Event updateEvent(Events::General::UPDATE);
+		updateEvent.SetParam(Events::General::DELTA_TIME, dt);
+		EventManager::FireEvent(updateEvent);
+
 		HFEngine::ECS.UpdateSystems(dt);
+
+		Event lateUpdateEvent(Events::General::LATE_UPDATE);
+		lateUpdateEvent.SetParam(Events::General::DELTA_TIME, dt);
+		EventManager::FireEvent(lateUpdateEvent);
+
 		HFEngine::Renderer.Render();
 		GUIManager::Draw();
 	}

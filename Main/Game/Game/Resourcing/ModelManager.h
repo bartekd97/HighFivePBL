@@ -24,8 +24,8 @@ namespace ModelManager {
 	extern std::shared_ptr<ModelLibrary> GENERIC_LIBRARY;
 	extern std::shared_ptr<Model> BLANK_MODEL; // 1 zero vertex mesh with blank material
 
-	std::shared_ptr<Mesh> CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, AABBStruct AABB);
-	std::shared_ptr<Mesh> CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData, AABBStruct AABB);
+	std::shared_ptr<Mesh> CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const AABBStruct AABB);
+	std::shared_ptr<Mesh> CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const std::vector<VertexBoneData>& boneData, const AABBStruct AABB);
 	std::shared_ptr<ModelLibrary> GetLibrary(std::string name);
 	std::shared_ptr<Model> GetModel(std::string libraryName, std::string modelName);
 

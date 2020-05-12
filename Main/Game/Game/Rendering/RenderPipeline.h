@@ -10,6 +10,8 @@ class CubeRenderSystem;
 class BoxColliderRenderSystem;
 class CircleColliderRenderSystem;
 
+class IPostprocessingEffect;
+
 class RenderPipeline
 {
 public:
@@ -26,6 +28,8 @@ public:
 		std::shared_ptr<Texture> albedo;
 		std::shared_ptr<Texture> metalnessRoughnessShadow;
 		std::shared_ptr<Texture> emissive;
+
+		std::shared_ptr<Texture> depth;
 
 		std::shared_ptr<FrameBuffer> frameBuffer;
 	};
@@ -46,18 +50,24 @@ public:
 
 private:
 	GBufferStruct GBuffer;
+	std::shared_ptr<FrameBuffer> PostprocessingSwapBuffers[2];
 	ShadowmapStruct Shadowmap;
 	RenderSystemsStruct RenderSystems;
 
 	bool initialized = false;
 	std::shared_ptr<Shader> combineGBufferShader;
 
+	std::vector<std::shared_ptr<IPostprocessingEffect>> postprocessingEffects;
+
 	void InitGBuffer();
 	void InitShadowmap();
 	void InitRenderSystems();
+	void InitPostprocessingEffects();
 
 public:
 	void Init();
 	void Render();
+
+	inline const GBufferStruct& const GetGBuffer() { return GBuffer; }
 };
 

@@ -113,7 +113,22 @@ void FrameBuffer::BlitDepth(std::shared_ptr<FrameBuffer> from, std::shared_ptr<F
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, from->frameBuffer);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, to == nullptr ? 0 : to->frameBuffer);
 	glBlitFramebuffer(
-		0, 0, from->width, from->height, 0, 0, to->width, to->height, GL_DEPTH_BUFFER_BIT, GL_NEAREST
+		0, 0, from->width, from->height,
+		0, 0, to == nullptr ? WindowManager::SCREEN_WIDTH : to->width, to == nullptr ? WindowManager::SCREEN_HEIGHT : to->height,
+		GL_DEPTH_BUFFER_BIT, GL_NEAREST
+		);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::BlitColor(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to, int readIndex)
+{
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, from->frameBuffer);
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + readIndex);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, to == nullptr ? 0 : to->frameBuffer);
+	glBlitFramebuffer(
+		0, 0, from->width, from->height,
+		0, 0, to == nullptr ? WindowManager::SCREEN_WIDTH : to->width, to == nullptr ? WindowManager::SCREEN_HEIGHT :to->height,
+		GL_COLOR_BUFFER_BIT, GL_NEAREST
 		);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

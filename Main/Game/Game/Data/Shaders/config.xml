@@ -11,4 +11,7 @@
     <shader name="GUIShader" vertex="GUI.glsl" fragment="GUI.glsl"/>
     <shader name="PaintCellTerrain" vertex="ScreenPass.glsl" fragment="PaintCellTerrain.glsl"/>
     <shader name="TextShader" vertex="Text.glsl" fragment="Text.glsl"/>
+
+    <!-- postprocessing -->
+    <shader name="PPRiverFog" vertex="GeometryPass.glsl" fragment="postprocessing/RiverFog.glsl"/>
 </shaders>

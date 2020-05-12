@@ -60,6 +60,7 @@
     <ClCompile Include="GUI\Text\TextRenderer.cpp" />
     <ClCompile Include="GUI\Text\Font.cpp" />
     <ClCompile Include="GUI\Label.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -171,6 +172,8 @@
     <ClInclude Include="GUI\Text\Character.h" />
     <ClInclude Include="GUI\Label.h" />
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
+    <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

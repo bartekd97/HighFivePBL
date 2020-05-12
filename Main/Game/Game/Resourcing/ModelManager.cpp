@@ -25,7 +25,7 @@ namespace ModelManager {
 
 // privates
 namespace ModelManager {
-	GLuint MakeAndSetupVBO(std::vector<Vertex>& vertices)
+	GLuint MakeAndSetupVBO(const std::vector<Vertex>& vertices)
 	{
 		GLuint vbo;
 		glGenBuffers(1, &vbo);
@@ -55,7 +55,7 @@ namespace ModelManager {
 		return vbo;
 	}
 
-	GLuint MakeAndSetupBoneVBO(std::vector<VertexBoneData>& boneData)
+	GLuint MakeAndSetupBoneVBO(const std::vector<VertexBoneData>& boneData)
 	{
 		GLuint bvbo;
 		glGenBuffers(1, &bvbo);
@@ -76,7 +76,7 @@ namespace ModelManager {
 		return bvbo;
 	}
 
-	GLuint MakeAndSetupEBO(std::vector<unsigned>& indices)
+	GLuint MakeAndSetupEBO(const std::vector<unsigned>& indices)
 	{
 		GLuint ebo;
 		glGenBuffers(1, &ebo);
@@ -115,7 +115,7 @@ void ModelManager::Initialize()
 
 
 
-std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, AABBStruct AABB)
+std::shared_ptr<Mesh> ModelManager::CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const AABBStruct AABB)
 {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -129,7 +129,7 @@ std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, st
 	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, 0, ebo, indices.size(), AABB));
 }
 
-std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices, std::vector<VertexBoneData>& boneData, AABBStruct AABB)
+std::shared_ptr<Mesh> ModelManager::CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const std::vector<VertexBoneData>& boneData, const AABBStruct AABB)
 {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);

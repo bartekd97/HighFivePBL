@@ -24,6 +24,10 @@ uniform DirectionalLight gDirectionalLight;
 
 uniform float gGamma = 2.2f;
 
+// distance fade
+uniform float fadeBelowY = -3.0f;
+uniform float fadeRangeY = 7.0f;
+
 // PBR stuff
 float DistributionGGX(vec3 N, vec3 H, float roughness);
 float GeometrySchlickGGX(float NdotV, float roughness);
@@ -80,12 +84,15 @@ void main()
     color += Lo * (1.0f - shadow);
     color += Emissive;
 
+    float fadeY = -(FragPos.y - fadeBelowY);
+    fadeY = clamp(1.0f - (fadeY/fadeRangeY), 0.0, 1.0f);
+
     // tone mappimg
     //color = color / (color + vec3(1.0));
     // gamma correction
     color = pow(color, vec3(1.0f/gGamma));
     
-    FragColor = vec4(color, 1.0f);
+    FragColor = vec4(color, fadeY);
 }
 
 
