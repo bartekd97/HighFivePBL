@@ -30,6 +30,8 @@ public:
 
 	std::optional<GameObject> GetGameObjectByName(std::string name);
 
+	std::set<GameObject> GetGameObjectsByName(std::string name);
+
 	std::vector<GameObject> GetByNameInChildren(GameObject parent, std::string name);
 
 	void DestroyGameObject(GameObject gameObject);
@@ -77,6 +79,32 @@ public:
 	T& GetComponent(GameObject gameObject)
 	{
 		return componentManager->GetComponent<T>(gameObject);
+	}
+
+	template<typename T>
+	std::optional<T> GetComponentInChildren(GameObject gameObject)
+	{
+		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(gameObject);
+		if (children.size() == 0) return std::nullopt;
+
+		for (auto& child : children)
+		{
+			if (SearchComponent<T>(child))
+			{
+				return GetComponent<T>(child);
+			}
+
+		}
+		for (auto& child : children)
+		{
+			auto tmp = GetComponentInChildren<T>(child);
+			if (tmp != std::nullopt)
+			{
+				return tmp;
+			}
+
+		}
+		return std::nullopt;
 	}
 
 	template<typename T>
