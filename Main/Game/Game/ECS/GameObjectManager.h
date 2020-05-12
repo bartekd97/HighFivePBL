@@ -4,6 +4,7 @@
 #include <cassert>
 #include <queue>
 #include <optional>
+#include <set>
 
 #include "ECSTypes.h"
 
@@ -27,6 +28,8 @@ public:
 	void SetName(GameObject gameObject, std::string name);
 
 	std::optional<GameObject> GetGameObjectByName(std::string name);
+
+	std::set<GameObject> GetGameObjectsByName(std::string name);
 
 	Signature GetSignature(GameObject gameObject);
 

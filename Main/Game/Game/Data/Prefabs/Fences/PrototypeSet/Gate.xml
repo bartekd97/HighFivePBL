@@ -42,7 +42,7 @@
             </children>
         </child>
 
-        <child name="Trigger" position="0,0,7.5" rotation="0,0,0" scale="1,1,1">
+        <child name="GateTrigger" position="0,0,7.5" rotation="0,0,0" scale="1,1,1">
             <component name="BoxCollider">
                 <property name="type" value="TRIGGER"/>
                 <property name="width" value="6.5"/>

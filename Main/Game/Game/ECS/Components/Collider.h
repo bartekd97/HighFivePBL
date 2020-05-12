@@ -3,7 +3,7 @@
 #include <functional>
 #include "../ECSTypes.h"
 
-#define TriggerMethodPointer(method) std::bind(&method, this, std::placeholders::_1)
+#define TriggerMethodPointer(method) std::bind(&method, this, std::placeholders::_1, std::placeholders::_2)
 
 struct Collider
 {
@@ -24,6 +24,6 @@ struct Collider
 	ColliderShapes shape;
 	bool frozen = false;
 
-	std::function<void(GameObject)> OnTriggerEnter;
-	std::function<void(GameObject)> OnTriggerExit;
+	std::function<void(GameObject, GameObject)> OnTriggerEnter;
+	std::function<void(GameObject, GameObject)> OnTriggerExit;
 };

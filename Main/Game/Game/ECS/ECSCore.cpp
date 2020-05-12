@@ -75,6 +75,11 @@ std::optional<GameObject> ECSCore::GetGameObjectByName(std::string name)
 	return gameObjectManager->GetGameObjectByName(name);
 }
 
+std::set<GameObject> ECSCore::GetGameObjectsByName(std::string name)
+{
+	return gameObjectManager->GetGameObjectsByName(name);
+}
+
 std::vector<GameObject> ECSCore::GetByNameInChildren(GameObject parent, std::string name)
 {
 	return gameObjectHierarchy.GetByNameInChildren(parent, name);

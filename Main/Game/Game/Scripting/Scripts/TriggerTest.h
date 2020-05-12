@@ -33,12 +33,12 @@ public:
 		}
 	}
 
-	void OnTriggerEnter(GameObject other)
+	void OnTriggerEnter(GameObject that, GameObject other)
 	{
 		LogInfo("TriggerTestScript:: OnTriggerEnter(), testParam value: {}",  testParam);
 	}
 
-	void OnTriggerExit(GameObject other)
+	void OnTriggerExit(GameObject that, GameObject other)
 	{
 		LogInfo("TriggerTestScript:: OnTriggerExit()");
 	}
