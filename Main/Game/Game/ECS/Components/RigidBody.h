@@ -9,6 +9,7 @@ struct RigidBody
 	glm::vec3 movePosition;
 	float mass;
 	bool moved = false;
+	bool isFalling = false;
 
 	inline void Move(glm::vec3 position)
 	{

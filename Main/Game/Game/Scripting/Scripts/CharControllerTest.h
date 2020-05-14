@@ -14,13 +14,15 @@ public:
 
 	void Start()
 	{
+		startPosition = HFEngine::ECS.GetComponent<Transform>(GetGameObject()).GetWorldPosition();
 		auto cam = HFEngine::ECS.GetGameObjectByName("CameraObject");
 		assert(cam.has_value() && "CharController: couldn't resolve camera object");
 		cameraObject = cam.value();
 
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
 		auto& camTransform = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-		cameraOffset = transform.GetPosition() - camTransform.GetPosition();
+		cameraOffset = transform.GetWorldPosition() - camTransform.GetWorldPosition();
+		cameraOffset.y = camTransform.GetWorldPosition().y;
 	}
 
 	void Update(float dt)
@@ -36,6 +38,13 @@ public:
 		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 
 		if (InputManager::GetKeyStatus(GLFW_KEY_SPACE)) speed = 1120.0f;
+
+		if (InputManager::GetKeyDown(GLFW_KEY_X))
+		{
+			rigidBody.isFalling = true;
+			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
+		}
+
 		else speed = 20.0f;
 
 		if (glm::length2(direction) > 0.5f)
@@ -43,13 +52,19 @@ public:
 			transform.SetRotation(glm::vec3(0.0f, std::atan2(direction.x, direction.z) * 180.0 / M_PI, 0.0f));
 		}
 		rigidBody.Move(transform.GetPosition() + (direction * speed * dt));
+		if (transform.GetWorldPosition().y < -15.0f)
+		{
+			transform.SetPosition(startPosition);
+		}
 	}
 
 	void LateUpdate(float dt)
 	{
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
 		auto& camTransform = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-		camTransform.SetPosition(transform.GetPosition() - cameraOffset);
+		glm::vec3 position = transform.GetWorldPosition() - cameraOffset;
+		position.y = cameraOffset.y;
+		camTransform.SetPosition(position);
 		HFEngine::MainCamera.SetView(camTransform);
 	}
 
@@ -57,4 +72,5 @@ private:
 	float speed = 20.0f;
 	GameObject cameraObject;
 	glm::vec3 cameraOffset;
+	glm::vec3 startPosition;
 };

@@ -8,7 +8,8 @@
 #include "../Components.h"
 
 #define clamp(x,min,max) x > min ? (x < max ? x : max) : min
-#define veclen(v) std::sqrtf(v.x*v.x + v.y*v.y);
+#define veclen(v) std::sqrtf(v.x*v.x + v.z*v.z);
+#define veclen2d(v) std::sqrtf(v.x*v.x + v.y*v.y);
 
 void PhysicsSystem::Init()
 {
@@ -32,18 +33,19 @@ void PhysicsSystem::Update(float dt)
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 
 		glm::vec3 displacement;
-		if (rigidBody.moved)
+		if (rigidBody.moved && !rigidBody.isFalling)
 		{
-			displacement = rigidBody.movePosition - transform.GetPosition();
+			displacement = rigidBody.movePosition - transform.GetWorldPosition();
 		}
 		else
 		{
 			displacement = rigidBody.velocity * dt;
 		}
+        displacement.y = 0.0f;
 
         if (!HFEngine::ECS.SearchComponent<Collider>(gameObject))
         {
-            transform.SetPosition(transform.GetPosition() + displacement);
+            transform.SetPosition(transform.GetWorldPosition() + displacement);
             continue;
         }
 
@@ -152,7 +154,8 @@ void PhysicsSystem::Update(float dt)
         cacheNode.position = transform.GetWorldPosition();
         if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;
         if (rigidBody.velocity.z * oldVelocity.z < 0) rigidBody.velocity.z = 0.0f;
-        rigidBody.velocity *= 0.75f;
+        rigidBody.velocity.x *= 0.75f;
+        rigidBody.velocity.z *= 0.75f;
         rigidBody.moved = false;
 	}
 }
@@ -162,7 +165,7 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
     float r = c1.radius + c2.radius;
     glm::vec2 c1c2(pos1.x - pos2.x, pos1.z - pos2.z);
 
-    float dist = veclen(c1c2);
+    float dist = veclen2d(c1c2);
     if (dist >= r) return false;
 
     sepVector.x = (c1c2.x / dist) * (r - dist);
@@ -210,7 +213,7 @@ bool PhysicsSystem::DetectCollision(const glm::vec3& pos1, const CircleCollider&
         axes[i] = glm::normalize(boxPoints[secondIndex] - boxPoints[i]);
 
         temp = boxPoints[i] - circleCenter;
-        tmpDist = veclen(temp);
+        tmpDist = veclen2d(temp);
         if (tmpDist < minDist)
         {
             minDist = tmpDist;

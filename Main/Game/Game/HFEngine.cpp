@@ -150,6 +150,14 @@ namespace HFEngine
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
 		physicsSystem->SetCollector(colliderCollectorSystem);
+		auto gravitySystem = ECS.RegisterSystem<GravitySystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			ECS.SetSystemSignature<GravitySystem>(signature);
+		}
+		gravitySystem->SetCollector(mapCellCollectorSystem);
 		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();
 		{
 			Signature signature;
