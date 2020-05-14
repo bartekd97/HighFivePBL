@@ -61,6 +61,7 @@
     <ClCompile Include="GUI\Text\Font.cpp" />
     <ClCompile Include="GUI\Label.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
+    <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
+    <ClInclude Include="ECS\Systems\GravitySystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

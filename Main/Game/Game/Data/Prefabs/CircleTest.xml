@@ -8,7 +8,7 @@
         <property name="mass" value="10.0"/>
     </component>
     <component name="CircleCollider">
-        <property name="radius" value="2.25"/>
+        <property name="radius" value="1.125"/>
     </component>
 
     <children>
