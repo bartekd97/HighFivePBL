@@ -35,6 +35,7 @@ GameObject CellFenceGenerator::CreateGate(GameObject bridge, GameObject parent)
     float rotation = rad2deg(glm::atan(gateDirection.x, gateDirection.y)) + 90; // + 90 for right
     //GameObject element = HFEngine::ECS.CreateGameObject(parent);
     GameObject element = config.gateEntity.prefab->Instantiate(parent, { gatePosition.x, 0.0f, gatePosition.y }, {0.0f, rotation, 0.0f});
+    HFEngine::ECS.SetNameGameObject(element, "Gate");
     /*
     element.transform.parent = parent.transform;
     element.transform.localPosition = new glm::vec3(

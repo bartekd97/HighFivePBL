@@ -6,7 +6,6 @@
 
 #include "Anchor.h"
 
-//TODO: obcinanie? mo¿e zmienna, a potem sprawdzanie czy parent ma j¹ ustawion¹ i wtedy opengl scissors
 class Widget : public std::enable_shared_from_this<Widget>
 {
 public:

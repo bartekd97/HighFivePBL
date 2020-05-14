@@ -14,56 +14,55 @@ class MapCellOptimizer : public Script
 public:
 	void Awake()
 	{
+		newCurrentCell = NULL_GAMEOBJECT;
+		currentCell = NULL_GAMEOBJECT;
 	}
 
 	void Start()
 	{
-		mapCellCollector = HFEngine::ECS.GetSystemByTypeName(typeid(MapCellCollectorSystem).name());
-		cells = mapCellCollector->gameObjects;
+		// TODO: maybe create map generated event?
+		auto gates = HFEngine::ECS.GetGameObjectsByName("GateTrigger");
+		for (auto& gate : gates)
+		{
+			auto& collider = HFEngine::ECS.GetComponent<Collider>(gate);
+			collider.OnTriggerEnter = TriggerMethodPointer(MapCellOptimizer::OnTriggerEnter);
+		}
+
+		auto cellsContainer = HFEngine::ECS.GetGameObjectByName("Cells");
+		cells = gameObjectHierarchy.GetChildren(cellsContainer.value());
 		CalculateCurrentCell();
-		CalculateEnabledCells();
 		EnableDisableCells();
 	}
 
 	void LateUpdate(float dt)
 	{
-		auto position = HFEngine::ECS.GetComponent<Transform>(GetGameObject()).GetWorldPosition();
-		auto positionCell = HFEngine::ECS.GetComponent<Transform>(currentCell).GetWorldPosition();
-		/*float x, z;
-		x = positionCell.x - position.x;
-		z = positionCell.z - position.z;
-		float dist = sqrt((x * x) + (z * z));
-		if (dist > cellMeshConfig.depthMax)
+		if (newCurrentCell != currentCell)
 		{
-			CalculateCurrentCell();
-			EnableDisableCells();
-		}*/
-		auto mapCell = HFEngine::ECS.GetComponent<MapCell>(currentCell);
-		if (!mapCell.PolygonBase.IsPointInside(glm::vec2(position.x - positionCell.x, position.z - positionCell.z)))
-		{
-			CalculateCurrentCell();
-			CalculateEnabledCells();
+			currentCell = newCurrentCell;
 			EnableDisableCells();
 		}
 	}
 
-private:
-	static const int enabledCellsCount = 10; // not counting current cell
-	std::shared_ptr<System> mapCellCollector;
-	std::set<GameObject> cells;
-	GameObject currentCell;
-	GameObject enableCellsList[enabledCellsCount];
-	CellMeshConfig cellMeshConfig;
-
-	void CalculateCurrentCell()
+	void OnTriggerEnter(GameObject that, GameObject other)
 	{
+		if (other == GetGameObject())
+		{
+			auto gate = gameObjectHierarchy.GetParent(that);
+			auto& cellGate = HFEngine::ECS.GetComponent<CellGate>(gate.value());
+			newCurrentCell = cellGate.Cell;
+		}
+	}
+
+private:
+	void CalculateCurrentCell() // TODO: temporary, only start function
+	{
+		// TODO: make it somehow so it doesnt have to be calculated
 		auto position = HFEngine::ECS.GetComponent<Transform>(GetGameObject()).GetWorldPosition();
 		float dist, minDist = std::numeric_limits<float>::max();
 		float x, z;
 		currentCell = NULL_GAMEOBJECT;
 		for (auto cell : cells)
 		{
-			auto mapCell = HFEngine::ECS.GetComponent<MapCell>(cell);
 			auto positionCell = HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition();
 			x = positionCell.x - position.x;
 			z = positionCell.z - position.z;
@@ -71,55 +70,38 @@ private:
 			if (dist < minDist)
 			{
 				minDist = dist;
-				currentCell = cell;
-			}
-		}
-	}
-
-	void CalculateEnabledCells()
-	{
-		auto currentCellPosition = HFEngine::ECS.GetComponent<Transform>(currentCell).GetWorldPosition();
-		float dist;
-		float x, z;
-		std::deque<std::pair<GameObject, float>> cellDist;
-		for (auto cell : cells)
-		{
-			auto mapCell = HFEngine::ECS.GetComponent<MapCell>(cell);
-			auto positionCell = HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition();
-			x = positionCell.x - currentCellPosition.x;
-			z = positionCell.z - currentCellPosition.z;
-			dist = sqrt((x * x) + (z * z));
-			cellDist.push_back(std::pair<GameObject, float>(cell, dist));
-		}
-		if (cellDist.size() > 0)
-		{
-			std::sort(cellDist.begin(), cellDist.end(), [](const std::pair<GameObject, float>& cell1, const std::pair<GameObject, float>& cell2) {
-				return cell1.second < cell2.second;
-			});
-		}
-		for (int i = 0; i < enabledCellsCount; i++)
-		{
-			if (i >= cellDist.size())
-			{
-				enableCellsList[i] = NULL_GAMEOBJECT;
-			}
-			else
-			{
-				enableCellsList[i] = cellDist[i].first;
+				newCurrentCell = cell;
 			}
 		}
 	}
 
 	void EnableDisableCells()
 	{
-		for (auto cell : cells)
+		if (currentCell != NULL_GAMEOBJECT)
 		{
-			bool enabled = false;
-			for (auto listCell : enableCellsList)
+			std::set<GameObject> enabledCells;
+			enabledCells.insert(currentCell);
+			auto mapCell = HFEngine::ECS.GetComponent<MapCell>(currentCell);
+			for (auto& bridge : mapCell.Bridges)
 			{
-				if (cell == listCell) enabled = true;
+				enabledCells.insert(bridge.Cell);
 			}
-			HFEngine::ECS.SetEnabledGameObject(cell, enabled);
+			for (auto& cell : cells)
+			{
+				if (enabledCells.find(cell) != enabledCells.end())
+				{
+					HFEngine::ECS.SetEnabledGameObject(cell, true);
+				}
+				else
+				{
+					HFEngine::ECS.SetEnabledGameObject(cell, false);
+				}
+			}
 		}
 	}
+
+	std::shared_ptr<System> mapCellCollector;
+	GameObject newCurrentCell;
+	GameObject currentCell;
+	std::vector<GameObject> cells;
 };

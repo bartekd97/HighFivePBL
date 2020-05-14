@@ -98,9 +98,9 @@ std::optional<GameObject> GameObjectManager::GetGameObjectByName(std::string nam
 {
 	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
 	{
-		if (name.compare(names[i]) == 0)
+		if (signatures[i].count() > 0)
 		{
-			if (signatures[i].count() > 0)
+			if (name.compare(names[i]) == 0)
 			{
 				return i;
 			}
@@ -108,4 +108,22 @@ std::optional<GameObject> GameObjectManager::GetGameObjectByName(std::string nam
 	}
 
 	return std::nullopt;
+}
+
+std::set<GameObject> GameObjectManager::GetGameObjectsByName(std::string name)
+{
+	std::set<GameObject> result;
+
+	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
+	{
+		if (signatures[i].count() > 0)
+		{
+			if (name.compare(names[i]) == 0)
+			{
+				result.insert(i);
+			}
+		}
+	}
+
+	return result;
 }
