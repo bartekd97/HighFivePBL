@@ -1,0 +1,6 @@
+<textures>
+    <texture name="gothAlbedo" file="pomnikUV_DefaultMaterial_BaseColor.png" format="srgb" />
+    <texture name="gothNormal" file="pomnikUV_DefaultMaterial_Normal.png" />
+    <texture name="gothMetal" file="pomnikUV_DefaultMaterial_Metallic.png" format="r" />
+    <texture name="gothRough" file="pomnikUV_DefaultMaterial_Roughness.png" format="r" />
+</textures>

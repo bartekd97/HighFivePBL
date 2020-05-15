@@ -8,6 +8,7 @@ public class CharController : MonoBehaviour
 {
     public bool ghostMovement { get; private set; }
 
+    public ParticleSystem smokePush;
 
     public Ghost ghost;
     public HealthBar healthBar;
@@ -26,6 +27,8 @@ public class CharController : MonoBehaviour
     public float speed = 4.0f;
     [SerializeField]
     public float ghostSpeed = 8.0f;
+    [SerializeField]
+    public float ghostCooldownTime = 1.0f;
 
     [SerializeField]
     float maxHealth = 10.0f;
@@ -41,6 +44,7 @@ public class CharController : MonoBehaviour
     Vector3 forward, right;
     float leftGhostDistance;
     public float nextPushBackTime = 0.0f;
+    public float nextGhostTime = 0.0f;
 
     //public bool pushedEnemies;
 
@@ -68,12 +72,15 @@ public class CharController : MonoBehaviour
     void Update()
     {
         CalculateColor();
-        if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f && Time.time >= nextGhostTime)
         {
             StartGhost();
+            nextGhostTime = Time.time + ghostCooldownTime;
         }
         else if (Input.GetKeyUp(KeyCode.Mouse0))
+        {
             StopGhost();
+        }
 
         if (ghostMovement && Input.GetKey(KeyCode.Mouse0))
             MoveGhost();
@@ -114,6 +121,20 @@ public class CharController : MonoBehaviour
 
     void PushEnemiesBack()
     {
+        smokePush.transform.eulerAngles = new Vector3(
+            transform.eulerAngles.x - 90,
+            transform.eulerAngles.y,
+            transform.eulerAngles.z
+        );
+
+        smokePush.transform.position = new Vector3(
+            transform.position.x,
+            transform.position.y + 0.5f,
+            transform.position.z
+        );
+
+        Instantiate(smokePush, smokePush.transform.position, smokePush.transform.rotation);
+
         foreach (EnemyController ec in FindObjectsOfType<EnemyController>())
         {
             Vector3 dir = ec.transform.position - transform.position;
@@ -237,5 +258,16 @@ public class CharController : MonoBehaviour
                 GameManager.Instance.SetCurrentCell(gate.Cell);
             }
         }
+    }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }

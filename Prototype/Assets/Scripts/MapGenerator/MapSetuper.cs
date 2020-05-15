@@ -7,6 +7,7 @@ public class MapSetuper : MonoBehaviour
 {
     public int minEnemiesInCell;
     public int maxEnemiesInCell;
+    public int maxMonumentsCounter = 3;
     public float centerSpawnRadiusPercentage;
     public int maxBossSpawnCellDistance;
     public GameObject playerObject;
@@ -14,13 +15,14 @@ public class MapSetuper : MonoBehaviour
 
     public GameObject enemyPrefab;
     public GameObject bossPrefab;
+    public GameObject monumentPrefab;
 
     public void SetupMap()
     {
         MapCell startupCell = GetStartupCell();
         playerObject.transform.position = startupCell.transform.position;
         SetupEnemies();
-
+        SetupMonuments();
         GameManager.Instance.SetCurrentCell(startupCell);
     }
 
@@ -99,4 +101,74 @@ public class MapSetuper : MonoBehaviour
     {
         return Mathf.Abs((C.x - lineA.x) * (-lineB.y + lineA.y) + (C.y - lineA.y) * (lineB.x - lineA.x)) / Mathf.Sqrt(Mathf.Pow(-lineB.y + lineA.y, 2) + Mathf.Pow(lineB.x - lineA.x, 2));
     }
+
+    private void GenerateMonumentInCell (MapCell cell)
+    {
+        Vector3 monumentPosition = cell.transform.position;
+        GameObject monument = Instantiate(monumentPrefab, cell.transform.position, Quaternion.identity);
+        //var monumentController = monument.GetComponent<MonumentController>();
+
+        cell.Monuments.Add(monument);
+    }
+
+    void SetupMonuments()
+    {
+        List<MapCell> cells = new List<MapCell>(MapCell.All);
+        
+        MapCell startupCell = GetStartupCell();
+        MapCell bossCell = GetRandomBossCell();
+
+        //Debug.Log("start:" + startupCell.CellSiteIndex);
+        //Debug.Log("boss:" + bossCell.CellSiteIndex);
+        cells.ToList();
+        
+        cells.Sort((p, q) => p.CellSiteIndex.CompareTo(q.CellSiteIndex));
+
+        cells.Remove(startupCell);
+        cells.Remove(bossCell);
+
+        int[] cellIndexes = new int[cells.Count];
+
+        for (int i = 0; i < cells.Count - 1; i++)
+        {
+            cellIndexes[i] = cells[i].CellSiteIndex;
+        }
+
+        for (int i = 0; i < maxMonumentsCounter; i++)
+        {
+            int index = Random.Range(0, cellIndexes.Length - 1);
+            int x = cellIndexes[index];
+
+
+            for (int j = 0; j < cells.Count - 1; j++)
+            {
+                if (cells[j].CellSiteIndex == x)
+                {
+                    GenerateMonumentInCell(cells[j]);
+                }
+            }
+            cellIndexes = RemoveIndices(cellIndexes, index);
+        }
+    }
+
+    private int[] RemoveIndices(int[] IndicesArray, int RemoveAt)
+    {
+        int[] newIndicesArray = new int[IndicesArray.Length - 1];
+
+        int i = 0;
+        int j = 0;
+        while (i < IndicesArray.Length)
+        {
+            if (i != RemoveAt)
+            {
+                newIndicesArray[j] = IndicesArray[i];
+                j++;
+            }
+
+            i++;
+        }
+
+        return newIndicesArray;
+    }
+
 }

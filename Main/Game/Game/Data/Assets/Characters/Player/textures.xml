@@ -1,0 +1,3 @@
+<textures>
+    <texture name="albedo" file="Demon__diffuse.png" format="srgb" />
+</textures>

@@ -1,0 +1,54 @@
+<prefab defaultScale="0.3,0.3,0.3">
+    <property name="length" value="5.337" />
+
+   <children>
+        <child name="LeftColumn" position="-8.089035,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="MeshRenderer">
+                <property name="model" value="Structures/Fences/PrototypeSet:GateColumn"/>
+            </component>
+        </child>
+        <child name="LeftWingAxle" position="-7.21,0,0" rotation="0,90,0" scale="1,1,1">
+            <children>
+                <child name="LeftWing" position="3.569965,0,0" rotation="0,0,0" scale="-1,1,1">
+                    <component name="MeshRenderer">
+                        <property name="model" value="Structures/Fences/PrototypeSet:Gate"/>
+                    </component>
+                    <component name="BoxCollider">
+                        <property name="width" value="2.75"/>
+                        <property name="height" value="0.25"/>
+                        <property name="type" value="STATIC"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+        <child name="RightColumn" position="8.089035,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="MeshRenderer">
+                <property name="model" value="Structures/Fences/PrototypeSet:GateColumn"/>
+            </component>
+        </child>
+        <child name="RightWingAxle" position="7.21,0,0" rotation="0,-90,0" scale="1,1,1">
+            <children>
+                <child name="RightWing" position="-3.569965,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="MeshRenderer">
+                        <property name="model" value="Structures/Fences/PrototypeSet:Gate"/>
+                    </component>
+                    <component name="BoxCollider">
+                        <property name="width" value="2.75"/>
+                        <property name="height" value="0.25"/>
+                        <property name="type" value="STATIC"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+        <child name="GateTrigger" position="0,0,7.5" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="6.5"/>
+                <property name="height" value="2.0"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+    </children>
+</prefab>

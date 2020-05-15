@@ -1,0 +1,17 @@
+<prefab defaultScale="1.0,1.0,1.0">
+<!--
+    <component name="MeshRenderer">
+        <property name="model" value="Structures/Bridges:Bridge1"/>
+    </component>
+
+    temporar bridge orientation fix
+    -->
+
+    <children>
+        <child name="bridgefix" position="0,0,0" rotation="0,90,0" scale="1,1,1">
+            <component name="MeshRenderer">
+                <property name="model" value="Structures/Bridges:Bridge1"/>
+            </component>
+        </child>
+    </children>
+</prefab>
