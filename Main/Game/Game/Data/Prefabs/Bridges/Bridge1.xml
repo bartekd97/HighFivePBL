@@ -13,5 +13,21 @@
                 <property name="model" value="Structures/Bridges:Bridge1"/>
             </component>
         </child>
+        <child name="BridgeColTop" position="-1.4,0,0" rotation="0,90,0" scale="1,1,1">
+          <component name="BoxCollider">
+            <property name="type" value="STATIC"/>
+            <property name="width" value="10.0"/>
+            <property name="height" value="0.2"/>
+            <property name="frozen" value="true"/>
+          </component>
+        </child>
+      <child name="BridgeColBottom" position="1.4,0,0" rotation="0,90,0" scale="1,1,1">
+        <component name="BoxCollider">
+          <property name="type" value="STATIC"/>
+          <property name="width" value="10.0"/>
+          <property name="height" value="0.2"/>
+          <property name="frozen" value="true"/>
+        </component>
+      </child>
     </children>
 </prefab>

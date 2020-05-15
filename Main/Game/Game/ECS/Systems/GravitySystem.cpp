@@ -20,40 +20,44 @@ void GravitySystem::Update(float dt)
         auto posYSub = dt * (rigidBody.velocity.y + dt * rigidBody.acceleration.y / 2.0f);
 
         int closestCell = GetClosestCellIndex(pos);
-        if (closestCell == -1)
+        /*if (closestCell == -1)
         {
             LogWarning("GravitySystem::Update(): closest cell not found for {}", gameObject);
             continue;
-        }
-        glm::vec2 posTemp = glm::vec2(pos.x - cells[closestCell].first.x, pos.z - cells[closestCell].first.z);
-        if (HFEngine::ECS.SearchComponent<Collider>(gameObject))
+        }*/
+        if (closestCell != -1) // TODO: remove it and find out why some objects sometimes have WTF positions causing this
         {
-            auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
-            if (collider.shape == Collider::ColliderShapes::CIRCLE)
+            glm::vec2 posTemp = glm::vec2(pos.x - cells[closestCell].first.x, pos.z - cells[closestCell].first.z);
+            if (HFEngine::ECS.SearchComponent<Collider>(gameObject))
             {
-                auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
-                glm::vec3 normal = glm::normalize(pos - cells[closestCell].first);
-                posTemp.x -= normal.x * circleCollider.radius;
-                posTemp.y -= normal.z * circleCollider.radius;
+                auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
+                if (collider.shape == Collider::ColliderShapes::CIRCLE)
+                {
+                    auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
+                    glm::vec3 normal = glm::normalize(pos - cells[closestCell].first);
+                    posTemp.x -= normal.x * circleCollider.radius;
+                    posTemp.y -= normal.z * circleCollider.radius;
+                }
             }
-        }
-        bool onCell = GetYLevel(posTemp, cells[closestCell].second, level);
-        if (onCell)
-        {
-            if ((pos.y - posYSub) <= level)
+            bool onCell = GetYLevel(posTemp, cells[closestCell].second, level);
+            if (onCell)
             {
-                rigidBody.isFalling = false;
-                rigidBody.velocity.y = 0;
-                pos.y = level;
-                transform.SetPosition(pos);
-                continue;
+                if ((pos.y - posYSub) <= level)
+                {
+                    rigidBody.isFalling = false;
+                    rigidBody.velocity.y = 0;
+                    pos.y = level;
+                    transform.SetPosition(pos);
+                    continue;
+                }
             }
+            else
+            {
+                rigidBody.isFalling = true;
+            }
+            transform.TranslateSelf(glm::vec3(0.0f, -posYSub, 0.0f));
         }
-        else
-        {
-            rigidBody.isFalling = true;
-        }
-        transform.TranslateSelf(glm::vec3(0.0f, -posYSub, 0.0f));
+        
     }
 }
 

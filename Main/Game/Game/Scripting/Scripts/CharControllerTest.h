@@ -38,14 +38,13 @@ public:
 		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 
 		if (InputManager::GetKeyStatus(GLFW_KEY_SPACE)) speed = 1120.0f;
+		else speed = 20.0f;
 
 		if (InputManager::GetKeyDown(GLFW_KEY_X))
 		{
 			rigidBody.isFalling = true;
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
 		}
-
-		else speed = 20.0f;
 
 		if (glm::length2(direction) > 0.5f)
 		{
