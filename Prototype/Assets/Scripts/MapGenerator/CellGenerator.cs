@@ -41,13 +41,25 @@ public class CellGenerator : MonoBehaviour
         meshObject.transform.parent = transform;
         meshObject.transform.position = transform.position;
 
-        MeshRenderer renderer = meshObject.AddComponent<MeshRenderer>();
-        renderer.material = new Material(Shader.Find("Lightweight Render Pipeline/Lit"));
+        Material material = new Material(Shader.Find("Lightweight Render Pipeline/Lit"));
 
         CellMeshGenerator generator = new CellMeshGenerator(meshConfig, originalPolygon);
         generator.PrepareOutlines();
         generator.PrepareBaseMeshStructure();
         Mesh mesh = generator.BuildMesh();
+
+        if (meshConfig.serializeMeshes)
+        {
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.CreateAsset(material, "Assets/CellMeshes/" + cell.CellSiteIndex.ToString() + ".mat");
+            UnityEditor.AssetDatabase.SaveAssets();
+            UnityEditor.AssetDatabase.CreateAsset(mesh, "Assets/CellMeshes/" + cell.CellSiteIndex.ToString() + ".asset");
+            UnityEditor.AssetDatabase.SaveAssets();
+#endif
+        }
+
+        MeshRenderer renderer = meshObject.AddComponent<MeshRenderer>();
+        renderer.material = material;
 
         MeshFilter filter = meshObject.AddComponent<MeshFilter>();
         filter.sharedMesh = mesh;
