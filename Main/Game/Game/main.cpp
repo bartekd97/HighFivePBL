@@ -85,10 +85,10 @@ int main()
 	HFEngine::ECS.AddComponent<SkinAnimator>(movableTestObject, SkinAnimator());
 	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).clips = demon->animations;
 	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).SetAnimation("running");
-	HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(3.0f));
+	HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(2.0f));
 
-	auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");
-	bigPrefab->Instantiate({ 90.0f, 1.0f, 120.0f });
+	//auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");
+	//bigPrefab->Instantiate({ 90.0f, 1.0f, 120.0f });
 
 	auto triggerColliderTest = PrefabManager::GetPrefab("TriggerTest");
 	auto triggerBox = triggerColliderTest->Instantiate({ 105.0f, 0.0f, 90.0f });
@@ -105,7 +105,7 @@ int main()
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
 	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 30.0f, 120.0f });
+	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 15.0f, 110.0f });
 	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -50.0f, 0.0f, 0.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 200.0f, 100.0f });
 	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -90.0f, 0.0f, 0.0f });

@@ -18,4 +18,6 @@ public class CellMeshConfig
     public float noiseCenterRatio = 0.75f;
     public float noiseScale = 0.2f;
     public Vector2 noiseForce = new Vector2(5, 10);
+
+    public bool serializeMeshes = false;
 }
