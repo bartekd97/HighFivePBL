@@ -13,7 +13,7 @@ class SystemManager
 {
 public:
 	template<typename T>
-	std::shared_ptr<T> RegisterSystem()
+	std::shared_ptr<T> RegisterSystem(bool autonomous)
 	{
 		const char* typeName = typeid(T).name();
 
@@ -21,15 +21,14 @@ public:
 
 		auto system = std::make_shared<T>();
 		system->Init();
-		systems.insert({ typeName, system });
+		if (!autonomous)
+		{
+			systems.insert({ typeName, system });
+		}
 		
 		if constexpr (std::is_base_of<SystemUpdate, T>::value)
 		{
 			updateQueue.push_back(system);
-		}
-		if constexpr (std::is_base_of<SystemRender, T>::value)
-		{
-			renderQueue.push_back(system);
 		}
 		return system;
 	}
@@ -72,8 +71,18 @@ public:
 		}
 	}
 
+	std::shared_ptr<System> GetSystemByTypeName(const char* typeName)
+	{
+		auto system = systems.find(typeName);
+		if (system != systems.end())
+		{
+			return system->second;
+		}
+
+		return nullptr;
+	}
+
 	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
-	std::vector<std::shared_ptr<SystemRender>> renderQueue; // TODO: remove when possible
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};

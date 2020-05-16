@@ -59,6 +59,8 @@ public class Ghost : MonoBehaviour
 
     private float lastDotTick = 0.0f;
 
+    public ParticleSystem sparkCrossing;
+
     public bool IsMarking { get; private set; }
     private void Awake()
     {
@@ -239,8 +241,10 @@ public class Ghost : MonoBehaviour
         CheckClosedLines();
 
         if (activeLines.Count > maxActiveLines)
+        {
             //while (activeLines.Count > 0)
-                FadeOutLine(activeLines[0]);
+            FadeOutLine(activeLines[0]);
+        }
     }
 
     void UpdateLineCrossings()
@@ -303,6 +307,11 @@ public class Ghost : MonoBehaviour
             line.ghosts.ForEach(g => g.DoAttack(center3));
             Destroy(line.lineRend);
             activeLines.Remove(line);
+            var clones = GameObject.FindGameObjectsWithTag("Spark");
+            foreach (var clone in clones)
+            {
+                Destroy(clone);
+            }
         }
 
     }
@@ -318,13 +327,16 @@ public class Ghost : MonoBehaviour
                         l1.points[i], l1.points[i + 1],
                         l2.points[j], l2.points[j + 1]
                     );
-                if (p != Vector2.zero)
-                    crossing.Add( new GhostCrossing()
+                if (p != Vector2.zero) {
+                    crossing.Add(new GhostCrossing()
                     {
                         a = l1,
                         b = l2,
                         position = p
                     });
+                    Vector3 sparkPosition = new Vector3(p.x, 0.4f, p.y);
+                    Instantiate(sparkCrossing, sparkPosition, Quaternion.identity);
+                }
             }
         }
         return crossing;
@@ -417,5 +429,16 @@ public class Ghost : MonoBehaviour
 
         IRend.positionCount = linePointsV.Length;
         IRend.SetPositions(linePointsV);
+    }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }

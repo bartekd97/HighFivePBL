@@ -3,6 +3,7 @@
 #include <array>
 #include <cassert>
 #include <unordered_map>
+#include <span>
 
 #include "ECSTypes.h"
 
@@ -52,6 +53,16 @@ public:
 		assert(gameObjectToIndexMap.find(gameObject) != gameObjectToIndexMap.end() && "Retrieving non-existent component.");
 
 		return componentArray[gameObjectToIndexMap[gameObject]];
+	}
+
+	std::span<T> GetAll()
+	{
+		return std::span<T>(componentArray.data(), size);
+	}
+
+	bool SearchData(GameObject gameObject)
+	{
+		return gameObjectToIndexMap.find(gameObject) != gameObjectToIndexMap.end();
 	}
 
 	void GameObjectDestroyed(GameObject gameObject) override

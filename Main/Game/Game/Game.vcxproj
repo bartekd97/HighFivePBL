@@ -57,12 +57,13 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Debug-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;cppDelaunay.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -75,6 +76,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AssemblerOutput>NoListing</AssemblerOutput>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,48 +84,93 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Release-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;cppDelaunay.lib;freetype.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
-    <ClCompile Include="ECS\Systems\CubeRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
-    <ClCompile Include="ECS\Systems\MeshRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
-    <ClCompile Include="ECS\Systems\TransformUpdateSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ScriptStartSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
+    <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
+    <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
+    <ClCompile Include="GUI\Button.cpp" />
+    <ClCompile Include="GUI\GUIManager.cpp" />
+    <ClCompile Include="GUI\Label.cpp" />
+    <ClCompile Include="GUI\Panel.cpp" />
+    <ClCompile Include="GUI\Text\Font.cpp" />
+    <ClCompile Include="GUI\Text\TextRenderer.cpp" />
+    <ClCompile Include="GUI\Widget.cpp" />
     <ClCompile Include="HFEngine.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapGenerator\CellFenceGenerator.cpp" />
+    <ClCompile Include="MapGenerator\CellGenerator.cpp" />
+    <ClCompile Include="MapGenerator\CellMeshGenerator.cpp" />
+    <ClCompile Include="MapGenerator\CellMeshPainter.cpp" />
+    <ClCompile Include="MapGenerator\CellSetuper.cpp" />
+    <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
+    <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
+    <ClCompile Include="MapGenerator\MapGenerator.cpp" />
+    <ClCompile Include="Physics\PhysicsCache.cpp" />
+    <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
+    <ClCompile Include="Rendering\Frustum.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Resourcing\Material.cpp" />
     <ClCompile Include="Resourcing\MaterialManager.cpp" />
     <ClCompile Include="Resourcing\MeshFileLoader.cpp" />
     <ClCompile Include="Resourcing\ModelManager.cpp" />
+    <ClCompile Include="Resourcing\Prefab.cpp" />
+    <ClCompile Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.cpp" />
+    <ClCompile Include="Resourcing\PrefabManager.cpp" />
     <ClCompile Include="Resourcing\ShaderManager.cpp" />
     <ClCompile Include="Resourcing\TextureManager.cpp" />
+    <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
-    <ClCompile Include="_stb_image.cpp" />
+    <ClCompile Include="_stb_impl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
+    <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
+    <ClInclude Include="Data\Shaders\Vertex\Text.glsl" />
     <ClInclude Include="ECS\ComponentArray.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
     <ClInclude Include="ECS\Components.h" />
+    <ClInclude Include="ECS\Components\BoxCollider.h" />
+    <ClInclude Include="ECS\Components\CircleCollider.h" />
+    <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\CubeRenderer.h" />
     <ClInclude Include="ECS\Components\CubeSpawner.h" />
+    <ClInclude Include="ECS\Components\CulledRenderer.h" />
     <ClInclude Include="ECS\Components\Gravity.h" />
     <ClInclude Include="ECS\Components\LifeTime.h" />
+    <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
+    <ClInclude Include="ECS\Components\ScriptContainer.h" />
+    <ClInclude Include="ECS\Components\SkinAnimator.h" />
+    <ClInclude Include="ECS\Components\SkinnedMeshRenderer.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
     <ClInclude Include="ECS\ECSCore.h" />
     <ClInclude Include="ECS\ECSTypes.h" />
@@ -134,31 +181,93 @@
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
-    <ClInclude Include="ECS\Systems\CubeRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\GravitySystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Systems\ColliderCollectorSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
-    <ClInclude Include="ECS\Systems\MeshRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\CulledRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
-    <ClInclude Include="ECS\Systems\TransformUpdateSystem.h" />
+    <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
+    <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
+    <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
+    <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
     <ClInclude Include="ECS\SystemUpdate.h" />
+    <ClInclude Include="Event\Event.h" />
+    <ClInclude Include="Event\EventManager.h" />
+    <ClInclude Include="Event\Events.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="GUI\Anchor.h" />
+    <ClInclude Include="GUI\Button.h" />
+    <ClInclude Include="GUI\GUIManager.h" />
+    <ClInclude Include="GUI\Label.h" />
+    <ClInclude Include="GUI\Panel.h" />
+    <ClInclude Include="GUI\TextureColor.h" />
+    <ClInclude Include="GUI\Text\Character.h" />
+    <ClInclude Include="GUI\Text\Font.h" />
+    <ClInclude Include="GUI\Text\TextRenderer.h" />
+    <ClInclude Include="GUI\Widget.h" />
+    <ClInclude Include="GUI\Widgets.h" />
     <ClInclude Include="HFEngine.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
+    <ClInclude Include="MapGenerator\CellGenerator.h" />
+    <ClInclude Include="MapGenerator\CellMeshGenerator.h" />
+    <ClInclude Include="MapGenerator\CellMeshPainter.h" />
+    <ClInclude Include="MapGenerator\CellSetuper.h" />
+    <ClInclude Include="MapGenerator\Config.h" />
+    <ClInclude Include="MapGenerator\ConvexPolygon.h" />
+    <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
+    <ClInclude Include="MapGenerator\MapGenerator.h" />
+    <ClInclude Include="Physics\CacheNode.h" />
+    <ClInclude Include="Physics\PhysicsCache.h" />
+    <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
+    <ClInclude Include="Rendering\Frustum.h" />
+    <ClInclude Include="Rendering\Lights.h" />
+    <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
+    <ClInclude Include="Resourcing\AnimationClip.h" />
+    <ClInclude Include="Resourcing\SkinningData.h" />
     <ClInclude Include="Resourcing\Material.h" />
     <ClInclude Include="Resourcing\MaterialManager.h" />
     <ClInclude Include="Resourcing\Mesh.h" />
     <ClInclude Include="Resourcing\MeshFileLoader.h" />
     <ClInclude Include="Resourcing\Model.h" />
     <ClInclude Include="Resourcing\ModelManager.h" />
+    <ClInclude Include="Resourcing\Prefab.h" />
+    <ClInclude Include="Resourcing\PrefabComponentLoader\PrefabComponentLoader.h" />
+    <ClInclude Include="Resourcing\PrefabManager.h" />
     <ClInclude Include="Resourcing\Shader.h" />
     <ClInclude Include="Resourcing\ShaderManager.h" />
     <ClInclude Include="Resourcing\Texture.h" />
     <ClInclude Include="Resourcing\TextureManager.h" />
+    <ClInclude Include="Scripting\Script.h" />
+    <ClInclude Include="Scripting\ScriptManager.h" />
+    <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
+    <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
+    <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
+    <ClInclude Include="Scripting\Scripts\Scripts.h" />
+    <ClInclude Include="Scripting\Scripts\TestScript.h" />
+    <ClInclude Include="Scripting\Scripts\TestScript2.h" />
+    <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="Utility\TaskPool.h" />
     <ClInclude Include="Utility\Logger.h" />
+    <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
+    <None Include="Data\Shaders\Fragment\GUI.glsl" />
+    <None Include="Data\Shaders\Fragment\Text.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

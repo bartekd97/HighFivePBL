@@ -7,25 +7,40 @@
 #include "ModelManager.h"
 
 struct Vertex {
-	glm::vec3 position;
-	glm::vec2 uv;
-	glm::vec3 normal;
-	glm::vec3 tangent;
-	glm::vec3 bitangent;
+	glm::vec3 position = { 0,0,0 };
+	glm::vec2 uv = { 0,0 };
+	glm::vec3 normal = { 0,0,0 };
+	glm::vec3 tangent = { 0,0,0 };
+	glm::vec3 bitangent = { 0,0,0 };
+};
+
+struct VertexBoneData {
+	unsigned int bones[4] = { 0,0,0,0 };
+	float weights[4] = { 0.0f,0.0f,0.0f,0.0f };
+};
+
+struct AABBStruct {
+	glm::vec3 min;
+	glm::vec3 max;
 };
 
 class Mesh
 {
-	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices);
+	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const AABBStruct AABB);
+	friend std::shared_ptr<Mesh> ModelManager::CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const std::vector<VertexBoneData>& boneData, const AABBStruct AABB);
+
+public:
+	const AABBStruct AABB;
 
 private:
 	GLuint VAO;
 	GLuint VBO;
+	GLuint bVBO; // bone data
 	GLuint EBO;
 	int indicesSize;
 
-	Mesh(GLuint VAO, GLuint VBO, GLuint EBO, int indicesSize) :
-		VAO(VAO), VBO(VBO), EBO(EBO), indicesSize(indicesSize) {}
+	Mesh(GLuint VAO, GLuint VBO, GLuint bVBO, GLuint EBO, int indicesSize, const AABBStruct AABB) :
+		VAO(VAO), VBO(VBO), bVBO(bVBO), EBO(EBO), indicesSize(indicesSize), AABB(AABB) {}
 
 public:
 	inline void bind() { glBindVertexArray(VAO); }
@@ -40,6 +55,10 @@ public:
 	~Mesh() {
 		glDeleteVertexArrays(1, &VAO);
 		glDeleteBuffers(1, &VBO);
+		if (bVBO != 0)
+		{
+			glDeleteBuffers(1, &bVBO);
+		}
 		glDeleteBuffers(1, &EBO);
 	}
 };

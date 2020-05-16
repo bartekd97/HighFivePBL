@@ -1,0 +1,19 @@
+<prefab defaultScale="0.3,0.3,0.3">
+	<property name="length" value="2.99504" />
+	<property name="minForFill" value="2.15" />
+	<property name="maxForFill" value="3.0" />
+
+	<component name="MeshRenderer">
+		<property name="model" value="Structures/Fences/PrototypeSet:HighFence"/>
+	</component>
+	<component name="BoxCollider">
+		<property name="type" value="TRIGGER"/>
+		<property name="width" value="3.0"/>
+		<property name="height" value="0.5"/>
+		<property name="frozen" value="true"/>
+	</component>
+  <component name="ScriptComponent">
+    <property name="name" value="TriggerTest"/>
+    <property name="testParam" value="0.5"/>
+  </component>
+</prefab>

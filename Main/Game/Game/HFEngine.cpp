@@ -7,20 +7,32 @@
 #include "ECS/Components.h"
 #include "ECS/Systems.h"
 
+#include "Event/EventManager.h"
+#include "Event/Events.h"
+
+#include "Scripting/ScriptManager.h"
+
 #include "Resourcing/Texture.h"
 #include "Resourcing/Material.h"
 #include "Resourcing/Model.h"
 #include "Resourcing/Shader.h"
+#include "Resourcing/Prefab.h"
 #include "Rendering/PrimitiveRenderer.h"
 #include "WindowManager.h"
+#include "InputManager.h"
+#include "GUI/GUIManager.h"
 
 namespace HFEngine
 {
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
+	Camera MainCamera;
+	DirectionalLight WorldLight;
 	int RENDER_WIDTH;
 	int RENDER_HEIGHT;
+	FrameCounter CURRENT_FRAME_NUMBER = 1;
+	int SHADOWMAP_SIZE = 1024;
 
 	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
 	{
@@ -49,6 +61,8 @@ namespace HFEngine
 			return false;
 		}
 
+		InputManager::Initialize();
+
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			LogError("Failed to initialize GLAD");
@@ -59,6 +73,16 @@ namespace HFEngine
 		TextureManager::Initialize();
 		MaterialManager::Initialize();
 		ModelManager::Initialize();
+		PrefabManager::Initialize();
+		ScriptManager::Initialize();
+		EventManager::Initialize();
+		GUIManager::Initialize();
+
+		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
+		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
+		//MainCamera.SetScale(0.015625f); // 1/64
+		MainCamera.SetScale(0.03125f); // 1/32
+		//MainCamera.SetScale(0.0625f); // 1/16
 
 		ECS.Init();
 
@@ -66,19 +90,45 @@ namespace HFEngine
 		ECS.RegisterComponent<Transform>();
 		ECS.RegisterComponent<RigidBody>();
 		ECS.RegisterComponent<Gravity>();
+		ECS.RegisterComponent<Collider>();
+		ECS.RegisterComponent<CircleCollider>();
+		ECS.RegisterComponent<BoxCollider>();
+		ECS.RegisterComponent<SkinAnimator>();
 		// render components
 		ECS.RegisterComponent<CubeRenderer>();
 		ECS.RegisterComponent<MeshRenderer>();
+		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<CubeSpawner>();
+		ECS.RegisterComponent<ScriptContainer>();
+		// map layout components
+		ECS.RegisterComponent<MapCell>();
+		ECS.RegisterComponent<CellGate>();
+		ECS.RegisterComponent<CellBridge>();
 
-		auto cubeRenderSystem = ECS.RegisterSystem<CubeRenderSystem>();
+		auto mapCellCollectorSystem = ECS.RegisterSystem<MapCellCollectorSystem>();
 		{
 			Signature signature;
-			signature.set(ECS.GetComponentType<Transform>());
-			signature.set(ECS.GetComponentType<CubeRenderer>());
-			ECS.SetSystemSignature<CubeRenderSystem>(signature);
+			signature.set(ECS.GetComponentType<MapCell>());
+			ECS.SetSystemSignature<MapCellCollectorSystem>(signature);
+		}
+
+		auto scriptStartSystem = ECS.RegisterSystem<ScriptStartSystem>(true);
+		auto scriptUpdateSystem = ECS.RegisterSystem<ScriptUpdateSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<ScriptContainer>());
+			ECS.SetSystemSignature<ScriptUpdateSystem>(signature);
+		}
+
+
+		auto skinAnimatorSystem = ECS.RegisterSystem<SkinAnimatorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<SkinAnimator>());
+			signature.set(ECS.GetComponentType<SkinnedMeshRenderer>());
+			ECS.SetSystemSignature<SkinAnimatorSystem>(signature);
 		}
 		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
 		{
@@ -86,25 +136,41 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<CubeSpawner>());
 			ECS.SetSystemSignature<CubeSpawnerSystem>(signature);
 		}
+		auto colliderCollectorSystem = ECS.RegisterSystem<ColliderCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Collider>());
+			ECS.SetSystemSignature<ColliderCollectorSystem>(signature);
+		}
 		auto physicsSystem = ECS.RegisterSystem<PhysicsSystem>();
 		{
 			Signature signature;
 			signature.set(ECS.GetComponentType<Transform>());
 			signature.set(ECS.GetComponentType<RigidBody>());
-			signature.set(ECS.GetComponentType<Gravity>());
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
+		physicsSystem->SetCollector(colliderCollectorSystem);
+		auto gravitySystem = ECS.RegisterSystem<GravitySystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			ECS.SetSystemSignature<GravitySystem>(signature);
+		}
+		gravitySystem->SetCollector(mapCellCollectorSystem);
 		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();
 		{
 			Signature signature;
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
 		}
-		auto transformUpdateSystem = ECS.RegisterSystem<TransformUpdateSystem>();
+
+
+		auto scriptLateUpdateSystem = ECS.RegisterSystem<ScriptLateUpdateSystem>();
 		{
 			Signature signature;
-			signature.set(ECS.GetComponentType<Transform>());
-			ECS.SetSystemSignature<TransformUpdateSystem>(signature);
+			signature.set(ECS.GetComponentType<ScriptContainer>());
+			ECS.SetSystemSignature<ScriptLateUpdateSystem>(signature);
 		}
 
 		Renderer.Init();
@@ -122,6 +188,26 @@ namespace HFEngine
 			return;
 		}
 		glfwTerminate();
+		GUIManager::Terminate();
+	}
+
+	void ProcessGameFrame(float dt)
+	{
+		CURRENT_FRAME_NUMBER++;
+
+		GUIManager::Update();
+
+		Event updateEvent(Events::General::UPDATE);
+		updateEvent.SetParam(Events::General::DELTA_TIME, dt);
+		EventManager::FireEvent(updateEvent);
+
+		HFEngine::ECS.UpdateSystems(dt);
+
+		Event lateUpdateEvent(Events::General::LATE_UPDATE);
+		lateUpdateEvent.SetParam(Events::General::DELTA_TIME, dt);
+		EventManager::FireEvent(lateUpdateEvent);
+
+		HFEngine::Renderer.Render();
+		GUIManager::Draw();
 	}
 }
-

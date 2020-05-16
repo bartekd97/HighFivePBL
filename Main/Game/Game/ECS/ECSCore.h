@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <span>
 
 #include "ComponentManager.h"
 #include "GameObjectManager.h"
@@ -27,11 +28,17 @@ public:
 
 	void SetNameGameObject(GameObject gameObject, std::string name);
 
+	std::optional<GameObject> GetGameObjectByName(std::string name);
+
+	std::set<GameObject> GetGameObjectsByName(std::string name);
+
+	std::vector<GameObject> GetByNameInChildren(GameObject parent, std::string name);
+
 	void DestroyGameObject(GameObject gameObject);
 
 	void UpdateSystems(float dt);
 
-	void RenderSystems();
+	std::shared_ptr<System> GetSystemByTypeName(const char* typeName);
 
 	inline int GetLivingGameObjectsCount()
 	{
@@ -75,15 +82,53 @@ public:
 	}
 
 	template<typename T>
+	std::optional<T> GetComponentInChildren(GameObject gameObject)
+	{
+		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(gameObject);
+		if (children.size() == 0) return std::nullopt;
+
+		for (auto& child : children)
+		{
+			if (SearchComponent<T>(child))
+			{
+				return GetComponent<T>(child);
+			}
+
+		}
+		for (auto& child : children)
+		{
+			auto tmp = GetComponentInChildren<T>(child);
+			if (tmp != std::nullopt)
+			{
+				return tmp;
+			}
+
+		}
+		return std::nullopt;
+	}
+
+	template<typename T>
+	std::span<T> GetAllComponents()
+	{
+		return componentManager->GetAllComponents<T>();
+	}
+
+	template<typename T>
+	bool SearchComponent(GameObject gameObject)
+	{
+		return componentManager->SearchComponent<T>(gameObject);
+	}
+
+	template<typename T>
 	ComponentType GetComponentType()
 	{
 		return componentManager->GetComponentType<T>();
 	}
 
 	template<typename T>
-	std::shared_ptr<T> RegisterSystem()
+	std::shared_ptr<T> RegisterSystem(bool autonomous = false)
 	{
-		return systemManager->RegisterSystem<T>();
+		return systemManager->RegisterSystem<T>(autonomous);
 	}
 
 	template<typename T>

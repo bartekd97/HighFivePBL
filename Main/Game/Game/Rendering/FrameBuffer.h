@@ -3,8 +3,8 @@
 #include <glad/glad.h>
 #include <vector>
 #include <memory>
-#include "../Resourcing/Texture.h"
-#include "../WindowManager.h"
+#include "Resourcing/Texture.h"
+#include "WindowManager.h"
 
 class FrameBuffer
 {
@@ -28,19 +28,29 @@ private:
 	GLuint depthRenderBuffer = 0;
 
 	std::vector<std::shared_ptr<Texture>> colorAttachementTextures;
+	std::vector<ColorAttachement> colorAttachementsConfig;
 	std::shared_ptr<Texture> depthAttachementTexture;
+
+	void rebindColorAttachements();
 
 	FrameBuffer(int width, int height) : width(width), height(height) {}
 public:
 	static std::shared_ptr<FrameBuffer> Create(
 		int width, int height,
-		std::vector<ColorAttachement> colorAttachements,
+		const std::vector<ColorAttachement>& colorAttachements,
 		DepthAttachement depthAttachment);
 
 
 	inline void bind() {
 		glViewport(0,0,width,height);
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+	}
+	inline void bindRead() {
+		glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBuffer);
+	}
+	inline void bindDraw() {
+		glViewport(0, 0, width, height);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, frameBuffer);
 	}
 
 	static inline void BindDefaultScreen() {
@@ -51,11 +61,18 @@ public:
 	inline std::vector<std::shared_ptr<Texture>> getColorAttachements() {
 		return colorAttachementTextures;
 	}
+	inline std::shared_ptr<Texture> getColorAttachement(int index) {
+		return colorAttachementTextures[index];
+	}
 	inline std::shared_ptr<Texture> getDepthAttachement() {
 		return depthAttachementTexture;
 	}
 
+	// return color attachement as independent texture, replacing it with new one
+	std::shared_ptr<Texture> popColorAttachement(int index);
+
 	static void BlitDepth(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to = nullptr);
+	static void BlitColor(std::shared_ptr<FrameBuffer> from, std::shared_ptr<FrameBuffer> to = nullptr, int readIndex = 0);
 
 	~FrameBuffer()
 	{

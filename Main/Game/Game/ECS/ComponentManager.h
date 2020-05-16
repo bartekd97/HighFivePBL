@@ -6,6 +6,7 @@
 
 #include "ComponentArray.h"
 #include "ECSTypes.h"
+#include "../Scripting/ScriptManager.h"
 
 class ComponentManager
 {
@@ -40,6 +41,12 @@ public:
 	}
 
 	template<typename T>
+	bool SearchComponent(GameObject gameObject)
+	{
+		return GetComponentArray<T>()->SearchData(gameObject);
+	}
+
+	template<typename T>
 	void RemoveComponent(GameObject gameObject)
 	{
 		GetComponentArray<T>()->RemoveData(gameObject);
@@ -49,6 +56,12 @@ public:
 	T& GetComponent(GameObject gameObject)
 	{
 		return GetComponentArray<T>()->GetData(gameObject);
+	}
+
+	template<typename T>
+	std::span<T> GetAllComponents()
+	{
+		return GetComponentArray<T>()->GetAll();
 	}
 
 	void GameObjectDestroyed(GameObject gameObject)

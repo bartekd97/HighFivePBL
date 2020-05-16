@@ -16,6 +16,7 @@ namespace ModelManager {
 	std::shared_ptr<ModelLibrary> GENERIC_LIBRARY;
 	std::shared_ptr<Model> BLANK_MODEL;
 
+	std::vector<std::shared_ptr<Model>> CacheHolder;
 
 	bool Initialized = false;
 
@@ -24,7 +25,7 @@ namespace ModelManager {
 
 // privates
 namespace ModelManager {
-	GLuint MakeAndSetupVBO(std::vector<Vertex>& vertices)
+	GLuint MakeAndSetupVBO(const std::vector<Vertex>& vertices)
 	{
 		GLuint vbo;
 		glGenBuffers(1, &vbo);
@@ -54,7 +55,28 @@ namespace ModelManager {
 		return vbo;
 	}
 
-	GLuint MakeAndSetupEBO(std::vector<unsigned>& indices)
+	GLuint MakeAndSetupBoneVBO(const std::vector<VertexBoneData>& boneData)
+	{
+		GLuint bvbo;
+		glGenBuffers(1, &bvbo);
+
+		glBindBuffer(GL_ARRAY_BUFFER, bvbo);
+		glBufferData(GL_ARRAY_BUFFER,
+			sizeof(VertexBoneData) * boneData.size(),
+			&boneData[0],
+			GL_STATIC_DRAW);
+
+		// pos attrib
+		glVertexAttribIPointer(5, 4, GL_INT, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, bones));
+		glEnableVertexAttribArray(5);
+		// uv attrib
+		glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (void*)offsetof(VertexBoneData, weights));
+		glEnableVertexAttribArray(6);
+
+		return bvbo;
+	}
+
+	GLuint MakeAndSetupEBO(const std::vector<unsigned>& indices)
 	{
 		GLuint ebo;
 		glGenBuffers(1, &ebo);
@@ -83,7 +105,7 @@ void ModelManager::Initialize()
 
 	std::vector<Vertex> vertices0; vertices0.push_back(Vertex());
 	std::vector<unsigned> indices0; indices0.push_back(0);
-	std::shared_ptr<Mesh> mesh0 = CreateMesh(vertices0, indices0);
+	std::shared_ptr<Mesh> mesh0 = CreateMesh(vertices0, indices0, {});
 	BLANK_MODEL = std::shared_ptr<Model>(new Model(mesh0, MaterialManager::BLANK_MATERIAL));
 
 	Initialized = true;
@@ -93,7 +115,7 @@ void ModelManager::Initialize()
 
 
 
-std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, std::vector<unsigned>& indices)
+std::shared_ptr<Mesh> ModelManager::CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const AABBStruct AABB)
 {
 	GLuint vao;
 	glGenVertexArrays(1, &vao);
@@ -104,7 +126,22 @@ std::shared_ptr<Mesh> ModelManager::CreateMesh(std::vector<Vertex>& vertices, st
 
 	glBindVertexArray(0);
 
-	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, ebo, indices.size()));
+	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, 0, ebo, indices.size(), AABB));
+}
+
+std::shared_ptr<Mesh> ModelManager::CreateMesh(const std::vector<Vertex>& vertices, const std::vector<unsigned>& indices, const std::vector<VertexBoneData>& boneData, const AABBStruct AABB)
+{
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	GLuint vbo = MakeAndSetupVBO(vertices);
+	GLuint bvbo = MakeAndSetupBoneVBO(boneData);
+	GLuint ebo = MakeAndSetupEBO(indices);
+
+	glBindVertexArray(0);
+
+	return std::shared_ptr<Mesh>(new Mesh(vao, vbo, bvbo, ebo, indices.size(), AABB));
 }
 
 std::shared_ptr<ModelLibrary> ModelManager::GetLibrary(std::string name)
@@ -145,6 +182,41 @@ std::shared_ptr<Model> ModelManager::GetModel(std::string libraryName, std::stri
 }
 
 
+
+void ModelManager::UnloadUnused()
+{
+	int i = 0;
+	for (; i < CacheHolder.size(); i++)
+	{
+		const auto& model = CacheHolder.at(i);
+
+		if (model.use_count() > 1)
+			continue;
+
+		if (model->material.use_count() > 1 ||
+			model->mesh.use_count() > 1 ||
+			model->skinningData.use_count() > 1)
+			continue;
+
+		bool cont = false;
+		for (const auto& ac : model->animations)
+		{
+			if (ac.second.use_count() > 1)
+			{
+				cont = true;
+				break;
+			}
+		}
+		if (cont)
+			continue;
+
+		CacheHolder.erase(CacheHolder.begin() + i);
+		i--;
+	}
+}
+
+
+
 // classes
 
 ModelLibrary::ModelLibrary() : name("GENERIC")
@@ -168,7 +240,7 @@ ModelLibrary::ModelLibrary(std::string name) : name(name)
 		return;
 	}
 
-	std::string materialLibraryName = nullabeString(root->Attribute("materialLibrary"));
+	std::string materialLibraryName = nullableString(root->Attribute("materialLibrary"));
 	if (materialLibraryName.size() > 0)
 	{
 		if (materialLibraryName == "this")
@@ -208,7 +280,25 @@ ModelLibrary::ModelLibrary(std::string name) : name(name)
 
 		LibraryEntity* entity = new LibraryEntity();
 		entity->meshFile = meshFilepath;
-		entity->materialName = node->Attribute("material");
+		entity->materialName = nullableString(node->Attribute("material"));
+		entity->skinned = node->Attribute("skinned", "true") != NULL;
+
+		int j = 0;
+		for (tinyxml2::XMLElement* animation = node->FirstChildElement("animation");
+			animation != nullptr;
+			animation = animation->NextSiblingElement("animation"), j++)
+		{
+			const char* animationName = animation->Attribute("name");
+			const char* animationClip = animation->Attribute("clip");
+
+			if (animationName == nullptr || animationClip == nullptr)
+			{
+				LogWarning("ModelLibrary::ModelLibrary(): Invalid animation node at #{}/{}", i, j);
+				continue;
+			}
+
+			entity->animations.push_back({ std::string(animationName), std::string(libraryFolder + animationClip) });
+		}
 
 		entities[modelName] = entity;
 	}
@@ -223,25 +313,66 @@ ModelLibrary::~ModelLibrary()
 
 std::shared_ptr<Model> ModelLibrary::LoadEntity(std::string& name, LibraryEntity* entity)
 {
-	std::shared_ptr<Model> ptr;
+	std::shared_ptr<Mesh> mesh;
+	std::shared_ptr<Material> material;
+	std::shared_ptr<SkinningData> skinningData;
+	Model::Animations animations;
 
 	MeshFileLoader loader(entity->meshFile);
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
-	if (loader.ReadMeshData(vertices, indices))
+	AABBStruct AABB;
+	if (loader.ReadMeshData(vertices, indices, AABB))
 	{
-		auto mesh = ModelManager::CreateMesh(vertices, indices);
-		auto material = materialLibrary->GetMaterial(entity->materialName);
-		ptr = std::shared_ptr<Model>(new Model(mesh, material));
-		LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+		if (entity->skinned)
+		{
+			std::vector<VertexBoneData> boneData;
+			if (loader.ReadBoneData(boneData, skinningData))
+			{
+				mesh = ModelManager::CreateMesh(vertices, indices, boneData, AABB);
+				LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+			}
+			else
+			{
+				mesh = ModelManager::BLANK_MODEL->mesh;
+				LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
+			}
+		}
+		else
+		{
+			mesh = ModelManager::CreateMesh(vertices, indices, AABB);
+			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);
+		}
 	}
 	else
 	{
-		ptr = ModelManager::BLANK_MODEL;
+		mesh = ModelManager::BLANK_MODEL->mesh;
 		LogError("ModelLibrary::LoadEntity(): Failed loading mesh for '{}' in '{}'", name, this->name);
 	}
+	
+	material = entity->materialName == "" ? MaterialManager::BLANK_MATERIAL : materialLibrary->GetMaterial(entity->materialName);
+
+	for (auto& ae : entity->animations)
+	{
+		std::shared_ptr<AnimationClip> animation;
+		MeshFileLoader animFile(ae.clip);
+		if (animFile.ReadAnimation(animation))
+		{
+			LogInfo("ModelLibrary::LoadEntity(): Loaded '{}' animation for '{}' in '{}'", ae.name, name, this->name);
+		}
+		else
+		{
+			animation = AnimationClip::Create(1.0f, 1.0f);
+			LogError("ModelLibrary::LoadEntity(): Failed loading animation '{}' for '{}' in '{}'", ae.name, name, this->name);
+		}
+
+		animations[ae.name] = animation;
+	}
+
+	std::shared_ptr<Model> ptr(new Model(mesh,material,skinningData, animations));
 
 	entity->model = ptr;
+	ModelManager::CacheHolder.push_back(ptr);
 	return ptr;
 }
 

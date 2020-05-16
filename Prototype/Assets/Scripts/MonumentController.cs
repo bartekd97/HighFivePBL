@@ -16,6 +16,9 @@ public class MonumentController : MonoBehaviour
     private GameObject gameManagerObject;
     private GameManager gameManager;
 
+    public ParticleSystem breakingEffect;
+    public ParticleSystem destroyingEffect;
+
 
     // Start is called before the first frame update
     void Start()
@@ -41,10 +44,12 @@ public class MonumentController : MonoBehaviour
         //Debug.Log("zycko:" + monumentHealth);
         healthBar.SetHealth(monumentHealth);
         //Debug.Log("pasek:" + healthBar.GetHealth());
+        Instantiate(breakingEffect, transform.position, transform.rotation);
 
         if (monumentHealth <= 0)
         {
             Destroy(gameObject);
+            Instantiate(destroyingEffect, transform.position, transform.rotation);
             gameManager.Upgrade();
         }
     }
@@ -68,5 +73,16 @@ public class MonumentController : MonoBehaviour
             float wsp = R / halfDuration;
             SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
         }
+    }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }
