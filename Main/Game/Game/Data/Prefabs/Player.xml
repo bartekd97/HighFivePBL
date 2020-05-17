@@ -1,0 +1,38 @@
+<prefab defaultScale="1.5,1.5,1.5">
+    <component name="RigidBody">
+        <property name="velocity" value="0.0,0.0,0.0"/>
+        <property name="acceleration" value="0.0,0.0,0.0"/>
+        <property name="mass" value="10.0"/>
+    </component>
+    <component name="CircleCollider">
+        <property name="radius" value="0.75"/>
+    </component>
+
+    <component name="ScriptComponent">
+        <property name="name" value="PlayerController"/>
+        <property name="moveSpeed" value="12.5"/>
+    </component>
+    <component name="ScriptComponent">
+        <property name="name" value="PlayerCameraFollower"/>
+        <property name="cameraOffset" value="0.0,20.0,12.0"/>
+        <property name="yLookOffset" value="2.0"/>
+    </component>
+    <component name="ScriptComponent">
+        <property name="name" value="MapCellOptimizer"/>
+    </component>
+
+    <children>
+        <!-- loaded characters have inversed front axis, so we make workaround by rotating by 180*-->
+        <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Characters/Player:Vampire"/>
+            </component>
+            <component name="SkinnedMeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+            <component name="SkinAnimator">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+    </children>
+</prefab>

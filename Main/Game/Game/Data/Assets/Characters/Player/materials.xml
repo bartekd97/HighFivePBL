@@ -1,5 +1,9 @@
 <materials textureLibrary="this">
-    <material name="DemonMat">
+    <material name="VampireMortalMat">
         <property name="albedoMap" value="albedo"/>
+        <property name="normalMap" value="norm"/>
+        <property name="metalnessMap" value="metal"/>
+        <property name="roughnessMap" value="rough"/>
+        <property name="emissiveMap" value="emis"/>
     </material>
 </materials>

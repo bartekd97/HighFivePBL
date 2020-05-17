@@ -130,7 +130,6 @@
     <ClInclude Include="ECS\Components\ScriptContainer.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Components\CircleCollider.h" />
-    <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
@@ -176,6 +175,9 @@
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
+    <ClInclude Include="ECS\Components\ModelHolder.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerController.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

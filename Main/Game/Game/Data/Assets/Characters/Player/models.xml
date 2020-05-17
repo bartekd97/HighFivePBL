@@ -1,5 +1,6 @@
 <models materialLibrary="this">
-    <model name="Demon" mesh="demon_t_wiezzorek.glb" material="DemonMat" skinned="true">
-        <animation name="running"   clip="anim/running.glb"/>
+    <model name="Vampire" mesh="vampire_a_lusth.glb" material="VampireMortalMat" skinned="true">
+        <animation name="idle"      clip="anim/Standing Torch Idle 02.glb"/>
+        <animation name="running"   clip="anim/Standing Torch Run Forward.glb"/>
     </model>
 </models>

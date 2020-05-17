@@ -79,15 +79,17 @@ namespace HFEngine
 		GUIManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
-		MainCamera.SetSize(RENDER_WIDTH, RENDER_HEIGHT);
+		MainCamera.SetSize((float)RENDER_WIDTH / 100.0f, (float)RENDER_HEIGHT / 100.0f);
 		//MainCamera.SetScale(0.015625f); // 1/64
-		MainCamera.SetScale(0.03125f); // 1/32
+		//MainCamera.SetScale(0.03125f); // 1/32
 		//MainCamera.SetScale(0.0625f); // 1/16
+		MainCamera.SetScale(1.75f);
 
 		ECS.Init();
 
 		// general components
 		ECS.RegisterComponent<Transform>();
+		ECS.RegisterComponent<ModelHolder>();
 		ECS.RegisterComponent<RigidBody>();
 		ECS.RegisterComponent<Gravity>();
 		ECS.RegisterComponent<Collider>();
