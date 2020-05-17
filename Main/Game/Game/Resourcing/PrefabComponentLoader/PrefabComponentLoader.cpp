@@ -8,35 +8,170 @@
 
 namespace {
 
-	class MeshRendererLoader : public IPrefabComponentLoader {
+	class ModelHolderLoader : public IPrefabComponentLoader {
 	public:
-		bool useModel = false;
 		std::string libraryName, modelName;
 
 		void Preprocess(PropertyReader& properties) override {
 			static std::string model;
-			if (properties.GetString("model",model,"")) {
+			if (properties.GetString("model", model, "")) {
 				auto parts = Utility::StringSplit(model, ':');
 				if (parts.size() == 2) {
 					libraryName = parts[0];
 					modelName = parts[1];
-					useModel = true;
 				}
 				else {
-					LogWarning("MeshRendererLoader::Preprocess(): Cannot parse 'model' value: {}", model);
+					LogWarning("ModelHolderLoader::Preprocess(): Cannot parse 'model' value: {}", model);
 				}
+			}
+			else {
+				LogWarning("ModelHolderLoader::Preprocess(): Missing 'model' value.");
 			}
 		}
 		void Create(GameObject target) override {
-			MeshRenderer renderer;
-			if (useModel) {
-				auto model = ModelManager::GetModel(libraryName, modelName);
-				renderer.mesh = model->mesh;
-				renderer.material = model->material;
+			ModelHolder holder;
+			holder.model = ModelManager::GetModel(libraryName, modelName);
+			HFEngine::ECS.AddComponent<ModelHolder>(target, holder);
+		}
+	};
+
+	class MeshRendererLoader : public IPrefabComponentLoader {
+	protected:
+		virtual inline std::string _cName() { return "ModelHolderLoader"; }
+	public:
+		bool configureFromHolder = false;
+
+		bool useMeshPath = false;
+		std::pair<std::string, std::string> meshPath;
+
+		bool useMaterialPath = false;
+		std::pair<std::string, std::string> materialPath;
+
+		virtual void Preprocess(PropertyReader& properties) override {
+			properties.GetBool("configureFromHolder", configureFromHolder, false);
+
+			static std::string tmpMeshPath;
+			if (properties.GetString("mesh", tmpMeshPath,"")) {
+				auto parts = Utility::StringSplit(tmpMeshPath, ':');
+				if (parts.size() == 2) {
+					meshPath = { parts[0], parts[1] };
+					useMeshPath = true;
+				}
+				else {
+					LogWarning("{}::Preprocess(): Cannot parse 'mesh' value: {}", _cName(), tmpMeshPath);
+				}
 			}
+
+			static std::string tmpMaterialPath;
+			if (properties.GetString("material", tmpMaterialPath, "")) {
+				auto parts = Utility::StringSplit(tmpMaterialPath, ':');
+				if (parts.size() == 2) {
+					materialPath = { parts[0], parts[1] };
+					useMaterialPath = true;
+				}
+				else {
+					LogWarning("{}::Preprocess(): Cannot parse 'material' value: {}", _cName(), tmpMaterialPath);
+				}
+			}
+		}
+
+		virtual void Create(GameObject target) override {
+			MeshRenderer renderer;
+			if (configureFromHolder) {
+				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
+				renderer.mesh = holder.model->mesh;
+				renderer.material = holder.model->material;
+			}
+			if (useMeshPath) {
+				auto model = ModelManager::GetModel(meshPath.first, meshPath.second);
+				renderer.mesh = model->mesh;
+			}
+			if (useMaterialPath) {
+				auto material = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
+				renderer.material = material;
+			}
+			assert(
+				renderer.mesh != nullptr &&
+				renderer.material != nullptr &&
+				"Missing MeshRenderer configuration"
+				);
 			HFEngine::ECS.AddComponent<MeshRenderer>(target, renderer);
 		}
 	};
+	class SkinnedMeshRendererLoader : public MeshRendererLoader {
+	protected:
+		virtual inline std::string _cName() override { return "SkinnedMeshRendererLoader"; }
+	public:
+		virtual void Preprocess(PropertyReader& properties) override {
+			MeshRendererLoader::Preprocess(properties);
+		}
+
+		virtual void Create(GameObject target) override {
+			SkinnedMeshRenderer renderer;
+			if (configureFromHolder) {
+				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
+				renderer.mesh = holder.model->mesh;
+				renderer.skinningData = holder.model->skinningData;
+				renderer.material = holder.model->material;
+			}
+			if (useMeshPath) {
+				auto model = ModelManager::GetModel(meshPath.first, meshPath.second);
+				renderer.mesh = model->mesh;
+				renderer.skinningData = model->skinningData;
+			}
+			if (useMaterialPath) {
+				auto material = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
+				renderer.material = material;
+			}
+			assert(
+				renderer.mesh != nullptr &&
+				renderer.material != nullptr &&
+				renderer.skinningData != nullptr &&
+				"Missing SkinnedMeshRenderer configuration"
+				);
+			HFEngine::ECS.AddComponent<SkinnedMeshRenderer>(target, renderer);
+		}
+	};
+
+	class SkinAnimatorLoader : public IPrefabComponentLoader {
+	public:
+		bool configureFromHolder = false;
+
+		bool useClipsPath = false;
+		std::pair<std::string, std::string> clipsPath;
+
+		virtual void Preprocess(PropertyReader& properties) override {
+			properties.GetBool("configureFromHolder", configureFromHolder, false);
+
+			static std::string tmpClipsPath;
+			if (properties.GetString("clips", tmpClipsPath, "")) {
+				auto parts = Utility::StringSplit(tmpClipsPath, ':');
+				if (parts.size() == 2) {
+					clipsPath = { parts[0], parts[1] };
+					useClipsPath = true;
+				}
+				else {
+					LogWarning("SkinAnimatorLoader::Preprocess(): Cannot parse 'clips' value: {}", tmpClipsPath);
+				}
+			}
+		}
+
+		virtual void Create(GameObject target) override {
+			SkinAnimator animator;
+			if (configureFromHolder) {
+				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
+				animator.clips = holder.model->animations;
+			}
+			if (useClipsPath) {
+				auto model = ModelManager::GetModel(clipsPath.first, clipsPath.second);
+				animator.clips = model->animations;
+			}
+			HFEngine::ECS.AddComponent<SkinAnimator>(target, animator);
+		}
+	};
+
+
+
 
 	class RigidBodyLoader : public IPrefabComponentLoader
 	{
@@ -240,7 +375,11 @@ namespace {
 
 void PrefabComponentLoader::RegisterLoaders()
 {
+	PrefabManager::RegisterComponentLoader("ModelHolder", []() { return std::make_shared<ModelHolderLoader>(); });
 	PrefabManager::RegisterComponentLoader("MeshRenderer", []() { return std::make_shared<MeshRendererLoader>(); });
+	PrefabManager::RegisterComponentLoader("SkinnedMeshRenderer", []() { return std::make_shared<SkinnedMeshRendererLoader>(); });
+	PrefabManager::RegisterComponentLoader("SkinAnimator", []() { return std::make_shared<SkinAnimatorLoader>(); });
+
 	PrefabManager::RegisterComponentLoader("RigidBody", []() { return std::make_shared<RigidBodyLoader>(); });
 	PrefabManager::RegisterComponentLoader("CircleCollider", []() { return std::make_shared<CircleColliderLoader>(); });
 	PrefabManager::RegisterComponentLoader("BoxCollider", []() { return std::make_shared<BoxColliderLoader>(); });

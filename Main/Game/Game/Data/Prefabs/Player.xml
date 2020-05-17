@@ -1,0 +1,30 @@
+<prefab defaultScale="1.0,1.0,1.0">
+    <component name="ModelHolder">
+        <property name="model" value="Characters/Player:Vampire"/>
+    </component>
+    <component name="SkinnedMeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+    <component name="SkinAnimator">
+        <property name="configureFromHolder" value="true" />
+    </component>
+
+    <component name="RigidBody">
+        <property name="velocity" value="0.0,0.0,0.0"/>
+        <property name="acceleration" value="0.0,0.0,0.0"/>
+        <property name="mass" value="10.0"/>
+    </component>
+    <component name="CircleCollider">
+        <property name="radius" value="1.125"/>
+    </component>
+
+    <component name="ScriptComponent">
+        <property name="name" value="PlayerController"/>
+    </component>
+    <component name="ScriptComponent">
+        <property name="name" value="MapCellOptimizer"/>
+    </component>
+
+    <children>
+    </children>
+</prefab>

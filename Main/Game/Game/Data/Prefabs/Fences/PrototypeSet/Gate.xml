@@ -3,15 +3,21 @@
 
    <children>
         <child name="LeftColumn" position="-8.089035,0,0" rotation="0,0,0" scale="1,1,1">
-            <component name="MeshRenderer">
+            <component name="ModelHolder">
                 <property name="model" value="Structures/Fences/PrototypeSet:GateColumn"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
             </component>
         </child>
         <child name="LeftWingAxle" position="-7.21,0,0" rotation="0,90,0" scale="1,1,1">
             <children>
                 <child name="LeftWing" position="3.569965,0,0" rotation="0,0,0" scale="-1,1,1">
-                    <component name="MeshRenderer">
+                    <component name="ModelHolder">
                         <property name="model" value="Structures/Fences/PrototypeSet:Gate"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
                     </component>
                     <component name="BoxCollider">
                         <property name="width" value="2.75"/>
@@ -23,15 +29,21 @@
         </child>
 
         <child name="RightColumn" position="8.089035,0,0" rotation="0,0,0" scale="1,1,1">
-            <component name="MeshRenderer">
+            <component name="ModelHolder">
                 <property name="model" value="Structures/Fences/PrototypeSet:GateColumn"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
             </component>
         </child>
         <child name="RightWingAxle" position="7.21,0,0" rotation="0,-90,0" scale="1,1,1">
             <children>
                 <child name="RightWing" position="-3.569965,0,0" rotation="0,0,0" scale="1,1,1">
-                    <component name="MeshRenderer">
+                    <component name="ModelHolder">
                         <property name="model" value="Structures/Fences/PrototypeSet:Gate"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
                     </component>
                     <component name="BoxCollider">
                         <property name="width" value="2.75"/>

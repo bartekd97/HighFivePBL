@@ -21,6 +21,8 @@ public:
 	{
 		if (currentClipName != name)
 		{
+			assert(clips.find(name) != clips.end() && "Trying to set non-existing animation clip");
+
 			currentClipName = name;
 			currentClip = clips[name];
 			animTime = 0.0f;

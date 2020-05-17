@@ -13,6 +13,7 @@ private:
 	std::unordered_map<std::string, std::string> raw;
 	std::unordered_map<std::string, float> floats;
 	std::unordered_map<std::string, int> ints;
+	std::unordered_map<std::string, bool> bools;
 	std::unordered_map<std::string, glm::vec3> vecs3;
 
 public:
@@ -96,6 +97,29 @@ public:
 				}
 				ints[name] = __inttmp;
 				target = __inttmp;
+				return true;
+			}
+			else {
+				//ints[name] = defaultValue;
+				target = defaultValue;
+				return false;
+			}
+		}
+	}
+	inline bool GetBool(std::string&& name, bool& target, bool defaultValue = false)
+	{
+		static std::unordered_map<std::string, bool>::iterator __boolval;
+		static std::unordered_map<std::string, std::string>::iterator __boolstrval;
+
+		if ((__boolval = bools.find(name)) != bools.end()) {
+			target = __boolval->second; return true;
+		}
+		else {
+			if ((__boolstrval = raw.find(name)) != raw.end()) {
+				static bool __booltmp;
+				__booltmp = __boolstrval->second == "true";
+				bools[name] = __booltmp;
+				target = __booltmp;
 				return true;
 			}
 			else {

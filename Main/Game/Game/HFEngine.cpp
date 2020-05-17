@@ -88,6 +88,7 @@ namespace HFEngine
 
 		// general components
 		ECS.RegisterComponent<Transform>();
+		ECS.RegisterComponent<ModelHolder>();
 		ECS.RegisterComponent<RigidBody>();
 		ECS.RegisterComponent<Gravity>();
 		ECS.RegisterComponent<Collider>();
