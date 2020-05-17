@@ -34,11 +34,17 @@ public:
 			transitioning = false;
 		}
 	}
-	void TransitToAnimation(std::string name, float duration = 0.25f)
+	void TransitToAnimation(std::string name, float duration = 0.2f)
 	{
 		if (currentClipName != name)
 		{
 			assert(clips.find(name) != clips.end() && "Trying to set non-existing animation clip");
+
+			if (transitioning)
+			{
+				currentClip = nextClip;
+				animTime = nextAnimTime;
+			}
 
 			currentClipName = name;
 

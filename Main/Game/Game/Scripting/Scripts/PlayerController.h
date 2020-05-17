@@ -1,5 +1,6 @@
 #pragma once
 
+#include <glm/gtx/vector_angle.hpp>
 #include "../Script.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
@@ -8,11 +9,22 @@
 #include "InputManager.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
-#define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(GetGameObject())
+#define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 #define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
 class PlayerController : public Script
 {
+private: // parameters
+	float moveSpeed = 10.0f;
+
+private: // variables
+	glm::vec3 startPosition;
+	GameObject visualObject;
+
+	float currentMoveSpeed = 0.0f;
+	float moveSpeedSmoothing; // set in Start()
+	float rotateSpeedSmoothing = 4.0f * M_PI;
+
 public:
 	PlayerController()
 	{
@@ -25,9 +37,12 @@ public:
 
 	void Start()
 	{
+		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
 		startPosition = GetTransform().GetWorldPosition();
+		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
 	}
+
 
 	void Update(float dt)
 	{
@@ -42,15 +57,41 @@ public:
 		if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
 		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 
-		if (glm::length2(direction) > 0.5f)
-		{
-			direction = glm::normalize(direction);
+		bool isKeyMoving = glm::length2(direction) > 0.5f;
+
+		if (isKeyMoving)
 			animator.TransitToAnimation("running", 0.2f);
-		}
 		else
-		{
 			animator.TransitToAnimation("idle", 0.2f);
+
+		// smooth move rotation
+		if (isKeyMoving)
+		{
+			glm::vec3 front3 = transform.GetFront();
+			float diff = glm::orientedAngle(
+				glm::normalize(glm::vec2(direction.x, direction.z)),
+				glm::normalize(glm::vec2(front3.x, front3.z))
+			);
+
+			float change = dt * rotateSpeedSmoothing;
+			if (glm::abs(change) > glm::abs(diff))
+				change = diff;
+			else
+				change *= glm::sign(diff);
+			transform.RotateSelf(glm::degrees(change), transform.GetUp());
 		}
+
+		// smoth move speed
+		float targetMoveSpeed = isKeyMoving ? moveSpeed : 0.0f;
+		{
+			float diff = targetMoveSpeed - currentMoveSpeed;
+			float change = dt * moveSpeedSmoothing;
+			if (glm::abs(change) > glm::abs(diff))
+				currentMoveSpeed = targetMoveSpeed;
+			else
+				currentMoveSpeed += change * glm::sign(diff);
+		}
+
 
 		if (InputManager::GetKeyDown(GLFW_KEY_X))
 		{
@@ -58,22 +99,13 @@ public:
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
 		}
 
-		if (glm::length2(direction) > 0.5f)
-		{
-			transform.SetRotation(glm::vec3(0.0f, std::atan2(direction.x, direction.z) * 180.0 / M_PI, 0.0f));
-		}
-		rigidBody.Move(transform.GetPosition() + (direction * moveSpeed * dt));
+		rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
+
 		if (transform.GetWorldPosition().y < -15.0f)
 		{
 			transform.SetPosition(startPosition);
 		}
 	}
-
-
-private:
-	float moveSpeed = 10.0f;
-
-	glm::vec3 startPosition;
 };
 
 
