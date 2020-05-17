@@ -1,34 +1,39 @@
 #pragma once
 
 #include "../Script.h"
-#include "../../HFEngine.h"
-#include "../../ECS/Components.h"
-#include "../../InputManager.h"
+#include "HFEngine.h"
+#include "ECS/Components/Transform.h"
+#include "ECS/Components/RigidBody.h"
+#include "ECS/Components/SkinAnimator.h"
+#include "InputManager.h"
+
+#define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
+#define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(GetGameObject())
+#define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
 class PlayerController : public Script
 {
 public:
+	PlayerController()
+	{
+		RegisterFloatParameter("moveSpeed", &moveSpeed);
+	}
+
 	void Awake()
 	{
 	}
 
 	void Start()
 	{
-		startPosition = HFEngine::ECS.GetComponent<Transform>(GetGameObject()).GetWorldPosition();
-		auto cam = HFEngine::ECS.GetGameObjectByName("CameraObject");
-		assert(cam.has_value() && "PlayerController: couldn't resolve camera object");
-		cameraObject = cam.value();
-
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
-		auto& camTransform = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-		cameraOffset = transform.GetWorldPosition() - camTransform.GetWorldPosition();
-		cameraOffset.y = camTransform.GetWorldPosition().y;
+		startPosition = GetTransform().GetWorldPosition();
+		GetAnimator().SetAnimation("idle");
 	}
 
 	void Update(float dt)
 	{
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
-		auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(GetGameObject());
+		auto& transform = GetTransform();
+		auto& animator = GetAnimator();
+		auto& rigidBody = GetRigidBody();
 
 		glm::vec3 direction(0.0f);
 		if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
@@ -37,7 +42,15 @@ public:
 		if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
 		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 
-		if (InputManager::GetKeyStatus(GLFW_KEY_SPACE)) speed = 1120.0f;
+		if (glm::length2(direction) > 0.5f)
+		{
+			direction = glm::normalize(direction);
+			animator.SetAnimation("running");
+		}
+		else
+		{
+			animator.SetAnimation("idle");
+		}
 
 		if (InputManager::GetKeyDown(GLFW_KEY_X))
 		{
@@ -45,32 +58,25 @@ public:
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
 		}
 
-		else speed = 20.0f;
-
 		if (glm::length2(direction) > 0.5f)
 		{
 			transform.SetRotation(glm::vec3(0.0f, std::atan2(direction.x, direction.z) * 180.0 / M_PI, 0.0f));
 		}
-		rigidBody.Move(transform.GetPosition() + (direction * speed * dt));
+		rigidBody.Move(transform.GetPosition() + (direction * moveSpeed * dt));
 		if (transform.GetWorldPosition().y < -15.0f)
 		{
 			transform.SetPosition(startPosition);
 		}
 	}
 
-	void LateUpdate(float dt)
-	{
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
-		auto& camTransform = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-		glm::vec3 position = transform.GetWorldPosition() - cameraOffset;
-		position.y = cameraOffset.y;
-		camTransform.SetPosition(position);
-		HFEngine::MainCamera.SetView(camTransform);
-	}
 
 private:
-	float speed = 20.0f;
-	GameObject cameraObject;
-	glm::vec3 cameraOffset;
+	float moveSpeed = 10.0f;
+
 	glm::vec3 startPosition;
 };
+
+
+#undef GetTransform()
+#undef GetAnimator()
+#undef GetRigidBody()

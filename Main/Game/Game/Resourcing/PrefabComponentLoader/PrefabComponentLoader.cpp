@@ -346,7 +346,15 @@ namespace {
 				for (auto property : rawProperties)
 				{
 					bool set = false;
-					if (IsFloat(property.second)) set = script->SetFloat(property.first, stof(property.second));
+
+					static float floatTmp;
+					if (Utility::TryConvertStringToFloat(property.second, floatTmp))
+						set = script->SetFloat(property.first, floatTmp);
+
+					static glm::vec3 vec3tmp;
+					if (!set && Utility::TryConvertStringToVec3(property.second, vec3tmp))
+						set = script->SetVec3(property.first, vec3tmp);
+				
 					if (!set) set = script->SetString(property.first, property.second);
 					if (!set)
 					{
@@ -358,15 +366,6 @@ namespace {
 					LogWarning("ScriptComponentLoader::Create(): script {} has unsetted parameters", name);
 				}
 			}
-		}
-	private:
-		bool IsFloat(const std::string& str)
-		{
-			if (str.empty()) return false;
-
-			char* ptr;
-			strtof(str.c_str(), &ptr);
-			return (*ptr) == '\0';
 		}
 	};
 

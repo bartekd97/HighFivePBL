@@ -50,16 +50,10 @@ int main()
 	MapGenerator generator;
 	generator.Generate();
 
-	//auto prefab = PrefabManager::GetPrefab("Sample");
-	//prefab->Instantiate({100,10,100});
+
 
 	auto prefab = PrefabManager::GetPrefab("Player");
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
-
-	auto demon = ModelManager::GetModel("Characters/Player", "Vampire");
-	SkinnedMeshRenderer demonRenderer = { demon->mesh, demon->material, demon->skinningData };
-	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).SetAnimation("running");
-	HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(2.0f));
 
 
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
@@ -67,9 +61,6 @@ int main()
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
-	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 15.0f, 110.0f });
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -50.0f, 0.0f, 0.0f });
 
 
 	float dt = 0.0f;

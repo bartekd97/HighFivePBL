@@ -24,6 +24,14 @@ public:
 		return  true;
 	}
 
+	bool SetVec3(std::string name, glm::vec3 value)
+	{
+		if (vec3Parameters.find(name) == vec3Parameters.end()) return false;
+		*vec3Parameters[name] = value;
+		unsettedParams -= 1;
+		return  true;
+	}
+
 	bool SetString(std::string name, std::string value)
 	{
 		if (stringParameters.find(name) == stringParameters.end()) return false;
@@ -50,6 +58,12 @@ protected:
 		unsettedParams += 1;
 	}
 
+	void RegisterVec3Parameter(std::string name, glm::vec3* vec3Ptr)
+	{
+		vec3Parameters[name] = vec3Ptr;
+		unsettedParams += 1;
+	}
+
 	void RegisterStringParameter(std::string name, std::string* stringPtr)
 	{
 		stringParameters[name] = stringPtr;
@@ -64,6 +78,7 @@ protected:
 private:
 	GameObject gameObject;
 	std::unordered_map<std::string, float*> floatParameters;
+	std::unordered_map<std::string, glm::vec3*> vec3Parameters;
 	std::unordered_map<std::string, std::string*> stringParameters;
 	int unsettedParams;
 

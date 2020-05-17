@@ -1,4 +1,4 @@
-<prefab defaultScale="1.0,1.0,1.0">
+<prefab defaultScale="1.5,1.5,1.5">
     <component name="ModelHolder">
         <property name="model" value="Characters/Player:Vampire"/>
     </component>
@@ -15,11 +15,17 @@
         <property name="mass" value="10.0"/>
     </component>
     <component name="CircleCollider">
-        <property name="radius" value="1.125"/>
+        <property name="radius" value="0.75"/>
     </component>
 
     <component name="ScriptComponent">
         <property name="name" value="PlayerController"/>
+        <property name="moveSpeed" value="12.5"/>
+    </component>
+    <component name="ScriptComponent">
+        <property name="name" value="PlayerCameraFollower"/>
+        <property name="cameraOffset" value="0.0,20.0,12.0"/>
+        <property name="yLookOffset" value="2.0"/>
     </component>
     <component name="ScriptComponent">
         <property name="name" value="MapCellOptimizer"/>
