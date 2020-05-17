@@ -45,11 +45,11 @@ public:
 		if (glm::length2(direction) > 0.5f)
 		{
 			direction = glm::normalize(direction);
-			animator.SetAnimation("running");
+			animator.TransitToAnimation("running", 0.2f);
 		}
 		else
 		{
-			animator.SetAnimation("idle");
+			animator.TransitToAnimation("idle", 0.2f);
 		}
 
 		if (InputManager::GetKeyDown(GLFW_KEY_X))
