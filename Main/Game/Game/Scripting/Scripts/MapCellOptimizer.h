@@ -25,7 +25,7 @@ public:
 		for (auto& gate : gates)
 		{
 			auto& collider = HFEngine::ECS.GetComponent<Collider>(gate);
-			collider.OnTriggerEnter = TriggerMethodPointer(MapCellOptimizer::OnTriggerEnter);
+			collider.OnTriggerEnter.push_back(TriggerMethodPointer(MapCellOptimizer::OnTriggerEnter));
 		}
 
 		auto cellsContainer = HFEngine::ECS.GetGameObjectByName("Cells");

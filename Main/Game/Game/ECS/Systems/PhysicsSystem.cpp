@@ -107,9 +107,9 @@ void PhysicsSystem::Update(float dt)
                             if (it == cacheNode.triggers.end())
                             {
                                 cacheNode.triggers.insert(otherObject);
-                                if (otherCacheNode.collider.OnTriggerEnter)
+                                for (const auto& onTriggerEnter : otherCacheNode.collider.OnTriggerEnter)
                                 {
-                                    otherCacheNode.collider.OnTriggerEnter(otherObject, gameObject);
+                                    onTriggerEnter(otherObject, gameObject);
                                 }
                             }
                         }
@@ -118,9 +118,9 @@ void PhysicsSystem::Update(float dt)
                             if (it != cacheNode.triggers.end())
                             {
                                 cacheNode.triggers.erase(it);
-                                if (otherCacheNode.collider.OnTriggerExit)
+                                for (const auto& onTriggerExit : otherCacheNode.collider.OnTriggerExit)
                                 {
-                                    otherCacheNode.collider.OnTriggerExit(otherObject, gameObject);
+                                    onTriggerExit(otherObject, gameObject);
                                 }
                             }
                         }
