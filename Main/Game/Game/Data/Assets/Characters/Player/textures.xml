@@ -1,3 +1,7 @@
 <textures>
-    <texture name="albedo" file="Demon__diffuse.png" format="srgb" />
+    <texture name="albedo" file="Vampire_albedo.png" format="srgb" />
+    <texture name="norm" file="Vampire_normal.png" />
+    <texture name="metal" file="Vampire_metalness.png" format="r" />
+    <texture name="rough" file="Vampire_roughness.png" format="r" />
+    <texture name="emis" file="Vampire_emissive.png" format="srgb" />
 </textures>

@@ -161,6 +161,9 @@ void RenderPipeline::Init()
 
 void RenderPipeline::Render()
 {
+	// clear texture bound cache
+	Texture::NoBindAll(true);
+
 	// prepare cameras
 	static Camera lightCamera;
 	Camera& viewCamera = HFEngine::MainCamera;
@@ -247,6 +250,4 @@ void RenderPipeline::Render()
 		RenderSystems.circleColliderRenderer->Render();
 	}
 #endif //  _DEBUG
-
-	//HFEngine::MainCamera = mCamera;
 }

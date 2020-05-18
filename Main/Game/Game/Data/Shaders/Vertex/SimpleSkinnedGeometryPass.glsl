@@ -8,7 +8,10 @@ const int MAX_BONES = 100;
 uniform mat4 gModel;
 uniform mat4 gView;
 uniform mat4 gProjection;
-uniform mat4 gBones[MAX_BONES];
+layout (std140) uniform gBonesBuffer
+{
+    mat4 gBones[MAX_BONES];
+};
 
 
 void main()  

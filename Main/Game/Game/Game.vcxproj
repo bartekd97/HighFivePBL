@@ -164,6 +164,7 @@
     <ClInclude Include="ECS\Components\LifeTime.h" />
     <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
+    <ClInclude Include="ECS\Components\ModelHolder.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
     <ClInclude Include="ECS\Components\ScriptContainer.h" />
     <ClInclude Include="ECS\Components\SkinAnimator.h" />
@@ -245,9 +246,11 @@
     <ClInclude Include="Resourcing\ShaderManager.h" />
     <ClInclude Include="Resourcing\Texture.h" />
     <ClInclude Include="Resourcing\TextureManager.h" />
+    <ClInclude Include="Resourcing\UniformBuffer.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
-    <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerController.h" />
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />

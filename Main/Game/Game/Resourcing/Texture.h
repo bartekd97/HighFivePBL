@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include "TextureManager.h"
 
 class Texture {
@@ -20,11 +21,37 @@ private:
 	Texture(GLuint texture, int width, int height, GLint format) :
 		texture(texture), width(width), height(height), format(format) {}
 
+	inline static GLuint LastBoundTextures[31];
+
 public:
+#pragma warning( push )
+#pragma warning( disable : 6385 6386 )
 	inline void bind(unsigned int slotId) {
+		assert(slotId <= 30 && "invalid slot id");
+		if (LastBoundTextures[slotId] == texture) return;
 		glActiveTexture(GL_TEXTURE0 + slotId);
 		glBindTexture(GL_TEXTURE_2D, texture);
+		LastBoundTextures[slotId] = texture;
 	}
+	inline void forceBind(unsigned int slotId) {
+		assert(slotId <= 30 && "invalid slot id");
+		LastBoundTextures[slotId] = 0;
+		bind(slotId);
+	}
+	inline static void NoBind(unsigned int slotId, bool cacheOnly = false) {
+		assert(slotId <= 30 && "invalid slot id");
+		if (!cacheOnly) {
+			glActiveTexture(GL_TEXTURE0 + slotId);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		LastBoundTextures[slotId] = 0;
+	}
+	inline static void NoBindAll(bool cacheOnly = false) {
+		for (unsigned int i = 0; i < 31; i++) {
+			NoBind(i, cacheOnly);
+		}
+	}
+#pragma warning( pop )
 
 	inline GLuint id() { return texture; }
 

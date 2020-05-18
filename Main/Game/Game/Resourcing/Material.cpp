@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tsl/robin_map.h>
 #include "../Utility/Logger.h"
 #include "Material.h"
 #include "Shader.h"
@@ -98,8 +99,12 @@ void Material::SetLibraryProperties(PropertyReader& properties, std::shared_ptr<
 #endif
 }
 
+static tsl::robin_map<Shader*, Material*> LastBoundMaterials;
 void Material::apply(std::shared_ptr<Shader> shader)
 {
+	if (LastBoundMaterials[shader.get()] == this) return;
+	LastBoundMaterials[shader.get()] = this;
+
 	// bind maps
 	albedoMap->bind(MaterialBindingPoint::ALBEDO_MAP);
 	normalMap->bind(MaterialBindingPoint::NORMAL_MAP);
@@ -112,4 +117,9 @@ void Material::apply(std::shared_ptr<Shader> shader)
 	shader->setFloat("roughnessValue", roughnessValue);
 	shader->setFloat("metalnessValue", metalnessValue);
 	shader->setVector3F("emissiveColor", emissiveColor);
+}
+
+void Material::NoApply(std::shared_ptr<Shader> shader)
+{
+	LastBoundMaterials[shader.get()] = NULL;
 }

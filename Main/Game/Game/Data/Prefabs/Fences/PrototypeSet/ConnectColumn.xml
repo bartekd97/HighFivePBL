@@ -3,7 +3,10 @@
     <property name="minForFill" value="0.0" />
     <property name="maxForFill" value="0.75" />
 
-    <component name="MeshRenderer">
+    <component name="ModelHolder">
         <property name="model" value="Structures/Fences/PrototypeSet:ConnectColumn"/> <!-- LibraryName:ModelName-->
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
     </component>
 </prefab>

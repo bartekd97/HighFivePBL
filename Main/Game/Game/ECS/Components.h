@@ -2,6 +2,7 @@
 #include "Components/LifeTime.h"
 #include "Components/Transform.h"
 #include "Components/RigidBody.h"
+#include "Components/ModelHolder.h"
 #include "Components/SkinAnimator.h"
 #include "Components/MeshRenderer.h"
 #include "Components/SkinnedMeshRenderer.h"

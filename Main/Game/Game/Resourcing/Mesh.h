@@ -42,8 +42,22 @@ private:
 	Mesh(GLuint VAO, GLuint VBO, GLuint bVBO, GLuint EBO, int indicesSize, const AABBStruct AABB) :
 		VAO(VAO), VBO(VBO), bVBO(bVBO), EBO(EBO), indicesSize(indicesSize), AABB(AABB) {}
 
+	inline static GLuint LastBoundVAO = 0;
+
 public:
-	inline void bind() { glBindVertexArray(VAO); }
+	inline void bind() {
+		if (VAO == LastBoundVAO) return;
+		glBindVertexArray(VAO);
+		LastBoundVAO = VAO;
+	}
+	inline void forceBind() {
+		glBindVertexArray(VAO);
+		LastBoundVAO = VAO;
+	}
+	inline static void NoBind() {
+		glBindVertexArray(0);
+		LastBoundVAO = 0;
+	}
 
 	inline void draw() {
 		glDrawElements(GL_TRIANGLES, indicesSize, GL_UNSIGNED_INT, 0);

@@ -19,7 +19,7 @@ public:
 	class Channel
 	{
 	public:
-		static const int MAX_KEYS = 256;
+		static const int MAX_KEYS = 512;
 
 		struct KeyVec3 {
 			float time; // in ticks
