@@ -8,6 +8,8 @@ public class MapSetuper : MonoBehaviour
     public int minEnemiesInCell;
     public int maxEnemiesInCell;
     public int maxMonumentsCounter = 3;
+    public int minObstaclesInCell = 0;
+    public int maxObstaclesInCell = 4;
     public float centerSpawnRadiusPercentage;
     public int maxBossSpawnCellDistance;
     public GameObject playerObject;
@@ -16,6 +18,11 @@ public class MapSetuper : MonoBehaviour
     public GameObject enemyPrefab;
     public GameObject bossPrefab;
     public GameObject monumentPrefab;
+    public GameObject mudPrefab;
+    public GameObject fogPrefab;
+    public GameObject toxicFogPrefab;
+    public GameObject firePrefab;
+
 
     public void SetupMap()
     {
@@ -23,6 +30,7 @@ public class MapSetuper : MonoBehaviour
         playerObject.transform.position = startupCell.transform.position;
         SetupEnemies();
         SetupMonuments();
+        SetupObstacles();
         GameManager.Instance.SetCurrentCell(startupCell);
     }
 
@@ -171,4 +179,109 @@ public class MapSetuper : MonoBehaviour
         return newIndicesArray;
     }
 
+    private void SpawnObstaclesInCell(MapCell cell)
+    {
+        int obstaclesCount = Random.Range(minObstaclesInCell, maxObstaclesInCell);
+        int obstacleType;
+        List<int> obstaclesTypes = new List<int>();
+        for (int i = 0; i < obstaclesCount; i++)
+        {
+            float minRadius = Mathf.Infinity;
+            for (int j = 0 ; j < cell.PolygonBase.Points.Length - 1; j++)
+            {
+                float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[j], cell.PolygonBase.Points[j + 1], new Vector2(0, 0));
+                if (distance < minRadius) minRadius = distance;
+            }
+
+            obstacleType = Random.Range(0, 4);
+            if (obstacleType == 0)
+            {
+                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+                Debug.Log(finalPoint);
+                int n = 0;
+
+                while (Physics.OverlapBox(finalPoint, new Vector3(6, 0.05f, 6)).Length != 0 )
+                {
+                    Debug.Log("TEST");//
+                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+                    Debug.Log("->");
+                    Debug.Log(finalPoint);
+                    Debug.Log(Physics.OverlapBox(finalPoint, new Vector3(6, 0.05f, 6)).Length);
+                    n++;
+                }
+
+                Instantiate(fogPrefab, finalPoint, Quaternion.identity);
+            }
+            else if (obstacleType == 1)
+            {
+                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+                while (Physics.OverlapBox(finalPoint, new Vector3(4, 0.05f, 4)).Length != 0)
+                {
+                    Debug.Log("TEST");//
+                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+                }
+
+                Instantiate(toxicFogPrefab, finalPoint, Quaternion.identity);
+            }
+            else if (obstacleType == 2)
+            {
+                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+                while (Physics.OverlapBox(finalPoint + new Vector3(0, 0.95f, 0), new Vector3(4, 0.05f, 4)).Length != 0)
+                {
+                    Debug.Log("TEST");// 
+                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+                }
+
+                Instantiate(firePrefab, finalPoint, Quaternion.identity);
+            }
+            else
+            {
+                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+                while (Physics.OverlapBox(finalPoint + new Vector3(0, 0.95f, 0), new Vector3(8, 0.05f, 8)).Length != 0)
+                {
+                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+                }
+
+                Instantiate(mudPrefab, finalPoint, Quaternion.identity);
+            }
+        }
+
+        //float minRadius = Mathf.Infinity;
+        //for (int i = 0; i < cell.PolygonBase.Points.Length - 1; i++)
+        //{
+        //    float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[i], cell.PolygonBase.Points[i + 1], new Vector2(0, 0));
+        //    if (distance < minRadius) minRadius = distance;
+        //}
+        //while (obstaclesCount > 0)
+        //{
+        //    Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //    Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1, circlePoint.y);
+        //    if (Physics.OverlapBox(finalPoint + new Vector3(0, 2, 0),  2.0f).Length == 0)
+        //    {
+        //        Instantiate(toxicFogPrefab, finalPoint, Quaternion.identity);
+        //        //GameObject enemy = InstantiateEnemy(finalPoint, cell);
+        //        //cell.Enemies.Add(enemy);
+        //        obstaclesCount -= 1;
+        //    }
+        //}
+    }
+
+    void SetupObstacles()
+    {
+        List<MapCell> cells = new List<MapCell>(MapCell.All);
+        MapCell startupCell = GetStartupCell();
+        MapCell bossCell = GetRandomBossCell();
+        cells
+            .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
+            .ToList()
+            .ForEach(cell => SpawnObstaclesInCell(cell));
+    }
 }

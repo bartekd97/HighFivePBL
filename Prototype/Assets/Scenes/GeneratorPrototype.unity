@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -7457,6 +7457,7 @@ MonoBehaviour:
     noiseCenterRatio: 0.9
     noiseScale: 0.1
     noiseForce: {x: 5, y: 5}
+    serializeMeshes: 0
   cellFenceConfig:
     gateEntity:
       gameObject: {fileID: 1523006188585765467, guid: 9f1ab5d0cd336de4185405a43c9cbde3,
@@ -19188,6 +19189,14 @@ MonoBehaviour:
   bossPrefab: {fileID: 8886014663648545004, guid: 045f9a318b5eaf3408faf5840371993c,
     type: 3}
   monumentPrefab: {fileID: 5058164864356723304, guid: 12c1e192743bf454fadf4a227c24ecdf,
+    type: 3}
+  mudPrefab: {fileID: 4554277341709737023, guid: 54012baf07f0539498e59dc92b6a0b46,
+    type: 3}
+  fogPrefab: {fileID: 5733388050050140644, guid: 1880bd1a8ff384e4480ba2b83eafc553,
+    type: 3}
+  toxicFogPrefab: {fileID: 5894159942928361553, guid: 59e0285ae368d204ab131cda4edf424a,
+    type: 3}
+  firePrefab: {fileID: 7449754332596637308, guid: 285f74bcb0b8d4945b434bc7147aa39b,
     type: 3}
 --- !u!4 &1873961013
 Transform:
