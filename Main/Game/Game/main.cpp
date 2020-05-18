@@ -43,25 +43,19 @@ int main()
 		return -1;
 	}
 
-
 	GLFWwindow* window = WindowManager::GetWindow();
-
 
 	MapGenerator generator;
 	generator.Generate();
 
-
-
 	auto prefab = PrefabManager::GetPrefab("Player");
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
-
+	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
-
-
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))

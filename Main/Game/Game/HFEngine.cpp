@@ -91,18 +91,16 @@ namespace HFEngine
 		ECS.RegisterComponent<Transform>();
 		ECS.RegisterComponent<ModelHolder>();
 		ECS.RegisterComponent<RigidBody>();
-		ECS.RegisterComponent<Gravity>();
+		ECS.RegisterComponent<GravityCollider>();
 		ECS.RegisterComponent<Collider>();
 		ECS.RegisterComponent<CircleCollider>();
 		ECS.RegisterComponent<BoxCollider>();
 		ECS.RegisterComponent<SkinAnimator>();
 		// render components
-		ECS.RegisterComponent<CubeRenderer>();
 		ECS.RegisterComponent<MeshRenderer>();
 		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
-		ECS.RegisterComponent<CubeSpawner>();
 		ECS.RegisterComponent<ScriptContainer>();
 		// map layout components
 		ECS.RegisterComponent<MapCell>();
@@ -131,12 +129,6 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<SkinAnimator>());
 			signature.set(ECS.GetComponentType<SkinnedMeshRenderer>());
 			ECS.SetSystemSignature<SkinAnimatorSystem>(signature);
-		}
-		auto cubeSpawnerSystem = ECS.RegisterSystem<CubeSpawnerSystem>();
-		{
-			Signature signature;
-			signature.set(ECS.GetComponentType<CubeSpawner>());
-			ECS.SetSystemSignature<CubeSpawnerSystem>(signature);
 		}
 		auto colliderCollectorSystem = ECS.RegisterSystem<ColliderCollectorSystem>();
 		{
