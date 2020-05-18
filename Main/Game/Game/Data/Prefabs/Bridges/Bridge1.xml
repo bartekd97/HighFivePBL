@@ -8,7 +8,7 @@
     -->
   <component name="BoxCollider">
     <property name="type" value="TRIGGER"/>
-    <property name="width" value="3.0"/>
+    <property name="width" value="2.6"/>
     <property name="height" value="10.0"/>
     <property name="frozen" value="true"/>
   </component>
@@ -29,7 +29,7 @@
           <component name="BoxCollider">
             <property name="type" value="STATIC"/>
             <property name="width" value="10.0"/>
-            <property name="height" value="0.2"/>
+            <property name="height" value="0.4"/>
             <property name="frozen" value="true"/>
           </component>
         </child>
@@ -37,7 +37,7 @@
         <component name="BoxCollider">
           <property name="type" value="STATIC"/>
           <property name="width" value="10.0"/>
-          <property name="height" value="0.2"/>
+          <property name="height" value="0.4"/>
           <property name="frozen" value="true"/>
         </component>
       </child>
