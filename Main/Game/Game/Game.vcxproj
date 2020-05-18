@@ -250,6 +250,7 @@
     <ClInclude Include="Resourcing\ShaderManager.h" />
     <ClInclude Include="Resourcing\Texture.h" />
     <ClInclude Include="Resourcing\TextureManager.h" />
+    <ClInclude Include="Resourcing\UniformBuffer.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />

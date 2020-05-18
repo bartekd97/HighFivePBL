@@ -2,16 +2,45 @@
 #include "SkinnedMeshRendererSystem.h"
 #include "Resourcing/Material.h"
 #include "Resourcing/Mesh.h"
+#include "Resourcing/UniformBuffer.h"
 
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/SkinnedMeshRenderer.h"
 
+static const GLuint BONE_MATRICES_BUFFER_BINING_POINT = 1;
+
+inline static void CheckBoneMatricesBuffer(SkinnedMeshRenderer& renderer)
+{
+	if (renderer.boneMatricesBuffer == nullptr)
+	{
+		renderer.boneMatricesBuffer = UniformBuffer::Create(sizeof(glm::mat4) * SkinnedMeshRenderer::MAX_BONES);
+		if (!renderer.needMatricesBufferUpdate)
+		{
+			glm::mat4 identity(1.0f);
+			renderer.boneMatrices.fill(identity);
+			renderer.needMatricesBufferUpdate = true;
+		}
+	}
+	if (renderer.needMatricesBufferUpdate)
+	{
+		renderer.boneMatricesBuffer->uploadData(
+		(char*)renderer.boneMatrices.data(),
+			sizeof(glm::mat4) * renderer.skinningData->NumBones()
+			);
+		renderer.needMatricesBufferUpdate = false;
+	}
+}
+
 void SkinnedMeshRendererSystem::Init()
 {
 	toShadowmapShader = ShaderManager::GetShader("ToShadowmapSkinned");
+	toShadowmapShader->bindUniformBlockPoint("gBonesBuffer", BONE_MATRICES_BUFFER_BINING_POINT);
+
 	toGBufferShader = ShaderManager::GetShader("ToGBufferSkinned");
 	toGBufferShader->use();
 	toGBufferShader->setInt("shadowmap", 0);
+	toGBufferShader->bindUniformBlockPoint("gBonesBuffer", BONE_MATRICES_BUFFER_BINING_POINT);
+
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
 }
 
@@ -24,7 +53,7 @@ void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	lightCamera.Use(toShadowmapShader);
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
 	auto renderers = HFEngine::ECS.GetAllComponents<SkinnedMeshRenderer>();
-	for (auto const& renderer : renderers)
+	for (auto& renderer : renderers)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
@@ -32,11 +61,15 @@ void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 			continue;
 
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
+		CheckBoneMatricesBuffer(renderer);
+		renderer.boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
+		/*
 		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
 		{
 			auto mat = renderer.boneMatrices[i];
 			toShadowmapShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
 		}
+		*/
 
 		renderer.mesh->bind();
 		renderer.mesh->draw();
@@ -57,7 +90,7 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
 	auto renderers = HFEngine::ECS.GetAllComponents<SkinnedMeshRenderer>();
-	for (auto const& renderer : renderers)
+	for (auto& renderer : renderers)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
@@ -65,11 +98,15 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 			continue;
 
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
+		CheckBoneMatricesBuffer(renderer);
+		renderer.boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
+		/*
 		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
 		{
 			auto mat = renderer.boneMatrices[i];
 			toGBufferShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
 		}
+		*/
 
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();

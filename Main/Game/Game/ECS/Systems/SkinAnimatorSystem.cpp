@@ -85,5 +85,7 @@ void SkinAnimatorSystem::Update(float dt)
 			for (ci=0; ci< node->childCount; ci++)
 				rec.emplace_back(IM(node->childIndices[ci], globalTransform));
 		}
+
+		renderer.needMatricesBufferUpdate = true;
 	}
 }

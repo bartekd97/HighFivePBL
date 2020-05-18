@@ -80,9 +80,12 @@ public:
 	/*
 	void setTexture(std::string name, shared_ptr<Texture> texture, unsigned int slotId);
 	void setCubemap(std::string name, shared_ptr<Cubemap> cubemap, unsigned int slotId);
-
-	void bindUBO(std::string name, GLuint bindingPoint);
 	*/
+
+	inline void bindUniformBlockPoint(std::string&& name, GLuint bindingPoint) {
+		GLint loc = glGetUniformBlockIndex(program, name.c_str());
+		glUniformBlockBinding(program, loc, bindingPoint);
+	}
 
 	~Shader()
 	{ glDeleteProgram(program); }
