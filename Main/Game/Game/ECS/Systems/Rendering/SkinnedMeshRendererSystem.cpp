@@ -28,16 +28,15 @@ void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
-
 		if (!renderer.cullingData.visibleByLightCamera)
 			continue;
 
+		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
 		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
 		{
 			auto mat = renderer.boneMatrices[i];
 			toShadowmapShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
 		}
-		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
 
 		renderer.mesh->bind();
 		renderer.mesh->draw();
@@ -56,14 +55,16 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 	toGBufferShader->setMat4("gLightViewProjection", lightViewProjection);
 	shadowmap->bind(0);
 
+	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
 	auto renderers = HFEngine::ECS.GetAllComponents<SkinnedMeshRenderer>();
 	for (auto const& renderer : renderers)
 	{
+		if (renderer.cullingData.lastUpdate != currentFrame)
+			continue;
 		if (!renderer.cullingData.visibleByViewCamera)
 			continue;
 
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
-
 		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
 		{
 			auto mat = renderer.boneMatrices[i];
@@ -74,6 +75,8 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 		renderer.mesh->bind();
 		renderer.mesh->draw();
 	}
+	Mesh::NoBind();
+	Material::NoApply(toGBufferShader);
 
 	glDisable(GL_CULL_FACE);
 }

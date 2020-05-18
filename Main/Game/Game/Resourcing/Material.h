@@ -41,5 +41,9 @@ private:
 
 public:
 	void apply(std::shared_ptr<Shader> shader);
-
+	inline void forceApply(std::shared_ptr<Shader> shader) {
+		NoApply(shader);
+		apply(shader);
+	}
+	static void NoApply(std::shared_ptr<Shader> shader);
 };
