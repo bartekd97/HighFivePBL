@@ -182,6 +182,66 @@ namespace {
 		}
 	};
 
+	class GravityColliderLoader : public IPrefabComponentLoader
+	{
+	public:
+		std::vector<std::pair<float, float>> heights;
+
+		void Preprocess(PropertyReader& properties) override
+		{
+			static std::string tmpString;
+			std::vector<float> ZValues;
+			std::vector<float> heightValues;
+
+			if (properties.GetString("ZValues", tmpString))
+			{
+				auto parts = Utility::StringSplit(tmpString, ',');
+				for (auto& part : parts)
+				{
+					ZValues.push_back(std::stof(part));
+				}
+			}
+
+			if (properties.GetString("heights", tmpString))
+			{
+				auto parts = Utility::StringSplit(tmpString, ',');
+				for (auto& part : parts)
+				{
+					heightValues.push_back(std::stof(part));
+				}
+			}
+
+			if (ZValues.size() == heightValues.size())
+			{
+				for (int i = 0; i < ZValues.size(); i++)
+				{
+					heights.push_back(std::make_pair(ZValues[i], heightValues[i]));
+				}
+			}
+			else
+			{
+				LogWarning("GravityColliderLoader::Preprocess(): sizes of ZValues and heights doesn't match");
+			}
+		}
+
+		void Create(GameObject target) override
+		{
+			if (heights.empty())
+			{
+				LogWarning("GravityColliderLoader::Create(): empty heights");
+				return;
+			}
+			Collider collider;
+			collider.shape = Collider::ColliderShapes::GRAVITY;
+			collider.type = Collider::ColliderTypes::STATIC;
+			collider.frozen = true;
+			GravityCollider gc;
+			gc.heights = heights;
+			HFEngine::ECS.AddComponent<Collider>(target, collider);
+			HFEngine::ECS.AddComponent<GravityCollider>(target, gc);
+		}
+	};
+
 	class ScriptComponentLoader : public IPrefabComponentLoader
 	{
 	public:
@@ -244,5 +304,6 @@ void PrefabComponentLoader::RegisterLoaders()
 	PrefabManager::RegisterComponentLoader("RigidBody", []() { return std::make_shared<RigidBodyLoader>(); });
 	PrefabManager::RegisterComponentLoader("CircleCollider", []() { return std::make_shared<CircleColliderLoader>(); });
 	PrefabManager::RegisterComponentLoader("BoxCollider", []() { return std::make_shared<BoxColliderLoader>(); });
+	PrefabManager::RegisterComponentLoader("GravityCollider", []() { return std::make_shared<GravityColliderLoader>(); });
 	PrefabManager::RegisterComponentLoader("ScriptComponent", []() { return std::make_shared<ScriptComponentLoader>(); });
 }

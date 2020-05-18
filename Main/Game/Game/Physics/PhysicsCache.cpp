@@ -18,7 +18,7 @@ namespace PhysicsCache
 				{
 					nodes[gameObject].boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
 				}
-				else
+				else if (collider.shape == Collider::ColliderShapes::CIRCLE)
 				{
 					nodes[gameObject].circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 				}

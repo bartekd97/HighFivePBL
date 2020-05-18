@@ -11,6 +11,11 @@ struct CacheNode
 	{
 	}
 
+	bool HasTrigger(GameObject gameObject)
+	{
+		return triggers.find(gameObject) != triggers.end();
+	}
+
 	glm::vec3 position;
 	glm::quat rotation;
 	Collider collider;

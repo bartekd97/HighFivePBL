@@ -1,10 +1,7 @@
 #pragma once
 #include "Components/LifeTime.h"
 #include "Components/Transform.h"
-#include "Components/CubeRenderer.h"
-#include "Components/CubeSpawner.h"
 #include "Components/RigidBody.h"
-#include "Components/Gravity.h"
 #include "Components/SkinAnimator.h"
 #include "Components/MeshRenderer.h"
 #include "Components/SkinnedMeshRenderer.h"
@@ -13,4 +10,4 @@
 #include "Components/CircleCollider.h"
 #include "Components/Collider.h"
 #include "Components/BoxCollider.h"
-
+#include "Components/GravityCollider.h"

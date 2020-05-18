@@ -2,7 +2,6 @@
 #include "RenderPipeline.h"
 #include "ECS/Systems/Rendering/MeshRendererSystem.h"
 #include "ECS/Systems/Rendering/SkinnedMeshRendererSystem.h"
-#include "ECS/Systems/Rendering/CubeRenderSystem.h"
 #include "ECS/Systems/Rendering/BoxColliderRenderSystem.h"
 #include "ECS/Systems/Rendering/CircleColliderRenderSystem.h"
 #include "HFEngine.h"
@@ -93,12 +92,6 @@ void RenderPipeline::InitRenderSystems()
 	}
 
 #ifdef _DEBUG
-	RenderSystems.cubeRenderer = HFEngine::ECS.RegisterSystem<CubeRenderSystem>();
-	{
-		Signature signature;
-		signature.set(HFEngine::ECS.GetComponentType<CubeRenderer>());
-		HFEngine::ECS.SetSystemSignature<CubeRenderSystem>(signature);
-	}
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
 	{
 		Signature signature;

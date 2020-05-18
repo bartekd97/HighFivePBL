@@ -2,6 +2,12 @@
 
 #include "GravitySystem.h"
 #include "HFEngine.h"
+#include "../../Physics/PhysicsCache.h"
+
+extern GameObjectHierarchy gameObjectHierarchy;
+
+const float gravityAcceleration = 9.81f * 5.0f;
+const float minFallingDist = 0.01f;
 
 void GravitySystem::Update(float dt)
 {
@@ -13,7 +19,7 @@ void GravitySystem::Update(float dt)
         auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 
-        rigidBody.acceleration.y = 9.81f * 5.0f;
+        rigidBody.acceleration.y = gravityAcceleration;
 
         rigidBody.velocity.y += dt * rigidBody.acceleration.y;
         auto pos = transform.GetWorldPosition();
@@ -25,24 +31,35 @@ void GravitySystem::Update(float dt)
             LogWarning("GravitySystem::Update(): closest cell not found for {}", gameObject);
             continue;
         }*/
+        bool shouldFall = true;
         if (closestCell != -1) // TODO: remove it and find out why some objects sometimes have WTF positions causing this
         {
-            glm::vec2 posTemp = glm::vec2(pos.x - cells[closestCell].first.x, pos.z - cells[closestCell].first.z);
-            if (HFEngine::ECS.SearchComponent<Collider>(gameObject))
+            GameObject bridge = GetBridge(gameObject, closestCell);
+            if (bridge != NULL_GAMEOBJECT)
             {
-                auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
-                if (collider.shape == Collider::ColliderShapes::CIRCLE)
-                {
-                    auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
-                    glm::vec3 normal = glm::normalize(pos - cells[closestCell].first);
-                    posTemp.x -= normal.x * circleCollider.radius;
-                    posTemp.y -= normal.z * circleCollider.radius;
-                }
+                shouldFall = false;
+                level = GetBridgeLevel(pos, bridge);
             }
-            bool onCell = GetYLevel(posTemp, cells[closestCell].second, level);
-            if (onCell)
+            else
             {
-                if ((pos.y - posYSub) <= level)
+                glm::vec2 posTemp = glm::vec2(pos.x - cells[closestCell].first.x, pos.z - cells[closestCell].first.z);
+                if (HFEngine::ECS.SearchComponent<Collider>(gameObject))
+                {
+                    auto& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
+                    if (collider.shape == Collider::ColliderShapes::CIRCLE)
+                    {
+                        auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
+                        glm::vec3 normal = glm::normalize(pos - cells[closestCell].first);
+                        posTemp.x -= normal.x * circleCollider.radius;
+                        posTemp.y -= normal.z * circleCollider.radius;
+                    }
+                }
+                shouldFall = GetCellYLevel(posTemp, cells[closestCell].second, level);
+            }
+            
+            if (!shouldFall)
+            {
+                if ((pos.y - posYSub) <= level || (!rigidBody.isFalling && posYSub < minFallingDist))
                 {
                     rigidBody.isFalling = false;
                     rigidBody.velocity.y = 0;
@@ -61,10 +78,10 @@ void GravitySystem::Update(float dt)
     }
 }
 
-bool GravitySystem::GetYLevel(glm::vec2& position, MapCell& cell, float& level)
+bool GravitySystem::GetCellYLevel(glm::vec2& position, MapCell& cell, float& level)
 {
     float coRatio = cell.PolygonSmooth.GetEdgeCenterRatio(position);
-    if (fabs(coRatio - 1.0f) < std::numeric_limits<float>::epsilon()) return false;
+    if (fabs(coRatio - 1.0f) < std::numeric_limits<float>::epsilon()) return true;
 
     float innerLevel = glm::clamp((1.0f - coRatio) / (1.0f - config.innerScale), 0.0f, 1.0f);
     float depthLevel = (1.0f - glm::sin(innerLevel * M_PI * 0.5f));
@@ -88,7 +105,7 @@ bool GravitySystem::GetYLevel(glm::vec2& position, MapCell& cell, float& level)
 
     level = noisey - config.depth * depthLevel;
 
-    return true;
+    return false;
 }
 
 void GravitySystem::SetCollector(std::shared_ptr<MapCellCollectorSystem> mapCellCollectorSystem)
@@ -125,4 +142,53 @@ int GravitySystem::GetClosestCellIndex(glm::vec3& position)
         }
     }
     return cellIndex;
+}
+
+GameObject GravitySystem::GetBridge(GameObject gameObject, int closestCell)
+{
+    for (auto bridge : cells[closestCell].second.Bridges)
+    {
+        if (PhysicsCache::nodes[gameObject].HasTrigger(bridge.Bridge))
+        {
+            return bridge.Bridge;
+        }
+    }
+
+    return NULL_GAMEOBJECT;
+}
+
+float GravitySystem::GetBridgeLevel(glm::vec3& position, GameObject bridge)
+{
+    int minIndex = -1, maxIndex = -1;
+    auto& bridgeTransform = HFEngine::ECS.GetComponent<Transform>(bridge);
+    auto gravityCollider = HFEngine::ECS.GetComponentInChildren<GravityCollider>(bridge).value();
+    if (gravityCollider.heights.size() == 0)
+    {
+        LogWarning("GravitySystem::GetBridgeLevel(): empty gravity collider {}", bridge);
+        return 0.0f;
+    }
+    auto subPos = position - bridgeTransform.GetWorldPosition();
+    auto zValue = std::sqrtf(subPos.x * subPos.x + subPos.z * subPos.z);
+
+    int i = 0;
+    int heightsSize = gravityCollider.heights.size() - 1;
+    while (gravityCollider.heights[i].first <= zValue && i < heightsSize) i++;
+    minIndex = i;
+
+    i = gravityCollider.heights.size() - 1;
+    while (gravityCollider.heights[i].first >= zValue && i > 0) i--;
+    maxIndex = i;
+
+    if (maxIndex == -1 && minIndex == -1)
+    {
+        LogError("GravitySystem::GetBridgeLevel(): minIndex and maxIndex not estabilished");
+        return 0.0f;
+    }
+    if (maxIndex == minIndex) 
+        return gravityCollider.heights[maxIndex].second;
+    auto& minPos = gravityCollider.heights[minIndex];
+    auto& maxPos = gravityCollider.heights[maxIndex];
+    if (maxPos.second == minPos.second) return maxPos.second;
+
+    return ((zValue - minPos.first) / (maxPos.first - minPos.first)) * std::max(minPos.second, maxPos.second);
 }
