@@ -5,9 +5,10 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     private Rigidbody rb;
-    private float speed = 3.0f;
+    public float speed = 3.0f;
     public float playerInRange = 15.0f;
     public float stoppingDistance = 1.5f;
+    public float retreatDistance = 0.75f;
     public GameObject player;
     public float maxHealth = 10.0f;
 
@@ -17,6 +18,7 @@ public class EnemyController : MonoBehaviour
     private float lastDmgTime = 0.0f;
 
     public float slow = 0.0f;
+    public float mudSlow = 0.0f;
     public float frozenTo = 0.0f;
 
     private float enemyHealth;
@@ -29,13 +31,26 @@ public class EnemyController : MonoBehaviour
 
     //attacking
     private float attackRange = 1.5f;
-    private float attackDelay = 1.0f;
+    public float attackDelay = 1.0f;
     private float timestampAttack;
     private float timestampAfterAttackPushStart;
     private float timestampAfterAttackPushStop;
     //private bool isPushedAfterAttack;
     public float pushBackForceAfterAttack = 5.0f;
     public float damage = 1.0f;
+
+    bool isPoisoned;
+    public float poisonCooldownTime = 1.0f;
+    float nextPoisonTime = 0.0f;
+    float poisoningStart = -1.0f;
+    float poisoningEnd = -1.0f;
+
+    bool isBurnt;
+    public float burningCooldownTime = 1.0f;
+    float nextBurnTime = 0.0f;
+
+    public bool isMelee = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -52,12 +67,28 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if ((isPoisoned) && Time.time >= nextPoisonTime)
+        {
+            TakeDamage(0.5f);
+            nextPoisonTime = Time.time + poisonCooldownTime;
+        }
+        if ((poisoningEnd >= Time.time && Time.time >= poisoningStart) && Time.time >= nextPoisonTime)
+        {
+            TakeDamage(0.5f);
+            nextPoisonTime = Time.time + poisonCooldownTime;
+        }
+        if ((isBurnt) && Time.time >= nextBurnTime)
+        {
+            TakeDamage(1.0f);
+            nextBurnTime = Time.time + burningCooldownTime;
+        }
+
         CalculateColor();
         if (transform.position.y < -10)
         {
             Destroy(gameObject);
         }
-        Vector3 moveDirection = Vector3.zero;
+        //Vector3 moveDirection = Vector3.zero;
         Vector3 pushDirection = Vector3.zero;
         //pushedEnemiess = charController.pushedEnemies;
 
@@ -68,19 +99,55 @@ public class EnemyController : MonoBehaviour
 
         if (Time.time > frozenTo)
         {
-            if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+            if (isMelee == true)
             {
-                ChasePlayer(moveDirection);
-                /*
-                if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
                 {
-                    PushEnemy(pushDirection);
+                    ChasePlayer();
+                    /*
+                    if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                    {
+                        PushEnemy(pushDirection);
+                    }
+                    */
                 }
-                */
+                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+                {
+                    Stop();
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
+                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+                {
+                    Stop();
+                }
             }
-            else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+            
+            else if (isMelee == false)
             {
-                Stop();
+                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+                {
+                    ChasePlayer();
+                    /*
+                    if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                    {
+                        PushEnemy(pushDirection);
+                    }
+                    */
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
+                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+                {
+                    Stop();
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
+                {
+                    RunAwayFromPlayer();
+                    //Debug.Log("no hej");
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+                {
+                    Stop();
+                }
             }
         }
         
@@ -121,14 +188,22 @@ public class EnemyController : MonoBehaviour
         */
     }
 
-    void ChasePlayer(Vector3 direction)
+    void ChasePlayer()
     {
-        direction = ((Vector3)player.transform.position - transform.position).normalized;
+        Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
+        rb.MovePosition(transform.position + direction * (speed - slow - mudSlow) * Time.deltaTime);
+    }
 
-        rb.MovePosition(transform.position + direction * (speed - slow) * Time.deltaTime);
+    void RunAwayFromPlayer()
+    {
+        Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(-direction.x, 0, -direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
+        rb.MovePosition(transform.position + direction * (-speed - slow - mudSlow) * Time.deltaTime);
     }
 
     void Stop()
@@ -175,6 +250,36 @@ public class EnemyController : MonoBehaviour
             if (R > halfDuration) R = dmgAnimationDuration - R;
             float wsp = R / halfDuration;
             SetMeshColor(((1.0f - wsp) * defaultColor) + (wsp * damagedColor));
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Mud"))
+        {
+            mudSlow = 2.0f;
+        }
+        if (other.CompareTag("MudOut"))
+        {
+            mudSlow = 0.0f;
+        }
+        if (other.CompareTag("ToxicFog"))
+        {
+            isPoisoned = true;
+        }
+        if (other.CompareTag("ToxicFogOut") && isPoisoned == true)
+        {
+            isPoisoned = false;
+            poisoningStart = Time.time;
+            poisoningEnd = Time.time + 2.0f;
+        }
+        if (other.CompareTag("Fire"))
+        {
+            isBurnt = true;
+        }
+        if (other.CompareTag("FireOut"))
+        {
+            isBurnt = false;
         }
     }
 
