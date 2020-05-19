@@ -175,6 +175,7 @@
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
     <ClInclude Include="Resourcing\UniformBuffer.h" />
     <ClInclude Include="Physics\Physics.h" />
+    <ClInclude Include="Physics\RaycastHit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

@@ -19,7 +19,9 @@ struct CacheNode
 	glm::vec3 position;
 	glm::quat rotation;
 	Collider collider;
+
 	BoxCollider boxCollider;
+
 	CircleCollider circleCollider;
 	tsl::robin_set<GameObject> triggers;
 };

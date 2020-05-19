@@ -59,27 +59,14 @@ namespace Physics
 
     bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
     {
-        // TODO: refaktor. maybe cache?
-        float tbx1, tby1, tbx2, tby2;
-        tbx1 = -c2.width / 2.0f;
-        tby1 = -c2.height / 2.0f;
-        tbx2 = c2.width / 2.0f;
-        tby2 = c2.height / 2.0f;
-
-        glm::vec3 boxBPoints[4] = {
-            { tbx1, 0.0f, tby1 },
-            { tbx2, 0.0f, tby1 },
-            { tbx2, 0.0f, tby2 },
-            { tbx1, 0.0f, tby2 }
-        };
         glm::vec2 boxPoints[4];
         glm::vec2 boxPos(pos2.x, pos2.z);
+        glm::vec3 boxBPoint;
         for (int i = 0; i < 4; i++)
         {
-            //boxPoints[i] = glm::rotate(boxPoints[i], rotation2) + boxPos;
-            boxBPoints[i] = rotation2 * boxBPoints[i];
-            boxPoints[i].x = boxBPoints[i].x + boxPos.x;
-            boxPoints[i].y = boxBPoints[i].z + boxPos.y;
+            boxBPoint = rotation2 * c2.bPoints[i];
+            boxPoints[i].x = boxBPoint.x + boxPos.x;
+            boxPoints[i].y = boxBPoint.z + boxPos.y;
         }
 
         glm::vec2 circleCenter(pos1.x, pos1.z);
@@ -154,4 +141,9 @@ namespace Physics
 
         return true;
     }
+
+    /*float isLeft(glm::vec3& P0, Point P1, Point P2)
+    {
+        return ((P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y));
+    }*/
 }

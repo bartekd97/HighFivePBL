@@ -223,6 +223,7 @@
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="Physics\CacheNode.h" />
     <ClInclude Include="Physics\Physics.h" />
+    <ClInclude Include="Physics\RaycastHit.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\Frustum.h" />
