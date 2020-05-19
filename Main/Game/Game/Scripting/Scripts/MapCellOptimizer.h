@@ -79,7 +79,7 @@ private:
 	{
 		if (currentCell != NULL_GAMEOBJECT)
 		{
-			std::set<GameObject> enabledCells;
+			tsl::robin_set<GameObject> enabledCells;
 			enabledCells.insert(currentCell);
 			auto mapCell = HFEngine::ECS.GetComponent<MapCell>(currentCell);
 			for (auto& bridge : mapCell.Bridges)

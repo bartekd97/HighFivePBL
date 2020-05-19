@@ -4,7 +4,7 @@ namespace PhysicsCache
 {
 	std::unordered_map<GameObject, CacheNode> nodes;
 
-	void ProcessGameObjects(const std::set<GameObject>& gameObjects)
+	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects)
 	{
 		for (const auto& gameObject : gameObjects)
 		{

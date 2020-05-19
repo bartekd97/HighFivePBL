@@ -1,6 +1,6 @@
 #pragma once
 
-#include <set>
+#include <tsl/robin_set.h>
 
 #include "../ECS/Components.h"
 
@@ -21,5 +21,5 @@ struct CacheNode
 	Collider collider;
 	BoxCollider boxCollider;
 	CircleCollider circleCollider;
-	std::set<GameObject> triggers;
+	tsl::robin_set<GameObject> triggers;
 };
