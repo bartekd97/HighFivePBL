@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class MapSetuper : MonoBehaviour
     public GameObject playerObject;
     public Material bossCellMaterial;
 
+    public GameObject[] structures;
     public GameObject enemyPrefab;
     public GameObject bossPrefab;
     public GameObject monumentPrefab;
@@ -28,9 +30,9 @@ public class MapSetuper : MonoBehaviour
     {
         MapCell startupCell = GetStartupCell();
         playerObject.transform.position = startupCell.transform.position;
-        SetupEnemies();
         SetupMonuments();
         SetupObstacles();
+        SetupEnemies();
         GameManager.Instance.SetCurrentCell(startupCell);
     }
 
@@ -200,8 +202,9 @@ public class MapSetuper : MonoBehaviour
                 Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
                 Debug.Log(finalPoint);
                 int n = 0;
-
-                while (Physics.OverlapBox(finalPoint, new Vector3(6, 0.05f, 6)).Length != 0 )
+                int test = Physics.OverlapBox(finalPoint + new Vector3(0, fogPrefab.GetComponent<BoxCollider>().size.y, 0), fogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length;
+                Debug.Log(test);// 
+                while (Physics.OverlapBox(finalPoint + new Vector3(0, fogPrefab.GetComponent<BoxCollider>().size.y, 0), fogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
                 {
                     Debug.Log("TEST");//
                     circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
@@ -218,7 +221,7 @@ public class MapSetuper : MonoBehaviour
             {
                 Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
                 Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
-                while (Physics.OverlapBox(finalPoint, new Vector3(4, 0.05f, 4)).Length != 0)
+                while (Physics.OverlapBox(finalPoint + new Vector3(0, toxicFogPrefab.GetComponent<BoxCollider>().size.y, 0), toxicFogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
                 {
                     Debug.Log("TEST");//
                     circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
@@ -231,7 +234,7 @@ public class MapSetuper : MonoBehaviour
             {
                 Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
                 Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
-                while (Physics.OverlapBox(finalPoint + new Vector3(0, 0.95f, 0), new Vector3(4, 0.05f, 4)).Length != 0)
+                while (Physics.OverlapBox(finalPoint + new Vector3(0, firePrefab.GetComponent<BoxCollider>().size.y, 0), firePrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
                 {
                     Debug.Log("TEST");// 
                     circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
@@ -244,7 +247,7 @@ public class MapSetuper : MonoBehaviour
             {
                 Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
                 Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
-                while (Physics.OverlapBox(finalPoint + new Vector3(0, 0.95f, 0), new Vector3(8, 0.05f, 8)).Length != 0)
+                while (Physics.OverlapBox(finalPoint + new Vector3(0, mudPrefab.GetComponent<BoxCollider>().size.y, 0), mudPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
                 {
                     circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
                     finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
@@ -252,6 +255,7 @@ public class MapSetuper : MonoBehaviour
 
                 Instantiate(mudPrefab, finalPoint, Quaternion.identity);
             }
+
         }
 
         //float minRadius = Mathf.Infinity;
@@ -274,13 +278,43 @@ public class MapSetuper : MonoBehaviour
         //}
     }
 
+    private void SpawnStructuresInCell(MapCell cell)
+    {
+        int structureNumber = Random.Range(0, structures.Length);
+        float minRadius = Mathf.Infinity;
+        for (int j = 0; j < cell.PolygonBase.Points.Length - 1; j++)
+        {
+            float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[j], cell.PolygonBase.Points[j + 1], new Vector2(0, 0));
+            if (distance < minRadius) minRadius = distance;
+        }
+        Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.00f, circlePoint.y);
+
+        int test = Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y/2.0f, 0), structures[structureNumber].GetComponent<BoxCollider>().size/2.0f).Length;
+        //Debug.Log(test);// 
+        Vector3 test2 =structures[structureNumber].GetComponent<BoxCollider>().size;
+        //Debug.Log(test2);// 
+
+        while (Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y, 0), structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length > 1)
+        {
+            circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+            finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0f, circlePoint.y);
+        }
+        Instantiate(structures[structureNumber], finalPoint, Quaternion.identity);
+    }
+
     void SetupObstacles()
     {
         List<MapCell> cells = new List<MapCell>(MapCell.All);
-        MapCell startupCell = GetStartupCell();
-        MapCell bossCell = GetRandomBossCell();
+        //MapCell startupCell = GetStartupCell();
+       // MapCell bossCell = GetRandomBossCell();
         cells
-            .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
+         //   .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
+        //    .Where(c => !c.CellSiteIndex.Equals(bossCell.CellSiteIndex))
+            .ToList()
+            .ForEach(cell => SpawnStructuresInCell(cell));
+        cells
+        //    .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
             .ToList()
             .ForEach(cell => SpawnObstaclesInCell(cell));
     }
