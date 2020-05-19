@@ -4,7 +4,7 @@
 #include "PhysicsSystem.h"
 #include "HFEngine.h"
 
-#include "../../Physics/PhysicsCache.h"
+#include "../../Physics/Physics.h"
 #include "../Components.h"
 
 #define clamp(x,min,max) x > min ? (x < max ? x : max) : min
@@ -13,7 +13,7 @@
 
 void PhysicsSystem::Init()
 {
-	step = 0.15f;
+
 }
 
 /*
@@ -25,7 +25,7 @@ void PhysicsSystem::Init()
  */
 void PhysicsSystem::Update(float dt)
 {
-    PhysicsCache::ProcessGameObjects(colliderCollectorSystem->gameObjects);
+    Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects);
     bool collided, localCollided;
 	for (auto const& gameObject : gameObjects)
 	{
@@ -51,13 +51,13 @@ void PhysicsSystem::Update(float dt)
 
 		float length = sqrt((displacement.x * displacement.x) + (displacement.z * displacement.z));
 
-        int steps = std::max(1, (int)std::round(length / step));
+        int steps = std::min(std::max(1, (int)std::round(length / Physics::step)), Physics::maxSteps);
 		glm::vec3 moveStep = displacement / (float)steps;
         glm::vec3 tempPosition = transform.GetWorldPosition();
         glm::vec3 sepVector(0.0f);
         glm::vec3 oldVelocity = rigidBody.velocity;
 
-        auto& cacheNode = PhysicsCache::nodes[gameObject];
+        auto& cacheNode = Physics::cacheNodes[gameObject];
 
         for (int s = 0; s < steps; s++)
         {
@@ -70,7 +70,7 @@ void PhysicsSystem::Update(float dt)
             {
                 if (gameObject != otherObject)
                 {
-                    auto& otherCacheNode = PhysicsCache::nodes[otherObject];
+                    auto& otherCacheNode = Physics::cacheNodes[otherObject];
 
                     auto dist = tempPosition - otherCacheNode.position;
                     float distLen = veclen(dist);

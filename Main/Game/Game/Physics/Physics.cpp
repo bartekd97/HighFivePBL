@@ -1,26 +1,29 @@
-#include "PhysicsCache.h"
+#include "Physics.h"
 
-namespace PhysicsCache
+namespace Physics
 {
-	std::unordered_map<GameObject, CacheNode> nodes;
+	const float step = 0.15f;
+	const int maxSteps = 20;
+
+	std::unordered_map<GameObject, CacheNode> cacheNodes;
 
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects)
 	{
 		for (const auto& gameObject : gameObjects)
 		{
-			auto it = nodes.find(gameObject);
-			if (it == nodes.end())
+			auto it = cacheNodes.find(gameObject);
+			if (it == cacheNodes.end())
 			{
 				auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 				auto const& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
-				nodes[gameObject] = CacheNode(transform, collider);
+				cacheNodes[gameObject] = CacheNode(transform, collider);
 				if (collider.shape == Collider::ColliderShapes::BOX)
 				{
-					nodes[gameObject].boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
+					cacheNodes[gameObject].boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
 				}
 				else if (collider.shape == Collider::ColliderShapes::CIRCLE)
 				{
-					nodes[gameObject].circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
+					cacheNodes[gameObject].circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 				}
 			}
 			else
@@ -37,6 +40,6 @@ namespace PhysicsCache
 
 	void RemoveNode(GameObject gameObject)
 	{
-		nodes.erase(gameObject);
+		cacheNodes.erase(gameObject);
 	}
 }

@@ -2,7 +2,7 @@
 
 #include "GravitySystem.h"
 #include "HFEngine.h"
-#include "../../Physics/PhysicsCache.h"
+#include "../../Physics/Physics.h"
 
 extern GameObjectHierarchy gameObjectHierarchy;
 
@@ -148,7 +148,7 @@ GameObject GravitySystem::GetBridge(GameObject gameObject, int closestCell)
 {
     for (auto bridge : cells[closestCell].second.Bridges)
     {
-        if (PhysicsCache::nodes[gameObject].HasTrigger(bridge.Bridge))
+        if (Physics::cacheNodes[gameObject].HasTrigger(bridge.Bridge))
         {
             return bridge.Bridge;
         }
