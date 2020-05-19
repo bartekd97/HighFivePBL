@@ -5,9 +5,10 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     private Rigidbody rb;
-    private float speed = 3.0f;
+    public float speed = 3.0f;
     public float playerInRange = 15.0f;
     public float stoppingDistance = 1.5f;
+    public float retreatDistance = 0.75f;
     public GameObject player;
     public float maxHealth = 10.0f;
 
@@ -30,7 +31,7 @@ public class EnemyController : MonoBehaviour
 
     //attacking
     private float attackRange = 1.5f;
-    private float attackDelay = 1.0f;
+    public float attackDelay = 1.0f;
     private float timestampAttack;
     private float timestampAfterAttackPushStart;
     private float timestampAfterAttackPushStop;
@@ -47,6 +48,8 @@ public class EnemyController : MonoBehaviour
     bool isBurnt;
     public float burningCooldownTime = 1.0f;
     float nextBurnTime = 0.0f;
+
+    public bool isMelee = false;
 
 
     // Start is called before the first frame update
@@ -85,7 +88,7 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        Vector3 moveDirection = Vector3.zero;
+        //Vector3 moveDirection = Vector3.zero;
         Vector3 pushDirection = Vector3.zero;
         //pushedEnemiess = charController.pushedEnemies;
 
@@ -96,19 +99,55 @@ public class EnemyController : MonoBehaviour
 
         if (Time.time > frozenTo)
         {
-            if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+            if (isMelee == true)
             {
-                ChasePlayer(moveDirection);
-                /*
-                if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
                 {
-                    PushEnemy(pushDirection);
+                    ChasePlayer();
+                    /*
+                    if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                    {
+                        PushEnemy(pushDirection);
+                    }
+                    */
                 }
-                */
+                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+                {
+                    Stop();
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
+                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+                {
+                    Stop();
+                }
             }
-            else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+            
+            else if (isMelee == false)
             {
-                Stop();
+                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+                {
+                    ChasePlayer();
+                    /*
+                    if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+                    {
+                        PushEnemy(pushDirection);
+                    }
+                    */
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
+                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+                {
+                    Stop();
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
+                {
+                    RunAwayFromPlayer();
+                    //Debug.Log("no hej");
+                }
+                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+                {
+                    Stop();
+                }
             }
         }
         
@@ -149,14 +188,22 @@ public class EnemyController : MonoBehaviour
         */
     }
 
-    void ChasePlayer(Vector3 direction)
+    void ChasePlayer()
     {
-        direction = ((Vector3)player.transform.position - transform.position).normalized;
+        Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
         rb.MovePosition(transform.position + direction * (speed - slow - mudSlow) * Time.deltaTime);
+    }
 
+    void RunAwayFromPlayer()
+    {
+        Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(-direction.x, 0, -direction.z));
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
+        rb.MovePosition(transform.position + direction * (-speed - slow - mudSlow) * Time.deltaTime);
     }
 
     void Stop()
