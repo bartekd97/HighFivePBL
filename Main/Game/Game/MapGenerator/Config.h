@@ -124,7 +124,7 @@ struct MapGeneratorConig
     CellStructuresConfig cellStructuresConfig;
 
     std::shared_ptr<Prefab> bridgePrefab;
-    float minEdgeLengthForBridge = 20.0f;
+    float minEdgeLengthForBridge = 24.0f;
 
     MapGeneratorConig()
     {

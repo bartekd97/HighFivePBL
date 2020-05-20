@@ -6,6 +6,7 @@
 #include "Components/SkinAnimator.h"
 #include "Components/MeshRenderer.h"
 #include "Components/SkinnedMeshRenderer.h"
+#include "Components/PointLightRenderer.h"
 #include "Components/MapLayoutComponents.h"
 #include "Components/ScriptContainer.h"
 #include "Components/CircleCollider.h"

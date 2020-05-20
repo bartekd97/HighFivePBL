@@ -133,6 +133,33 @@ namespace {
 		}
 	};
 
+
+	class PointLightRendererLoader : public IPrefabComponentLoader {
+	public:
+		PointLight light;
+
+		virtual void Preprocess(PropertyReader& properties) override {
+			if (!properties.GetVec3("color", light.color, light.color)) {
+				LogWarning("PointLightRendererLoader::Preprocess(): Missing 'color' value. Using default: {}", light.color);
+			}
+			if (!properties.GetFloat("radius", light.radius, light.radius)) {
+				LogWarning("PointLightRendererLoader::Preprocess(): Missing 'radius' value. Using default: {}", light.radius);
+			}
+			if (!properties.GetFloat("intensity", light.intensity, light.intensity)) {
+				LogWarning("PointLightRendererLoader::Preprocess(): Missing 'intensity' value. Using default: {}", light.intensity);
+			}
+			if (!properties.GetFloat("shadowIntensity", light.shadowIntensity, light.shadowIntensity)) {
+				LogWarning("PointLightRendererLoader::Preprocess(): Missing 'shadowIntensity' value. Using default: {}", light.shadowIntensity);
+			}
+		}
+
+		virtual void Create(GameObject target) override {
+			PointLightRenderer renderer;
+			renderer.light = light;
+			HFEngine::ECS.AddComponent<PointLightRenderer>(target, renderer);
+		}
+	};
+
 	class SkinAnimatorLoader : public IPrefabComponentLoader {
 	public:
 		bool configureFromHolder = false;
@@ -169,6 +196,7 @@ namespace {
 			HFEngine::ECS.AddComponent<SkinAnimator>(target, animator);
 		}
 	};
+
 
 
 
@@ -458,6 +486,8 @@ void PrefabComponentLoader::RegisterLoaders()
 	PrefabManager::RegisterComponentLoader("ModelHolder", []() { return std::make_shared<ModelHolderLoader>(); });
 	PrefabManager::RegisterComponentLoader("MeshRenderer", []() { return std::make_shared<MeshRendererLoader>(); });
 	PrefabManager::RegisterComponentLoader("SkinnedMeshRenderer", []() { return std::make_shared<SkinnedMeshRendererLoader>(); });
+	PrefabManager::RegisterComponentLoader("PointLightRenderer", []() { return std::make_shared<PointLightRendererLoader>(); });
+
 	PrefabManager::RegisterComponentLoader("SkinAnimator", []() { return std::make_shared<SkinAnimatorLoader>(); });
 
 	PrefabManager::RegisterComponentLoader("RigidBody", []() { return std::make_shared<RigidBodyLoader>(); });
