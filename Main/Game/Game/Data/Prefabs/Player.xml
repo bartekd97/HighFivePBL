@@ -33,6 +33,26 @@
             <component name="SkinAnimator">
                 <property name="configureFromHolder" value="true" />
             </component>
+
+            <children>
+                <child name="FireTorch" position="0,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="BoneAttacher">
+                        <property name="boneName" value="RightHand" />
+                    </component>
+
+                    <children>
+                        <child name="FireTorchVisual" position="-0.1,0,-0.05" rotation="0,0,150" scale="1,1,1">
+                            <component name="ModelHolder">
+                                <property name="model" value="Characters/Player:FireTorch"/>
+                            </component>
+                            <component name="MeshRenderer">
+                                <property name="configureFromHolder" value="true" />
+                            </component>
+                        </child>
+                    </children>
+                </child>
+            </children>
+
         </child>
     </children>
 </prefab>

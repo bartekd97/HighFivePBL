@@ -203,7 +203,10 @@ bool MeshFileLoader::ReadBoneData(std::vector<VertexBoneData>& data, std::shared
 
 
 	glm::mat inverseRootTransform = glm::inverse(mat4_cast(scene->mRootNode->mTransformation));
-	skinning = SkinningData::Create(nodes, boneOffsets, inverseRootTransform);
+	glm::mat inverseModelTransform = glm::inverse(mat4_cast(
+		scene->mRootNode->FindNode(mesh->mName)->mTransformation
+		));
+	skinning = SkinningData::Create(nodes, boneOffsets, inverseRootTransform, inverseModelTransform);
 
 	return true;
 }

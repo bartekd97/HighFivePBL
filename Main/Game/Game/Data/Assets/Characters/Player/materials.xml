@@ -6,4 +6,11 @@
         <property name="roughnessMap" value="rough"/>
         <property name="emissiveMap" value="emis"/>
     </material>
+
+     <material name="FireTorchMat">
+        <property name="albedoMap" value="torch_albedo"/>
+        <property name="normalMap" value="torch_norm"/>
+        <property name="metalnessMap" value="torch_metal"/>
+        <property name="roughnessMap" value="torch_rough"/>
+    </material>
 </materials>

@@ -4,6 +4,7 @@
 #include "Systems/ScriptUpdateSystem.h"
 
 #include "Systems/SkinAnimatorSystem.h"
+#include "Systems/BoneAttacherSystem.h"
 #include "Systems/LifeTimeSystem.h"
 #include "Systems/ColliderCollectorSystem.h"
 #include "Systems/PhysicsSystem.h"

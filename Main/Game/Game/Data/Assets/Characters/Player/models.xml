@@ -3,4 +3,6 @@
         <animation name="idle"      clip="anim/Standing Torch Idle 02.glb"/>
         <animation name="running"   clip="anim/Standing Torch Run Forward.glb"/>
     </model>
+
+    <model name="FireTorch" mesh="firetorch.glb"    material="FireTorchMat" />
 </models>
