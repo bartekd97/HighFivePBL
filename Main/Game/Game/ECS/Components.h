@@ -12,3 +12,4 @@
 #include "Components/Collider.h"
 #include "Components/BoxCollider.h"
 #include "Components/GravityCollider.h"
+#include "Components/BoneAttacher.h"

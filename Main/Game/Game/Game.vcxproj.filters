@@ -61,6 +61,7 @@
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\GravityColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -175,6 +176,8 @@
     <ClInclude Include="Scripting\Scripts\PlayerController.h" />
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
     <ClInclude Include="Resourcing\UniformBuffer.h" />
+    <ClInclude Include="ECS\Components\BoneAttacher.h" />
+    <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

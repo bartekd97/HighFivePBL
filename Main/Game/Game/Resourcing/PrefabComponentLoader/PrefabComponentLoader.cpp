@@ -172,7 +172,6 @@ namespace {
 
 
 
-
 	class RigidBodyLoader : public IPrefabComponentLoader
 	{
 	public:
@@ -429,6 +428,28 @@ namespace {
 		}
 	};
 
+
+	class BoneAttacherLoader : public IPrefabComponentLoader
+	{
+	public:
+		std::string boneName;
+
+		void Preprocess(PropertyReader& properties) override
+		{
+			if (!properties.GetString("boneName", boneName, ""))
+			{
+				LogWarning("BoneAttacherLoader::Preprocess(): Missing 'boneName' parameter.");
+			}
+		}
+
+		void Create(GameObject target) override
+		{
+			BoneAttacher attacher;
+			attacher.boneName = boneName;
+			HFEngine::ECS.AddComponent<BoneAttacher>(target, attacher);
+		}
+	};
+
 } // end of namespace
 
 
@@ -444,4 +465,6 @@ void PrefabComponentLoader::RegisterLoaders()
 	PrefabManager::RegisterComponentLoader("BoxCollider", []() { return std::make_shared<BoxColliderLoader>(); });
 	PrefabManager::RegisterComponentLoader("GravityCollider", []() { return std::make_shared<GravityColliderLoader>(); });
 	PrefabManager::RegisterComponentLoader("ScriptComponent", []() { return std::make_shared<ScriptComponentLoader>(); });
+
+	PrefabManager::RegisterComponentLoader("BoneAttacher", []() { return std::make_shared<BoneAttacherLoader>(); });
 }
