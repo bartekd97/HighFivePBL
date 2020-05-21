@@ -1,32 +1,27 @@
 #version 330 core
 const float PI = 3.14159265359;
 
-out vec4 FragColor;
-
-in vec2 TexCoords;
+layout (location = 4) out vec3 gEmissive;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedo;
 uniform sampler2D gMetalnessRoughnessShadow;
-uniform sampler2D gEmissive;
 
+uniform vec2 viewportSize;
 uniform vec3 gCameraPosition;
 
-struct DirectionalLight
+struct PointLight
 {
-    vec3 Direction;
+    vec3 Position;
     vec3 Color;
-    vec3 Ambient;
+    float Radius;
+    float Intensity;
     float ShadowIntensity;
 };
-uniform DirectionalLight gDirectionalLight;
+uniform PointLight gPointLight;
 
-uniform float gGamma = 2.2f;
 
-// distance fade
-uniform float fadeBelowY = -3.0f;
-uniform float fadeRangeY = 7.0f;
 
 // PBR stuff
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -38,23 +33,28 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0);
 
 void main()
 { 
-    vec3 FragPos = texture(gPosition, TexCoords).rgb;
-    vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 Albedo = texture(gAlbedo, TexCoords).rgb;
-    vec3 MetlnessRoughnessShadow = texture(gMetalnessRoughnessShadow, TexCoords).rgb;
-    vec3 Emissive = texture(gEmissive, TexCoords).rgb;
+    vec2 texCoords = gl_FragCoord.xy / viewportSize;
+
+    vec3 FragPos = texture(gPosition, texCoords).rgb;
+    vec3 Normal = texture(gNormal, texCoords).rgb;
+    vec3 Albedo = texture(gAlbedo, texCoords).rgb;
+    vec3 MetlnessRoughnessShadow = texture(gMetalnessRoughnessShadow, texCoords).rgb;
 
     float metalness = MetlnessRoughnessShadow.r;
     float roughness = MetlnessRoughnessShadow.g;
-    float shadow = MetlnessRoughnessShadow.b * gDirectionalLight.ShadowIntensity;
+    float shadow = MetlnessRoughnessShadow.b * gPointLight.ShadowIntensity;
 
 
     vec3 viewDir = normalize(gCameraPosition - FragPos);
     vec3 F0 = mix(vec3(0.04), Albedo, metalness);
-    vec3 lightDir = normalize(-gDirectionalLight.Direction);
+    vec3 lightDir = normalize(gPointLight.Position - FragPos);
     vec3 Lo = vec3(0.0f);
 
-    // cook-torrance for directional light
+    float attenuation = clamp(distance(FragPos, gPointLight.Position) / gPointLight.Radius, 0, 1);
+    attenuation = sin((PI * 0.5f) - (attenuation * PI));
+    attenuation = (attenuation + 1.0f) * 0.5f;
+
+    // cook-torrance for point light
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);
 
@@ -73,26 +73,11 @@ void main()
 
         float NdotL = max(dot(Normal, lightDir), 0.0);    
 
-        Lo += ((kD * Albedo / PI + specular) * NdotL) * gDirectionalLight.Color;
+        Lo += ((kD * Albedo / PI + specular) * NdotL) * gPointLight.Color * attenuation * gPointLight.Intensity;
     }
 
-    vec3 Ambient = gDirectionalLight.Ambient * Albedo;
 
-    vec3 color = vec3(0.0);
-
-    color += Ambient;
-    color += Lo * (1.0f - shadow);
-    color += Emissive;
-
-    float fadeY = -(FragPos.y - fadeBelowY);
-    fadeY = clamp(1.0f - (fadeY/fadeRangeY), 0.0, 1.0f);
-
-    // tone mappimg
-    //color = color / (color + vec3(1.0));
-    // gamma correction
-    color = pow(color, vec3(1.0f/gGamma));
-    
-    FragColor = vec4(color, fadeY);
+    gEmissive = Lo * (1.0f - shadow);
 }
 
 

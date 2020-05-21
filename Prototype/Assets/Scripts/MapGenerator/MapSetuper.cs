@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -25,6 +26,12 @@ public class MapSetuper : MonoBehaviour
     public GameObject toxicFogPrefab;
     public GameObject firePrefab;
 
+    public GameObject pointPrefab;
+    public GameObject pointPrefab2;
+    public GameObject pointPrefab3;
+
+
+
 
     public void SetupMap()
     {
@@ -32,7 +39,7 @@ public class MapSetuper : MonoBehaviour
         playerObject.transform.position = startupCell.transform.position;
         SetupMonuments();
         SetupObstacles();
-        SetupEnemies();
+        //SetupEnemies();
         GameManager.Instance.SetCurrentCell(startupCell);
     }
 
@@ -128,8 +135,7 @@ public class MapSetuper : MonoBehaviour
         MapCell startupCell = GetStartupCell();
         MapCell bossCell = GetRandomBossCell();
 
-        //Debug.Log("start:" + startupCell.CellSiteIndex);
-        //Debug.Log("boss:" + bossCell.CellSiteIndex);
+
         cells.ToList();
         
         cells.Sort((p, q) => p.CellSiteIndex.CompareTo(q.CellSiteIndex));
@@ -181,82 +187,74 @@ public class MapSetuper : MonoBehaviour
         return newIndicesArray;
     }
 
+   
+
     private void SpawnObstaclesInCell(MapCell cell)
     {
         int obstaclesCount = Random.Range(minObstaclesInCell, maxObstaclesInCell);
         int obstacleType;
         List<int> obstaclesTypes = new List<int>();
-        for (int i = 0; i < obstaclesCount; i++)
-        {
-            float minRadius = Mathf.Infinity;
-            for (int j = 0 ; j < cell.PolygonBase.Points.Length - 1; j++)
-            {
-                float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[j], cell.PolygonBase.Points[j + 1], new Vector2(0, 0));
-                if (distance < minRadius) minRadius = distance;
-            }
 
-            obstacleType = Random.Range(0, 4);
-            if (obstacleType == 0)
-            {
-                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
-                Debug.Log(finalPoint);
-                int n = 0;
-                int test = Physics.OverlapBox(finalPoint + new Vector3(0, fogPrefab.GetComponent<BoxCollider>().size.y, 0), fogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length;
-                Debug.Log(test);// 
-                while (Physics.OverlapBox(finalPoint + new Vector3(0, fogPrefab.GetComponent<BoxCollider>().size.y, 0), fogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
-                {
-                    Debug.Log("TEST");//
-                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
-                    Debug.Log("->");
-                    Debug.Log(finalPoint);
-                    Debug.Log(Physics.OverlapBox(finalPoint, new Vector3(6, 0.05f, 6)).Length);
-                    n++;
-                }
+        SpawnPoints(cell);
 
-                Instantiate(fogPrefab, finalPoint, Quaternion.identity);
-            }
-            else if (obstacleType == 1)
-            {
-                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
-                while (Physics.OverlapBox(finalPoint + new Vector3(0, toxicFogPrefab.GetComponent<BoxCollider>().size.y, 0), toxicFogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
-                {
-                    Debug.Log("TEST");//
-                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
-                }
+        //for (int i = 0; i < obstaclesCount; i++)
+        //{
+        //    float minRadius = Mathf.Infinity;
+        //    for (int j = 0 ; j < cell.PolygonBase.Points.Length - 1; j++)
+        //    {
+        //        float distance = GetDistanceFromPointToLine(cell.PolygonBase.Points[j], cell.PolygonBase.Points[j + 1], new Vector2(0, 0));
+        //        if (distance < minRadius) minRadius = distance;
+        //    }
+        //    obstacleType = Random.Range(0, 4);
+        //    if (obstacleType == 0)
+        //    {
+        //        Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //        Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+        //        int n = 0;
+        //        int test = Physics.OverlapBox(finalPoint + new Vector3(0, fogPrefab.GetComponent<BoxCollider>().size.y, 0), fogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length;
+        //        while (Physics.OverlapBox(finalPoint + new Vector3(0, fogPrefab.GetComponent<BoxCollider>().size.y, 0), fogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
+        //        {
+        //            circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //            finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+        //            n++;
+        //        }
+        //        Instantiate(fogPrefab, finalPoint, Quaternion.identity);
+        //    }
+        //    else if (obstacleType == 1)
+        //    {
+        //        Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //        Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+        //        while (Physics.OverlapBox(finalPoint + new Vector3(0, toxicFogPrefab.GetComponent<BoxCollider>().size.y, 0), toxicFogPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
+        //        {
+        //            circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //            finalPoint = cell.transform.position + new Vector3(circlePoint.x, 1f, circlePoint.y);
+        //        }
+        //        Instantiate(toxicFogPrefab, finalPoint, Quaternion.identity);
+        //    }
+        //    else if (obstacleType == 2)
+        //    {
+        //        Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //        Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+        //        while (Physics.OverlapBox(finalPoint + new Vector3(0, firePrefab.GetComponent<BoxCollider>().size.y, 0), firePrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
+        //        {
+        //            circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //            finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+        //        }
+        //        Instantiate(firePrefab, finalPoint, Quaternion.identity);
+        //    }
+        //    else
+        //    {
+        //        Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //        Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+        //        while (Physics.OverlapBox(finalPoint + new Vector3(0, mudPrefab.GetComponent<BoxCollider>().size.y, 0), mudPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
+        //        {
+        //            circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
+        //            finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
+        //        }
+        //        Instantiate(mudPrefab, finalPoint, Quaternion.identity);
+        //    }
+        //}
 
-                Instantiate(toxicFogPrefab, finalPoint, Quaternion.identity);
-            }
-            else if (obstacleType == 2)
-            {
-                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
-                while (Physics.OverlapBox(finalPoint + new Vector3(0, firePrefab.GetComponent<BoxCollider>().size.y, 0), firePrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
-                {
-                    Debug.Log("TEST");// 
-                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
-                }
-
-                Instantiate(firePrefab, finalPoint, Quaternion.identity);
-            }
-            else
-            {
-                Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
-                while (Physics.OverlapBox(finalPoint + new Vector3(0, mudPrefab.GetComponent<BoxCollider>().size.y, 0), mudPrefab.GetComponent<BoxCollider>().size / 2.0f).Length > 1)
-                {
-                    circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
-                    finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.05f, circlePoint.y);
-                }
-
-                Instantiate(mudPrefab, finalPoint, Quaternion.identity);
-            }
-
-        }
 
         //float minRadius = Mathf.Infinity;
         //for (int i = 0; i < cell.PolygonBase.Points.Length - 1; i++)
@@ -291,16 +289,14 @@ public class MapSetuper : MonoBehaviour
         Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.00f, circlePoint.y);
 
         int test = Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y/2.0f, 0), structures[structureNumber].GetComponent<BoxCollider>().size/2.0f).Length;
-        //Debug.Log(test);// 
         Vector3 test2 =structures[structureNumber].GetComponent<BoxCollider>().size;
-        //Debug.Log(test2);// 
 
         while (Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y, 0), structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length > 1)
         {
             circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
             finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0f, circlePoint.y);
         }
-        Instantiate(structures[structureNumber], finalPoint, Quaternion.identity);
+        //Instantiate(structures[structureNumber], finalPoint, Quaternion.identity);
     }
 
     void SetupObstacles()
@@ -317,5 +313,81 @@ public class MapSetuper : MonoBehaviour
         //    .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
             .ToList()
             .ForEach(cell => SpawnObstaclesInCell(cell));
+    }
+
+
+
+    private float getDistanceBetweenPointAndSegment(float pointX, float pointY, float x1, float y1, float x2, float y2)
+    {
+        float A = pointX - x1;
+        float B = pointY - y1;
+        float C = x2 - x1;
+        float D = y2 - y1;
+
+        float point = A * C + B * D;
+        float lenSquare = C * C + D * D;
+        float parameter = point / lenSquare;
+
+        float shortestX;
+        float shortestY;
+
+        if (parameter < 0)
+        {
+            shortestX = x1;
+            shortestY = y1;
+        }
+        else if (parameter > 1)
+        {
+            shortestX = x2;
+            shortestY = y2;
+        }
+        else
+        {
+            shortestX = x1 + parameter * C;
+            shortestY = y1 + parameter * D;
+        }
+
+        float distance = Mathf.Sqrt((pointX - shortestX) * (pointX - shortestX) + (pointY - shortestY) * (pointY - shortestY));
+        return distance;
+    }
+
+    private void SpawnPoints(MapCell cell)
+    {
+        float startX = cell.transform.position.x - 25;
+        float startY = cell.transform.position.z - 25;
+
+        for (float i = 0; i < 50; i = i + 1)
+        {
+            for (float j = 0; j < 50; j = j + 1)
+            {
+                if (cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) < 0.75 && cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) > 0.2)
+                {
+                    cell.generationPoints.Add(new Vector3(startX + i, 0, startY + j));
+                }
+            }
+        }
+
+        float centerX = cell.transform.position.x;
+        float centerY = cell.transform.position.z;
+
+        foreach (MapCell.BridgeTo bridge in cell.Bridges)
+        {
+            float bridgeX = bridge.Gate.transform.position.x;
+            float bridgeY = bridge.Gate.transform.position.z;
+            for (int i = 0; i < cell.generationPoints.Count; i++)
+            {
+                if (getDistanceBetweenPointAndSegment(cell.generationPoints[i].x, cell.generationPoints[i].z,
+                    centerX, centerY, bridgeX, bridgeY) < 3.0f)
+                {
+                    cell.generationPoints.RemoveAt(i);
+                    i = i - 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < cell.generationPoints.Count; i++)
+        {
+            Instantiate(pointPrefab, cell.generationPoints[i], Quaternion.identity);
+        }
     }
 }

@@ -145,6 +145,8 @@ public:
 
 	void SetLocalMatrix(glm::mat4& transform);
 
+#undef CheckWorld()
+
 private:
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f };

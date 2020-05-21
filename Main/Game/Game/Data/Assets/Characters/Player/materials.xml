@@ -13,4 +13,8 @@
         <property name="metalnessMap" value="torch_metal"/>
         <property name="roughnessMap" value="torch_rough"/>
     </material>
+
+    <material name="FireTorcFlamehMat">
+        <property name="emissiveMap" value="torch_flame_emiss"/>
+    </material>
 </materials>
