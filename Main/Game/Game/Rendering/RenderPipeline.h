@@ -6,6 +6,7 @@ class Shader;
 
 class MeshRendererSystem;
 class SkinnedMeshRendererSystem;
+class PointLightRendererSystem;
 class CubeRenderSystem;
 class BoxColliderRenderSystem;
 class CircleColliderRenderSystem;
@@ -41,6 +42,7 @@ public:
 	struct RenderSystemsStruct {
 		std::shared_ptr<MeshRendererSystem> meshRenderer;
 		std::shared_ptr<SkinnedMeshRendererSystem> skinnedMeshRender;
+		std::shared_ptr<PointLightRendererSystem> pointLightRenderer;
 #ifdef _DEBUG
 		std::shared_ptr<CubeRenderSystem> cubeRenderer;
 		std::shared_ptr<BoxColliderRenderSystem> boxColliderRenderer;

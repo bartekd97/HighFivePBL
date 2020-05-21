@@ -5,4 +5,5 @@
     </model>
 
     <model name="FireTorch" mesh="firetorch.glb"    material="FireTorchMat" />
+    <model name="FireTorchFlame" mesh="flame.glb"   material="FireTorcFlamehMat" />
 </models>
