@@ -92,6 +92,7 @@
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
+    <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
@@ -100,6 +101,7 @@
     <ClCompile Include="ECS\Systems\Rendering\GravityColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptStartSystem.cpp" />
     <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
@@ -156,6 +158,7 @@
     <ClInclude Include="ECS\ComponentArray.h" />
     <ClInclude Include="ECS\ComponentManager.h" />
     <ClInclude Include="ECS\Components.h" />
+    <ClInclude Include="ECS\Components\BoneAttacher.h" />
     <ClInclude Include="ECS\Components\BoxCollider.h" />
     <ClInclude Include="ECS\Components\CircleCollider.h" />
     <ClInclude Include="ECS\Components\Collider.h" />
@@ -165,6 +168,7 @@
     <ClInclude Include="ECS\Components\MapLayoutComponents.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\ModelHolder.h" />
+    <ClInclude Include="ECS\Components\PointLightRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
     <ClInclude Include="ECS\Components\ScriptContainer.h" />
     <ClInclude Include="ECS\Components\SkinAnimator.h" />
@@ -179,6 +183,7 @@
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
+    <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
@@ -189,6 +194,7 @@
     <ClInclude Include="ECS\Systems\Rendering\GravityColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />

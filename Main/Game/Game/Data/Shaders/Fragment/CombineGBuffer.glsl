@@ -54,7 +54,7 @@ void main()
     vec3 lightDir = normalize(-gDirectionalLight.Direction);
     vec3 Lo = vec3(0.0f);
 
-    // cook-torrance
+    // cook-torrance for directional light
     {
         vec3 halfwayDir = normalize(lightDir + viewDir);
 
@@ -73,7 +73,7 @@ void main()
 
         float NdotL = max(dot(Normal, lightDir), 0.0);    
 
-        Lo += (kD * Albedo / PI + specular) * NdotL;
+        Lo += ((kD * Albedo / PI + specular) * NdotL) * gDirectionalLight.Color;
     }
 
     vec3 Ambient = gDirectionalLight.Ambient * Albedo;

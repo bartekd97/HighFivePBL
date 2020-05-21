@@ -61,6 +61,8 @@
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\GravityColliderRenderSystem.cpp" />
     <ClCompile Include="Physics\Physics.cpp" />
+    <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -176,6 +178,10 @@
     <ClInclude Include="Resourcing\UniformBuffer.h" />
     <ClInclude Include="Physics\Physics.h" />
     <ClInclude Include="Physics\RaycastHit.h" />
+    <ClInclude Include="ECS\Components\BoneAttacher.h" />
+    <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
+    <ClInclude Include="ECS\Components\PointLightRenderer.h" />
+    <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

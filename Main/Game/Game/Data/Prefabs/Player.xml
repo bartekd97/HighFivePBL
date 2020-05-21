@@ -33,6 +33,47 @@
             <component name="SkinAnimator">
                 <property name="configureFromHolder" value="true" />
             </component>
+
+            <children>
+                <child name="FireTorch" position="0,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="BoneAttacher">
+                        <property name="boneName" value="RightHand" />
+                    </component>
+
+                    <children>
+                        <!-- adjust torch offset -->
+                        <child name="FireTorchVisual" position="-0.1,0,-0.05" rotation="0,0,150" scale="1,1,1">
+                            <component name="ModelHolder">
+                                <property name="model" value="Characters/Player:FireTorch"/>
+                            </component>
+                            <component name="MeshRenderer">
+                                <property name="configureFromHolder" value="true" />
+                            </component>
+
+                             <children>
+                                <child name="TorchFlame" position="0,0.76,0" rotation="0,0,0" scale="1,1,1">
+                                    <component name="ModelHolder">
+                                        <property name="model" value="Characters/Player:FireTorchFlame"/>
+                                    </component>
+                                    <component name="MeshRenderer">
+                                        <property name="configureFromHolder" value="true" />
+                                    </component>
+                                </child>
+                                <child name="FlameLight" position="0,0.76,0" rotation="0,0,0" scale="1,1,1">
+                                    <component name="PointLightRenderer">
+                                        <property name="color" value="1.0,0.65,0.35"/>
+                                        <property name="radius" value="7.5"/>
+                                        <property name="intensity" value="4.0"/>
+                                        <property name="shadowIntensity" value="0.5"/>
+                                    </component>
+                                </child>
+                            </children>
+
+                        </child>
+                    </children>
+                </child>
+            </children>
+
         </child>
     </children>
 </prefab>

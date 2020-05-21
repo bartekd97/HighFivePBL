@@ -96,9 +96,11 @@ namespace HFEngine
 		ECS.RegisterComponent<CircleCollider>();
 		ECS.RegisterComponent<BoxCollider>();
 		ECS.RegisterComponent<SkinAnimator>();
+		ECS.RegisterComponent<BoneAttacher>();
 		// render components
 		ECS.RegisterComponent<MeshRenderer>();
 		ECS.RegisterComponent<SkinnedMeshRenderer>();
+		ECS.RegisterComponent<PointLightRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<ScriptContainer>();
@@ -129,6 +131,12 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<SkinAnimator>());
 			signature.set(ECS.GetComponentType<SkinnedMeshRenderer>());
 			ECS.SetSystemSignature<SkinAnimatorSystem>(signature);
+		}
+		auto boneAttacherSystem = ECS.RegisterSystem<BoneAttacherSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<BoneAttacher>());
+			ECS.SetSystemSignature<BoneAttacherSystem>(signature);
 		}
 		auto colliderCollectorSystem = ECS.RegisterSystem<ColliderCollectorSystem>();
 		{
