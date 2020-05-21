@@ -61,6 +61,8 @@ public class Ghost : MonoBehaviour
 
     public ParticleSystem sparkCrossing;
 
+    public BossSpawnerController bossController;
+
     public bool IsMarking { get; private set; }
     private void Awake()
     {
@@ -392,7 +394,7 @@ public class Ghost : MonoBehaviour
         if (!IsMarking)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument") && !other.gameObject.CompareTag("Boss"))
             return;
 
         enemyController = other.GetComponent<EnemyController>();
@@ -407,6 +409,12 @@ public class Ghost : MonoBehaviour
         if (monumentController != null)
         {
             monumentController.ApplyDamageToMonument(damageToEnemies);
+        }
+
+        bossController = other.GetComponent<BossSpawnerController>();
+        if (bossController != null)
+        {
+            bossController.TakeDamage(damageToEnemies);
         }
     }
 

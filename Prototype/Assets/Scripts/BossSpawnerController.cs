@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyController : MonoBehaviour
+public class BossSpawnerController : MonoBehaviour
 {
     private Rigidbody rb;
-    public float speed = 3.0f;
+    //public float speed = 3.0f;
     public float playerInRange = 15.0f;
-    public float stoppingDistance = 1.5f;
-    public float retreatDistance = 0.75f;
+    //public float stoppingDistance = 1.5f;
+    //public float retreatDistance = 0.75f;
     public GameObject player;
-    public float maxHealth = 10.0f;
+    public float maxHealth = 30.0f;
 
     public Color defaultColor;
     public Color damagedColor;
@@ -30,14 +30,20 @@ public class EnemyController : MonoBehaviour
 
 
     //attacking
-    private float meleeRange = 1.5f;
-    public float attackDelay = 1.0f;
-    private float timestampAttack;
-    private float timestampAfterAttackPushStart;
-    private float timestampAfterAttackPushStop;
+    //private float meleeRange = 1.5f;
+    //public float attackDelay = 1.0f;
+    //private float timestampAttack;
+    //private float timestampAfterAttackPushStart;
+    //private float timestampAfterAttackPushStop;
     //private bool isPushedAfterAttack;
-    public float pushBackForceAfterAttack = 5.0f;
-    public float damage = 1.0f;
+    //public float pushBackForceAfterAttack = 5.0f;
+    //public float damage = 1.0f;
+
+    private float timestampSpawn;
+    public float spawnDelay = 3.0f;
+    public GameObject enemy;
+    public int enemyWaveNumber = 3;
+    private int startWaveNumber = 0;
 
     bool isPoisoned;
     public float poisonCooldownTime = 1.0f;
@@ -49,21 +55,20 @@ public class EnemyController : MonoBehaviour
     public float burningCooldownTime = 1.0f;
     float nextBurnTime = 0.0f;
 
-    public bool isMelee = false;
+    //public bool isMelee = false;
 
-    public GameObject arrow;
-    public float arrowSpeed = 10.0f;
-    public float shootingRange = 10.0f;
-    public float shootingDelay = 3.0f;
-    private bool isMoving = false;
+    //public GameObject arrow;
+    //public float arrowSpeed = 1.0f;
+    //public float shootingRange = 10.0f;
+    //public float shootingDelay = 3.0f;
 
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        timestampAttack = 0.0f;
-        timestampAfterAttackPushStart = 0.0f;
-        timestampAfterAttackPushStop = 0.0f;
+        //timestampAttack = 0.0f;
+        //timestampAfterAttackPushStart = 0.0f;
+        //timestampAfterAttackPushStop = 0.0f;
         enemyHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
@@ -89,10 +94,10 @@ public class EnemyController : MonoBehaviour
         }
 
         CalculateColor();
-        if (transform.position.y < -10)
+        /*if (transform.position.y < -10)
         {
             Destroy(gameObject);
-        }
+        }*/
         //Vector3 moveDirection = Vector3.zero;
         Vector3 pushDirection = Vector3.zero;
         //pushedEnemiess = charController.pushedEnemies;
@@ -102,91 +107,40 @@ public class EnemyController : MonoBehaviour
         //    PushEnemy(pushDirection);
         //}
 
-        if (Time.time > frozenTo)
+        if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange)
         {
-            if (isMelee == true)
-            {
-                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
-                {
-                    ChasePlayer();
-                    /*
-                    if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
-                    {
-                        PushEnemy(pushDirection);
-                    }
-                    */
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
-                {
-                    Stop();
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
-                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
-                {
-                    Stop();
-                }
-            }
-            
-            else if (isMelee == false)
-            {
-                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
-                {
-                    ChasePlayer();
-                    isMoving = true;
-                    /*
-                    if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
-                    {
-                        PushEnemy(pushDirection);
-                    }
-                    */
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
-                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
-                {
-                    Stop();
-                    isMoving = false;
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
-                {
-                    RunAwayFromPlayer();
-                    isMoving = true;
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
-                {
-                    Stop();
-                    isMoving = false;
-                }
-            }
-        }
-        
+            //Debug.Log("eldorado");
 
-        if (Vector3.Distance(transform.position, player.transform.position) <= meleeRange && isMelee == true)
-        {
-            if (timestampAttack <= Time.time)
+            if (timestampSpawn <= Time.time && startWaveNumber < enemyWaveNumber)
             {
-                timestampAttack = Time.time + attackDelay;
-                player.GetComponent<CharController>().TakeDamage(damage);
+                timestampSpawn = Time.time + spawnDelay;
+                //player.GetComponent<CharController>().TakeDamage(damage);
 
                 //isPushedAfterAttack = true;
-                timestampAfterAttackPushStart = Time.time;
-                timestampAfterAttackPushStop = Time.time + 0.1f;
+                //timestampAfterAttackPushStart = Time.time;
+                //timestampAfterAttackPushStop = Time.time + 0.1f;
 
                 // push after attack
-                Vector3 dir = transform.position - player.transform.position;
-                dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
-                PushEnemy(dir, pushBackForceAfterAttack);
-            }
-        }
-        else if (Vector3.Distance(transform.position, player.transform.position) <= shootingRange && isMelee == false)
-        {
-            if (timestampAttack <= Time.time)
-            {
-                timestampAttack = Time.time + shootingDelay;
-                if (isMoving == false)
+                //Vector3 dir = transform.position - player.transform.position;
+                //dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
+                //PushEnemy(dir, pushBackForceAfterAttack);
+                Vector3 startPosition = transform.position;
+
+                Vector3 startDirection = transform.forward;
+                //Quaternion playerRotation = player.transform.rotation;
+                float spawnDistance = 2;
+
+                Vector3 spawnPos = startPosition + startDirection * spawnDistance;
+
+                for (int i = 1; i <= 3; i++)
                 {
-                    ShootWithArrow();
+                    spawnPos.x += i * spawnDistance;
+                    //spawnPos.z += i * spawnDistance;
+                    GameObject newEnemy = GameObject.Instantiate(enemy, spawnPos, transform.rotation);
                 }
-            }   
+                startWaveNumber++;
+
+            }
         }
 
 
@@ -204,7 +158,7 @@ public class EnemyController : MonoBehaviour
         }
         */
     }
-
+    /*
     void ChasePlayer()
     {
         Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
@@ -222,24 +176,29 @@ public class EnemyController : MonoBehaviour
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
         rb.MovePosition(transform.position + direction * (-speed - slow - mudSlow) * Time.deltaTime);
     }
-
+    */
     void Stop()
     {
         rb.velocity = Vector3.zero;
     }
-    
+
     public void TakeDamage(float value)
     {
+        Debug.Log("no co sie dzieje skad to zwatpienie");
         lastDmgTime = Time.time;
         enemyHealth -= value;
         healthBar.SetHealth(enemyHealth);
 
+        if (enemyHealth %2 == 0 && enemyHealth != maxHealth && enemyHealth > 0)
+        {
+            startWaveNumber = 0;
+        }
         if (enemyHealth <= 0)
         {
             Destroy(gameObject);
         }
     }
-
+    /*
     void ShootWithArrow()
     {
         Vector3 arrowPosition = transform.position;
@@ -254,11 +213,13 @@ public class EnemyController : MonoBehaviour
         GameObject newArrow = GameObject.Instantiate(arrow, arrowPosition, arrowRotation);
         newArrow.SetActive(true);
         Rigidbody rbArrow = newArrow.GetComponent<Rigidbody>();
-        rbArrow.AddForce(direction * arrowSpeed, ForceMode.Impulse);
-        //rbArrow.velocity = Vector3.zero;
-        //rbArrow.velocity = direction * arrowSpeed;
+        //newArrow.GetComponent<Rigidbody>().AddForce(direction * arrowSpeed, ForceMode.Impulse);
+        //rbArrow.AddForce(Vector3.forward * arrowSpeed, ForceMode.Impulse);
+        Debug.Log("velocity here: " + rb.velocity);
+        rbArrow.velocity = direction * arrowSpeed;
+        Debug.Log("velocity here: " + rb.velocity);
     }
-
+    
     public void PushEnemy(Vector3 direction, float force)
     {
         //direction = ((Vector3)transform.position - player.transform.position).normalized;
@@ -267,7 +228,7 @@ public class EnemyController : MonoBehaviour
         //rb.MovePosition(transform.position + direction * speed * Time.deltaTime * 60.0f);
         rb.AddForce(direction * force, ForceMode.VelocityChange);
     }
-
+    */
     private void SetMeshColor(Color color)
     {
         Renderer[] renderers = GetComponentsInChildren<Renderer>();
