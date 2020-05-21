@@ -105,7 +105,6 @@ void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize
             * glm::scale(glm::mat4(1.0f), glm::vec3(renderer.light.radius));
         pointLightShader->setMat4("gModel", model);
         sphereMesh->draw();
-        //PrimitiveRenderer::DrawScreenQuad();
     }
 
     glDisable(GL_BLEND);
