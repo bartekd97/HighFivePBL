@@ -19,6 +19,9 @@ public class MapCell : MonoBehaviour
 
     public List<GameObject> Monuments = new List<GameObject>();
 
+    public List<Vector3> generationPoints = new List<Vector3>();
+
+
 
     [HideInInspector]
     public int CellSiteIndex;

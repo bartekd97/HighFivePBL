@@ -19206,6 +19206,12 @@ MonoBehaviour:
     type: 3}
   firePrefab: {fileID: 7449754332596637308, guid: 285f74bcb0b8d4945b434bc7147aa39b,
     type: 3}
+  pointPrefab: {fileID: 8876826773527404814, guid: 68581654839804d479bca7d825e772d6,
+    type: 3}
+  pointPrefab2: {fileID: 63573587319288568, guid: a2868598c4a2223448c736dec3a8a5ef,
+    type: 3}
+  pointPrefab3: {fileID: 4945155149449214535, guid: e719d34cfce764045b98b16e248eec78,
+    type: 3}
 --- !u!4 &1873961013
 Transform:
   m_ObjectHideFlags: 0
