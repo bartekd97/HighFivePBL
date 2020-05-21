@@ -30,7 +30,7 @@ public class EnemyController : MonoBehaviour
 
 
     //attacking
-    private float attackRange = 1.5f;
+    private float meleeRange = 1.5f;
     public float attackDelay = 1.0f;
     private float timestampAttack;
     private float timestampAfterAttackPushStart;
@@ -51,6 +51,9 @@ public class EnemyController : MonoBehaviour
 
     public bool isMelee = false;
 
+    public GameObject arrow;
+    public float arrowSpeed = 100.0f;
+    public float shootingRange = 10.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -152,7 +155,7 @@ public class EnemyController : MonoBehaviour
         }
         
 
-        if (Vector3.Distance(transform.position, player.transform.position) <= attackRange)
+        if (Vector3.Distance(transform.position, player.transform.position) <= meleeRange && isMelee == true)
         {
             //Debug.Log("eldorado");
 
@@ -170,6 +173,14 @@ public class EnemyController : MonoBehaviour
                 dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
                 PushEnemy(dir, pushBackForceAfterAttack);
             }
+        }
+        else if (Vector3.Distance(transform.position, player.transform.position) <= shootingRange && isMelee == false)
+        {
+            if (timestampAttack <= Time.time)
+            {
+                timestampAttack = Time.time + attackDelay;
+                ShootWithArrow();
+            }   
         }
 
 
@@ -221,6 +232,24 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    void ShootWithArrow()
+    {
+        Vector3 arrowPosition = transform.position;
+        arrowPosition.y += 1.0f;
+
+        Quaternion arrowRotation = transform.rotation;
+        arrowRotation.y += 30.0f;
+
+        Vector3 direction = ((Vector3)player.transform.position - transform.position);
+        //direction = Vector3.Normalize(direction.normalized + Vector3.up * 0.75f);
+
+        GameObject newArrow = GameObject.Instantiate(arrow, arrowPosition, arrowRotation);
+        newArrow.SetActive(true);
+        Rigidbody rbArrow = newArrow.GetComponent<Rigidbody>();
+        newArrow.GetComponent<Rigidbody>().AddForce(direction * arrowSpeed, ForceMode.Impulse);
+        //rbArrow.AddForce(direction * arrowSpeed, ForceMode.Impulse);
     }
 
     public void PushEnemy(Vector3 direction, float force)
