@@ -251,6 +251,18 @@ public class CharController : MonoBehaviour
         }
     }
 
+    public void TakeDamage(Arrow arrow)
+    {
+        lastDmgTime = Time.time;
+        health -= arrow.arrowDamage;
+        healthBar.SetHealth(health);
+        Debug.Log("Health remaining: " + health);
+        if (health <= 0)
+        {
+            KillPlayer();
+        }
+    }
+
     public void KillPlayer()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
