@@ -31,7 +31,7 @@ void CellGenerator::GenerateMesh(GameObject cell)
 
     MeshRenderer renderer;
     renderer.mesh = mesh;
-    renderer.material = MaterialManager::CreateEmptyMaterial();
+    renderer.material = MaterialManager::BLANK_MATERIAL;
     HFEngine::ECS.AddComponent<MeshRenderer>(cell, renderer);
 
     // assign polygon structures

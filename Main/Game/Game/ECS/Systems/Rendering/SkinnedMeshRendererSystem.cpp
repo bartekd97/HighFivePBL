@@ -40,8 +40,12 @@ void SkinnedMeshRendererSystem::Init()
 	toGBufferShader->use();
 	toGBufferShader->setInt("shadowmap", 0);
 	toGBufferShader->bindUniformBlockPoint("gBonesBuffer", BONE_MATRICES_BUFFER_BINING_POINT);
-
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
+
+	forwardShader = ShaderManager::GetShader("ForwardRenderSkinned");
+	forwardShader->use();
+	forwardShader->bindUniformBlockPoint("gBonesBuffer", BONE_MATRICES_BUFFER_BINING_POINT);
+	MaterialBindingPoint::AssignToShader(forwardShader);
 }
 
 void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
@@ -57,19 +61,12 @@ void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
-		if (!renderer.cullingData.visibleByLightCamera)
+		if (!renderer.cullingData.visibleByLightCamera || !renderer.castShadows)
 			continue;
 
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
 		CheckBoneMatricesBuffer(renderer);
 		renderer.boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
-		/*
-		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
-		{
-			auto mat = renderer.boneMatrices[i];
-			toShadowmapShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
-		}
-		*/
 
 		renderer.mesh->bind();
 		renderer.mesh->draw();
@@ -97,16 +94,14 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 		if (!renderer.cullingData.visibleByViewCamera)
 			continue;
 
+		if (renderer.material->type == MaterialType::FORWARD) {
+			delayedForward.push(&renderer);
+			continue;
+		}
+
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
 		CheckBoneMatricesBuffer(renderer);
 		renderer.boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
-		/*
-		for (int i = 0; i < SkinnedMeshRenderer::MAX_BONES; i++)
-		{
-			auto mat = renderer.boneMatrices[i];
-			toGBufferShader->setMat4(("gBones[" + std::to_string(i) + "]").c_str(), mat);
-		}
-		*/
 
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
@@ -114,6 +109,35 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 	}
 	Mesh::NoBind();
 	Material::NoApply(toGBufferShader);
+
+	glDisable(GL_CULL_FACE);
+}
+
+void SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
+{
+	if (delayedForward.empty()) return;
+
+	forwardShader->use();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	viewCamera.Use(forwardShader);
+	dirLight.Apply(forwardShader);
+	do {
+		SkinnedMeshRenderer* renderer = delayedForward.top();
+
+		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
+		CheckBoneMatricesBuffer(*renderer);
+		renderer->boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
+
+		renderer->material->apply(forwardShader);
+		renderer->mesh->bind();
+		renderer->mesh->draw();
+
+		delayedForward.pop();
+	} while (!delayedForward.empty());
+	Mesh::NoBind();
+	Material::NoApply(forwardShader);
 
 	glDisable(GL_CULL_FACE);
 }

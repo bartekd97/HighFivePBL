@@ -65,6 +65,8 @@ public:
 	float GetFOV();
 	float GetScale();
 
+	glm::vec3 ScreenToWorldPosition(glm::vec2 position, float depth = 0.0f);
+
 	void Use(std::shared_ptr<Shader> shader);
 
 private:

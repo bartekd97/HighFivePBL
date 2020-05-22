@@ -78,16 +78,16 @@ void MaterialManager::Initialize()
 	blankMapConfig.format = GL_SRGB8;
 	BLANK_EMISSIVE_MAP = TextureManager::CreateTextureFromRawData(BLANK_EMISSIVE_MAP_DATA, 4, 4, GL_RGB, blankMapConfig);
 
-	BLANK_MATERIAL = CreateEmptyMaterial();
+	BLANK_MATERIAL = CreateEmptyMaterial(MaterialType::DEFERRED);
 
 	Initialized = true;
 
 	LogInfo("MaterialManager initialized.");
 }
 
-std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial()
+std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial(MaterialType type)
 {
-	return std::shared_ptr<Material>(new Material());
+	return std::shared_ptr<Material>(new Material(type));
 }
 
 std::shared_ptr<MaterialLibrary> MaterialManager::GetLibrary(std::string name)
@@ -181,8 +181,17 @@ MaterialLibrary::MaterialLibrary(std::string name) : name(name)
 			continue;
 		}
 
-		int j = 0;
 		LibraryEntity* entity = new LibraryEntity();
+
+		std::string materialType = nullableString(node->Attribute("type"));
+		if (materialType == "" || materialType == "DEFERRED")
+			entity->materialType = MaterialType::DEFERRED;
+		else if (materialType == "FORWARD")
+			entity->materialType = MaterialType::FORWARD;
+		else {
+			entity->materialType = MaterialType::DEFERRED;
+			LogWarning("MaterialLibrary::MaterialLibrary(): Invalid material type in node at #{}, using DEFERRED...", i);
+		}
 		entity->properties = PropertyReader(node);
 
 		entities[materialName] = entity;
@@ -198,7 +207,7 @@ MaterialLibrary::~MaterialLibrary()
 
 std::shared_ptr<Material> MaterialLibrary::LoadEntity(std::string& name, LibraryEntity* entity)
 {
-	auto ptr = MaterialManager::CreateEmptyMaterial();
+	auto ptr = MaterialManager::CreateEmptyMaterial(entity->materialType);
 	ptr->SetLibraryProperties(entity->properties, textureLibrary);
 	entity->material = ptr;
 	LogInfo("MaterialLibrary::LoadEntity(): Loaded '{}' in '{}'", name, this->name);

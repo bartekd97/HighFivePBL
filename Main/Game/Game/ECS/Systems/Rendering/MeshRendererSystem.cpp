@@ -31,7 +31,7 @@ void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
-		if (!renderer.cullingData.visibleByLightCamera)
+		if (!renderer.cullingData.visibleByLightCamera || !renderer.castShadows)
 			continue;
 
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
