@@ -40,13 +40,18 @@ public:
 		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
 		moveSpeedSmoothing = moveSpeed * 4.0f;
-		GetAnimator().SetAnimation("running");
+		GetAnimator().SetAnimation("ghostrunning");
 	}
 
 	void MovementStart(Event& event)
 	{
 		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), true);
-		GetTransform().SetPosition({ 0.0f,0.0f,0.0f });
+		auto& transform = GetTransform();
+		transform.SetPosition({ 0.0f,0.0f,0.0f });
+		transform.RotateSelf(
+			glm::degrees(GetRotationdifferenceToMousePosition()),
+			transform.GetUp()
+			);
 		currentMoveSpeed = 0.0f;
 	}
 	void MovementStop(Event& event)
@@ -59,22 +64,9 @@ public:
 	{
 		auto& transform = GetTransform();
 
-		glm::vec2 cursorPos = InputManager::GetMousePosition();
-		glm::vec3 world = HFEngine::MainCamera.ScreenToWorldPosition(cursorPos, 0.0f);
-		glm::vec3 worldDirection = HFEngine::MainCamera.ScreenToWorldPosition(cursorPos, 1.0f);
-		worldDirection = world - worldDirection;
-		worldDirection /= worldDirection.y;
-		glm::vec3 worldZero = world - (worldDirection * world.y);
-
-		glm::vec3 direction = glm::normalize(worldZero - transform.GetWorldPosition());
 		// smooth rotate
 		{
-			glm::vec3 front3 = transform.GetWorldFront();
-			float diff = glm::orientedAngle(
-				glm::normalize(glm::vec2(direction.x, direction.z)),
-				glm::normalize(glm::vec2(front3.x, front3.z))
-				);
-
+			float diff = GetRotationdifferenceToMousePosition();
 			float change = dt * rotateSpeedSmoothing;
 			if (glm::abs(change) > glm::abs(diff))
 				change = diff;
@@ -98,6 +90,27 @@ public:
 
 		if (currentMoveSpeed > 0.01f)
 			transform.TranslateSelf(currentMoveSpeed * dt, transform.GetFront());
+	}
+
+	float GetRotationdifferenceToMousePosition()
+	{
+		auto& transform = GetTransform();
+
+		glm::vec2 cursorPos = InputManager::GetMousePosition();
+		glm::vec3 world = HFEngine::MainCamera.ScreenToWorldPosition(cursorPos, 0.0f);
+		glm::vec3 worldDirection = HFEngine::MainCamera.ScreenToWorldPosition(cursorPos, 1.0f);
+		worldDirection = world - worldDirection;
+		worldDirection /= worldDirection.y;
+		glm::vec3 worldZero = world - (worldDirection * world.y);
+
+		glm::vec3 direction = glm::normalize(worldZero - transform.GetWorldPosition());
+		glm::vec3 front3 = transform.GetWorldFront();
+		float diff = glm::orientedAngle(
+			glm::normalize(glm::vec2(direction.x, direction.z)),
+			glm::normalize(glm::vec2(front3.x, front3.z))
+			);
+
+		return diff;
 	}
 };
 

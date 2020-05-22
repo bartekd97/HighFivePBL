@@ -26,6 +26,8 @@ private: // variables
 	float moveSpeedSmoothing; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
+	bool hasGhostMovement = false;
+
 public:
 	PlayerController()
 	{
@@ -34,6 +36,8 @@ public:
 
 	void Awake()
 	{
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 	}
 
 	void Start()
@@ -43,6 +47,10 @@ public:
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
 	}
+
+
+	void GhostMovementStart(Event& event) { hasGhostMovement = true; }
+	void GhostMovementStop(Event& event) { hasGhostMovement = false; }
 
 
 	void Update(float dt)
@@ -82,11 +90,14 @@ public:
 		auto& rigidBody = GetRigidBody();
 
 		glm::vec3 direction(0.0f);
-		if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
-		else if (InputManager::GetKeyStatus(GLFW_KEY_D)) direction.x = 1.0f;
+		if (!hasGhostMovement)
+		{
+			if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
+			else if (InputManager::GetKeyStatus(GLFW_KEY_D)) direction.x = 1.0f;
 
-		if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
-		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
+			if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
+			else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
+		}
 
 		bool isMoving = glm::length2(direction) > 0.5f;
 
