@@ -7,6 +7,13 @@
         <property name="emissiveMap" value="emis"/>
     </material>
 
+    <material name="VampireGhostMat" type="FORWARD">
+        <property name="albedoColor" value="0.4,2.5,1.0"/>
+        <property name="emissiveColor" value="0.1,0.5,0.25"/>
+        <property name="specularValue" value="4.0"/>
+        <property name="opacityValue" value="0.4"/>
+    </material>
+
      <material name="FireTorchMat">
         <property name="albedoMap" value="torch_albedo"/>
         <property name="normalMap" value="torch_norm"/>

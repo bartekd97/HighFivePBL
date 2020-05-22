@@ -7,6 +7,7 @@
 #include "Utility/PropertyReader.h"
 
 class Material;
+enum class MaterialType;
 class MaterialLibrary;
 class TextureLibrary;
 
@@ -23,7 +24,7 @@ namespace MaterialManager {
 	extern std::shared_ptr<Texture> BLANK_ROUGHNESS_MAP; // 4x4 gray (127) r texture
 	extern std::shared_ptr<Texture> BLANK_EMISSIVE_MAP; // 4x4 black (0) srgb texture
 
-	std::shared_ptr<Material> CreateEmptyMaterial();
+	std::shared_ptr<Material> CreateEmptyMaterial(MaterialType type);
 	std::shared_ptr<MaterialLibrary> GetLibrary(std::string name);
 	std::shared_ptr<Material> GetMaterial(std::string libraryName, std::string materialName);
 }
@@ -40,6 +41,7 @@ private:
 	struct LibraryEntity {
 		std::weak_ptr<Material> material;
 		//std::unordered_map<std::string, std::string> properties;
+		MaterialType materialType;
 		PropertyReader properties;
 	};
 	std::unordered_map<std::string, LibraryEntity*> entities;
