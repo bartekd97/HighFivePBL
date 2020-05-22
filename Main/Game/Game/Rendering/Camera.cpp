@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "Frustum.h"
+#include "WindowManager.h"
 
 Camera::Camera()
 {
@@ -157,6 +158,22 @@ float Camera::GetFOV()
 float Camera::GetScale()
 {
 	return this->scale;
+}
+
+glm::vec3 Camera::ScreenToWorldPosition(glm::vec2 position, float depth)
+{
+	if (dirty)
+	{
+		Update();
+	}
+
+	position /= glm::vec2(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
+	position -= glm::vec2(0.5f, 0.5f);
+	position *= glm::vec2(2.0f, -2.0f);;
+	float z = ((depth / (farPlane - nearPlane)) * 2.0f) - 1.0f;
+	glm::vec4 world = invView * (invProjection * glm::vec4(position, z, 1.0f));
+
+	return glm::vec3(world);
 }
 
 

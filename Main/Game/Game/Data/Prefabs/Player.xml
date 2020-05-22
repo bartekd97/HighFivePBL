@@ -75,5 +75,29 @@
             </children>
 
         </child>
+
+
+        <child name="Ghost" position="0,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="ScriptComponent">
+                <property name="name" value="GhostController"/>
+                <property name="moveSpeed" value="6.25"/>
+            </component>
+
+            <children>
+                <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Characters/Player:Vampire"/>
+                    </component>
+                    <component name="SkinnedMeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                    <component name="SkinAnimator">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                </child>
+            </children>
+
+        </child>
+
     </children>
 </prefab>
