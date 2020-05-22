@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Ghost : MonoBehaviour
@@ -62,6 +63,7 @@ public class Ghost : MonoBehaviour
     public ParticleSystem sparkCrossing;
 
     public BossSpawnerController bossController;
+    public bool bossHit;
 
     public bool IsMarking { get; private set; }
     private void Awake()
@@ -70,6 +72,7 @@ public class Ghost : MonoBehaviour
         firstEnemyHit = false;
         numberOfEnemyToHit = 1;
         numberOfEnemyHit = 1;
+        bossHit = false;
     }
     private void Start()
     {
@@ -157,6 +160,48 @@ public class Ghost : MonoBehaviour
                 enemy.GetComponent<EnemyController>().frozenTo = Time.time + ghostFreezeTime;
             }
         });
+
+        //boss
+        List<GameObject> bosses = new List<GameObject>(GameObject.FindGameObjectsWithTag("Boss"));
+        bosses.ForEach(enemy => enemy.GetComponent<BossSpawnerController>().slow = 0.0f);
+
+        bool isTimeToStrikeBoss = false;
+        if (dotDmg > 0 && dotTick > 0)
+        {
+            if ((Time.time - lastDotTick) >= dotTick)
+            {
+                lastDotTick = Time.time;
+                isTimeToStrikeBoss = true;
+            }
+        }
+
+        //Slow + DoT (boss)
+        activeLines.ForEach(line =>
+        {
+            line.ghosts.ForEach(ghost =>
+            {
+                BoxCollider coll = ghost.GetComponentInParent<BoxCollider>();
+                bosses.ForEach(boss =>
+                {
+                    BoxCollider bossColl = boss.GetComponent<BoxCollider>();
+                    if (coll.bounds.Intersects(bossColl.bounds))
+                    {
+                        boss.GetComponent<EnemyController>().slow = lineSlow;
+                        if (isTimeToStrikeBoss) boss.GetComponent<BossSpawnerController>().TakeDamage(dotDmg);
+                    }
+                });
+            });
+        });
+
+        //Freeze (boss)
+        bosses.ForEach(enemy =>
+        {
+            BoxCollider bossColl = enemy.GetComponent<BoxCollider>();
+            if (bossColl.bounds.Intersects(GetComponentInParent<BoxCollider>().bounds))
+            {
+                enemy.GetComponent<BossSpawnerController>().frozenTo = Time.time + ghostFreezeTime;
+            }
+        });
     }
 
     public void Show(Transform start)
@@ -195,6 +240,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
         firstEnemyHit = true;
+        bossHit = true;
         numberOfEnemyHit = 0;
     }
 
@@ -412,9 +458,10 @@ public class Ghost : MonoBehaviour
         }
 
         bossController = other.GetComponent<BossSpawnerController>();
-        if (bossController != null)
+        if (bossController != null && bossHit == true)
         {
             bossController.TakeDamage(damageToEnemies);
+            bossHit = false;
         }
     }
 

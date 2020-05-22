@@ -57,6 +57,8 @@ public class EnemyController : MonoBehaviour
     public float shootingDelay = 3.0f;
     private bool isMoving = false;
 
+    private bool enemyTriggered = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -179,7 +181,8 @@ public class EnemyController : MonoBehaviour
         }
         else if (Vector3.Distance(transform.position, player.transform.position) <= shootingRange && isMelee == false)
         {
-            if (timestampAttack <= Time.time)
+            CheckIfEnemySeePlayer();
+            if (timestampAttack <= Time.time && enemyTriggered == true)
             {
                 timestampAttack = Time.time + shootingDelay;
                 if (isMoving == false)
@@ -227,7 +230,29 @@ public class EnemyController : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
     }
-    
+
+    void CheckIfEnemySeePlayer()
+    {
+        var heading = player.transform.position - transform.position;
+        var distance = heading.magnitude * 0.5f;
+        var direction = (heading / distance);
+        RaycastHit hit;
+        //Debug.Log(hit.collider.gameObject);
+        Debug.DrawRay(transform.position, direction);
+
+        if (Vector2.Distance(transform.position, player.transform.position) < playerInRange)
+        {
+            if (Physics.Raycast(transform.position, direction, out hit, playerInRange))
+            {
+                if (hit.collider != null && hit.collider.gameObject == player)
+                {
+                    enemyTriggered = true;
+                }
+                else enemyTriggered = false;
+            }
+        }
+    }
+
     public void TakeDamage(float value)
     {
         lastDmgTime = Time.time;

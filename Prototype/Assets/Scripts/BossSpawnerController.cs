@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class BossSpawnerController : MonoBehaviour
 {
     private Rigidbody rb;
-    //public float speed = 3.0f;
+    public float speed = 5.0f;
     public float playerInRange = 15.0f;
-    //public float stoppingDistance = 1.5f;
-    //public float retreatDistance = 0.75f;
+    public float stoppingDistance = 7.5f;
+    public float retreatDistance = 5.0f;
     public GameObject player;
     public float maxHealth = 30.0f;
 
@@ -62,6 +64,18 @@ public class BossSpawnerController : MonoBehaviour
     //public float shootingRange = 10.0f;
     //public float shootingDelay = 3.0f;
 
+    bool isMoving = false;
+    private float timestampMovement = 2.0f;
+    public float delayMovement = 2.0f;
+    public float movingDistance = 6.0f;
+    private Vector3 position1;
+    private Vector3 position2;
+    private Vector3[] moveSpots = new Vector3[2];
+    private int startSpot;
+    private float waitTime;
+    public float startWaitTime;
+    private bool firstUpdate = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -72,11 +86,25 @@ public class BossSpawnerController : MonoBehaviour
         enemyHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
-    }
+        //timestampMovement = 0.0f;
+        startSpot = 0;
+        position1 = this.transform.position;
+        position2 = this.transform.position;
+}
 
     // Update is called once per frame
     void Update()
     {
+
+        if (firstUpdate == false)
+        {
+            position1.x -= movingDistance;
+            position2.x += movingDistance;
+            moveSpots[0] = position1;
+            moveSpots[1] = position2;
+            firstUpdate = true;
+        }
+
         if ((isPoisoned) && Time.time >= nextPoisonTime)
         {
             TakeDamage(0.5f);
@@ -106,6 +134,41 @@ public class BossSpawnerController : MonoBehaviour
         //{
         //    PushEnemy(pushDirection);
         //}
+
+
+        if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+        {
+            //ChasePlayer();
+            LookAtPlayer();
+            MoveSideToSide();
+            isMoving = true;
+            /*
+            if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
+            {
+                PushEnemy(pushDirection);
+            }
+            */
+        }
+        else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
+                                                        && Vector3.Distance(transform.position, player.transform.position) > retreatDistance * 1.1f)
+        {
+            //Stop();
+            LookAtPlayer();
+            MoveSideToSide();
+            isMoving = false;
+        }
+        else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
+        {
+            RunAwayFromPlayer();
+            isMoving = true;
+        }
+        else if (Vector3.Distance(transform.position, player.transform.position) < stoppingDistance)
+        {
+            //Stop();
+            //MoveSideToSide();
+            LookAtPlayer();
+            isMoving = false;
+        }
 
         if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange)
         {
@@ -167,7 +230,7 @@ public class BossSpawnerController : MonoBehaviour
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
         rb.MovePosition(transform.position + direction * (speed - slow - mudSlow) * Time.deltaTime);
     }
-
+    */
     void RunAwayFromPlayer()
     {
         Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
@@ -176,15 +239,47 @@ public class BossSpawnerController : MonoBehaviour
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
         rb.MovePosition(transform.position + direction * (-speed - slow - mudSlow) * Time.deltaTime);
     }
-    */
+
+    void MoveSideToSide()
+    {
+        Debug.Log("0: " + moveSpots[0]);
+        Debug.Log("1: " + moveSpots[1]);
+
+        //transform.position = Vector2.MoveTowards(transform.position, moveSpots[startSpot], speed);
+        Vector3 direction = (moveSpots[startSpot] - transform.position);
+        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+
+        if (Vector2.Distance(transform.position, moveSpots[startSpot]) < 0.2f)
+        {
+            if (waitTime <= 0.0f)
+            {
+                startSpot += 1;
+                waitTime = startWaitTime;
+
+                if (startSpot > 1)
+                {
+                    startSpot = 0;
+                }
+            }
+            else
+            {
+                waitTime -= Time.deltaTime;
+            }
+        }
+    }
+
+    void LookAtPlayer()
+    {
+        transform.LookAt(player.transform);
+    }
+    
     void Stop()
     {
         rb.velocity = Vector3.zero;
     }
-
+    
     public void TakeDamage(float value)
     {
-        Debug.Log("no co sie dzieje skad to zwatpienie");
         lastDmgTime = Time.time;
         enemyHealth -= value;
         healthBar.SetHealth(enemyHealth);
