@@ -34,8 +34,8 @@ void ParticleRendererSystem::Init()
 		 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
 	};
 	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VAO);
-	glBindVertexArray(VBO);
+	glGenBuffers(1, &VBO);
+	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);

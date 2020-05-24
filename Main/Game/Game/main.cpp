@@ -52,6 +52,25 @@ int main()
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 
+	// particle test
+	//auto particles = HFEngine::ECS.CreateGameObject(movableTestObject);
+	//HFEngine::ECS.GetComponent<Transform>(particles).SetPosition({ 5.0f, 0.1f, 0.0f });
+	ParticleContainer container;
+	container.setMaxParticles(256);
+	ParticleEmitter emitter;
+	emitter.shape = ParticleEmitter::EmitterShape::CIRCLE;
+	emitter.sourcShapeeSize = { 0.5f, 0.5f };
+	emitter.targetShapeSize = { 0.5f, 0.5f };
+	emitter.size = { .1f, .3f };
+	emitter.lifetime = { 2.25f, 3.0f };
+	emitter.velocity = { 0.5f, 0.75f };
+	emitter.rate = 64.0f;
+	emitter.emitting = true;
+	ParticleRenderer renderer;
+	HFEngine::ECS.AddComponent<ParticleContainer>(movableTestObject, container);
+	HFEngine::ECS.AddComponent<ParticleEmitter>(movableTestObject, emitter);
+	HFEngine::ECS.AddComponent<ParticleRenderer>(movableTestObject, renderer);
+
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);

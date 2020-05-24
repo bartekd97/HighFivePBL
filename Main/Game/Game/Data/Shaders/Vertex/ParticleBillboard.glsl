@@ -35,6 +35,6 @@ void main()
 
     gl_Position = gProjection * gView * vec4(aPositionBillboard, 1.0f);
     vs_out.TexCoords = aTexCoords;
-    vs_out.Opacity = 0.5f;
+    vs_out.Opacity = clamp(1.0f - (particle.Lifetime.x / particle.Lifetime.y), 0.0f, 1.0f);
     vs_out.Color = vec3(1.0f);
 }  
