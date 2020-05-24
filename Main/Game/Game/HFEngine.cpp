@@ -142,6 +142,13 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<BoneAttacher>());
 			ECS.SetSystemSignature<BoneAttacherSystem>(signature);
 		}
+		auto particleEmitterSystem = ECS.RegisterSystem<ParticleEmitterSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<ParticleContainer>());
+			signature.set(ECS.GetComponentType<ParticleEmitter>());
+			ECS.SetSystemSignature<ParticleEmitterSystem>(signature);
+		}
 		auto colliderCollectorSystem = ECS.RegisterSystem<ColliderCollectorSystem>();
 		{
 			Signature signature;

@@ -2,13 +2,14 @@
 
 #include <vector>
 #include <glm/glm.hpp>
+#include "ECS/ECSTypes.h"
 
 // struct definition for uniform buffer std140 layout (must be padded to vec4 size)
 struct Particle
 {
 	// gets packed into vec4 in uniform buffer
 	glm::vec3 position;
-	float scale;
+	float size;
 
 	// gets packed into vec4 in uniform buffer
 	glm::vec3 direction;
@@ -28,6 +29,7 @@ struct ParticleContainer
 	static const int MAX_ALLOWED_PARTICLES = 256;
 
 	std::vector<Particle> particles;
+	FrameCounter lastUpdate = 0;
 	
 	void setMaxParticles(int limit)
 	{

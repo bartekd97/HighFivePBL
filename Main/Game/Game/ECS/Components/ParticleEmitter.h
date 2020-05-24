@@ -18,4 +18,7 @@ struct ParticleEmitter
 	glm::vec2 size; // min,max
 
 	float rate; // particles per second
+
+	bool emitting = false;
+	float timeLeftSinceEmit = 0.0f;
 };
