@@ -182,6 +182,9 @@
     <ClInclude Include="ECS\Components\PointLightRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
+    <ClInclude Include="ECS\Components\ParticleContainer.h" />
+    <ClInclude Include="ECS\Components\ParticleRenderer.h" />
+    <ClInclude Include="ECS\Components\ParticleEmitter.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

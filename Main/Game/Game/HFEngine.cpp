@@ -101,6 +101,10 @@ namespace HFEngine
 		ECS.RegisterComponent<MeshRenderer>();
 		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		ECS.RegisterComponent<PointLightRenderer>();
+		// particle components
+		ECS.RegisterComponent<ParticleContainer>();
+		ECS.RegisterComponent<ParticleEmitter>();
+		ECS.RegisterComponent<ParticleRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<ScriptContainer>();
