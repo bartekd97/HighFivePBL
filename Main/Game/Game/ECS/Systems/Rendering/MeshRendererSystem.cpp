@@ -12,10 +12,15 @@
 void MeshRendererSystem::Init()
 {
 	toShadowmapShader = ShaderManager::GetShader("ToShadowmap");
+
 	toGBufferShader = ShaderManager::GetShader("ToGBuffer");
 	toGBufferShader->use();
 	toGBufferShader->setInt("shadowmap", 0);
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
+
+	forwardShader = ShaderManager::GetShader("ForwardRender");
+	forwardShader->use();
+	MaterialBindingPoint::AssignToShader(forwardShader);
 }
 
 void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
@@ -31,7 +36,7 @@ void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
-		if (!renderer.cullingData.visibleByLightCamera)
+		if (!renderer.cullingData.visibleByLightCamera || !renderer.castShadows)
 			continue;
 
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
@@ -55,13 +60,19 @@ void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera
 	shadowmap->bind(0);
 
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
+	delayedForward.clear();
 	auto renderers = HFEngine::ECS.GetAllComponents<MeshRenderer>();
-	for (auto const& renderer : renderers)
+	for (auto& renderer : renderers)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
 		if (!renderer.cullingData.visibleByViewCamera)
 			continue;
+
+		if (renderer.material->type == MaterialType::FORWARD) {
+			delayedForward.emplace_back(&renderer);
+			continue;
+		}
 		
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
 		renderer.material->apply(toGBufferShader);
@@ -70,6 +81,32 @@ void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera
 	}
 	Mesh::NoBind();
 	Material::NoApply(toGBufferShader);
+
+	glDisable(GL_CULL_FACE);
+}
+
+void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
+{
+	if (delayedForward.empty()) return;
+
+	forwardShader->use();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	viewCamera.Use(forwardShader);
+	dirLight.Apply(forwardShader);
+	do {
+		MeshRenderer* renderer = delayedForward.back();
+
+		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
+		renderer->material->apply(forwardShader);
+		renderer->mesh->bind();
+		renderer->mesh->draw();
+
+		delayedForward.pop_back();
+	} while (!delayedForward.empty());
+	Mesh::NoBind();
+	Material::NoApply(forwardShader);
 
 	glDisable(GL_CULL_FACE);
 }

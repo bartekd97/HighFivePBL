@@ -6,6 +6,13 @@
 
 class PlayerCameraFollower : public Script
 {
+private:
+	bool hasGhostMovement = false;
+	glm::vec3 currentCameraTarget;
+	float cameraSmoothing = 0.75f;
+	GameObject mortalObject;
+	GameObject ghostObject;
+
 public:
 	PlayerCameraFollower()
 	{
@@ -13,14 +20,48 @@ public:
 		RegisterFloatParameter("yLookOffset", &yLookOffset);
 	}
 
+	void Awake()
+	{
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerCameraFollower::GhostMovementStart));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerCameraFollower::GhostMovementStop));
+	}
+
+	void Start()
+	{
+		mortalObject = GetGameObject();
+		ghostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Ghost")[0];
+
+		currentCameraTarget = GetCameraTargetPosition();
+	}
+
+	void GhostMovementStart(Event& event) { hasGhostMovement = true; }
+	void GhostMovementStop(Event& event) { hasGhostMovement = false; }
+
 	void LateUpdate(float dt)
 	{
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(GetGameObject());
-		glm::vec3 targetPosition = transform.GetWorldPosition();
-		targetPosition.y = yLookOffset;
-		glm::vec3 cameraPosition = targetPosition + cameraOffset;
+		glm::vec3 targetPosition = GetCameraTargetPosition();
+		currentCameraTarget = glm::mix(targetPosition, currentCameraTarget, cameraSmoothing);
 
-		HFEngine::MainCamera.SetView(cameraPosition, targetPosition);
+		glm::vec3 cameraPosition = currentCameraTarget + cameraOffset;
+		HFEngine::MainCamera.SetView(cameraPosition, currentCameraTarget);
+	}
+
+	glm::vec3 GetCameraTargetPosition()
+	{
+		auto& transformMortal = HFEngine::ECS.GetComponent<Transform>(mortalObject);
+		glm::vec3 targetPosition;
+		if (hasGhostMovement)
+		{
+			auto& transformGhost = HFEngine::ECS.GetComponent<Transform>(ghostObject);
+			targetPosition = (transformMortal.GetWorldPosition() + transformGhost.GetWorldPosition()) / 2.0f;
+			targetPosition.y = yLookOffset;
+		}
+		else
+		{
+			targetPosition = transformMortal.GetWorldPosition();
+			targetPosition.y = yLookOffset;
+		}
+		return targetPosition;
 	}
 
 

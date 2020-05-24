@@ -240,6 +240,14 @@ void RenderPipeline::Render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
+
+	// draw forward
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE); // disable zbuffer writing
+	RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_DEPTH_TEST);
+
 	glDisable(GL_BLEND);
 
 	// apply post processing
