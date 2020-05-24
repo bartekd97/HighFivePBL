@@ -85,6 +85,7 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 	toGBufferShader->setMat4("gLightViewProjection", lightViewProjection);
 	shadowmap->bind(0);
 
+	delayedForward.clear();
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
 	auto renderers = HFEngine::ECS.GetAllComponents<SkinnedMeshRenderer>();
 	for (auto& renderer : renderers)
@@ -95,7 +96,7 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 			continue;
 
 		if (renderer.material->type == MaterialType::FORWARD) {
-			delayedForward.push(&renderer);
+			delayedForward.emplace_back(&renderer);
 			continue;
 		}
 
@@ -124,7 +125,7 @@ void SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLig
 	viewCamera.Use(forwardShader);
 	dirLight.Apply(forwardShader);
 	do {
-		SkinnedMeshRenderer* renderer = delayedForward.top();
+		SkinnedMeshRenderer* renderer = delayedForward.back();
 
 		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
 		CheckBoneMatricesBuffer(*renderer);
@@ -134,7 +135,7 @@ void SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLig
 		renderer->mesh->bind();
 		renderer->mesh->draw();
 
-		delayedForward.pop();
+		delayedForward.pop_back();
 	} while (!delayedForward.empty());
 	Mesh::NoBind();
 	Material::NoApply(forwardShader);

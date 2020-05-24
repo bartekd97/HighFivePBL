@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stack>
+#include <vector>
 #include "ECS/Components/SkinnedMeshRenderer.h"
 #include "CulledRendererSystem.h"
 #include "Resourcing/Shader.h"
@@ -15,7 +15,7 @@ private:
 	std::shared_ptr<Shader> toShadowmapShader;
 	std::shared_ptr<Shader> forwardShader;
 
-	std::stack<SkinnedMeshRenderer*> delayedForward;
+	std::vector<SkinnedMeshRenderer*> delayedForward;
 
 public:
 	inline virtual const AABBStruct& GetLocalAABB(SkinnedMeshRenderer& component)
