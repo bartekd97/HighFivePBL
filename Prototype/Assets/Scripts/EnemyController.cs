@@ -52,8 +52,13 @@ public class EnemyController : MonoBehaviour
     public bool isMelee = false;
 
     public GameObject arrow;
-    public float arrowSpeed = 100.0f;
+    public float arrowSpeed = 10.0f;
     public float shootingRange = 10.0f;
+    public float shootingDelay = 3.0f;
+    private bool isMoving = false;
+
+    private bool enemyTriggered = false;
+    private Quaternion startRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -65,6 +70,7 @@ public class EnemyController : MonoBehaviour
         enemyHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
+        startRotation = transform.rotation;
     }
 
     // Update is called once per frame
@@ -130,6 +136,7 @@ public class EnemyController : MonoBehaviour
                 if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
                 {
                     ChasePlayer();
+                    isMoving = true;
                     /*
                     if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
                     {
@@ -140,16 +147,19 @@ public class EnemyController : MonoBehaviour
                 else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
                                                                 && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
                 {
-                    Stop();
+                    //Stop();
+                    MoveToGetBetterPosition();
+                    isMoving = false;
                 }
                 else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
                 {
                     RunAwayFromPlayer();
-                    //Debug.Log("no hej");
+                    isMoving = true;
                 }
                 else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
                 {
                     Stop();
+                    isMoving = false;
                 }
             }
         }
@@ -157,8 +167,6 @@ public class EnemyController : MonoBehaviour
 
         if (Vector3.Distance(transform.position, player.transform.position) <= meleeRange && isMelee == true)
         {
-            //Debug.Log("eldorado");
-
             if (timestampAttack <= Time.time)
             {
                 timestampAttack = Time.time + attackDelay;
@@ -176,10 +184,14 @@ public class EnemyController : MonoBehaviour
         }
         else if (Vector3.Distance(transform.position, player.transform.position) <= shootingRange && isMelee == false)
         {
-            if (timestampAttack <= Time.time)
+            CheckIfEnemySeePlayer();
+            if (timestampAttack <= Time.time && enemyTriggered == true)
             {
-                timestampAttack = Time.time + attackDelay;
-                ShootWithArrow();
+                timestampAttack = Time.time + shootingDelay;
+                if (isMoving == false)
+                {
+                    ShootWithArrow();
+                }
             }   
         }
 
@@ -221,7 +233,42 @@ public class EnemyController : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
     }
-    
+
+    void CheckIfEnemySeePlayer()
+    {
+        var heading = player.transform.position - transform.position;
+        var distance = heading.magnitude;
+        var direction = (heading / distance);
+        RaycastHit hit;
+        //Debug.Log(hit.collider.gameObject);
+        Debug.DrawRay(transform.position, direction);
+
+        if (Vector2.Distance(transform.position, player.transform.position) < playerInRange)
+        {
+            if (Physics.Raycast(transform.position, direction, out hit, playerInRange))
+            {
+                if (hit.collider != null && hit.collider.gameObject == player)
+                {
+                    enemyTriggered = true;
+                }
+                else enemyTriggered = false;
+            }
+        }
+    }
+
+    void MoveToGetBetterPosition()
+    {
+        if (enemyTriggered == false && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance && Vector3.Distance(transform.position, player.transform.position) > (retreatDistance + 0.5f))
+        {
+            startRotation = Quaternion.AngleAxis(-90, transform.forward);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, startRotation, speed/10 * Time.deltaTime);
+
+            //Vector3 direction = Vector3.right;
+            rb.MovePosition(transform.position + Vector3.forward * speed * Time.deltaTime);
+        }
+    }
+
     public void TakeDamage(float value)
     {
         lastDmgTime = Time.time;
@@ -237,19 +284,20 @@ public class EnemyController : MonoBehaviour
     void ShootWithArrow()
     {
         Vector3 arrowPosition = transform.position;
-        arrowPosition.y += 1.0f;
+        arrowPosition.y += 2.0f;
 
         Quaternion arrowRotation = transform.rotation;
-        arrowRotation.y += 30.0f;
+        //arrowRotation.x += 30.0f;
 
-        Vector3 direction = ((Vector3)player.transform.position - transform.position);
+        Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
         //direction = Vector3.Normalize(direction.normalized + Vector3.up * 0.75f);
 
         GameObject newArrow = GameObject.Instantiate(arrow, arrowPosition, arrowRotation);
         newArrow.SetActive(true);
         Rigidbody rbArrow = newArrow.GetComponent<Rigidbody>();
-        newArrow.GetComponent<Rigidbody>().AddForce(direction * arrowSpeed, ForceMode.Impulse);
-        //rbArrow.AddForce(direction * arrowSpeed, ForceMode.Impulse);
+        rbArrow.AddForce(direction * arrowSpeed, ForceMode.Impulse);
+        //rbArrow.velocity = Vector3.zero;
+        //rbArrow.velocity = direction * arrowSpeed;
     }
 
     public void PushEnemy(Vector3 direction, float force)

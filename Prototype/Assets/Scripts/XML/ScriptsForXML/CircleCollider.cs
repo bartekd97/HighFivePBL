@@ -6,6 +6,9 @@ public class CircleCollider : MonoBehaviour
 {
 
     public float radius;
+    public bool frozen;
+    public enum ColliderTypes { DYNAMIC, TRIGGER, STATIC }
+    public ColliderTypes type;
 
     string output;
 
@@ -18,6 +21,8 @@ public class CircleCollider : MonoBehaviour
         {
             output += "<property value=\"" + radius + "\" name=\"radius\"/>";
         }
+        output += "<property value=\"" + frozen + "\" name=\"frozen\"/>";
+        output += "<property value=\"" + type + "\" name=\"type\"/>";
 
         output += "</component>";
         return output;

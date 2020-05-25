@@ -29,7 +29,7 @@ namespace MaterialBindingPoint {
 	}
 }
 
-Material::Material() {
+Material::Material(MaterialType type) : type(type) {
 	albedoMap = MaterialManager::BLANK_ALBEDO_MAP;
 	normalMap = MaterialManager::BLANK_NORMAL_MAP;
 	metalnessMap = MaterialManager::BLANK_METALNESS_MAP;
@@ -40,6 +40,9 @@ Material::Material() {
 	metalnessValue = 0.5f;
 	roughnessValue = 0.5f;
 	emissiveColor = {0.0f, 0.0f, 0.0f};
+
+	specularValue = 0.5f;
+	opacityValue = 1.0f;
 }
 
 void Material::SetLibraryProperties(PropertyReader& properties, std::shared_ptr<TextureLibrary> textureLibrary)
@@ -81,6 +84,10 @@ void Material::SetLibraryProperties(PropertyReader& properties, std::shared_ptr<
 	properties.GetVec3("emissiveColor", emissiveColor, emissiveColor);
 
 
+	properties.GetFloat("specularValue", specularValue, specularValue);
+	properties.GetFloat("opacityValue", opacityValue, opacityValue);
+
+
 #ifdef _DEBUG
 	auto debugProperties = properties.GetRawCopy();
 	debugProperties.erase("albedoMap");
@@ -92,6 +99,8 @@ void Material::SetLibraryProperties(PropertyReader& properties, std::shared_ptr<
 	debugProperties.erase("roughnessValue");
 	debugProperties.erase("emissiveMap");
 	debugProperties.erase("emissiveColor");
+	debugProperties.erase("specularValue");
+	debugProperties.erase("opacityValue");
 	for (auto leftover : debugProperties)
 	{
 		LogWarning("Material::SetLibraryProperties(): Unknown property: '{}' = '{}'", leftover.first, leftover.second);
@@ -108,15 +117,27 @@ void Material::apply(std::shared_ptr<Shader> shader)
 	// bind maps
 	albedoMap->bind(MaterialBindingPoint::ALBEDO_MAP);
 	normalMap->bind(MaterialBindingPoint::NORMAL_MAP);
-	metalnessMap->bind(MaterialBindingPoint::METALNESS_MAP);
-	roughnessMap->bind(MaterialBindingPoint::ROUGHNESS_MAP);
+	if (type == MaterialType::DEFERRED)
+	{
+		metalnessMap->bind(MaterialBindingPoint::METALNESS_MAP);
+		roughnessMap->bind(MaterialBindingPoint::ROUGHNESS_MAP);
+	}
 	emissiveMap->bind(MaterialBindingPoint::EMISSIVE_MAP);
 
 	// assign values
 	shader->setVector3F("albedoColor", albedoColor);
-	shader->setFloat("roughnessValue", roughnessValue);
-	shader->setFloat("metalnessValue", metalnessValue);
+	if (type == MaterialType::DEFERRED)
+	{
+		shader->setFloat("roughnessValue", roughnessValue);
+		shader->setFloat("metalnessValue", metalnessValue);
+	}
 	shader->setVector3F("emissiveColor", emissiveColor);
+
+	if (type == MaterialType::FORWARD)
+	{
+		shader->setFloat("specularValue", specularValue);
+		shader->setFloat("opacityValue", opacityValue);
+	}
 }
 
 void Material::NoApply(std::shared_ptr<Shader> shader)

@@ -40,6 +40,7 @@ namespace {
 		virtual inline std::string _cName() { return "ModelHolderLoader"; }
 	public:
 		bool configureFromHolder = false;
+		bool castShadows = true;
 
 		bool useMeshPath = false;
 		std::pair<std::string, std::string> meshPath;
@@ -49,6 +50,7 @@ namespace {
 
 		virtual void Preprocess(PropertyReader& properties) override {
 			properties.GetBool("configureFromHolder", configureFromHolder, false);
+			properties.GetBool("castShadows", castShadows, true);
 
 			static std::string tmpMeshPath;
 			if (properties.GetString("mesh", tmpMeshPath,"")) {
@@ -77,6 +79,7 @@ namespace {
 
 		virtual void Create(GameObject target) override {
 			MeshRenderer renderer;
+			renderer.castShadows = castShadows;
 			if (configureFromHolder) {
 				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
 				renderer.mesh = holder.model->mesh;
@@ -108,6 +111,7 @@ namespace {
 
 		virtual void Create(GameObject target) override {
 			SkinnedMeshRenderer renderer;
+			renderer.castShadows = castShadows;
 			if (configureFromHolder) {
 				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
 				renderer.mesh = holder.model->mesh;

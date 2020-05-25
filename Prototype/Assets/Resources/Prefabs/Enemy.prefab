@@ -353,6 +353,10 @@ MonoBehaviour:
   poisonCooldownTime: 1
   burningCooldownTime: 1
   isMelee: 1
+  arrow: {fileID: 0}
+  arrowSpeed: 100
+  shootingRange: 10
+  shootingDelay: 3
 --- !u!1 &5058164864419121106
 GameObject:
   m_ObjectHideFlags: 0

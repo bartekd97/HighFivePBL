@@ -1,8 +1,11 @@
 #pragma once
 
+#include <vector>
 #include "ECS/Components/SkinnedMeshRenderer.h"
 #include "CulledRendererSystem.h"
 #include "Resourcing/Shader.h"
+
+struct SkinnedMeshRenderer;
 
 // require SkinnedMeshRenderer component
 class SkinnedMeshRendererSystem : public CulledRendererSystem<SkinnedMeshRenderer, 2>
@@ -10,6 +13,9 @@ class SkinnedMeshRendererSystem : public CulledRendererSystem<SkinnedMeshRendere
 private:
 	std::shared_ptr<Shader> toGBufferShader;
 	std::shared_ptr<Shader> toShadowmapShader;
+	std::shared_ptr<Shader> forwardShader;
+
+	std::vector<SkinnedMeshRenderer*> delayedForward;
 
 public:
 	inline virtual const AABBStruct& GetLocalAABB(SkinnedMeshRenderer& component)
@@ -25,4 +31,5 @@ public:
 	void Init() override;
 	void RenderToShadowmap(Camera& lightCamera);
 	void RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap);
+	void RenderForward(Camera& viewCamera, DirectionalLight& dirLight);
 };

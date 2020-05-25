@@ -46,7 +46,7 @@ std::shared_ptr<Material> CellMeshPainter::CreateMaterial()
 	fb->bind();
 	PrimitiveRenderer::DrawScreenQuad();
 
-	auto material = MaterialManager::CreateEmptyMaterial();
+	auto material = MaterialManager::CreateEmptyMaterial(MaterialType::DEFERRED);
 	material->albedoMap = fb->popColorAttachement(0);
 	material->metalnessMap = fb->popColorAttachement(1);
 	material->roughnessMap = fb->popColorAttachement(2);
