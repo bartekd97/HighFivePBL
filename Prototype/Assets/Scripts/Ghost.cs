@@ -186,7 +186,7 @@ public class Ghost : MonoBehaviour
                     BoxCollider bossColl = boss.GetComponent<BoxCollider>();
                     if (coll.bounds.Intersects(bossColl.bounds))
                     {
-                        boss.GetComponent<EnemyController>().slow = lineSlow;
+                        boss.GetComponent<BossSpawnerController>().slow = lineSlow;
                         if (isTimeToStrikeBoss) boss.GetComponent<BossSpawnerController>().TakeDamage(dotDmg);
                     }
                 });

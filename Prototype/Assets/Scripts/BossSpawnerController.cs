@@ -68,6 +68,7 @@ public class BossSpawnerController : MonoBehaviour
     private float timestampMovement = 2.0f;
     public float delayMovement = 2.0f;
     public float movingDistance = 6.0f;
+    private Vector3 positionStart;
     private Vector3 position1;
     private Vector3 position2;
     private Vector3[] moveSpots = new Vector3[2];
@@ -88,6 +89,7 @@ public class BossSpawnerController : MonoBehaviour
         SetMeshColor(defaultColor);
         //timestampMovement = 0.0f;
         startSpot = 0;
+        positionStart = this.transform.position;
         position1 = this.transform.position;
         position2 = this.transform.position;
 }
@@ -150,11 +152,17 @@ public class BossSpawnerController : MonoBehaviour
             */
         }
         else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
-                                                        && Vector3.Distance(transform.position, player.transform.position) > retreatDistance * 1.1f)
+                                                        && Vector3.Distance(transform.position, player.transform.position) > (retreatDistance + 1.0f))
         {
             //Stop();
             LookAtPlayer();
-            MoveSideToSide();
+            //MoveSideToSide();
+            isMoving = false;
+        }
+        else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < (retreatDistance + 1.0f)
+                                                        && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+        {
+            //MoveSideToSide();
             isMoving = false;
         }
         else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
@@ -245,9 +253,10 @@ public class BossSpawnerController : MonoBehaviour
         Debug.Log("0: " + moveSpots[0]);
         Debug.Log("1: " + moveSpots[1]);
 
+        //transform.LookAt(transform.forward);
         //transform.position = Vector2.MoveTowards(transform.position, moveSpots[startSpot], speed);
-        Vector3 direction = (moveSpots[startSpot] - transform.position);
-        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+        Vector3 direction2 = (moveSpots[startSpot] - transform.position);
+        rb.MovePosition(transform.position + direction2 * speed * Time.deltaTime);
 
         if (Vector2.Distance(transform.position, moveSpots[startSpot]) < 0.2f)
         {
