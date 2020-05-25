@@ -11,6 +11,8 @@
 
     <shader name="PointLight" vertex="SimpleGeometryPass.glsl" fragment="PointLight.glsl"/>
 
+    <shader name="ParticleRender" vertex="ParticleBillboard.glsl" fragment="Particle.glsl"/>
+
     <shader name="CombineGBuffer" vertex="ScreenPass.glsl" fragment="CombineGBuffer.glsl"/>
     <shader name="GUIShader" vertex="GUI.glsl" fragment="GUI.glsl"/>
     <shader name="PaintCellTerrain" vertex="ScreenPass.glsl" fragment="PaintCellTerrain.glsl"/>

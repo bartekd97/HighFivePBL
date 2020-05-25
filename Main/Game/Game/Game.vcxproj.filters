@@ -63,6 +63,9 @@
     <ClCompile Include="ECS\Systems\Rendering\GravityColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\ParticleRendererSystem.cpp" />
+    <ClCompile Include="Utility\TextureTools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -182,6 +185,12 @@
     <ClInclude Include="ECS\Components\PointLightRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
+    <ClInclude Include="ECS\Components\ParticleContainer.h" />
+    <ClInclude Include="ECS\Components\ParticleRenderer.h" />
+    <ClInclude Include="ECS\Components\ParticleEmitter.h" />
+    <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
+    <ClInclude Include="Utility\TextureTools.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
