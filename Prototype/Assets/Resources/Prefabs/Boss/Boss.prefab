@@ -114,8 +114,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Sample
-  model: Box
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &3349651198450122934
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,8 +233,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Sample
-  model: Box
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &6142726890047540619
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,8 +409,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Sample
-  model: Box
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &7660613476231795266
 GameObject:
   m_ObjectHideFlags: 0
@@ -519,8 +528,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Sample
-  model: Box
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &8005098735226219642
 GameObject:
   m_ObjectHideFlags: 0
@@ -674,7 +686,7 @@ GameObject:
   - component: {fileID: 2431406466040421561}
   - component: {fileID: 1408528238816549064}
   - component: {fileID: 530515934820480340}
-  - component: {fileID: 4011550119053882671}
+  - component: {fileID: 2659311264508906784}
   m_Layer: 0
   m_Name: Boss
   m_TagString: Enemy
@@ -777,6 +789,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 17.54
   height: 7.95
+  frozen: 0
+  type: 0
 --- !u!114 &2431406466040421561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -790,6 +804,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 2.49
+  frozen: 0
+  type: 0
 --- !u!114 &1408528238816549064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,8 +818,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Sample
-  model: spaceship
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!114 &530515934820480340
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -820,7 +839,7 @@ MonoBehaviour:
   acceleration: {x: -1.5, y: -1.49, z: 1.86}
   movePosition: {x: 1.32, y: 1.45, z: 0.84}
   mass: 2.73
---- !u!114 &4011550119053882671
+--- !u!114 &2659311264508906784
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -829,33 +848,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 8886014663648545004}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
+  m_Script: {fileID: 11500000, guid: ae7fa37c48b5a8c47b7421ffea6e44bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  charController: {fileID: 0}
+  healthBar: {fileID: 3995673256348405370}
+  rb: {fileID: 2054084409848889847}
   speed: 3
   playerInRange: 15
   stoppingDistance: 1.5
-  retreatDistance: 0.75
-  player: {fileID: 0}
-  maxHealth: 30
-  defaultColor: {r: 0.020692414, g: 0.5411831, b: 0.8773585, a: 0}
-  damagedColor: {r: 0.8962264, g: 0.012682426, b: 0.012682426, a: 0}
+  maxHealth: 10
+  enemyHealth: 0
+  defaultColor: {r: 0, g: 0, b: 0, a: 0}
+  damagedColor: {r: 0, g: 0, b: 0, a: 0}
   dmgAnimationDuration: 0.5
+  lastDmgTime: 0
   slow: 0
   mudSlow: 0
   frozenTo: 0
-  charController: {fileID: 0}
-  healthBar: {fileID: 3995673256348405370}
-  attackDelay: 1
-  pushBackForceAfterAttack: 2
-  damage: 3
+  isPoisoned: 0
   poisonCooldownTime: 1
+  nextPoisonTime: 0
+  poisoningStart: -1
+  poisoningEnd: -1
+  isBurnt: 0
   burningCooldownTime: 1
-  isMelee: 0
-  arrow: {fileID: 0}
-  arrowSpeed: 1
-  shootingRange: 10
-  shootingDelay: 3
+  nextBurnTime: 0
+  attackDelay: 1
+  timestampAttack: 0
+  timestampAfterAttackPushStart: 0
+  timestampAfterAttackPushStop: 0
+  pushBackForceAfterAttack: 5
+  damage: 1
+  meleeRange: 1.5
 --- !u!1001 &9088025645858012889
 PrefabInstance:
   m_ObjectHideFlags: 0

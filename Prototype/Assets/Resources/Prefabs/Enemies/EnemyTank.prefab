@@ -72,7 +72,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1c3d9b56b7c466740865e404fe06f8ce, type: 2}
+  - {fileID: 2100000, guid: b12851fe44f2f4743bd20b239538a477, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -127,9 +127,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: "Wpisz \u015Bcie\u017Ck\u0119 wzgl\u0119dna katalogu z modelem od katalogu
-    Assets"
-  model: "Wpisz nazw\u0119 modelu"
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &5058164864279115338
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,9 +205,9 @@ GameObject:
   - component: {fileID: -8180658437796102302}
   - component: {fileID: -3439429714690381859}
   - component: {fileID: 255853367858161144}
-  - component: {fileID: 3568626784090719447}
+  - component: {fileID: 8102837727809430850}
   m_Layer: 0
-  m_Name: EnemyArcher
+  m_Name: EnemyTank
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -321,7 +323,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 0
   height: 0
---- !u!114 &3568626784090719447
+  frozen: 0
+  type: 0
+--- !u!114 &8102837727809430850
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -330,33 +334,48 @@ MonoBehaviour:
   m_GameObject: {fileID: 5058164864356723304}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
+  m_Script: {fileID: 11500000, guid: ae7fa37c48b5a8c47b7421ffea6e44bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 6
-  playerInRange: 15
-  stoppingDistance: 8
-  retreatDistance: 5
   player: {fileID: 0}
+  charController: {fileID: 0}
+  healthBar: {fileID: 4431763044092605764}
+  rb: {fileID: 5058164864356723307}
+  speed: 3
+  playerInRange: 15
+  stoppingDistance: 1.5
   maxHealth: 10
-  defaultColor: {r: 0.8078432, g: 0.34509805, b: 0.16470589, a: 0}
-  damagedColor: {r: 0.65882355, g: 0.03529412, b: 0.03529412, a: 0}
+  enemyHealth: 0
+  defaultColor: {r: 0.38431376, g: 0.15686275, b: 0.46274513, a: 0}
+  damagedColor: {r: 1, g: 0, b: 0, a: 0}
   dmgAnimationDuration: 0.5
+  lastDmgTime: 0
   slow: 0
   mudSlow: 0
   frozenTo: 0
-  charController: {fileID: 0}
-  healthBar: {fileID: 4431763044092605764}
+  isPoisoned: 0
+  poisonCooldownTime: 1
+  nextPoisonTime: 0
+  poisoningStart: -1
+  poisoningEnd: -1
+  isBurnt: 0
+  burningCooldownTime: 1
+  nextBurnTime: 0
+  meleeRange: 1.5
   attackDelay: 1
+  timestampAttack: 0
+  timestampAfterAttackPushStart: 0
+  timestampAfterAttackPushStop: 0
   pushBackForceAfterAttack: 5
   damage: 1
-  poisonCooldownTime: 1
-  burningCooldownTime: 1
   isMelee: 0
-  arrow: {fileID: 8174723482436621488, guid: 5e470078eb392e047a9a8a15239a3753, type: 3}
-  arrowSpeed: 20
+  arrow: {fileID: 0}
+  arrowSpeed: 10
   shootingRange: 10
   shootingDelay: 3
+  isMoving: 0
+  enemyTriggered: 0
+  startRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &5058164864419121106
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,7 +435,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1c3d9b56b7c466740865e404fe06f8ce, type: 2}
+  - {fileID: 2100000, guid: b12851fe44f2f4743bd20b239538a477, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -471,9 +490,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: "Wpisz \u015Bcie\u017Ck\u0119 wzgl\u0119dna katalogu z modelem od katalogu
-    Assets"
-  model: "Wpisz nazw\u0119 modelu"
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &5058164865240205833
 GameObject:
   m_ObjectHideFlags: 0
@@ -533,7 +554,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1c3d9b56b7c466740865e404fe06f8ce, type: 2}
+  - {fileID: 2100000, guid: b12851fe44f2f4743bd20b239538a477, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -588,9 +609,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: "Wpisz \u015Bcie\u017Ck\u0119 wzgl\u0119dna katalogu z modelem od katalogu
-    Assets"
-  model: "Wpisz nazw\u0119 modelu"
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &5058164865257003887
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,7 +673,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1c3d9b56b7c466740865e404fe06f8ce, type: 2}
+  - {fileID: 2100000, guid: b12851fe44f2f4743bd20b239538a477, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -705,9 +728,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: "Wpisz \u015Bcie\u017Ck\u0119 wzgl\u0119dna katalogu z modelem od katalogu
-    Assets"
-  model: "Wpisz nazw\u0119 modelu"
+  configureFromHolder: 0
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 
 --- !u!1 &7669177006270533330
 GameObject:
   m_ObjectHideFlags: 0
@@ -956,11 +981,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290705387946340834, guid: 40a3de57c4d1ca14ba12237ac23f346d,
-        type: 3}
-      propertyPath: m_Color.r
-      value: 0.6603278
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8923095800539802201, guid: 40a3de57c4d1ca14ba12237ac23f346d, type: 3}

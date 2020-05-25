@@ -272,7 +272,7 @@ GameObject:
   - component: {fileID: 5082647435263578313}
   - component: {fileID: 8411386401387877560}
   - component: {fileID: 6947896212647999780}
-  - component: {fileID: 5808733338116241759}
+  - component: {fileID: 7366066106516034670}
   m_Layer: 0
   m_Name: Phoenix
   m_TagString: Enemy
@@ -425,7 +425,7 @@ MonoBehaviour:
   acceleration: {x: -1.5, y: -1.49, z: 1.86}
   movePosition: {x: 1.32, y: 1.45, z: 0.84}
   mass: 2.73
---- !u!114 &5808733338116241759
+--- !u!114 &7366066106516034670
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -434,33 +434,47 @@ MonoBehaviour:
   m_GameObject: {fileID: 2046412021107115164}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
+  m_Script: {fileID: 11500000, guid: ec9c74eebb264964e8ab22937a1d1a4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  charController: {fileID: 0}
+  healthBar: {fileID: 5783849035352637962}
+  rb: {fileID: 8914511828608142727}
   speed: 3
   playerInRange: 15
   stoppingDistance: 1.5
-  retreatDistance: 0.75
-  player: {fileID: 0}
-  maxHealth: 30
-  defaultColor: {r: 0.8784314, g: 0.87014055, b: 0.019607821, a: 0}
-  damagedColor: {r: 0.8962264, g: 0.012682426, b: 0.012682426, a: 0}
+  maxHealth: 10
+  enemyHealth: 0
+  defaultColor: {r: 0, g: 0, b: 0, a: 0}
+  damagedColor: {r: 0, g: 0, b: 0, a: 0}
   dmgAnimationDuration: 0.5
+  lastDmgTime: 0
   slow: 0
   mudSlow: 0
   frozenTo: 0
-  charController: {fileID: 0}
-  healthBar: {fileID: 5783849035352637962}
-  attackDelay: 1
-  pushBackForceAfterAttack: 2
-  damage: 3
+  isPoisoned: 0
   poisonCooldownTime: 1
+  nextPoisonTime: 0
+  poisoningStart: -1
+  poisoningEnd: -1
+  isBurnt: 0
   burningCooldownTime: 1
-  isMelee: 0
-  arrow: {fileID: 0}
-  arrowSpeed: 1
-  shootingRange: 10
-  shootingDelay: 3
+  nextBurnTime: 0
+  attackDelay: 1
+  timestampAttack: 0
+  timestampAfterAttackPushStart: 0
+  timestampAfterAttackPushStop: 0
+  pushBackForceAfterAttack: 5
+  damage: 1
+  firewall: {fileID: 3990497735648471169, guid: d47fa654da386b540a0071872a86421d,
+    type: 3}
+  preFireball: {fileID: 7077487412147231082, guid: 2748e127664ec5440bd9121db57981be,
+    type: 3}
+  fireball: {fileID: 7449754332596637308, guid: 285f74bcb0b8d4945b434bc7147aa39b,
+    type: 3}
+  clearFire: {fileID: 548697592113626093, guid: bdc21aa1fe47b5f49a1199d4fb3c76eb,
+    type: 3}
 --- !u!1 &3605270221369426427
 GameObject:
   m_ObjectHideFlags: 0
@@ -882,6 +896,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3710089066071754504}
     m_Modifications:
+    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
+        type: 3}
+      propertyPath: m_Name
+      value: HealthBar
+      objectReference: {fileID: 0}
     - target: {fileID: 5290705387214696610, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -986,11 +1005,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5290705387214696613, guid: 40a3de57c4d1ca14ba12237ac23f346d,
-        type: 3}
-      propertyPath: m_Name
-      value: HealthBar
       objectReference: {fileID: 0}
     - target: {fileID: 5290705387946340837, guid: 40a3de57c4d1ca14ba12237ac23f346d,
         type: 3}
