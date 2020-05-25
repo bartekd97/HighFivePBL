@@ -18,6 +18,8 @@ public class MapSetuper : MonoBehaviour
     public Material bossCellMaterial;
 
     public GameObject[] structures;
+    public GameObject[] obstacles;
+
     public GameObject enemyPrefab;
     public GameObject bossPrefab;
     public GameObject monumentPrefab;
@@ -39,14 +41,14 @@ public class MapSetuper : MonoBehaviour
         playerObject.transform.position = startupCell.transform.position;
         SetupMonuments();
         SetupObstacles();
-        //SetupEnemies();
+        SetupEnemies();
         GameManager.Instance.SetCurrentCell(startupCell);
     }
 
     MapCell GetStartupCell()
     {
         List<MapCell> tmp = new List<MapCell>(MapCell.All);
-        tmp.Sort((a,b) => { return a.transform.position.x.CompareTo(b.transform.position.x); });
+        tmp.Sort((a, b) => { return a.transform.position.x.CompareTo(b.transform.position.x); });
         return tmp[0];
     }
 
@@ -119,7 +121,7 @@ public class MapSetuper : MonoBehaviour
         return Mathf.Abs((C.x - lineA.x) * (-lineB.y + lineA.y) + (C.y - lineA.y) * (lineB.x - lineA.x)) / Mathf.Sqrt(Mathf.Pow(-lineB.y + lineA.y, 2) + Mathf.Pow(lineB.x - lineA.x, 2));
     }
 
-    private void GenerateMonumentInCell (MapCell cell)
+    private void GenerateMonumentInCell(MapCell cell)
     {
         Vector3 monumentPosition = cell.transform.position;
         GameObject monument = Instantiate(monumentPrefab, cell.transform.position, Quaternion.identity);
@@ -131,13 +133,13 @@ public class MapSetuper : MonoBehaviour
     void SetupMonuments()
     {
         List<MapCell> cells = new List<MapCell>(MapCell.All);
-        
+
         MapCell startupCell = GetStartupCell();
         MapCell bossCell = GetRandomBossCell();
 
 
         cells.ToList();
-        
+
         cells.Sort((p, q) => p.CellSiteIndex.CompareTo(q.CellSiteIndex));
 
         cells.Remove(startupCell);
@@ -187,15 +189,94 @@ public class MapSetuper : MonoBehaviour
         return newIndicesArray;
     }
 
-   
+    private void GenerateStructure(MapCell cell)
+    {
+        int structureNumber = Random.Range(0, structures.Length);
+
+        int pointNumber = Random.Range(0, cell.Zones[0].Points.Count);
+        Vector3 finalPoint = cell.Zones[0].Points[pointNumber];
+
+        int iter_available = 200;
+
+        while (Physics.OverlapBox(finalPoint, structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length > 1
+            && iter_available > 0)
+        {
+            pointNumber = Random.Range(0, cell.Zones[0].Points.Count);
+            finalPoint = cell.Zones[0].Points[pointNumber];
+            iter_available = iter_available - 1;
+        }
+
+        if (Physics.OverlapBox(finalPoint, structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length <= 1)
+        {
+            Instantiate(structures[structureNumber], finalPoint, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(pointPrefab, finalPoint, Quaternion.identity);
+            UnityEngine.Debug.Log(structures[structureNumber]);
+            UnityEngine.Debug.Log(Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y, 0), structures[structureNumber].GetComponent<BoxCollider>().size));
+        }
+    }
+
+    private void GenerateObstacle(MapCell cell, int i)
+    {
+        int obstacleType = Random.Range(0, obstacles.Length);
+
+        int pointNumber = Random.Range(0, cell.Zones[i].Points.Count);
+        Vector3 finalPoint = cell.Zones[i].Points[pointNumber];
+
+        int iter_available = 200;
+
+        while (Physics.OverlapBox(finalPoint, obstacles[obstacleType].GetComponent<BoxCollider>().size / 2.0f).Length > 1
+            && iter_available > 0)
+        {
+            pointNumber = Random.Range(0, cell.Zones[i].Points.Count);
+            finalPoint = cell.Zones[i].Points[pointNumber];
+            iter_available = iter_available - 1;
+        }
+
+        if (Physics.OverlapBox(finalPoint, obstacles[obstacleType].GetComponent<BoxCollider>().size / 2.0f).Length <= 1)
+        {
+            Instantiate(obstacles[obstacleType], new Vector3(finalPoint.x, obstacles[obstacleType].transform.position.y, finalPoint.z), Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(pointPrefab, finalPoint, Quaternion.identity);
+            UnityEngine.Debug.Log(obstacles[obstacleType]);
+            UnityEngine.Debug.Log(Physics.OverlapBox(finalPoint + new Vector3(0, obstacles[obstacleType].GetComponent<BoxCollider>().size.y, 0), obstacles[obstacleType].GetComponent<BoxCollider>().size));
+        }
+    }
 
     private void SpawnObstaclesInCell(MapCell cell)
     {
-        int obstaclesCount = Random.Range(minObstaclesInCell, maxObstaclesInCell);
+        //int obstaclesCount = Random.Range(minObstaclesInCell, maxObstaclesInCell);
         int obstacleType;
-        List<int> obstaclesTypes = new List<int>();
 
         SpawnPoints(cell);
+
+
+        // Generate structure
+        GenerateStructure(cell);
+
+        if (cell.Zones[0].Points.Count > 400)
+        {
+            GenerateStructure(cell);
+        }
+
+
+        // Generate obstacles
+        for (int i = 1; i < cell.Zones.Count; i++)
+        {
+            GenerateObstacle(cell, i);
+
+            if (cell.Zones[i].Points.Count > 400)
+            {
+                GenerateObstacle(cell, i);
+            }
+        }
+
+
+
 
         //for (int i = 0; i < obstaclesCount; i++)
         //{
@@ -288,8 +369,8 @@ public class MapSetuper : MonoBehaviour
         Vector2 circlePoint = (Random.insideUnitCircle * minRadius * centerSpawnRadiusPercentage);
         Vector3 finalPoint = cell.transform.position + new Vector3(circlePoint.x, 0.00f, circlePoint.y);
 
-        int test = Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y/2.0f, 0), structures[structureNumber].GetComponent<BoxCollider>().size/2.0f).Length;
-        Vector3 test2 =structures[structureNumber].GetComponent<BoxCollider>().size;
+        int test = Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y / 2.0f, 0), structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length;
+        Vector3 test2 = structures[structureNumber].GetComponent<BoxCollider>().size;
 
         while (Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y, 0), structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length > 1)
         {
@@ -303,10 +384,10 @@ public class MapSetuper : MonoBehaviour
     {
         List<MapCell> cells = new List<MapCell>(MapCell.All);
         //MapCell startupCell = GetStartupCell();
-       // MapCell bossCell = GetRandomBossCell();
+        // MapCell bossCell = GetRandomBossCell();
         cells
-         //   .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
-        //    .Where(c => !c.CellSiteIndex.Equals(bossCell.CellSiteIndex))
+            //   .Where(c => !c.CellSiteIndex.Equals(startupCell.CellSiteIndex))
+            //    .Where(c => !c.CellSiteIndex.Equals(bossCell.CellSiteIndex))
             .ToList()
             .ForEach(cell => SpawnStructuresInCell(cell));
         cells
@@ -353,6 +434,17 @@ public class MapSetuper : MonoBehaviour
 
     private void SpawnPoints(MapCell cell)
     {
+        // Sort bridge points by angle
+        foreach (MapCell.BridgeTo bridge in cell.Bridges)
+        {
+            float bridgeX = bridge.Gate.transform.position.x;
+            float bridgeY = bridge.Gate.transform.position.z;
+            bridge.angle = Mathf.Atan2(bridge.Gate.transform.position.x - cell.transform.position.x, bridge.Gate.transform.position.z - cell.transform.position.z);
+        }
+        cell.Bridges.Sort(cell.SortByAngle);
+
+
+        //Generate points
         float startX = cell.transform.position.x - 25;
         float startY = cell.transform.position.z - 25;
 
@@ -367,6 +459,8 @@ public class MapSetuper : MonoBehaviour
             }
         }
 
+
+        // Delete points on roads
         float centerX = cell.transform.position.x;
         float centerY = cell.transform.position.z;
 
@@ -385,9 +479,40 @@ public class MapSetuper : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < cell.generationPoints.Count; i++)
+        // Group point in zones
+        for (int i = 0; i < cell.Bridges.Count; i++)
         {
-            Instantiate(pointPrefab, cell.generationPoints[i], Quaternion.identity);
+            cell.Zones.Add(new MapCell.Zone());
+            for (int j = 0; j < cell.generationPoints.Count; j++)
+            {
+                if (i == cell.Bridges.Count - 1)
+                {
+                    cell.Zones[i].Points.Add(cell.generationPoints[j]);
+                    cell.generationPoints.RemoveAt(j);
+                    j = j - 1;
+
+                }
+                else
+                {
+                    if (Mathf.Atan2(cell.generationPoints[j].x - cell.transform.position.x, cell.generationPoints[j].z - cell.transform.position.z) > cell.Bridges[i].angle
+                        && Mathf.Atan2(cell.generationPoints[j].x - cell.transform.position.x, cell.generationPoints[j].z - cell.transform.position.z) < cell.Bridges[i + 1].angle)
+                    {
+                        cell.Zones[i].Points.Add(cell.generationPoints[j]);
+                        cell.generationPoints.RemoveAt(j);
+                        j = j - 1;
+
+                    }
+                }
+            }
+            //UnityEngine.Debug.Log(cell.Zones[i].Points.Count) ;
+
         }
+        UnityEngine.Debug.Log("->");
+
+        // Generation remaining points
+        //for (int i = 0; i < cell.generationPoints.Count; i++)
+        //{
+        //    Instantiate(pointPrefab, cell.generationPoints[i], Quaternion.identity);
+        //}
     }
 }
