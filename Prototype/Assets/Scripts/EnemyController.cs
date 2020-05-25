@@ -58,6 +58,7 @@ public class EnemyController : MonoBehaviour
     private bool isMoving = false;
 
     private bool enemyTriggered = false;
+    private Quaternion startRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +70,7 @@ public class EnemyController : MonoBehaviour
         enemyHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
+        startRotation = transform.rotation;
     }
 
     // Update is called once per frame
@@ -145,7 +147,8 @@ public class EnemyController : MonoBehaviour
                 else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
                                                                 && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
                 {
-                    Stop();
+                    //Stop();
+                    MoveToGetBetterPosition();
                     isMoving = false;
                 }
                 else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
@@ -234,7 +237,7 @@ public class EnemyController : MonoBehaviour
     void CheckIfEnemySeePlayer()
     {
         var heading = player.transform.position - transform.position;
-        var distance = heading.magnitude * 0.5f;
+        var distance = heading.magnitude;
         var direction = (heading / distance);
         RaycastHit hit;
         //Debug.Log(hit.collider.gameObject);
@@ -250,6 +253,19 @@ public class EnemyController : MonoBehaviour
                 }
                 else enemyTriggered = false;
             }
+        }
+    }
+
+    void MoveToGetBetterPosition()
+    {
+        if (enemyTriggered == false && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance && Vector3.Distance(transform.position, player.transform.position) > (retreatDistance + 0.5f))
+        {
+            startRotation = Quaternion.AngleAxis(-90, transform.forward);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, startRotation, speed/10 * Time.deltaTime);
+
+            //Vector3 direction = Vector3.right;
+            rb.MovePosition(transform.position + Vector3.forward * speed * Time.deltaTime);
         }
     }
 
