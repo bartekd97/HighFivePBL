@@ -207,12 +207,21 @@ void RenderPipeline::Render()
 	RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	//RenderSystems.cubeRenderer->Render();
 
+	// synchronize light rendering with finished gbuffer, make  write to emissive safely
+	glWaitSync(
+		glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, GL_ZERO),
+		GL_ZERO,
+		GL_TIMEOUT_IGNORED
+	); // glWaitSync doesn't block CPU
+	// it makes sure all previous GPU commands will be completed until next scheduled commands
+
 	// bind gbuffer textures
 	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
 	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
 	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);
 	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
+
 	// draw point lights
 	glm::vec2 viewportSize = { GBuffer.frameBuffer->width, GBuffer.frameBuffer->height };
 	RenderSystems.pointLightRenderer->Render(viewCamera, viewportSize);
@@ -231,6 +240,14 @@ void RenderPipeline::Render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
+
+	// draw forward
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE); // disable zbuffer writing
+	RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_DEPTH_TEST);
+
 	glDisable(GL_BLEND);
 
 	// apply post processing

@@ -675,9 +675,10 @@ GameObject:
   - component: {fileID: 1408528238816549064}
   - component: {fileID: 530515934820480340}
   - component: {fileID: 4011550119053882671}
+  - component: {fileID: 5838528053766770871}
   m_Layer: 0
-  m_Name: Boss
-  m_TagString: Enemy
+  m_Name: BossSpawner
+  m_TagString: Boss
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -725,8 +726,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 2.3937912, y: 1.8954792, z: 2.230194}
+  m_Center: {x: -0.6968956, y: 0.4477396, z: 0.61509705}
 --- !u!114 &9007044987449238166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -827,7 +828,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8886014663648545004}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8fdb788e9915ed74f9121ffc5e6c8e03, type: 3}
   m_Name: 
@@ -856,6 +857,34 @@ MonoBehaviour:
   arrowSpeed: 1
   shootingRange: 10
   shootingDelay: 3
+--- !u!114 &5838528053766770871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8886014663648545004}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7529951810b2ad64f9b3516ecc4ecc92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInRange: 15
+  player: {fileID: 0}
+  maxHealth: 30
+  defaultColor: {r: 0.019607844, g: 0.5411765, b: 0.87843144, a: 0}
+  damagedColor: {r: 0.8980393, g: 0.011764707, b: 0.011764707, a: 0}
+  dmgAnimationDuration: 0.5
+  slow: 0
+  mudSlow: 0
+  frozenTo: 0
+  charController: {fileID: 0}
+  healthBar: {fileID: 3995673256348405370}
+  spawnDelay: 3
+  enemy: {fileID: 5058164864356723304, guid: 82cd9f3d442d0c04a98ad0b9bb61d277, type: 3}
+  enemyWaveNumber: 3
+  poisonCooldownTime: 1
+  burningCooldownTime: 1
 --- !u!1001 &9088025645858012889
 PrefabInstance:
   m_ObjectHideFlags: 0

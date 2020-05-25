@@ -7,6 +7,7 @@
 #include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "InputManager.h"
+#include "Event/Events.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -25,6 +26,8 @@ private: // variables
 	float moveSpeedSmoothing; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
+	bool hasGhostMovement = false;
+
 public:
 	PlayerController()
 	{
@@ -33,6 +36,8 @@ public:
 
 	void Awake()
 	{
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 	}
 
 	void Start()
@@ -44,45 +49,79 @@ public:
 	}
 
 
+	void GhostMovementStart(Event& event) { hasGhostMovement = true; }
+	void GhostMovementStop(Event& event) { hasGhostMovement = false; }
+
+
 	void Update(float dt)
 	{
 		auto& transform = GetTransform();
 		auto& animator = GetAnimator();
 		auto& rigidBody = GetRigidBody();
 
-		glm::vec3 direction(0.0f);
-		if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
-		else if (InputManager::GetKeyStatus(GLFW_KEY_D)) direction.x = 1.0f;
+		bool isMoving = UpdateMovement(dt);
 
-		if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
-		else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
-
-		bool isKeyMoving = glm::length2(direction) > 0.5f;
-
-		if (isKeyMoving)
+		if (isMoving)
 			animator.TransitToAnimation("running", 0.2f);
 		else
 			animator.TransitToAnimation("idle", 0.2f);
 
+		if (InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
+		else if (InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
+			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+
+		if (InputManager::GetKeyDown(GLFW_KEY_X))
+		{
+			rigidBody.isFalling = true;
+			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
+		}
+
+		if (transform.GetWorldPosition().y < -15.0f)
+		{
+			transform.SetPosition(startPosition);
+		}
+
+	}
+
+	bool UpdateMovement(float dt)
+	{
+		auto& transform = GetTransform();
+		auto& rigidBody = GetRigidBody();
+
+		glm::vec3 direction(0.0f);
+		if (!hasGhostMovement)
+		{
+			if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
+			else if (InputManager::GetKeyStatus(GLFW_KEY_D)) direction.x = 1.0f;
+
+			if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
+			else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
+		}
+
+		bool isMoving = glm::length2(direction) > 0.5f;
+
 		// smooth move rotation
-		if (isKeyMoving)
+		if (isMoving)
 		{
 			glm::vec3 front3 = transform.GetFront();
 			float diff = glm::orientedAngle(
 				glm::normalize(glm::vec2(direction.x, direction.z)),
 				glm::normalize(glm::vec2(front3.x, front3.z))
-			);
+				);
 
 			float change = dt * rotateSpeedSmoothing;
 			if (glm::abs(change) > glm::abs(diff))
 				change = diff;
 			else
 				change *= glm::sign(diff);
-			transform.RotateSelf(glm::degrees(change), transform.GetUp());
+
+			if (glm::abs(change) > 0.01f)
+				transform.RotateSelf(glm::degrees(change), transform.GetUp());
 		}
 
 		// smoth move speed
-		float targetMoveSpeed = isKeyMoving ? moveSpeed : 0.0f;
+		float targetMoveSpeed = isMoving ? moveSpeed : 0.0f;
 		{
 			float diff = targetMoveSpeed - currentMoveSpeed;
 			float change = dt * moveSpeedSmoothing;
@@ -92,19 +131,10 @@ public:
 				currentMoveSpeed += change * glm::sign(diff);
 		}
 
+		if (currentMoveSpeed > 0.01f)
+			rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
 
-		if (InputManager::GetKeyDown(GLFW_KEY_X))
-		{
-			rigidBody.isFalling = true;
-			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
-		}
-
-		rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
-
-		if (transform.GetWorldPosition().y < -15.0f)
-		{
-			transform.SetPosition(startPosition);
-		}
+		return isMoving;
 	}
 };
 

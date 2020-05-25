@@ -92,7 +92,7 @@ public class MiniGhost : MonoBehaviour
         if (!doingAttack)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Boss"))
             return;
 
         EnemyController ec = other.GetComponent<EnemyController>();
@@ -100,6 +100,13 @@ public class MiniGhost : MonoBehaviour
         {
             ec.TakeDamage(damageToEnemies);
             //DisappearDoingAttack();
+            Destroy(gameObject);
+        }
+
+        BossSpawnerController bc = other.GetComponent<BossSpawnerController>();
+        if (bc != null)
+        {
+            bc.TakeDamage(damageToEnemies);
             Destroy(gameObject);
         }
     }

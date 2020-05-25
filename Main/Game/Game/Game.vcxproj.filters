@@ -181,6 +181,7 @@
     <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
     <ClInclude Include="ECS\Components\PointLightRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
+    <ClInclude Include="Scripting\Scripts\GhostController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
