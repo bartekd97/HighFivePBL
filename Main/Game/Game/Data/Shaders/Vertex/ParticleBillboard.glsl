@@ -4,8 +4,7 @@ layout (location = 1) in vec2 aTexCoords;
 
 out VS_OUT {
     vec2 TexCoords;
-    float Opacity;
-    vec3 Color;
+    flat float Lifetime;
 } vs_out;
 
 const int MAX_PARTICLES = 256;
@@ -14,6 +13,8 @@ uniform mat4 gView;
 uniform mat4 gProjection;
 uniform vec3 gCameraRight;
 uniform vec3 gCameraUp;
+
+uniform int gSpriteSheetCount = 1;
 
 struct Particle
 {
@@ -34,7 +35,12 @@ void main()
         + gCameraUp * aPosition.y * particle.Position.w;
 
     gl_Position = gProjection * gView * vec4(aPositionBillboard, 1.0f);
+
+    float textureUVPart = 1.0f / float(gSpriteSheetCount);
+    float currentUVOffset = textureUVPart * (gl_InstanceID % gSpriteSheetCount);
+
     vs_out.TexCoords = aTexCoords;
-    vs_out.Opacity = clamp(1.0f - (particle.Lifetime.x / particle.Lifetime.y), 0.0f, 1.0f);
-    vs_out.Color = vec3(1.0f);
+    vs_out.TexCoords.x *= textureUVPart;
+    vs_out.TexCoords.x += currentUVOffset;
+    vs_out.Lifetime = clamp(particle.Lifetime.x / particle.Lifetime.y, 0.0f, 1.0f);
 }  

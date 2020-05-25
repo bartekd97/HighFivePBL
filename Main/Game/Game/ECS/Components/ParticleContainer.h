@@ -20,7 +20,7 @@ struct Particle
 	float maxLifetime = 0.0f;
 	glm::vec2 __padding;
 
-	bool isExpired() { return currentLifetime >= maxLifetime; }
+	bool IsExpired() { return currentLifetime >= maxLifetime; }
 };
 
 
@@ -31,24 +31,24 @@ struct ParticleContainer
 	std::vector<Particle> particles;
 	FrameCounter lastUpdate = 0;
 	
-	void setMaxParticles(int limit)
+	void SetMaxParticles(int limit)
 	{
-		assert(limit <= MAX_ALLOWED_PARTICLES && "Out of range");
+		assert(limit >= 0 && limit <= MAX_ALLOWED_PARTICLES && "Out of range");
 		particles.resize(limit);
 	}
 
 	int _nextFreeIndexCheck = 0;
-	Particle* getFreeParticle()
+	Particle* GetFreeParticle()
 	{
 		for (; _nextFreeIndexCheck < particles.size(); _nextFreeIndexCheck++)
-			if (particles[_nextFreeIndexCheck].isExpired())
+			if (particles[_nextFreeIndexCheck].IsExpired())
 				return &particles[_nextFreeIndexCheck++];
 
 		int tmp = _nextFreeIndexCheck;
 		_nextFreeIndexCheck = 0;
 
 		for (; _nextFreeIndexCheck < tmp; _nextFreeIndexCheck++)
-			if (particles[_nextFreeIndexCheck].isExpired())
+			if (particles[_nextFreeIndexCheck].IsExpired())
 				return &particles[_nextFreeIndexCheck++];
 
 		return NULL;

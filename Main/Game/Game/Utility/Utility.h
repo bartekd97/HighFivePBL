@@ -23,8 +23,12 @@ namespace Utility {
 	bool ReadTextFile(std::string filename, std::string& content);
 	std::vector<std::string> StringSplit(std::string& string, char separator);
 
+	// 2 floats, coma separated
+	bool TryConvertStringToVec2(std::string& string, glm::vec2& vec);
 	// 3 floats, coma separated
 	bool TryConvertStringToVec3(std::string& string, glm::vec3& vec);
+	// 4 floats, coma separated
+	bool TryConvertStringToVec4(std::string& string, glm::vec4& vec);
 	bool TryConvertStringToFloat(std::string& string, float& value);
 
 	std::uint32_t HashString(char const* s, std::size_t count);
@@ -44,6 +48,9 @@ namespace std {
 	}
 	inline string to_string(glm::vec3 val) {
 		return to_string(val.x) + "," + to_string(val.y) + "," + to_string(val.z);
+	}
+	inline string to_string(glm::vec4 val) {
+		return to_string(val.x) + "," + to_string(val.y) + "," + to_string(val.z) + "," + to_string(val.w);
 	}
 }
 #pragma endregion

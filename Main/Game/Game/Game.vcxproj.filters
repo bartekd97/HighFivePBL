@@ -65,6 +65,7 @@
     <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\ParticleRendererSystem.cpp" />
+    <ClCompile Include="Utility\TextureTools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="ECS\Components\ParticleEmitter.h" />
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
+    <ClInclude Include="Utility\TextureTools.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

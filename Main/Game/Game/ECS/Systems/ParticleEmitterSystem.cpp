@@ -19,7 +19,7 @@ namespace {
 	{
 		for (auto& particle : container.particles)
 		{
-			if (particle.isExpired()) continue;
+			if (particle.IsExpired()) continue;
 			particle.position += particle.direction * particle.velocity * dt;
 			particle.currentLifetime += dt;
 		}
@@ -80,7 +80,7 @@ void ParticleEmitterSystem::Update(float dt)
 		int spawned = 0;
 		while (emitter.timeLeftSinceEmit >= emitTimeStep && spawned < maxParticlesPerFrame)
 		{
-			Particle* particle = container.getFreeParticle();
+			Particle* particle = container.GetFreeParticle();
 			if (particle == NULL) break;
 
 			EmitParticle(particle, emitter, transform);

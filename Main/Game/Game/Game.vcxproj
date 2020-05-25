@@ -148,6 +148,7 @@
     <ClCompile Include="Resourcing\TextureManager.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
+    <ClCompile Include="Utility\TextureTools.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="Utility\TaskPool.h" />
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
+    <ClInclude Include="Utility\TextureTools.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>

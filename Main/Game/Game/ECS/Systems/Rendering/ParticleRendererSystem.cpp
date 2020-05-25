@@ -4,7 +4,14 @@
 #include "HFEngine.h"
 #include "ParticleRendererSystem.h"
 
-static const GLuint PARTICLES_BUFFER_BINING_POINT = 2;
+static struct ParticlesBinding
+{
+	static const GLuint BUFFER = 2;
+
+	static const GLuint TEXTURE = 1;
+	static const GLuint COLOR = 2;
+	static const GLuint OPACITY = 3;
+};
 
 inline static void CheckParticlesBuffer(ParticleContainer& container, ParticleRenderer& renderer)
 {
@@ -46,7 +53,11 @@ void ParticleRendererSystem::Init()
 
 	// get shader
 	particleShader = ShaderManager::GetShader("ParticleRender");
-	particleShader->bindUniformBlockPoint("gParticlesBuffer", PARTICLES_BUFFER_BINING_POINT);
+	particleShader->use();
+	particleShader->bindUniformBlockPoint("gParticlesBuffer", ParticlesBinding::BUFFER);
+	particleShader->setInt("gSpriteSheet", ParticlesBinding::TEXTURE);
+	particleShader->setInt("gColor", ParticlesBinding::COLOR);
+	particleShader->setInt("gOpacity", ParticlesBinding::OPACITY);
 }
 
 
@@ -65,6 +76,7 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 	particleShader->setVector3F("gCameraRight", cameraRightWorld);
 	particleShader->setVector3F("gCameraUp", cameraUpWorld);
 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glBindVertexArray(VAO);
 	auto it = gameObjects.begin();
 	while (it != gameObjects.end())
@@ -75,9 +87,14 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 		auto& renderer = HFEngine::ECS.GetComponent<ParticleRenderer>(gameObject);
 
 		CheckParticlesBuffer(container, renderer);
-		renderer.particlesBuffer->bind(PARTICLES_BUFFER_BINING_POINT);
+		renderer.particlesBuffer->bind(ParticlesBinding::BUFFER);
+		renderer.spriteSheet->bind(ParticlesBinding::TEXTURE);
+		renderer.colorOverTime->bind(ParticlesBinding::COLOR);
+		renderer.opacityOverTime->bind(ParticlesBinding::OPACITY);
+		particleShader->setInt("gSpriteSheetCount", renderer.spriteSheetCount);
 
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, container.particles.size());
 	}
 	glBindVertexArray(0);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
