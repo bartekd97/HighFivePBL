@@ -16,7 +16,7 @@ struct CacheNode
 		return triggers.find(gameObject) != triggers.end();
 	}
 
-	void CalculateBoxRealPoints()
+	void CalculateBoxPoints()
 	{
 		glm::vec3 boxBPoint;
 		for (int i = 0; i < 4; i++)
@@ -25,6 +25,16 @@ struct CacheNode
 			boxRealPoints[i].x = boxBPoint.x + position.x;
 			boxRealPoints[i].y = boxBPoint.z + position.y;
 		}
+		glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
+		for (int i = 0; i < 4; i++)
+		{
+			if (boxRealPoints[i].x < min.x) min.x = boxRealPoints[i].x;
+			else if (boxRealPoints[i].x > max.x) max.x = boxRealPoints[i].x;
+			if (boxRealPoints[i].y < min.y) min.y = boxRealPoints[i].y;
+			else if (boxRealPoints[i].y > max.y) max.y = boxRealPoints[i].y;
+		}
+		boxMinMax[0] = min;
+		boxMinMax[1] = max;
 	}
 
 	glm::vec3 position;
@@ -33,9 +43,12 @@ struct CacheNode
 
 	BoxCollider boxCollider;
 	glm::vec2 boxRealPoints[4];
+	glm::vec2 boxMinMax[2];
 
 	CircleCollider circleCollider;
 	tsl::robin_set<GameObject> triggers;
+
+	bool hasRigidBody = false;
 
 	float lastFrameUpdate;
 };

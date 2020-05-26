@@ -6,6 +6,13 @@ namespace Physics
 	const int maxSteps = 20;
 
 	std::unordered_map<GameObject, CacheNode> cacheNodes;
+    std::shared_ptr<System> rigidBodyCollector;
+
+
+    void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector)
+    {
+        Physics::rigidBodyCollector = rigidBodyCollector;
+    }
 
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects)
 	{
@@ -17,10 +24,14 @@ namespace Physics
 				auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 				auto const& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
 				cacheNodes[gameObject] = CacheNode(transform, collider);
+                if (HFEngine::ECS.SearchComponent<RigidBody>(gameObject))
+                {
+                    cacheNodes[gameObject].hasRigidBody = true;
+                }
 				if (collider.shape == Collider::ColliderShapes::BOX)
 				{
 					cacheNodes[gameObject].boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
-                    cacheNodes[gameObject].CalculateBoxRealPoints();
+                    cacheNodes[gameObject].CalculateBoxPoints();
 				}
 				else if (collider.shape == Collider::ColliderShapes::CIRCLE)
 				{
@@ -36,7 +47,7 @@ namespace Physics
                     {
                         it->second.position = transform.GetWorldPosition();
                         it->second.rotation = transform.GetWorldRotation();
-                        cacheNodes[gameObject].CalculateBoxRealPoints();
+                        cacheNodes[gameObject].CalculateBoxPoints();
                     }
 				}
 			}
@@ -241,6 +252,7 @@ namespace Physics
 
     bool DetectCollision(const glm::vec3& pos1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector) //TODO: test, sepVector
     {
+        // TODO: zamiana na policzone ju¿
         glm::vec3 relativePointPos = pos1 - pos2;
         glm::vec2 boxPoints[4];
         glm::vec3 boxBPoint;
@@ -312,6 +324,112 @@ namespace Physics
             }
         }
 
+        return false;
+    }
+
+    /*bool Raycast(glm::vec3& position, glm::vec2& direction, RaycastHit& out, GameObject ignoredGameObject, float maxDistance)
+    {
+        glm::vec2 invDirection = 1.0f / direction;
+        int sign[2];
+        sign[0] = (invDirection.x < 0);
+        sign[1] = (invDirection.y < 0);
+
+        float tmin, tmax, tymin, tymax;
+        glm::vec3 distVec;
+
+        for (auto& node : cacheNodes)
+        {
+            if (node.first == ignoredGameObject) continue;
+
+            distVec = position - node.second.position;
+            if (VECLEN(distVec) > maxDistance) continue;
+
+            if (node.second.collider.shape == Collider::ColliderShapes::BOX)
+            {
+                tmin = (node.second.boxMinMax[sign[0]].x - position.x) * invDirection.x;
+                tmax = (node.second.boxMinMax[1 - sign[0]].x - position.x) * invDirection.x;
+                tymin = (node.second.boxMinMax[sign[1]].y - position.z) * invDirection.y;
+                tymax = (node.second.boxMinMax[1 - sign[1]].y - position.z) * invDirection.y;
+
+                if ((tmin > tymax) || (tymin > tmax))
+                    continue;
+                if (tymin > tmin)
+                    tmin = tymin;
+                if (tymax < tmax)
+                    tmax = tymax;
+
+                out.hitPosition = glm::vec3(tymin, 0.0f, tymax);
+                distVec = out.hitPosition - position;
+                out.distance = VECLEN(distVec);
+                out.hittedObject = node.first;
+
+                return true;
+            }
+            else if (node.second.collider.shape == Collider::ColliderShapes::CIRCLE)
+            {
+
+            }
+        }
+        return false;
+    }*/
+
+    /*bool Raycast(glm::vec3& position, glm::vec3& direction, RaycastHit& out, GameObject ignoredGameObject, float maxDistance)
+    {
+        glm::vec3 currentPosition = position;
+        glm::vec3 diff = currentPosition - position;
+        float distance = VECLEN(diff);
+        glm::vec3 sepVector;
+        while (distance <= maxDistance)
+        {
+            for (auto& node : cacheNodes)
+            {
+                if (node.first == ignoredGameObject) continue;
+
+                if (node.second.collider.shape == Collider::ColliderShapes::BOX)
+                {
+                    if (DetectCollision(currentPosition, node.second.position, node.second.rotation, node.second.boxCollider, sepVector))
+                    {
+                        out.hitPosition = currentPosition;
+                        out.hittedObject = node.first;
+                        out.distance = distance;
+                        return true;
+                    }
+                }
+            }
+
+            currentPosition += direction * step;
+            diff = currentPosition - position;
+            distance = VECLEN(diff);
+        }
+
+        return false;
+    }*/
+
+    bool Raycast(glm::vec3& position, glm::vec3& direction, RaycastHit& out, GameObject ignoredGameObject, float maxDistance)
+    {
+        std::vector<std::pair<float, GameObject>> objects;
+        glm::vec3 tmpPos;
+        glm::vec3 tmpCheck;
+        float tmpDistance;
+        float maxDistanceSquared = maxDistance * maxDistance;
+        for (auto& node : cacheNodes)
+        {
+            if (node.first == ignoredGameObject) continue;
+
+            tmpPos = node.second.position - position;
+            tmpCheck = tmpPos * direction;
+            if (tmpCheck.x >= 0 && tmpCheck.z >= 0)
+            {
+                tmpDistance = (tmpPos.x * tmpPos.x) + (tmpPos.z * tmpPos.z);
+                if (tmpDistance <= maxDistanceSquared)
+                {
+                    objects.push_back(std::make_pair(tmpDistance, node.first));
+                }
+            }
+        }
+        std::sort(objects.begin(), objects.end(), [](const std::pair<float, GameObject>& a, const std::pair<float, GameObject>& b) {
+            return a.first < b.first;
+        });
         return false;
     }
 }

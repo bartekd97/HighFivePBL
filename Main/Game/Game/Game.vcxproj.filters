@@ -183,6 +183,8 @@
     <ClInclude Include="ECS\Components\PointLightRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
+    <ClInclude Include="Physics\Raycaster.h" />
+    <ClInclude Include="ECS\Systems\RigidBodyCollectorSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

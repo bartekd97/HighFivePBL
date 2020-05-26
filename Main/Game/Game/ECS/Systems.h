@@ -15,3 +15,5 @@
 #include "Systems/Rendering/BoxColliderRenderSystem.h"
 #include "Systems/MapCellCollectorSystem.h"
 #include "Systems/GravitySystem.h"
+#include "Systems/RigidBodyCollectorSystem.h"
+

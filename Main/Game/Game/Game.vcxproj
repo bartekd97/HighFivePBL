@@ -195,6 +195,7 @@
     <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\RigidBodyCollectorSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
@@ -229,6 +230,7 @@
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="Physics\CacheNode.h" />
     <ClInclude Include="Physics\Physics.h" />
+    <ClInclude Include="Physics\Raycaster.h" />
     <ClInclude Include="Physics\RaycastHit.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
