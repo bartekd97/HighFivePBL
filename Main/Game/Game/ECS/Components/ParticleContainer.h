@@ -3,6 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "ECS/ECSTypes.h"
+#include "Utility/ThreadBusiness.h"
 
 // struct definition for uniform buffer std140 layout (must be padded to vec4 size)
 struct Particle
@@ -53,4 +54,6 @@ struct ParticleContainer
 
 		return NULL;
 	}
+
+	ThreadBusiness business;
 };

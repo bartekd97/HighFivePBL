@@ -2,13 +2,13 @@
 
 #include <glm/glm.hpp>
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 #include "../Components.h"
 #include "MapCellCollectorSystem.h"
 
 #include "../../MapGenerator/Config.h"
 
-class GravitySystem : public SystemUpdate
+class GravitySystem : public System, public ISystemUpdate
 {
 public:
 	void Update(float dt) override;

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 #include "../../Event/EventManager.h"
 #include "../../Event/Events.h"
 

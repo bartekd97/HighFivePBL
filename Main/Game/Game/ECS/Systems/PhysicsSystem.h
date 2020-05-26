@@ -2,11 +2,11 @@
 
 #include <glm/glm.hpp>
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 #include "../Components.h"
 #include "ColliderCollectorSystem.h"
 
-class PhysicsSystem : public SystemUpdate
+class PhysicsSystem : public System, public ISystemUpdate
 {
 public:
 	void Init() override;

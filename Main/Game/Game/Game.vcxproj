@@ -208,7 +208,6 @@
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
-    <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="Event\Events.h" />
@@ -276,6 +275,7 @@
     <ClInclude Include="Utility\Logger.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\TextureTools.h" />
+    <ClInclude Include="Utility\ThreadBusiness.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>

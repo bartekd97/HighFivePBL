@@ -81,7 +81,6 @@
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
-    <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="ECS\Components\LifeTime.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
@@ -191,6 +190,7 @@
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
     <ClInclude Include="Utility\TextureTools.h" />
+    <ClInclude Include="Utility\ThreadBusiness.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

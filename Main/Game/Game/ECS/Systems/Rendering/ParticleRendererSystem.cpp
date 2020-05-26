@@ -15,6 +15,7 @@ static struct ParticlesBinding
 
 inline static void CheckParticlesBuffer(ParticleContainer& container, ParticleRenderer& renderer)
 {
+	container.business.Wait();
 	if (container.lastUpdate > renderer.lastUpdate || renderer.particlesBuffer == nullptr)
 	{
 		if (renderer.particlesBuffer == nullptr)
@@ -78,6 +79,7 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glBindVertexArray(VAO);
+	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
 	auto it = gameObjects.begin();
 	while (it != gameObjects.end())
 	{
@@ -85,6 +87,11 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 
 		auto& container = HFEngine::ECS.GetComponent<ParticleContainer>(gameObject);
 		auto& renderer = HFEngine::ECS.GetComponent<ParticleRenderer>(gameObject);
+
+		if (renderer.cullingData.lastUpdate != currentFrame)
+			continue;
+		if (!renderer.cullingData.visibleByViewCamera)
+			continue;
 
 		CheckParticlesBuffer(container, renderer);
 		renderer.particlesBuffer->bind(ParticlesBinding::BUFFER);

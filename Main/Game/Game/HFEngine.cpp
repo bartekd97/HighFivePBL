@@ -204,6 +204,54 @@ namespace HFEngine
 		GUIManager::Terminate();
 	}
 
+/*
+	=================== FRAME START ====================
+
+	--------------
+	| Update GUI |
+	--------------
+	      |
+		  | <-- Send General::UPDATE event
+		  |
+	      \/
+	----------------------------
+	|    ------------------    |
+	|    | Script::Update |    |
+	|    ------------------    |
+	|            |             |
+	|  	         \/            |
+	|    ------------------    |
+	|    | System::Update |    |
+	|    ------------------    |
+	|            |             |
+	|  	         \/            |
+	|  ----------------------  |
+	|  | Script::LateUpdate |  |
+	|  ----------------------  |
+	----------------------------
+		  |
+		  | <-- Send General::POST_UPDATE event
+		  |
+		  \/
+	----------------------
+	| System::PostUpdate |
+	----------------------
+	      |
+		  |
+		  \/
+	----------------------
+	|  ----------------  |
+	|  | Render World |  |
+	|  ----------------  |
+	|         |          |
+    |		  \/         |
+    |   --------------   |
+	|   | Render GUI |   |
+	|   --------------   |
+	----------------------
+
+	=================== FRAME END ====================
+*/
 	void ProcessGameFrame(float dt)
 	{
 		CURRENT_FRAME_NUMBER++;
@@ -216,9 +264,11 @@ namespace HFEngine
 
 		HFEngine::ECS.UpdateSystems(dt);
 
-		Event lateUpdateEvent(Events::General::LATE_UPDATE);
+		Event lateUpdateEvent(Events::General::POST_UPDATE);
 		lateUpdateEvent.SetParam(Events::General::DELTA_TIME, dt);
 		EventManager::FireEvent(lateUpdateEvent);
+
+		HFEngine::ECS.PostUpdateSystems(dt);
 
 		HFEngine::Renderer.Render();
 		GUIManager::Draw();

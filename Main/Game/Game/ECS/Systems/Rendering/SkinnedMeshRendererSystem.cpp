@@ -11,6 +11,8 @@ static const GLuint BONE_MATRICES_BUFFER_BINING_POINT = 1;
 
 inline static void CheckBoneMatricesBuffer(SkinnedMeshRenderer& renderer)
 {
+	renderer.business.Wait();
+
 	if (renderer.boneMatricesBuffer == nullptr)
 	{
 		renderer.boneMatricesBuffer = UniformBuffer::Create(sizeof(glm::mat4) * SkinnedMeshRenderer::MAX_BONES);

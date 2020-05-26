@@ -6,8 +6,6 @@
 #include "Resourcing/Shader.h"
 #include "Rendering/Camera.h"
 
-struct MeshRenderer;
-
 // require MeshRenderer component
 class MeshRendererSystem : public CulledRendererSystem<MeshRenderer, 4>
 {
