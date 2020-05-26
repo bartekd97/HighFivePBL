@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../SystemPostUpdate.h"
+#include "../System.h"
 
 // requires BoneAttacher
 // requires SkinnedMeshRenderer in parent
-class BoneAttacherSystem : public SystemPostUpdate
+class BoneAttacherSystem : public System, public ISystemPostUpdate
 {
 public:
 	void PostUpdate(float dt) override;

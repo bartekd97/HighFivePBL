@@ -208,8 +208,6 @@
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
-    <ClInclude Include="ECS\SystemPostUpdate.h" />
-    <ClInclude Include="ECS\SystemUpdate.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="Event\Events.h" />

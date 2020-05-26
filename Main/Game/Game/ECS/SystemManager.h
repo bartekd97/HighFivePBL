@@ -5,8 +5,6 @@
 #include <unordered_map>
 
 #include "../Utility/Utility.h"
-#include "SystemUpdate.h"
-#include "SystemPostUpdate.h"
 #include "SystemRender.h"
 #include "ECSTypes.h"
 
@@ -27,11 +25,11 @@ public:
 			systems.insert({ typeName, system });
 		}
 		
-		if constexpr (std::is_base_of<SystemUpdate, T>::value)
+		if constexpr (std::is_base_of<ISystemUpdate, T>::value)
 		{
 			updateQueue.push_back(system);
 		}
-		if constexpr (std::is_base_of<SystemPostUpdate, T>::value)
+		if constexpr (std::is_base_of<ISystemPostUpdate, T>::value)
 		{
 			postUpdateQueue.push_back(system);
 		}
@@ -87,8 +85,8 @@ public:
 		return nullptr;
 	}
 
-	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
-	std::vector<std::shared_ptr<SystemPostUpdate>> postUpdateQueue;
+	std::vector<std::shared_ptr<ISystemUpdate>> updateQueue;
+	std::vector<std::shared_ptr<ISystemPostUpdate>> postUpdateQueue;
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};

@@ -61,8 +61,8 @@ namespace {
 
 void ParticleEmitterSystem::Update(float dt)
 {
-	auto it = gameObjects.begin();
-	while (it != gameObjects.end())
+	auto it = System::gameObjects.begin();
+	while (it != System::gameObjects.end())
 	{
 		auto gameObject = *(it++);
 
@@ -89,4 +89,8 @@ void ParticleEmitterSystem::Update(float dt)
 			spawned++;
 		}
 	}
+}
+
+void ParticleEmitterSystem::PostUpdate(float dt)
+{
 }

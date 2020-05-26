@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 
 class MapCellCollectorSystem : public System
 {
