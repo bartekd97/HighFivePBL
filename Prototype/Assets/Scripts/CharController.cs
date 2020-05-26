@@ -251,6 +251,18 @@ public class CharController : MonoBehaviour
         }
     }
 
+    public void TakeDamage(Arrow arrow)
+    {
+        lastDmgTime = Time.time;
+        health -= arrow.arrowDamage;
+        healthBar.SetHealth(health);
+        Debug.Log("Health remaining: " + health);
+        if (health <= 0)
+        {
+            KillPlayer();
+        }
+    }
+
     public void KillPlayer()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -290,26 +302,30 @@ public class CharController : MonoBehaviour
         if (other.CompareTag("Mud"))
         {
             slow = 3.0f;
-        }
-        if (other.CompareTag("MudOut"))
-        {
-            slow = 0.0f;
-        }
+        }       
         if (other.CompareTag("ToxicFog"))
         {
             isPoisoned = true;
         }
-        if (other.CompareTag("ToxicFogOut") && isPoisoned == true)
+        if (other.CompareTag("Fire"))
+        {
+            isBurnt = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Mud"))
+        {
+            slow = 0.0f;
+        }
+        if (other.CompareTag("ToxicFog"))
         {
             isPoisoned = false;
             poisoningStart = Time.time;
             poisoningEnd = Time.time + 2.0f;
         }
         if (other.CompareTag("Fire"))
-        {
-            isBurnt = true;
-        }
-        if (other.CompareTag("FireOut"))
         {
             isBurnt = false;
         }
