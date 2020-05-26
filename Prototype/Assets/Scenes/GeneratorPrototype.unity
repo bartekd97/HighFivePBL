@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -7457,6 +7457,7 @@ MonoBehaviour:
     noiseCenterRatio: 0.9
     noiseScale: 0.1
     noiseForce: {x: 5, y: 5}
+    serializeMeshes: 0
   cellFenceConfig:
     gateEntity:
       gameObject: {fileID: 1523006188585765467, guid: 9f1ab5d0cd336de4185405a43c9cbde3,
@@ -19179,15 +19180,52 @@ MonoBehaviour:
   minEnemiesInCell: 4
   maxEnemiesInCell: 10
   maxMonumentsCounter: 3
+  minObstaclesInCell: 0
+  maxObstaclesInCell: 4
   centerSpawnRadiusPercentage: 0.6
   maxBossSpawnCellDistance: 4
   playerObject: {fileID: 2066263928}
   bossCellMaterial: {fileID: 2100000, guid: 59506a8a305a8db4d8155384ca3390d3, type: 2}
+  structures:
+  - {fileID: 619704319074078069, guid: 6b256cdd2a3391546807c8dd8f9136d4, type: 3}
+  - {fileID: 4208013602266115354, guid: 64c997720725d914580d6140f3fe4fb0, type: 3}
+  - {fileID: 1071604874394535321, guid: 83e4893ae751a154d9330dc8d8e0ae1d, type: 3}
+  - {fileID: 2287374080932051936, guid: 344063e5b930e584ab5d459fcc4c2159, type: 3}
+  - {fileID: 2147150098049278905, guid: bd0e3270e5727064389df6267c32ea22, type: 3}
+  - {fileID: 3650727782279017061, guid: 668c880b72b8eaa4d9da95070f87fdf8, type: 3}
+  - {fileID: 7799057430775891150, guid: dac9e1e486f46d54783987a7c923c697, type: 3}
+  - {fileID: 2517872015021499232, guid: 6bec6104d05888f489b4426e7f4cbca4, type: 3}
+  - {fileID: 5591093004961980299, guid: 0c23d5aac075f514a93cdaebfceb343a, type: 3}
+  - {fileID: 4262302805846501280, guid: ef319315de5e0e74387172d7631fac1b, type: 3}
+  - {fileID: 5101846210367853544, guid: 3bf76ee630ee6724290513d7360598bd, type: 3}
+  - {fileID: 4050005441335905192, guid: 5eddf7e88b40ecf4aa8b7b1551d31fc4, type: 3}
+  - {fileID: 4556974847197291742, guid: a46c07441e055274bb2fbd7b41f4b162, type: 3}
+  - {fileID: 7131841553874019674, guid: b4108893af9d92a40bb8c46cc708b572, type: 3}
+  - {fileID: 8223358562366704241, guid: 6754d445afbbf914db6bf0c6f7a64223, type: 3}
+  obstacles:
+  - {fileID: 7449754332596637308, guid: 285f74bcb0b8d4945b434bc7147aa39b, type: 3}
+  - {fileID: 5733388050050140644, guid: 1880bd1a8ff384e4480ba2b83eafc553, type: 3}
+  - {fileID: 5791657536213704658, guid: 86db3034a3a3bc74a98326857e25b066, type: 3}
+  - {fileID: 5894159942928361553, guid: 59e0285ae368d204ab131cda4edf424a, type: 3}
   enemyPrefab: {fileID: 5058164864356723304, guid: 82cd9f3d442d0c04a98ad0b9bb61d277,
     type: 3}
   bossPrefab: {fileID: 8886014663648545004, guid: 045f9a318b5eaf3408faf5840371993c,
     type: 3}
   monumentPrefab: {fileID: 5058164864356723304, guid: 12c1e192743bf454fadf4a227c24ecdf,
+    type: 3}
+  mudPrefab: {fileID: 5791657536213704658, guid: 86db3034a3a3bc74a98326857e25b066,
+    type: 3}
+  fogPrefab: {fileID: 5733388050050140644, guid: 1880bd1a8ff384e4480ba2b83eafc553,
+    type: 3}
+  toxicFogPrefab: {fileID: 5894159942928361553, guid: 59e0285ae368d204ab131cda4edf424a,
+    type: 3}
+  firePrefab: {fileID: 7449754332596637308, guid: 285f74bcb0b8d4945b434bc7147aa39b,
+    type: 3}
+  pointPrefab: {fileID: 8876826773527404814, guid: 68581654839804d479bca7d825e772d6,
+    type: 3}
+  pointPrefab2: {fileID: 63573587319288568, guid: a2868598c4a2223448c736dec3a8a5ef,
+    type: 3}
+  pointPrefab3: {fileID: 4945155149449214535, guid: e719d34cfce764045b98b16e248eec78,
     type: 3}
 --- !u!4 &1873961013
 Transform:

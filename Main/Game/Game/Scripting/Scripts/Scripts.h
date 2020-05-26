@@ -2,7 +2,9 @@
 
 #include "TestScript.h"
 #include "TestScript2.h"
-#include "CharControllerTest.h"
+#include "PlayerController.h"
+#include "PlayerCameraFollower.h"
+#include "GhostController.h"
 #include "MapCellOptimizer.h"
 #include "TriggerTest.h"
 #include "GUIStatistics.h"

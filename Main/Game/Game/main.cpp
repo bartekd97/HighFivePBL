@@ -16,6 +16,7 @@
 #include "Resourcing/Prefab.h"
 #include "Rendering/PrimitiveRenderer.h"
 #include "Utility/Logger.h"
+#include "Utility/TextureTools.h"
 
 #include "HFEngine.h"
 #include "WindowManager.h"
@@ -43,73 +44,52 @@ int main()
 		return -1;
 	}
 
-	/*EventManager::AddListener(Events::Test::TICK, [](Event& event) {
-		LogInfo("Tick event fired!");
-	});*/
-
-	/*GameObject cubeSpawner = HFEngine::ECS.CreateGameObject();
-	HFEngine::ECS.AddComponent<CubeSpawner>(
-		cubeSpawner,
-		{ 0.05f, 0.0f }
-	);*/
-
 	GLFWwindow* window = WindowManager::GetWindow();
-
 
 	MapGenerator generator;
 	generator.Generate();
 
-	auto spaceship = ModelManager::GetModel("Sample", "spaceship");
-	MeshRenderer spaceshipRenderer = { spaceship->mesh, spaceship->material };
-
-	/*GameObject ss1 = HFEngine::ECS.CreateGameObject();
-	HFEngine::ECS.GetComponent<Transform>(ss1).SetPosition({ 100.0f, 2.0f, 100.0f });
-	HFEngine::ECS.AddComponent<MeshRenderer>(ss1, spaceshipRenderer);*/
-
-	//HFEngine::ECS.GetComponent<Transform>(ss1).SetScale({ 0.4f, 0.4f, 0.4f });
-
-	float dt = 0.0f;
-
-	//auto prefab = PrefabManager::GetPrefab("Sample");
-	//prefab->Instantiate({100,10,100});
-
-	auto prefab = PrefabManager::GetPrefab("CircleTest");
+	auto prefab = PrefabManager::GetPrefab("Player");
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
-	prefab->Instantiate({ 80.0f, 1.0f, 100.0f });
 
-	auto demon = ModelManager::GetModel("Characters/Player", "Demon");
-	SkinnedMeshRenderer demonRenderer = { demon->mesh, demon->material, demon->skinningData };
-	HFEngine::ECS.RemoveComponent<MeshRenderer>(movableTestObject);
-	HFEngine::ECS.AddComponent<SkinnedMeshRenderer>(movableTestObject, demonRenderer);
-	HFEngine::ECS.AddComponent<SkinAnimator>(movableTestObject, SkinAnimator());
-	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).clips = demon->animations;
-	HFEngine::ECS.GetComponent<SkinAnimator>(movableTestObject).SetAnimation("running");
-	HFEngine::ECS.GetComponent<Transform>(movableTestObject).SetScale(glm::vec3(2.0f));
-
-	//auto bigPrefab = PrefabManager::GetPrefab("BigCircleTest");
-	//bigPrefab->Instantiate({ 90.0f, 1.0f, 120.0f });
-
-	auto triggerColliderTest = PrefabManager::GetPrefab("TriggerTest");
-	auto triggerBox = triggerColliderTest->Instantiate({ 105.0f, 0.0f, 90.0f });
-	HFEngine::ECS.GetComponent<Transform>(triggerBox).RotateSelf(45, glm::vec3(0.0f, 1.0f, 0.0f));
-
-	HFEngine::ECS.AddComponent<ScriptContainer>(movableTestObject, {});
-	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(movableTestObject);
-	scriptContainer.AddScript(movableTestObject, "CharControllerTest");
-	scriptContainer.AddScript(movableTestObject, "MapCellOptimizer");
+	// particle test
+	//auto particles = HFEngine::ECS.CreateGameObject(movableTestObject);
+	//HFEngine::ECS.GetComponent<Transform>(particles).SetPosition({ 5.0f, 0.1f, 0.0f });
+	/*
+	ParticleContainer container;
+	container.SetMaxParticles(256);
+	ParticleEmitter emitter;
+	emitter.shape = ParticleEmitter::EmitterShape::CIRCLE;
+	emitter.sourcShapeeSize = { 0.5f, 0.5f };
+	emitter.targetShapeSize = { 0.5f, 0.5f };
+	emitter.size = { 1.9f, 1.9f };
+	emitter.lifetime = { 2.25f, 3.0f };
+	emitter.velocity = { 0.5f, 0.75f };
+	emitter.rate = 16.0f;
+	emitter.emitting = true;
+	ParticleRenderer renderer;
+	renderer.colorOverTime = TextureTools::GenerateGradientTexture(
+		{
+			{ 1.0f, 1.0f, 0.0f },
+			{ 1.0f, 1.0f, 0.0f },
+			{ 1.0f, 0.0f, 0.0f }
+		}
+	);
+	renderer.opacityOverTime = TextureTools::GenerateGradientTexture({1.0f, 1.0f, 0.0f});
+	renderer.spriteSheet = TextureManager::GetTexture("Particles", "Flames");
+	renderer.spriteSheetCount = 4;
+	HFEngine::ECS.AddComponent<ParticleContainer>(movableTestObject, container);
+	HFEngine::ECS.AddComponent<ParticleEmitter>(movableTestObject, emitter);
+	HFEngine::ECS.AddComponent<ParticleRenderer>(movableTestObject, renderer);
+	*/
 
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
-	GameObject cameraObject = HFEngine::ECS.CreateGameObject("CameraObject");
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 15.0f, 110.0f });
-	HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -50.0f, 0.0f, 0.0f });
-	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetPosition({ 100.0f, 200.0f, 100.0f });
-	//HFEngine::ECS.GetComponent<Transform>(cameraObject).SetRotation({ -90.0f, 0.0f, 0.0f });
-
+	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
 		auto startTime = std::chrono::high_resolution_clock::now();

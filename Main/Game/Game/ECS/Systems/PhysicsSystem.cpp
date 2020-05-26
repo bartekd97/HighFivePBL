@@ -13,7 +13,7 @@
 
 void PhysicsSystem::Init()
 {
-	step = 0.25f;
+	step = 0.15f;
 }
 
 /*

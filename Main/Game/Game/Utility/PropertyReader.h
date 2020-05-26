@@ -13,7 +13,10 @@ private:
 	std::unordered_map<std::string, std::string> raw;
 	std::unordered_map<std::string, float> floats;
 	std::unordered_map<std::string, int> ints;
+	std::unordered_map<std::string, bool> bools;
+	std::unordered_map<std::string, glm::vec2> vecs2;
 	std::unordered_map<std::string, glm::vec3> vecs3;
+	std::unordered_map<std::string, glm::vec4> vecs4;
 
 public:
 	PropertyReader() {}
@@ -105,6 +108,57 @@ public:
 			}
 		}
 	}
+	inline bool GetBool(std::string&& name, bool& target, bool defaultValue = false)
+	{
+		static std::unordered_map<std::string, bool>::iterator __boolval;
+		static std::unordered_map<std::string, std::string>::iterator __boolstrval;
+
+		if ((__boolval = bools.find(name)) != bools.end()) {
+			target = __boolval->second; return true;
+		}
+		else {
+			if ((__boolstrval = raw.find(name)) != raw.end()) {
+				static bool __booltmp;
+				__booltmp = __boolstrval->second == "true";
+				bools[name] = __booltmp;
+				target = __booltmp;
+				return true;
+			}
+			else {
+				//ints[name] = defaultValue;
+				target = defaultValue;
+				return false;
+			}
+		}
+	}
+	inline bool GetVec2(std::string&& name, glm::vec2& target, glm::vec2 defaultValue = { 0.0f,0.0f })
+	{
+		static std::unordered_map<std::string, glm::vec2>::iterator __vec2val;
+		static std::unordered_map<std::string, std::string>::iterator __vec2strval;
+
+		if ((__vec2val = vecs2.find(name)) != vecs2.end()) {
+			target = __vec2val->second; return true;
+		}
+		else {
+			if ((__vec2strval = raw.find(name)) != raw.end()) {
+				static glm::vec3 __vec3tmp;
+				if (!Utility::TryConvertStringToVec2(__vec2strval->second, target)) {
+					vecs2[name] = defaultValue;
+					LogWarning("PropertyReader::GetVec2(): Cannot parse '{}': {}. Using: {}", name, __vec2strval->second, defaultValue);
+					target = defaultValue;
+					return false;
+				}
+				else {
+					vecs2[name] = target;
+					return true;
+				}
+			}
+			else {
+				target = defaultValue;
+				return false;
+			}
+		}
+	}
 	inline bool GetVec3(std::string&& name, glm::vec3& target, glm::vec3 defaultValue = {0.0f,0.0f,0.0f})
 	{
 		static std::unordered_map<std::string, glm::vec3>::iterator __vec3val;
@@ -128,7 +182,34 @@ public:
 				}
 			}
 			else {
-				//vecs3[name] = defaultValue;
+				target = defaultValue;
+				return false;
+			}
+		}
+	}
+	inline bool GetVec4(std::string&& name, glm::vec4& target, glm::vec4 defaultValue = { 0.0f,0.0f,0.0f,0.0f })
+	{
+		static std::unordered_map<std::string, glm::vec4>::iterator __vec4val;
+		static std::unordered_map<std::string, std::string>::iterator __vec4strval;
+
+		if ((__vec4val = vecs4.find(name)) != vecs4.end()) {
+			target = __vec4val->second; return true;
+		}
+		else {
+			if ((__vec4strval = raw.find(name)) != raw.end()) {
+				static glm::vec3 __vec3tmp;
+				if (!Utility::TryConvertStringToVec4(__vec4strval->second, target)) {
+					vecs4[name] = defaultValue;
+					LogWarning("PropertyReader::GetVec4(): Cannot parse '{}': {}. Using: {}", name, __vec4strval->second, defaultValue);
+					target = defaultValue;
+					return false;
+				}
+				else {
+					vecs4[name] = target;
+					return true;
+				}
+			}
+			else {
 				target = defaultValue;
 				return false;
 			}

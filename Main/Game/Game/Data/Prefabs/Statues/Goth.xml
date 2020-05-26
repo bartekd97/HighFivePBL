@@ -1,6 +1,9 @@
 <prefab defaultScale="1.25,1.25,1.25">
-    <component name="MeshRenderer">
+    <component name="ModelHolder">
         <property name="model" value="Structures/Statues:Goth"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
     </component>
     <component name="BoxCollider">
         <property name="width" value="3.25"/>

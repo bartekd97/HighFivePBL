@@ -14,10 +14,13 @@ class Transform
 private:
 	GameObject gameObject;
 	FrameCounter lastFrameUpdate = 0;
+	bool needWorldDecompose = true;
 
 public:
 	Transform();
 	Transform(GameObject gameObject);
+
+#define CheckWorld() if (needWorldDecompose) DecomposeWorldTransform()
 
 	inline FrameCounter LastFrameUpdate() { return lastFrameUpdate; }
 
@@ -25,17 +28,17 @@ public:
 	inline glm::quat GetRotation() { return this->rotation; }
 	inline glm::vec3 GetRotationEuler() { return this->rotationEuler; }
 	inline glm::vec3 GetScale() { return this->scale; }
-	inline glm::vec3 GetWorldPosition() { return this->worldPosition; }
-	inline glm::quat GetWorldRotation() { return this->worldRotation; }
-	inline glm::quat GetWorldRotationEuler() { return this->worldRotationEuler; }
-	inline glm::vec3 GetWorldScale() { return this->worldScale; }
+	inline glm::vec3 GetWorldPosition() { CheckWorld(); return this->worldPosition; }
+	inline glm::quat GetWorldRotation() { CheckWorld(); return this->worldRotation; }
+	inline glm::quat GetWorldRotationEuler() { CheckWorld(); return this->worldRotationEuler; }
+	inline glm::vec3 GetWorldScale() { CheckWorld(); return this->worldScale; }
 
 	inline glm::vec3 GetFront() { return this->front; }
 	inline glm::vec3 GetUp() { return this->up; }
 	inline glm::vec3 GetRight() { return this->right; }
-	inline glm::vec3 GetWorldFront() { return this->worldFront; }
-	inline glm::vec3 GetWorldUp() { return this->worldUp; }
-	inline glm::vec3 GetWorldRight() { return this->worldRight; }
+	inline glm::vec3 GetWorldFront() { CheckWorld(); return this->worldFront; }
+	inline glm::vec3 GetWorldUp() { CheckWorld(); return this->worldUp; }
+	inline glm::vec3 GetWorldRight() { CheckWorld(); return this->worldRight; }
 
 	inline glm::mat4 GetLocalTransform() { return this->localTransform; }
 	inline glm::mat4 GetWorldTransform() { return this->worldTransform; }
@@ -140,6 +143,10 @@ public:
 	}
 
 
+	void SetLocalMatrix(glm::mat4& transform);
+
+#undef CheckWorld()
+
 private:
 	glm::vec3 position = { 0.0f, 0.0f, 0.0f };
 	glm::quat rotation = { 1.0f, 0.0f, 0.0f, 0.0f };
@@ -165,4 +172,6 @@ private:
 
 	void UpdateFromParent(glm::mat4& parentWorldTransform);
 	void UpdateSelf();
+	void UpdateWorldTransform();
+	void DecomposeWorldTransform();
 };

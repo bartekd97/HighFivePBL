@@ -5,20 +5,33 @@ using UnityEditor;
 
 public class MeshRendererXML : MonoBehaviour
 {
+    public bool configureFromHolder = false;
 
-    public string path = "Wpisz ścieżkę względna katalogu z modelem od katalogu Assets";
-    public string model = "Wpisz nazwę modelu";
+    public bool useMeshPath = false;
+    public string meshPath;
+
+    public bool useMaterialPath = false;
+    public string materialPath;
 
     string output;
 
     public override string ToString()
     {
         output = "";
-        output += "<component name=\"MeshRenderer\">";
+        output += "<component name=\"MeshRendererLoader\">";
+        output += "<property value=\"" + configureFromHolder + "\" name=\"configureFromHolder\"/>";
 
-        if (path != "Wpisz nazwę katalogu z modelem")
+        output += "<property value=\"" + useMeshPath + "\" name=\"useMeshPath\"/>";
+        output += "<property value=\"" + useMaterialPath + "\" name=\"useMaterialPath\"/>";
+
+        if (useMeshPath == true)
         {
-            output += "<property value=\"" + path + ":" + model + "\" name=\"model\"/>";
+            output += "<property value=\"" + meshPath + "\" name=\"mesh\"/>";
+        }
+
+        if (useMaterialPath == true)
+        {
+            output += "<property value=\"" + materialPath + "\" name=\"material\"/>";
         }
 
         output += "</component>";

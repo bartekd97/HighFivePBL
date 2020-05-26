@@ -8,7 +8,6 @@
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
-    <ClCompile Include="ECS\Systems\CubeSpawnerSystem.cpp" />
     <ClCompile Include="ECS\Systems\LifeTimeSystem.cpp" />
     <ClCompile Include="ECS\Systems\PhysicsSystem.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
@@ -51,7 +50,6 @@
     <ClCompile Include="MapGenerator\CellSetuper.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
-    <ClCompile Include="ECS\Systems\Rendering\CubeRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\MeshRendererSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
@@ -62,6 +60,12 @@
     <ClCompile Include="GUI\Label.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\GravityColliderRenderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\ParticleRendererSystem.cpp" />
+    <ClCompile Include="Utility\TextureTools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -77,15 +81,10 @@
     <ClInclude Include="ECS\SystemManager.h" />
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
-    <ClInclude Include="ECS\SystemUpdate.h" />
-    <ClInclude Include="ECS\Components\CubeRenderer.h" />
-    <ClInclude Include="ECS\Components\CubeSpawner.h" />
-    <ClInclude Include="ECS\Components\Gravity.h" />
     <ClInclude Include="ECS\Components\LifeTime.h" />
     <ClInclude Include="ECS\Components\MeshRenderer.h" />
     <ClInclude Include="ECS\Components\RigidBody.h" />
     <ClInclude Include="ECS\Components\Transform.h" />
-    <ClInclude Include="ECS\Systems\CubeSpawnerSystem.h" />
     <ClInclude Include="ECS\Systems\LifeTimeSystem.h" />
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
@@ -130,7 +129,6 @@
     <ClInclude Include="ECS\Components\ScriptContainer.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Components\CircleCollider.h" />
-    <ClInclude Include="Scripting\Scripts\CharControllerTest.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="MapGenerator\CellFenceGenerator.h" />
@@ -158,7 +156,6 @@
     <ClInclude Include="MapGenerator\CellSetuper.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
-    <ClInclude Include="ECS\Systems\Rendering\CubeRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\MeshRendererSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
     <ClInclude Include="Rendering\Frustum.h" />
@@ -176,6 +173,24 @@
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
+    <ClInclude Include="ECS\Components\GravityCollider.h" />
+    <ClInclude Include="ECS\Systems\Rendering\GravityColliderRenderSystem.h" />
+    <ClInclude Include="ECS\Components\ModelHolder.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerController.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
+    <ClInclude Include="Resourcing\UniformBuffer.h" />
+    <ClInclude Include="ECS\Components\BoneAttacher.h" />
+    <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
+    <ClInclude Include="ECS\Components\PointLightRenderer.h" />
+    <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
+    <ClInclude Include="Scripting\Scripts\GhostController.h" />
+    <ClInclude Include="ECS\Components\ParticleContainer.h" />
+    <ClInclude Include="ECS\Components\ParticleRenderer.h" />
+    <ClInclude Include="ECS\Components\ParticleEmitter.h" />
+    <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
+    <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
+    <ClInclude Include="Utility\TextureTools.h" />
+    <ClInclude Include="Utility\ThreadBusiness.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

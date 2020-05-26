@@ -37,6 +37,22 @@ std::vector<std::string> Utility::StringSplit(std::string& string, char separato
 	return strings;
 }
 
+bool Utility::TryConvertStringToVec2(std::string& string, glm::vec2& vec)
+{
+	auto floats = StringSplit(string, ',');
+	if (floats.size() != 2) return false;
+	try
+	{
+		vec.x = std::stof(floats[0].c_str(), NULL);
+		vec.y = std::stof(floats[1].c_str(), NULL);
+	}
+	catch (std::invalid_argument ex)
+	{
+		return false;
+	}
+	return true;
+}
+
 bool Utility::TryConvertStringToVec3(std::string& string, glm::vec3& vec)
 {
 	auto floats = StringSplit(string, ',');
@@ -46,6 +62,24 @@ bool Utility::TryConvertStringToVec3(std::string& string, glm::vec3& vec)
 		vec.x = std::stof(floats[0].c_str(), NULL);
 		vec.y = std::stof(floats[1].c_str(), NULL);
 		vec.z = std::stof(floats[2].c_str(), NULL);
+	}
+	catch (std::invalid_argument ex)
+	{
+		return false;
+	}
+	return true;
+}
+
+bool Utility::TryConvertStringToVec4(std::string& string, glm::vec4& vec)
+{
+	auto floats = StringSplit(string, ',');
+	if (floats.size() != 4) return false;
+	try
+	{
+		vec.x = std::stof(floats[0].c_str(), NULL);
+		vec.y = std::stof(floats[1].c_str(), NULL);
+		vec.z = std::stof(floats[2].c_str(), NULL);
+		vec.w = std::stof(floats[3].c_str(), NULL);
 	}
 	catch (std::invalid_argument ex)
 	{

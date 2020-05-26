@@ -8,6 +8,13 @@ TagManager:
   - Gate
   - Monument
   - Spark
+  - Mud
+  - MudOut
+  - ToxicFog
+  - ToxicFogOut
+  - Fire
+  - FireOut
+  - Boss
   layers:
   - Default
   - TransparentFX

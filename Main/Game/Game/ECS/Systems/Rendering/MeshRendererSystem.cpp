@@ -1,4 +1,4 @@
-#include <chrono>
+#include <memory>
 #include <glm/gtc/matrix_access.hpp>
 #include "HFEngine.h"
 #include "MeshRendererSystem.h"
@@ -12,10 +12,15 @@
 void MeshRendererSystem::Init()
 {
 	toShadowmapShader = ShaderManager::GetShader("ToShadowmap");
+
 	toGBufferShader = ShaderManager::GetShader("ToGBuffer");
 	toGBufferShader->use();
 	toGBufferShader->setInt("shadowmap", 0);
 	MaterialBindingPoint::AssignToShader(toGBufferShader);
+
+	forwardShader = ShaderManager::GetShader("ForwardRender");
+	forwardShader->use();
+	MaterialBindingPoint::AssignToShader(forwardShader);
 }
 
 void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
@@ -31,8 +36,7 @@ void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	{
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
-
-		if (!renderer.cullingData.visibleByLightCamera)
+		if (!renderer.cullingData.visibleByLightCamera || !renderer.castShadows)
 			continue;
 
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
@@ -40,13 +44,12 @@ void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 		renderer.mesh->bind();
 		renderer.mesh->draw();
 	}
+	Mesh::NoBind();
 	glDisable(GL_CULL_FACE);
 }
 
 void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
 {
-	//auto start = std::chrono::high_resolution_clock::now();
-
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -56,38 +59,54 @@ void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera
 	toGBufferShader->setMat4("gLightViewProjection", lightViewProjection);
 	shadowmap->bind(0);
 
-	//int visCount = 0, invisCount = 0;
-
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
+	delayedForward.clear();
 	auto renderers = HFEngine::ECS.GetAllComponents<MeshRenderer>();
-	for (auto const& renderer : renderers)
+	for (auto& renderer : renderers)
 	{
-		//auto const& renderer = HFEngine::ECS.GetComponent<MeshRenderer>(gameObject);
-
 		if (renderer.cullingData.lastUpdate != currentFrame)
 			continue;
-
-		
 		if (!renderer.cullingData.visibleByViewCamera)
-		{
-			//invisCount++;
 			continue;
-		}
-		else
-		{
-			//visCount++;
+
+		if (renderer.material->type == MaterialType::FORWARD) {
+			delayedForward.emplace_back(&renderer);
+			continue;
 		}
 		
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
-
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
 		renderer.mesh->draw();
 	}
+	Mesh::NoBind();
+	Material::NoApply(toGBufferShader);
 
 	glDisable(GL_CULL_FACE);
+}
 
-	//auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	//long us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
-	//LogInfo("RENDERING: Vis: {}    Invis: {}    Elapsed: {} us", visCount, invisCount, us);
+void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
+{
+	if (delayedForward.empty()) return;
+
+	forwardShader->use();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	viewCamera.Use(forwardShader);
+	dirLight.Apply(forwardShader);
+	do {
+		MeshRenderer* renderer = delayedForward.back();
+
+		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
+		renderer->material->apply(forwardShader);
+		renderer->mesh->bind();
+		renderer->mesh->draw();
+
+		delayedForward.pop_back();
+	} while (!delayedForward.empty());
+	Mesh::NoBind();
+	Material::NoApply(forwardShader);
+
+	glDisable(GL_CULL_FACE);
 }

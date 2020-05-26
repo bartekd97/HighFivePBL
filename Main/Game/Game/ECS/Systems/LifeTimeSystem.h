@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 
 //TEST SYSTEM
-class LifeTimeSystem : public SystemUpdate
+class LifeTimeSystem : public System, public ISystemUpdate
 {
 public:
 	void Update(float dt) override;

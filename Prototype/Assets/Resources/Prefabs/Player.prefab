@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 7091947314756690527}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -98,6 +98,7 @@ MonoBehaviour:
   maxGhostDistance: 12
   ghostDistanceRecoverySpeed: 15
   speed: 7
+  slow: 0
   ghostSpeed: 15
   ghostCooldownTime: 1
   maxHealth: 10
@@ -106,6 +107,8 @@ MonoBehaviour:
   pushCooldownTime: 1
   nextPushBackTime: 0
   nextGhostTime: 0
+  poisonCooldownTime: 1
+  burningCooldownTime: 1
 --- !u!114 &3852999908232335553
 MonoBehaviour:
   m_ObjectHideFlags: 0

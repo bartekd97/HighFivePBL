@@ -18,6 +18,7 @@ uniform vec2 viewportSize;
 uniform float fogZoom = 40.0f;
 uniform vec2 noiseOffsets[3];
 
+uniform vec3 fogColor = vec3(0.2, 0.3, 0.5);
 uniform float fogFadeDist = 0.025f;
 
 float getFogValue(vec2 uv)
@@ -45,5 +46,5 @@ void main()
     float fogValue = getFogValue(fs_in.FragPos.xz / fogZoom);
     float fog = clamp(fogDepth * fogValue, 0.0f, 1.0f);
 
-    FragColor = vec4(vec3(1.0f), fog);
+    FragColor = vec4(fogColor, fog);
 }

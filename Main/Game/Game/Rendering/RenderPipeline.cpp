@@ -2,7 +2,8 @@
 #include "RenderPipeline.h"
 #include "ECS/Systems/Rendering/MeshRendererSystem.h"
 #include "ECS/Systems/Rendering/SkinnedMeshRendererSystem.h"
-#include "ECS/Systems/Rendering/CubeRenderSystem.h"
+#include "ECS/Systems/Rendering/PointLightRendererSystem.h"
+#include "ECS/Systems/Rendering/ParticleRendererSystem.h"
 #include "ECS/Systems/Rendering/BoxColliderRenderSystem.h"
 #include "ECS/Systems/Rendering/CircleColliderRenderSystem.h"
 #include "HFEngine.h"
@@ -46,7 +47,7 @@ void RenderPipeline::InitGBuffer()
 		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
-		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE}	// emissive
+		{GL_RGB16F, GL_RGB, GL_FLOAT}	// emissive
 	};
 
 	GBuffer.frameBuffer = FrameBuffer::Create(
@@ -91,14 +92,21 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<SkinnedMeshRenderer>());
 		HFEngine::ECS.SetSystemSignature<SkinnedMeshRendererSystem>(signature);
 	}
-
-#ifdef _DEBUG
-	RenderSystems.cubeRenderer = HFEngine::ECS.RegisterSystem<CubeRenderSystem>();
+	RenderSystems.pointLightRenderer = HFEngine::ECS.RegisterSystem<PointLightRendererSystem>();
 	{
 		Signature signature;
-		signature.set(HFEngine::ECS.GetComponentType<CubeRenderer>());
-		HFEngine::ECS.SetSystemSignature<CubeRenderSystem>(signature);
+		signature.set(HFEngine::ECS.GetComponentType<PointLightRenderer>());
+		HFEngine::ECS.SetSystemSignature<PointLightRendererSystem>(signature);
 	}
+	RenderSystems.particleRenderer = HFEngine::ECS.RegisterSystem<ParticleRendererSystem>();
+	{
+		Signature signature;
+		signature.set(HFEngine::ECS.GetComponentType<ParticleContainer>());
+		signature.set(HFEngine::ECS.GetComponentType<ParticleRenderer>());
+		HFEngine::ECS.SetSystemSignature<ParticleRendererSystem>(signature);
+	}
+
+#ifdef _DEBUG
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
 	{
 		Signature signature;
@@ -168,6 +176,9 @@ void RenderPipeline::Init()
 
 void RenderPipeline::Render()
 {
+	// clear texture bound cache
+	Texture::NoBindAll(true);
+
 	// prepare cameras
 	static Camera lightCamera;
 	Camera& viewCamera = HFEngine::MainCamera;
@@ -195,6 +206,9 @@ void RenderPipeline::Render()
 	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
 	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
 
+	// schedule particle culling
+	RenderSystems.particleRenderer->ScheduleCulling(viewFrustum, lightFrustum);
+
 	// draw to gbuffer
 	GBuffer.frameBuffer->bind();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -203,6 +217,25 @@ void RenderPipeline::Render()
 	RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	//RenderSystems.cubeRenderer->Render();
+
+	// synchronize light rendering with finished gbuffer, make  write to emissive safely
+	glWaitSync(
+		glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, GL_ZERO),
+		GL_ZERO,
+		GL_TIMEOUT_IGNORED
+	); // glWaitSync doesn't block CPU
+	// it makes sure all previous GPU commands will be completed until next scheduled commands
+
+	// bind gbuffer textures
+	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
+	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
+	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);
+	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
+	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
+
+	// draw point lights
+	glm::vec2 viewportSize = { GBuffer.frameBuffer->width, GBuffer.frameBuffer->height };
+	RenderSystems.pointLightRenderer->Render(viewCamera, viewportSize);
 
 	// combine gbuffer
 	//FrameBuffer::BindDefaultScreen();
@@ -213,16 +246,24 @@ void RenderPipeline::Render()
 	combineGBufferShader->use();
 	HFEngine::MainCamera.Use(combineGBufferShader); // for gCameraPosition
 	HFEngine::WorldLight.Apply(combineGBufferShader); // for gDirectionalLight struct
-	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
-	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
-	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);
-	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
-	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
+
+	// wait for particle culling
+	RenderSystems.particleRenderer->FinishCulling();
+
+	// draw forward
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE); // disable zbuffer writing
+	RenderSystems.particleRenderer->Render(viewCamera);
+	RenderSystems.meshRenderer->RenderForward(viewCamera, HFEngine::WorldLight);
+	RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_DEPTH_TEST);
+
 	glDisable(GL_BLEND);
 
 	// apply post processing
@@ -254,6 +295,4 @@ void RenderPipeline::Render()
 		RenderSystems.circleColliderRenderer->Render();
 	}
 #endif //  _DEBUG
-
-	//HFEngine::MainCamera = mCamera;
 }

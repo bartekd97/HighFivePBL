@@ -28,6 +28,11 @@ namespace InputManager
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
 		mouseButtonStates[button] = action;
+
+		if (action == GLFW_PRESS)
+			currentlyPressed[button] = true;
+		else if (action == GLFW_RELEASE)
+			currentlyReleased[button] = true;
 	}
 
 	void Initialize()
@@ -73,8 +78,16 @@ namespace InputManager
 	{
 		return currentlyReleased.find(key) != currentlyReleased.end();
 	}
-
 	bool GetKeyDown(GLFW_KEY key)
+	{
+		return currentlyPressed.find(key) != currentlyPressed.end();
+	}
+
+	bool GetMouseButtonUp(GLFW_MOUSE_BUTTON key)
+	{
+		return currentlyReleased.find(key) != currentlyReleased.end();
+	}
+	bool GetMouseButtonDown(GLFW_MOUSE_BUTTON key)
 	{
 		return currentlyPressed.find(key) != currentlyPressed.end();
 	}

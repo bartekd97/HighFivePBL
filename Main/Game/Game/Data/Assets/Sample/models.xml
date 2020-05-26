@@ -1,3 +1,0 @@
-<models materialLibrary="this">
-    <model name="spaceship" mesh="spaceship.glb" material="mat" />
-</models>

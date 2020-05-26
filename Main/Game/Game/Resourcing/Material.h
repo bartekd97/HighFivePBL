@@ -16,30 +16,44 @@ namespace MaterialBindingPoint {
 	void AssignToShader(std::shared_ptr<Shader> shader);
 }
 
+enum class MaterialType {
+	DEFERRED,
+	FORWARD
+};
 class Material {
 	friend void MaterialManager::Initialize();
-	friend std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial();
+	friend std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial(MaterialType type);
 	friend class MaterialLibrary;
 
 public:
+
 	std::shared_ptr<Texture> albedoMap;
 	std::shared_ptr<Texture> normalMap;
-	std::shared_ptr<Texture> metalnessMap;
-	std::shared_ptr<Texture> roughnessMap;
+	std::shared_ptr<Texture> metalnessMap; // only in deferred
+	std::shared_ptr<Texture> roughnessMap; // only in deferred
 	std::shared_ptr<Texture> emissiveMap;
 
 	glm::vec3 albedoColor;
-	float metalnessValue;
-	float roughnessValue;
+	float metalnessValue; // only in deferred
+	float roughnessValue; // only in deferred
 	glm::vec3 emissiveColor;
+
+	float specularValue; // only in forward
+	float opacityValue; // only in forward
+
+	const MaterialType type;
 
 private:
 	void SetLibraryProperties(PropertyReader& properties, std::shared_ptr<TextureLibrary> textureLibrary);
 
 
-	Material();
+	Material(MaterialType materialType);
 
 public:
 	void apply(std::shared_ptr<Shader> shader);
-
+	inline void forceApply(std::shared_ptr<Shader> shader) {
+		NoApply(shader);
+		apply(shader);
+	}
+	static void NoApply(std::shared_ptr<Shader> shader);
 };

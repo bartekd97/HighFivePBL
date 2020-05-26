@@ -203,7 +203,10 @@ bool MeshFileLoader::ReadBoneData(std::vector<VertexBoneData>& data, std::shared
 
 
 	glm::mat inverseRootTransform = glm::inverse(mat4_cast(scene->mRootNode->mTransformation));
-	skinning = SkinningData::Create(nodes, boneOffsets, inverseRootTransform);
+	glm::mat inverseModelTransform = glm::inverse(mat4_cast(
+		scene->mRootNode->FindNode(mesh->mName)->mTransformation
+		));
+	skinning = SkinningData::Create(nodes, boneOffsets, inverseRootTransform, inverseModelTransform);
 
 	return true;
 }
@@ -222,8 +225,8 @@ bool MeshFileLoader::ReadAnimation(std::shared_ptr<AnimationClip>& animation)
 	}
 	aiAnimation* anim = scene->mAnimations[0];
 
-	float framerate = anim->mTicksPerSecond == 0.0f ? 25.0f : anim->mTicksPerSecond;
-	animation = AnimationClip::Create(framerate, anim->mDuration);
+	float ticks = anim->mTicksPerSecond == 0.0f ? 25.0f : anim->mTicksPerSecond;
+	animation = AnimationClip::Create(1000.0f / ticks, anim->mDuration);
 
 	std::vector<AnimationClip::Channel::KeyVec3> positions;
 	std::vector<AnimationClip::Channel::KeyQuat> rotations;

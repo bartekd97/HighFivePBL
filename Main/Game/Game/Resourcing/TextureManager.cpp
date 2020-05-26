@@ -218,10 +218,14 @@ TextureLibrary::TextureLibrary(std::string name) : name(name)
 
 		if (node->Attribute("format", "srgb"))
 			entity->config.format = GL_SRGB8;
+		else if (node->Attribute("format", "srgba"))
+			entity->config.format = GL_SRGB8_ALPHA8;
 		else if (node->Attribute("format", "r"))
 			entity->config.format = GL_R8;
 		else if (node->Attribute("format", "rg"))
 			entity->config.format = GL_RG8;
+		else if (node->Attribute("format", "rgba"))
+			entity->config.format = GL_RGBA8;
 		
 		entities[textureName] = entity;
 	}

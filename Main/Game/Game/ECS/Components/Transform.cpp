@@ -11,13 +11,39 @@ Transform::Transform(GameObject gameObject) : gameObject(gameObject) {
 	UpdateSelf();
 }
 
+void Transform::SetLocalMatrix(glm::mat4& transform)
+{
+	localTransform = transform;
+
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(
+		localTransform,
+		scale,
+		rotation,
+		position,
+		skew,
+		perspective
+		);
+	rotationEuler = glm::vec3(
+		glm::degrees(glm::pitch(rotation)), // x
+		glm::degrees(glm::yaw(rotation)), // y
+		glm::degrees(glm::roll(rotation)) // z
+		);
+
+	right = rotation * glm::vec3(1, 0, 0);
+	up = rotation * glm::vec3(0, 1, 0);
+	front = rotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
+
+	UpdateWorldTransform();
+}
+
 void Transform::UpdateFromParent(glm::mat4& parentWorldTransform) {
 	this->parentWorldTransform = parentWorldTransform;
-	UpdateSelf();
+	UpdateWorldTransform();
 }
 
 void Transform::UpdateSelf() {
-	assert(gameObject != NULL_GAMEOBJECT && "Updating generic transform");
 	// local transform
 	{
 		glm::mat4 translateMat = glm::translate(glm::mat4(1.0), position);
@@ -30,28 +56,14 @@ void Transform::UpdateSelf() {
 		front = rotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
 	}
 
+	UpdateWorldTransform();
+}
+
+void Transform::UpdateWorldTransform()
+{
+	assert(gameObject != NULL_GAMEOBJECT && "Updating generic transform");
 	worldTransform = parentWorldTransform * localTransform;
-	// decompose world
-	{
-		glm::vec3 skew;
-		glm::vec4 perspective;
-		glm::decompose(
-			worldTransform,
-			worldScale,
-			worldRotation,
-			worldPosition,
-			skew,
-			perspective
-			);
-		worldRotationEuler = glm::vec3(
-			glm::degrees(glm::pitch(worldRotation)), // x
-			glm::degrees(glm::yaw(worldRotation)), // y
-			glm::degrees(glm::roll(worldRotation)) // z
-			);
-		worldRight = worldRotation * glm::vec3(1, 0, 0);
-		worldUp = worldRotation * glm::vec3(0, 1, 0);
-		worldFront = worldRotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
-	}
+	needWorldDecompose = true;
 
 	// update frame number
 	lastFrameUpdate = HFEngine::CURRENT_FRAME_NUMBER;
@@ -64,5 +76,28 @@ void Transform::UpdateSelf() {
 			HFEngine::ECS.GetComponent<Transform>(*it).UpdateFromParent(worldTransform);
 		}
 	}
+}
 
+void Transform::DecomposeWorldTransform()
+{
+	glm::vec3 skew;
+	glm::vec4 perspective;
+	glm::decompose(
+		worldTransform,
+		worldScale,
+		worldRotation,
+		worldPosition,
+		skew,
+		perspective
+		);
+	worldRotationEuler = glm::vec3(
+		glm::degrees(glm::pitch(worldRotation)), // x
+		glm::degrees(glm::yaw(worldRotation)), // y
+		glm::degrees(glm::roll(worldRotation)) // z
+		);
+	worldRight = worldRotation * glm::vec3(1, 0, 0);
+	worldUp = worldRotation * glm::vec3(0, 1, 0);
+	worldFront = worldRotation * glm::vec3(0, 0, -1); // https://shot511.github.io/2017-09-25-uklady-wspolrzednych/
+	
+	needWorldDecompose = false;
 }

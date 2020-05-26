@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Ghost : MonoBehaviour
@@ -61,6 +62,9 @@ public class Ghost : MonoBehaviour
 
     public ParticleSystem sparkCrossing;
 
+    public BossSpawnerController bossController;
+    public bool bossHit;
+
     public bool IsMarking { get; private set; }
     private void Awake()
     {
@@ -68,6 +72,7 @@ public class Ghost : MonoBehaviour
         firstEnemyHit = false;
         numberOfEnemyToHit = 1;
         numberOfEnemyHit = 1;
+        bossHit = false;
     }
     private void Start()
     {
@@ -116,6 +121,7 @@ public class Ghost : MonoBehaviour
         }
 
         List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+        
         enemies.ForEach(enemy => enemy.GetComponent<EnemyController>().slow = 0.0f);
 
         bool isTimeToStrikexD = false;
@@ -155,6 +161,7 @@ public class Ghost : MonoBehaviour
                 enemy.GetComponent<EnemyController>().frozenTo = Time.time + ghostFreezeTime;
             }
         });
+
     }
 
     public void Show(Transform start)
@@ -193,6 +200,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
         firstEnemyHit = true;
+        bossHit = true;
         numberOfEnemyHit = 0;
     }
 
@@ -392,7 +400,7 @@ public class Ghost : MonoBehaviour
         if (!IsMarking)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument") && !other.gameObject.CompareTag("Boss"))
             return;
 
         enemyController = other.GetComponent<EnemyController>();
@@ -407,6 +415,13 @@ public class Ghost : MonoBehaviour
         if (monumentController != null)
         {
             monumentController.ApplyDamageToMonument(damageToEnemies);
+        }
+
+        bossController = other.GetComponent<BossSpawnerController>();
+        if (bossController != null && bossHit == true)
+        {
+            bossController.TakeDamage(damageToEnemies);
+            bossHit = false;
         }
     }
 
