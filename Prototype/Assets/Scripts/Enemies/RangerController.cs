@@ -28,6 +28,7 @@ public class RangerController : EnemyController
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
         startRotation = transform.rotation;
+
     }
 
     // Update is called once per frame

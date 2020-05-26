@@ -71,6 +71,7 @@ public class MapSetuper : MonoBehaviour
             .ForEach(cell => SpawnEnemiesInCell(cell));
 
         GameObject boss = InstantiateBoss(bossCell.transform.position);
+        boss.GetComponent<EnemyController>().cellNumber = bossCell.CellSiteIndex;
         bossCell.Enemies.Add(boss);
 
         bossCell.GetComponentInChildren<MeshRenderer>().material = bossCellMaterial;
@@ -92,6 +93,8 @@ public class MapSetuper : MonoBehaviour
             if (Physics.OverlapBox(finalPoint + new Vector3(0, enemyPrefab.GetComponent<BoxCollider>().size.y, 0), enemyPrefab.GetComponent<BoxCollider>().size / 2.0f).Length == 0)
             {
                 GameObject enemy = InstantiateEnemy(finalPoint, cell);
+                enemy.GetComponent<EnemyController>().cellNumber = cell.CellSiteIndex;
+
                 cell.Enemies.Add(enemy);
                 enemiesCount -= 1;
             }
