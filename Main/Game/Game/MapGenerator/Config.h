@@ -66,7 +66,7 @@ struct CellFenceConfig
     CellFenceEntity gateEntity;
     CellFenceEntity fragmentEntity;
     CellFenceEntity connectorEntity;
-    float gateDistance = 6.5f;
+    float gateDistance = 9.0f;
     int fragmentCount = 2;
     float innerLevelFenceLocation = 0.87f;
 
