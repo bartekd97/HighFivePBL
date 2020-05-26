@@ -97,3 +97,10 @@ void ECSCore::UpdateSystems(float dt)
 		(*it)->Update(dt);
 	}
 }
+void ECSCore::PostUpdateSystems(float dt)
+{
+	for (auto it = systemManager->postUpdateQueue.begin(); it != systemManager->postUpdateQueue.end(); ++it)
+	{
+		(*it)->PostUpdate(dt);
+	}
+}

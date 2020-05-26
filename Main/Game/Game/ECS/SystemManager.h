@@ -6,6 +6,7 @@
 
 #include "../Utility/Utility.h"
 #include "SystemUpdate.h"
+#include "SystemPostUpdate.h"
 #include "SystemRender.h"
 #include "ECSTypes.h"
 
@@ -29,6 +30,10 @@ public:
 		if constexpr (std::is_base_of<SystemUpdate, T>::value)
 		{
 			updateQueue.push_back(system);
+		}
+		if constexpr (std::is_base_of<SystemPostUpdate, T>::value)
+		{
+			postUpdateQueue.push_back(system);
 		}
 		return system;
 	}
@@ -83,6 +88,7 @@ public:
 	}
 
 	std::vector<std::shared_ptr<SystemUpdate>> updateQueue;
+	std::vector<std::shared_ptr<SystemPostUpdate>> postUpdateQueue;
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};

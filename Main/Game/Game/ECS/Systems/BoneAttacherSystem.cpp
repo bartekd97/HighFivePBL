@@ -6,7 +6,7 @@
 #include "../Components/SkinnedMeshRenderer.h"
 #include "../Components/BoneAttacher.h"
 
-void BoneAttacherSystem::Update(float dt)
+void BoneAttacherSystem::PostUpdate(float dt)
 {
 	auto it = gameObjects.begin();
 	while (it != gameObjects.end())
@@ -18,10 +18,12 @@ void BoneAttacherSystem::Update(float dt)
 		
 		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 		auto const& attacher = HFEngine::ECS.GetComponent<BoneAttacher>(gameObject);
-		auto const& renderer = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(gameObjectParent.value());
+		auto& renderer = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(gameObjectParent.value());
 
 		int boneIndex = renderer.skinningData->GetBoneIndex(attacher.boneName);
 		assert(boneIndex >= 0 && "Invalid bone name");
+
+		renderer.business.Wait(); // wait for bone transform being updated by skin animator
 
 		glm::mat4 localTransform =
 			renderer.boneMatrices[boneIndex] *

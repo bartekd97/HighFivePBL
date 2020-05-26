@@ -58,7 +58,7 @@ void RiverFogEffect::Init()
 	shader->setInt("depthMap", 0);
 	shader->setInt("noiseMap", 1);
 
-	EventManager::AddListener(METHOD_LISTENER(Events::General::LATE_UPDATE, RiverFogEffect::LateUpdateNoise));
+	EventManager::AddListener(METHOD_LISTENER(Events::General::POST_UPDATE, RiverFogEffect::LateUpdateNoise));
 }
 
 bool RiverFogEffect::Process(

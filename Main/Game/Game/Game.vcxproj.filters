@@ -191,6 +191,8 @@
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
     <ClInclude Include="Utility\TextureTools.h" />
+    <ClInclude Include="Utility\ThreadBusiness.h" />
+    <ClInclude Include="ECS\SystemPostUpdate.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

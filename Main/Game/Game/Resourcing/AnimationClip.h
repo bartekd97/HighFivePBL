@@ -31,9 +31,6 @@ public:
 		};
 
 	private:
-		int positionsCount;
-		int rotationsCount;
-		int scalesCount;
 		std::array<KeyVec3, MAX_KEYS> positions{};
 		std::array<KeyQuat, MAX_KEYS> rotations{};
 		std::array<KeyVec3, MAX_KEYS> scales{};
@@ -46,15 +43,16 @@ public:
 			assert(_positions.size() > 0 && _positions.size() <= MAX_KEYS && "Too many or none position keys");
 			assert(_rotations.size() > 0 && _rotations.size() <= MAX_KEYS && "Too many or none rotation keys");
 			assert(_scales.size() > 0 && _scales.size() <= MAX_KEYS && "Too many or none scale keys");
-			positionsCount = _positions.size();
-			rotationsCount = _rotations.size();
-			scalesCount = _scales.size();
-			std::copy_n(std::make_move_iterator(_positions.begin()), positionsCount, positions.begin());
-			std::copy_n(std::make_move_iterator(_rotations.begin()), rotationsCount, rotations.begin());
-			std::copy_n(std::make_move_iterator(_scales.begin()), scalesCount, scales.begin());
+			assert(
+				_positions.size() == _rotations.size()
+				&& _rotations.size() == _scales.size()
+				&& "Not equal amount of keys");
+			std::copy_n(std::make_move_iterator(_positions.begin()), _positions.size(), positions.begin());
+			std::copy_n(std::make_move_iterator(_rotations.begin()), _rotations.size(), rotations.begin());
+			std::copy_n(std::make_move_iterator(_scales.begin()), _scales.size(), scales.begin());
 		}
 
-
+		/*
 		template<typename TKey, typename TRet>
 		inline TRet Evaluate(TKey* arr, int count, float time, TRet (*func)(TRet const&, TRet const&, float))
 		{
@@ -77,6 +75,7 @@ public:
 			const TRet& end = arr[nextIndex].key;
 			return func(start, end, factor);
 		}
+		*/
 
 	public:
 		inline static std::shared_ptr<Channel> Create(
@@ -87,19 +86,19 @@ public:
 			return std::shared_ptr<Channel>(new Channel(_positions, _rotations, _scales));
 		}
 
-		inline glm::vec3 EvaluatePosition(float time)
+		inline glm::vec3 EvaluatePosition(int from, int to, float t)
 		{
-			return Evaluate<KeyVec3, glm::vec3>(positions.data(), positionsCount, time, glm::mix);
+			return glm::mix(positions[from].key, positions[to].key, t);
 		}
 
-		inline glm::quat EvaluateRotation(float time)
+		inline glm::quat EvaluateRotation(int from, int to, float t)
 		{
-			return Evaluate<KeyQuat, glm::quat>(rotations.data(), rotationsCount, time, glm::slerp);
+			return glm::slerp(rotations[from].key, rotations[to].key, t);
 		}
 
-		inline glm::vec3 EvaluateScale(float time)
+		inline glm::vec3 EvaluateScale(int from, int to, float t)
 		{
-			return Evaluate<KeyVec3, glm::vec3>(scales.data(), scalesCount, time, glm::mix);
+			return glm::mix(scales[from].key, scales[to].key, t);
 		}
 
 	};
@@ -107,11 +106,12 @@ public:
 public:
 	const float framerate = 0.0f;
 	const float duration = 0.0f;
+	const float framecount;
 private:
 	std::unordered_map<std::string, std::shared_ptr<Channel>> channels;
 
 	AnimationClip(float framerate, float duration)
-		: framerate(framerate), duration(duration)
+		: framerate(framerate), duration(duration), framecount(duration / framerate)
 	{}
 public:
 	inline static std::shared_ptr<AnimationClip> Create(float framerate, float duration) {
@@ -132,13 +132,17 @@ public:
 		float timeInTicks = timeInSeconds * 1000.0f; // to ms
 		float time = glm::mod(timeInTicks, duration);
 		//time = 0.0f;
+		float frame = time / framerate;
+		int from = glm::min( int(frame), int(framecount) - 2);
+		float t = frame - float(from);
 
 		auto& channel = channels[name];
-		glm::vec3 position = channel->EvaluatePosition(time);
-		glm::quat rotation = channel->EvaluateRotation(time);
-		glm::vec3 scale = channel->EvaluateScale(time);
+		glm::vec3 position = channel->EvaluatePosition(from, from + 1, t);
+		glm::quat rotation = channel->EvaluateRotation(from, from + 1, t);
+		// disabling scale to save some performance cuz its not used 
+		//glm::vec3 scale = channel->EvaluateScale(from, from + 1, t);
 
 		//return fallback;
-		return glm::translate(glm::mat4(1.0), position) * glm::mat4_cast(rotation) * glm::scale(glm::mat4(1.0), scale);
+		return glm::translate(glm::mat4(1.0), position) * glm::mat4_cast(rotation) /** glm::scale(glm::mat4(1.0), scale)*/;
 	}
 };

@@ -216,9 +216,11 @@ namespace HFEngine
 
 		HFEngine::ECS.UpdateSystems(dt);
 
-		Event lateUpdateEvent(Events::General::LATE_UPDATE);
+		Event lateUpdateEvent(Events::General::POST_UPDATE);
 		lateUpdateEvent.SetParam(Events::General::DELTA_TIME, dt);
 		EventManager::FireEvent(lateUpdateEvent);
+
+		HFEngine::ECS.PostUpdateSystems(dt);
 
 		HFEngine::Renderer.Render();
 		GUIManager::Draw();

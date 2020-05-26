@@ -19,7 +19,7 @@ namespace Events::Test
 namespace Events::General
 {
 	const EventId UPDATE = "Events::General::UPDATE"_hash;
-	const EventId LATE_UPDATE = "Events::General::LATE_UPDATE"_hash;
+	const EventId POST_UPDATE = "Events::General::POST_UPDATE"_hash;
 }
 
 namespace Events::Gameplay
