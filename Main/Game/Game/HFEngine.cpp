@@ -101,6 +101,10 @@ namespace HFEngine
 		ECS.RegisterComponent<MeshRenderer>();
 		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		ECS.RegisterComponent<PointLightRenderer>();
+		// particle components
+		ECS.RegisterComponent<ParticleContainer>();
+		ECS.RegisterComponent<ParticleEmitter>();
+		ECS.RegisterComponent<ParticleRenderer>();
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<ScriptContainer>();
@@ -137,6 +141,13 @@ namespace HFEngine
 			Signature signature;
 			signature.set(ECS.GetComponentType<BoneAttacher>());
 			ECS.SetSystemSignature<BoneAttacherSystem>(signature);
+		}
+		auto particleEmitterSystem = ECS.RegisterSystem<ParticleEmitterSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<ParticleContainer>());
+			signature.set(ECS.GetComponentType<ParticleEmitter>());
+			ECS.SetSystemSignature<ParticleEmitterSystem>(signature);
 		}
 		auto colliderCollectorSystem = ECS.RegisterSystem<ColliderCollectorSystem>();
 		{

@@ -9,9 +9,9 @@
 #include "Systems/ColliderCollectorSystem.h"
 #include "Systems/PhysicsSystem.h"
 
+#include "Systems/ParticleEmitterSystem.h"
+
 #include "Systems/ScriptLateUpdateSystem.h"
 
-#include "Systems/Rendering/MeshRendererSystem.h"
-#include "Systems/Rendering/BoxColliderRenderSystem.h"
 #include "Systems/MapCellCollectorSystem.h"
 #include "Systems/GravitySystem.h"

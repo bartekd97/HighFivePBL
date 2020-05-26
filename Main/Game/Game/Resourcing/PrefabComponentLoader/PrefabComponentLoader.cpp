@@ -3,6 +3,7 @@
 #include "HFEngine.h"
 #include "ECS/Components.h"
 #include "Utility/Utility.h"
+#include "Utility/TextureTools.h"
 #include "Utility/Logger.h"
 #include "Resourcing/Model.h"
 
@@ -201,6 +202,136 @@ namespace {
 		}
 	};
 
+
+
+	class ParticleContainerLoader : public IPrefabComponentLoader {
+	public:
+		int maxParticles = 0;
+
+		virtual void Preprocess(PropertyReader& properties) override {
+			if (!properties.GetInt("maxParticles", maxParticles, maxParticles)) {
+				LogWarning("ParticleContainerLoader::Preprocess(): Missing 'maxParticles' value. Using default: {}", maxParticles);
+			}
+			assert(maxParticles >= 0 && maxParticles <= ParticleContainer::MAX_ALLOWED_PARTICLES && "Particles amount is out of range");
+		}
+
+		virtual void Create(GameObject target) override {
+			ParticleContainer container;
+			container.SetMaxParticles(maxParticles);
+			HFEngine::ECS.AddComponent<ParticleContainer>(target, container);
+		}
+	};
+	class ParticleEmitterLoader : public IPrefabComponentLoader {
+	public:
+		ParticleEmitter emitter;
+
+		virtual void Preprocess(PropertyReader& properties) override {
+			static std::string emitterShapeStr;
+			if (properties.GetString("shape", emitterShapeStr, "RECTANGLE")) {
+				if (emitterShapeStr == "RECTANGLE")
+					emitter.shape = ParticleEmitter::EmitterShape::RECTANGLE;
+				else if (emitterShapeStr == "CIRCLE")
+					emitter.shape = ParticleEmitter::EmitterShape::CIRCLE;
+				else {
+					LogWarning("ParticleEmitterLoader::Preprocess(): Invalid 'shape' value. Using default: {}", "RECTANGLE");
+					emitter.shape = ParticleEmitter::EmitterShape::RECTANGLE;
+				}
+			}
+			else {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'shape' value. Using default: {}", "RECTANGLE");
+				emitter.shape = ParticleEmitter::EmitterShape::RECTANGLE;
+			}
+
+			if (!properties.GetVec2("sourcShapeeSize", emitter.sourcShapeeSize, emitter.sourcShapeeSize)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'sourcShapeeSize' value. Using default: {}", emitter.sourcShapeeSize);
+			}
+			if (!properties.GetVec2("targetShapeSize", emitter.targetShapeSize, emitter.targetShapeSize)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'targetShapeSize' value. Using default: {}", emitter.targetShapeSize);
+			}
+			if (!properties.GetVec2("lifetime", emitter.lifetime, emitter.lifetime)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'lifetime' value. Using default: {}", emitter.lifetime);
+			}
+			if (!properties.GetVec2("velocity", emitter.velocity, emitter.velocity)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'velocity' value. Using default: {}", emitter.velocity);
+			}
+			if (!properties.GetVec2("size", emitter.size, emitter.size)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'size' value. Using default: {}", emitter.size);
+			}
+			if (!properties.GetFloat("rate", emitter.rate, emitter.rate)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'rate' value. Using default: {}", emitter.rate);
+			}
+
+			properties.GetBool("emitting", emitter.emitting, emitter.emitting);
+		}
+
+		virtual void Create(GameObject target) override {
+			ParticleEmitter emitter = this->emitter;
+			HFEngine::ECS.AddComponent<ParticleEmitter>(target, emitter);
+		}
+	};
+	class ParticleRendererLoader : public IPrefabComponentLoader {
+	public:
+		ParticleRenderer renderer;
+
+		virtual void Preprocess(PropertyReader& properties) override {
+			// color over time
+			std::string colorOverTimeStr = "1.0,1.0,1.0";
+			if (!properties.GetString("colorOverTime", colorOverTimeStr, colorOverTimeStr)) {
+				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'colorOverTime' value. Using default: {}", colorOverTimeStr);
+			}
+			else {
+				std::vector<glm::vec3> colorOverTimeVec3;
+				for (auto& color : Utility::StringSplit(colorOverTimeStr, ';'))
+				{
+					glm::vec3 cvec;
+					if (!Utility::TryConvertStringToVec3(color, cvec)) {
+						LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'colorOverTime' value. Using: {}", color, cvec);
+					}
+					colorOverTimeVec3.push_back(cvec);
+				}
+				renderer.colorOverTime = TextureTools::GenerateGradientTexture(colorOverTimeVec3);
+			}
+
+			// opacity over time
+			std::string opacityOverTimeStr = "1.0";
+			if (!properties.GetString("opacityOverTime", opacityOverTimeStr, opacityOverTimeStr)) {
+				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'opacityOverTime' value. Using default: {}", opacityOverTimeStr);
+			}
+			else {
+				std::vector<float> opacityOverTimeFloats;
+				for (auto& opacity : Utility::StringSplit(opacityOverTimeStr, ';'))
+				{
+					float of;
+					if (!Utility::TryConvertStringToFloat(opacity, of)) {
+						LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'opacityOverTime' value. Using: {}", opacity, of);
+					}
+					opacityOverTimeFloats.push_back(of);
+				}
+				renderer.opacityOverTime = TextureTools::GenerateGradientTexture(opacityOverTimeFloats);
+			}
+
+
+			static std::string tmpSpriteSheetPath;
+			if (properties.GetString("spriteSheet", tmpSpriteSheetPath, "")) {
+				auto parts = Utility::StringSplit(tmpSpriteSheetPath, ':');
+				if (parts.size() == 2) {
+					renderer.spriteSheet = TextureManager::GetTexture(parts[0], parts[1]);
+				}
+				else {
+					LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse 'spriteSheet' value: {}", tmpSpriteSheetPath);
+				}
+			}
+
+			if (!properties.GetInt("spriteSheetCount", renderer.spriteSheetCount, renderer.spriteSheetCount)) {
+				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'spriteSheetCount' value. Using default: {}", renderer.spriteSheetCount);
+			}
+		}
+
+		virtual void Create(GameObject target) override {
+			ParticleRenderer renderer = this->renderer;
+			HFEngine::ECS.AddComponent<ParticleRenderer>(target, renderer);
+		}
+	};
 
 
 
@@ -493,6 +624,11 @@ void PrefabComponentLoader::RegisterLoaders()
 	PrefabManager::RegisterComponentLoader("PointLightRenderer", []() { return std::make_shared<PointLightRendererLoader>(); });
 
 	PrefabManager::RegisterComponentLoader("SkinAnimator", []() { return std::make_shared<SkinAnimatorLoader>(); });
+
+	PrefabManager::RegisterComponentLoader("ParticleContainer", []() { return std::make_shared<ParticleContainerLoader>(); });
+	PrefabManager::RegisterComponentLoader("ParticleEmitter", []() { return std::make_shared<ParticleEmitterLoader>(); });
+	PrefabManager::RegisterComponentLoader("ParticleRenderer", []() { return std::make_shared<ParticleRendererLoader>(); });
+
 
 	PrefabManager::RegisterComponentLoader("RigidBody", []() { return std::make_shared<RigidBodyLoader>(); });
 	PrefabManager::RegisterComponentLoader("CircleCollider", []() { return std::make_shared<CircleColliderLoader>(); });

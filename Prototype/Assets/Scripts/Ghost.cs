@@ -121,6 +121,7 @@ public class Ghost : MonoBehaviour
         }
 
         List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+        
         enemies.ForEach(enemy => enemy.GetComponent<EnemyController>().slow = 0.0f);
 
         bool isTimeToStrikexD = false;
@@ -161,47 +162,6 @@ public class Ghost : MonoBehaviour
             }
         });
 
-        //boss
-        List<GameObject> bosses = new List<GameObject>(GameObject.FindGameObjectsWithTag("Boss"));
-        bosses.ForEach(enemy => enemy.GetComponent<BossSpawnerController>().slow = 0.0f);
-
-        bool isTimeToStrikeBoss = false;
-        if (dotDmg > 0 && dotTick > 0)
-        {
-            if ((Time.time - lastDotTick) >= dotTick)
-            {
-                lastDotTick = Time.time;
-                isTimeToStrikeBoss = true;
-            }
-        }
-
-        //Slow + DoT (boss)
-        activeLines.ForEach(line =>
-        {
-            line.ghosts.ForEach(ghost =>
-            {
-                BoxCollider coll = ghost.GetComponentInParent<BoxCollider>();
-                bosses.ForEach(boss =>
-                {
-                    BoxCollider bossColl = boss.GetComponent<BoxCollider>();
-                    if (coll.bounds.Intersects(bossColl.bounds))
-                    {
-                        boss.GetComponent<BossSpawnerController>().slow = lineSlow;
-                        if (isTimeToStrikeBoss) boss.GetComponent<BossSpawnerController>().TakeDamage(dotDmg);
-                    }
-                });
-            });
-        });
-
-        //Freeze (boss)
-        bosses.ForEach(enemy =>
-        {
-            BoxCollider bossColl = enemy.GetComponent<BoxCollider>();
-            if (bossColl.bounds.Intersects(GetComponentInParent<BoxCollider>().bounds))
-            {
-                enemy.GetComponent<BossSpawnerController>().frozenTo = Time.time + ghostFreezeTime;
-            }
-        });
     }
 
     public void Show(Transform start)
