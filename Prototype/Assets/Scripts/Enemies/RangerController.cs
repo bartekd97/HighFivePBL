@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RangerController : EnemyController
 {
@@ -10,10 +11,19 @@ public class RangerController : EnemyController
     public float arrowSpeed = 10.0f;
     public float shootingRange = 10.0f;
     public float shootingDelay = 3.0f;
-    public bool isMoving = false;
+    public bool canShoot = false;
 
     public bool enemyTriggered = false;
     public Quaternion startRotation;
+
+    private int state;
+    public float movingDistance = 1.0f;
+    public Vector3 position1;
+    public Vector3 position2;
+    private int startSpot;
+    Vector3[] movePositions = new Vector3[2];
+    private float waitTime;
+    public float startWaitTime = 1.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +38,10 @@ public class RangerController : EnemyController
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
         startRotation = transform.rotation;
-
+        startSpot = 0;
+        state = 0;
+        movePositions[0] = position1;
+        movePositions[1] = position2;
     }
 
     // Update is called once per frame
@@ -56,34 +69,43 @@ public class RangerController : EnemyController
             Destroy(gameObject);
         }
         Vector3 pushDirection = Vector3.zero;
-        
+
 
         if (Time.time > frozenTo)
         {
-                if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
-                {
-                    ChasePlayer();
-                    isMoving = true;
-                   
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
-                                                                && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+            if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
+            {
+                state = 1; //gonienie
+                ChasePlayer();
+                canShoot = false;
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
+                                                            && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+            {
+                if (state != 3)
+                    state = 2; //szczelanie, przed policzeniem punktow
+                if (enemyTriggered == false)
                 {
                     MoveToGetBetterPosition();
-                    isMoving = false;
                 }
-                else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
-                {
-                    RunAwayFromPlayer();
-                    isMoving = true;
-                }
-                else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
-                {
-                    Stop();
-                    isMoving = false;
-                }
-        }
 
+                canShoot = true;
+                state = 3; //szczelanie, punkty policzone
+                
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
+            {
+                state = 4; //ucieczka
+                RunAwayFromPlayer();
+                canShoot = false;
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
+            {
+                state = 5; //poza zasiegiem
+                Stop();
+                canShoot = false;
+            }
+        }
 
 
         if (Vector3.Distance(transform.position, player.transform.position) <= shootingRange)
@@ -92,7 +114,7 @@ public class RangerController : EnemyController
             if (timestampAttack <= Time.time && enemyTriggered == true)
             {
                 timestampAttack = Time.time + shootingDelay;
-                if (isMoving == false)
+                if (canShoot == true)
                 {
                     ShootWithArrow();
                 }
@@ -133,15 +155,41 @@ public class RangerController : EnemyController
 
     void MoveToGetBetterPosition()
     {
-        if (enemyTriggered == false && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance && Vector3.Distance(transform.position, player.transform.position) > (retreatDistance + 0.5f))
+        //startRotation = Quaternion.AngleAxis(-90, transform.forward);
+        //transform.rotation = Quaternion.Lerp(transform.rotation, startRotation, speed / 10 * Time.deltaTime);
+        //Vector3 direction = Vector3.right;
+        //rb.MovePosition(transform.position + Vector3.forward * speed * Time.deltaTime);
+
+        if (state == 2)
         {
-            startRotation = Quaternion.AngleAxis(-90, transform.forward);
-
-            transform.rotation = Quaternion.Lerp(transform.rotation, startRotation, speed / 10 * Time.deltaTime);
-
-            //Vector3 direction = Vector3.right;
-            rb.MovePosition(transform.position + Vector3.forward * speed * Time.deltaTime);
+            position1 = transform.position;
+            position1.x += movingDistance;
+            position2 = transform.position; 
+            position2.x -= movingDistance;
         }
+
+        Vector3 direction = (movePositions[startSpot] - transform.position);
+        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+
+        if (Vector2.Distance(transform.position, movePositions[startSpot]) < 0.1f)
+        {
+            if (waitTime <= 0.0f)
+            {
+                startSpot += 1;
+                waitTime = startWaitTime;
+
+                if (startSpot > 1)
+                {
+                    startSpot = 0;
+                }
+            }
+            else
+            {
+                waitTime -= Time.deltaTime;
+            }
+        }
+
+
     }
 
     void ShootWithArrow()
