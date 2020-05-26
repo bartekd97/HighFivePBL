@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
     public GameObject player;
     public CharController charController;
+    public GameManager gameManager;
     public HealthBar healthBar;
 
     public Rigidbody rb;
@@ -14,6 +16,8 @@ public class EnemyController : MonoBehaviour
     public float stoppingDistance = 1.5f;
     public float maxHealth = 10.0f;
     public float enemyHealth;
+
+    public int cellNumber;
 
 
     public Color defaultColor;
@@ -106,15 +110,23 @@ public class EnemyController : MonoBehaviour
         {
             mudSlow = 2.0f;
         }
-        if (other.CompareTag("MudOut"))
-        {
-            mudSlow = 0.0f;
-        }
         if (other.CompareTag("ToxicFog"))
         {
             isPoisoned = true;
         }
-        if (other.CompareTag("ToxicFogOut") && isPoisoned == true)
+        if (other.CompareTag("Fire"))
+        {
+            isBurnt = true;
+        }    
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Mud"))
+        {
+            slow = 0.0f;
+        }
+        if (other.CompareTag("ToxicFog"))
         {
             isPoisoned = false;
             poisoningStart = Time.time;
@@ -122,22 +134,18 @@ public class EnemyController : MonoBehaviour
         }
         if (other.CompareTag("Fire"))
         {
-            isBurnt = true;
-        }
-        if (other.CompareTag("FireOut"))
-        {
             isBurnt = false;
         }
     }
 
-    string output;
+    //string output;
 
-    public override string ToString()
-    {
-        output = "";
-        output += "<component name=\"ScriptComponent\">";
-        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
-        output += "</component>";
-        return output;
-    }
+    //public override string ToString()
+    //{
+    //    output = "";
+    //    output += "<component name=\"ScriptComponent\">";
+    //    output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+    //    output += "</component>";
+    //    return output;
+    //}
 }
