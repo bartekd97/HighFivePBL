@@ -17,13 +17,15 @@ public class RangerController : EnemyController
     public Quaternion startRotation;
 
     private int state;
-    public float movingDistance = 1.0f;
+    public float movingDistance = 10.0f;
     public Vector3 position1;
     public Vector3 position2;
     private int startSpot;
     Vector3[] movePositions = new Vector3[2];
     private float waitTime;
     public float startWaitTime = 1.0f;
+
+    public GameObject pointPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -73,6 +75,7 @@ public class RangerController : EnemyController
 
         if (Time.time > frozenTo)
         {
+            Debug.Log("state: " + state);
             if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
             {
                 state = 1; //gonienie
@@ -82,13 +85,13 @@ public class RangerController : EnemyController
             else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
                                                             && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
             {
-                if (state != 3)
+                if (state == 1 || state == 4)
                     state = 2; //szczelanie, przed policzeniem punktow
                 if (enemyTriggered == false)
                 {
                     MoveToGetBetterPosition();
                 }
-
+                //Debug.Log("dist: " + Vector3.Distance(transform.position, player.transform.position) + ", stopping: " + stoppingDistance + ", retreat: " + retreatDistance);
                 canShoot = true;
                 state = 3; //szczelanie, punkty policzone
                 
@@ -97,12 +100,6 @@ public class RangerController : EnemyController
             {
                 state = 4; //ucieczka
                 RunAwayFromPlayer();
-                canShoot = false;
-            }
-            else if (Vector3.Distance(transform.position, player.transform.position) <= stoppingDistance)
-            {
-                state = 5; //poza zasiegiem
-                Stop();
                 canShoot = false;
             }
         }
@@ -162,17 +159,23 @@ public class RangerController : EnemyController
 
         if (state == 2)
         {
-            position1 = transform.position;
-            position1.x += movingDistance;
-            position2 = transform.position; 
-            position2.x -= movingDistance;
+            movePositions[0] = transform.position;
+            movePositions[0].x += movingDistance;
+            movePositions[0].z += movingDistance;
+            movePositions[1] = transform.position;
+            movePositions[1].x -= movingDistance;
+            movePositions[1].z -= movingDistance;
+            Instantiate(pointPrefab, movePositions[0], transform.rotation);
+            Instantiate(pointPrefab, movePositions[1], transform.rotation);
         }
+        //Debug.Log("pos1= " + position1 + ", pos2= " + position2);
 
-        Vector3 direction = (movePositions[startSpot] - transform.position);
+        Vector3 direction = (movePositions[startSpot] - transform.position).normalized;
         rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
 
-        if (Vector2.Distance(transform.position, movePositions[startSpot]) < 0.1f)
+        if (Vector2.Distance(transform.position, movePositions[startSpot]) < 0.4f)
         {
+            Debug.Log("no hej");
             if (waitTime <= 0.0f)
             {
                 startSpot += 1;
