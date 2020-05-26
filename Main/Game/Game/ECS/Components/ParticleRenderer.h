@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "Resourcing/Texture.h"
+#include "CulledRenderer.h"
 
 class UniformBuffer;
 struct ParticleRenderer
@@ -17,10 +18,15 @@ struct ParticleRenderer
 	std::shared_ptr<Texture> colorOverTime;
 	std::shared_ptr<Texture> opacityOverTime;
 
+	float visibilityRadius = 5.0f;
+
 	ParticleRenderer()
 	{
 		spriteSheet = TextureManager::BLANK_TEXTURE;
 		colorOverTime = TextureManager::BLANK_TEXTURE;
 		opacityOverTime = TextureManager::BLANK_TEXTURE;
 	}
+
+	CulledRenderer cullingData;
+	AABBStruct localAABB;
 };

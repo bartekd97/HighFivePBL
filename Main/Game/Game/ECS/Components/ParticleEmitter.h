@@ -21,4 +21,6 @@ struct ParticleEmitter
 
 	bool emitting = false;
 	float timeLeftSinceEmit = 0.0f;
+
+	int _delayedEmitCount = 0;
 };

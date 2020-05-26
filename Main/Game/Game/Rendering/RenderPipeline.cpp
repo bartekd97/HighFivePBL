@@ -206,6 +206,9 @@ void RenderPipeline::Render()
 	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
 	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
 
+	// schedule particle culling
+	RenderSystems.particleRenderer->ScheduleCulling(viewFrustum, lightFrustum);
+
 	// draw to gbuffer
 	GBuffer.frameBuffer->bind();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -248,6 +251,9 @@ void RenderPipeline::Render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
+
+	// wait for particle culling
+	RenderSystems.particleRenderer->FinishCulling();
 
 	// draw forward
 	glEnable(GL_DEPTH_TEST);

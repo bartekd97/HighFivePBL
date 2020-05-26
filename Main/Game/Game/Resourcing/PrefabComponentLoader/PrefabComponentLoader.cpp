@@ -325,6 +325,9 @@ namespace {
 			if (!properties.GetInt("spriteSheetCount", renderer.spriteSheetCount, renderer.spriteSheetCount)) {
 				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'spriteSheetCount' value. Using default: {}", renderer.spriteSheetCount);
 			}
+			if (!properties.GetFloat("visibilityRadius", renderer.visibilityRadius, renderer.visibilityRadius)) {
+				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'visibilityRadius' value. Using default: {}", renderer.visibilityRadius);
+			}
 		}
 
 		virtual void Create(GameObject target) override {

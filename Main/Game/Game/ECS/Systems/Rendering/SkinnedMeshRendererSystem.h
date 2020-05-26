@@ -5,10 +5,8 @@
 #include "CulledRendererSystem.h"
 #include "Resourcing/Shader.h"
 
-struct SkinnedMeshRenderer;
-
 // require SkinnedMeshRenderer component
-class SkinnedMeshRendererSystem : public CulledRendererSystem<SkinnedMeshRenderer, 2>
+class SkinnedMeshRendererSystem : public CulledRendererSystem<SkinnedMeshRenderer, 1>
 {
 private:
 	std::shared_ptr<Shader> toGBufferShader;
@@ -23,8 +21,8 @@ public:
 		// TWEAK
 		// potential exceeding AABB due to skinning animation
 		// so increase original AABB to secure it a bit
-		component.extendedLocalAABB.min = component.mesh->AABB.min * 1.5f;
-		component.extendedLocalAABB.max = component.mesh->AABB.max * 1.5f;
+		component.extendedLocalAABB.min = component.mesh->AABB.min * 2.0f;
+		component.extendedLocalAABB.max = component.mesh->AABB.max * 2.0f;
 		return component.extendedLocalAABB;
 	};
 

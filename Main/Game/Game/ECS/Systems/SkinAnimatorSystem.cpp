@@ -87,6 +87,8 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 
 void SkinAnimatorSystem::Update(float dt)
 {
+	skinAimatorWorker.WaitForAll(); // make sure we start frame with free worker
+
 	auto it = gameObjects.begin();
 	while (it != gameObjects.end())
 	{
@@ -96,6 +98,14 @@ void SkinAnimatorSystem::Update(float dt)
 		auto& animator = HFEngine::ECS.GetComponent<SkinAnimator>(gameObject);
 
 		if (animator.currentClip == nullptr || renderer.skinningData == nullptr)
+			continue;
+
+		// skip renderers that weren't seen on screen
+		// there is 1 frame delay (cuz it checks state from previous render frame)
+		// but extended AABB should do the trick
+		if (renderer.cullingData.lastUpdate + 1 < HFEngine::CURRENT_FRAME_NUMBER)
+			continue;
+		if (!renderer.cullingData.visibleByViewCamera && !renderer.cullingData.visibleByLightCamera)
 			continue;
 
 		renderer.business.MakeBusy();
