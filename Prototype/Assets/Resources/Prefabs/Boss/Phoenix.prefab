@@ -446,9 +446,11 @@ MonoBehaviour:
   speed: 3
   playerInRange: 30
   stoppingDistance: 1.5
-  maxHealth: 10
+  maxHealth: 150
   enemyHealth: 0
   cellNumber: 0
+  cell: {fileID: 0}
+  pointPrefab: {fileID: 0}
   defaultColor: {r: 0, g: 0, b: 0, a: 0}
   damagedColor: {r: 0, g: 0, b: 0, a: 0}
   dmgAnimationDuration: 0.5
@@ -470,18 +472,21 @@ MonoBehaviour:
   timestampAfterAttackPushStop: 0
   pushBackForceAfterAttack: 5
   damage: 1
+  preFirewall: {fileID: 423077234419044442, guid: 0b9600d7354afdd4ba3efc81a6f03563,
+    type: 3}
   firewall: {fileID: 3990497735648471169, guid: d47fa654da386b540a0071872a86421d,
     type: 3}
   preFireball: {fileID: 7077487412147231082, guid: 2748e127664ec5440bd9121db57981be,
     type: 3}
   fireball: {fileID: 7449754332596637308, guid: 285f74bcb0b8d4945b434bc7147aa39b,
     type: 3}
-  clearFire: {fileID: 548697592113626093, guid: bdc21aa1fe47b5f49a1199d4fb3c76eb,
-    type: 3}
   thrower: {fileID: 2127717401973405181}
-  attackCooldownTime: 5
+  attackCooldownTime: 3
+  attackCooldownTimePhase2: 1.5
   nextAttackTime: 0
   fireWallRange: 12
+  retreatDistance: 6.75
+  magicTime: 15
 --- !u!1 &2127717401973405181
 GameObject:
   m_ObjectHideFlags: 0
@@ -506,7 +511,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2127717401973405181}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 3}
+  m_LocalPosition: {x: 0, y: -0.81, z: 3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 640032961010915118}

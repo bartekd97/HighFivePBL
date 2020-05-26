@@ -45,8 +45,6 @@ public class BossSpawnerController : EnemyController
         positionStart = this.transform.position;
         position1 = this.transform.position;
         position2 = this.transform.position;
-
-
     }
 
     // Update is called once per frame

@@ -72,6 +72,8 @@ public class MapSetuper : MonoBehaviour
 
         GameObject boss = InstantiateBoss(bossCell.transform.position);
         boss.GetComponent<EnemyController>().cellNumber = bossCell.CellSiteIndex;
+        boss.GetComponent<EnemyController>().cell = bossCell;
+
         bossCell.Enemies.Add(boss);
 
         bossCell.GetComponentInChildren<MeshRenderer>().material = bossCellMaterial;
@@ -93,8 +95,6 @@ public class MapSetuper : MonoBehaviour
             if (Physics.OverlapBox(finalPoint + new Vector3(0, enemyPrefab.GetComponent<BoxCollider>().size.y, 0), enemyPrefab.GetComponent<BoxCollider>().size / 2.0f).Length == 0)
             {
                 GameObject enemy = InstantiateEnemy(finalPoint, cell);
-                enemy.GetComponent<EnemyController>().cellNumber = cell.CellSiteIndex;
-
                 cell.Enemies.Add(enemy);
                 enemiesCount -= 1;
             }
@@ -105,6 +105,9 @@ public class MapSetuper : MonoBehaviour
     {
         GameObject enemy = Instantiate(enemyPrefab, position, Quaternion.identity);
         var enemyController = enemy.GetComponent<EnemyController>();
+        enemyController.cellNumber = cell.CellSiteIndex;
+        enemyController.cell = cell;
+
         enemyController.player = playerObject;
         enemyController.charController = playerObject.GetComponent<CharController>();
         return enemy;
@@ -254,7 +257,7 @@ public class MapSetuper : MonoBehaviour
     {
         //int obstaclesCount = Random.Range(minObstaclesInCell, maxObstaclesInCell);
         int obstacleType;
-
+        SpawnPathfindingPoints(cell);
         SpawnPoints(cell);
 
 
@@ -517,5 +520,31 @@ public class MapSetuper : MonoBehaviour
         //{
         //    Instantiate(pointPrefab, cell.generationPoints[i], Quaternion.identity);
         //}
+    }
+
+    public void SpawnPathfindingPoints(MapCell cell)
+    {
+        //Generate points
+        float startX = cell.transform.position.x - 25;
+        float startY = cell.transform.position.z - 25;
+
+        for (float i = 0; i < 50; i = i + 1)
+        {
+            for (float j = 0; j < 50; j = j + 1)
+            {
+                if (cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) < 0.75)
+                {
+                    cell.pathPoints.Add(new Vector3(startX + i, 0, startY + j));
+                }
+            }
+        }
+
+
+
+        // Generation remaining points
+        for (int i = 0; i < cell.pathPoints.Count; i++)
+        {
+            Instantiate(pointPrefab2, cell.pathPoints[i], Quaternion.identity);
+        }
     }
 }

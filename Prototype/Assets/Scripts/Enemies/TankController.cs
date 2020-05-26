@@ -20,7 +20,7 @@ public class TankController : EnemyController
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
 
-       
+
     }
 
     // Update is called once per frame
