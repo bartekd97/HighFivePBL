@@ -42,6 +42,7 @@ public class MapCell : MonoBehaviour
     public List<GameObject> Monuments = new List<GameObject>();
 
     public List<Vector3> generationPoints = new List<Vector3>();
+    public List<Vector3> pathPoints = new List<Vector3>();
 
 
 

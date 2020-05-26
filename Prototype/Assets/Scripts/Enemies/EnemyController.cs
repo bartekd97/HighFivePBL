@@ -18,6 +18,9 @@ public class EnemyController : MonoBehaviour
     public float enemyHealth;
 
     public int cellNumber;
+    public MapCell cell;
+
+    public GameObject pointPrefab;
 
 
     public Color defaultColor;
@@ -48,7 +51,6 @@ public class EnemyController : MonoBehaviour
     public float pushBackForceAfterAttack = 5.0f;
     public float damage = 1.0f;
 
-   
 
     public void ChasePlayer()
     {
