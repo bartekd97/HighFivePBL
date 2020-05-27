@@ -13,7 +13,7 @@ namespace Physics
 	extern const float step;
 	extern const int maxSteps;
 
-	extern std::unordered_map<GameObject, CacheNode> cacheNodes;
+	extern std::unordered_map<GameObject, CacheNode> cacheNodes; // TODO: check if there is if !active in all places or make smth like filtered iterator
 	extern std::shared_ptr<System> rigidBodyCollector;
 
 	void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector);
