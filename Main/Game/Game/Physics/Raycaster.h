@@ -50,6 +50,7 @@ public:
         static glm::vec2 dir;
         dir.x = direction.x;
         dir.y = direction.z;
+        glm::vec2 interTest, tmpPosTest;
 
         for (auto& gameObjectPair : dynamicGameObjects)
         {
@@ -70,9 +71,10 @@ public:
             }
             else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                if (CircleCast(startPos, dir, gameObjectPair.second, staticIntersection))
+                if (CircleCast(startPos, dir, gameObjectPair.second, dynamicIntersection))
                 {
-                    tmpPos = dynamicIntersection - startPos;
+                    tmpPosTest = tmpPos = dynamicIntersection - startPos;
+                    interTest = dynamicIntersection;
                     raycastHitTmp.distance = VECLEN2D(tmpPos);
                     raycastHitTmp.hittedObject = gameObjectPair.second;
                     raycastHitTmp.hitPosition = glm::vec3(dynamicIntersection.x, 0.0f, dynamicIntersection.y);
@@ -162,20 +164,23 @@ private:
         subPos = glm::vec2(node.position.x, node.position.z) - position;
 
         lf = glm::dot(direction, subPos);
-        s = std::sqrtf(node.circleCollider.radius * node.circleCollider.radius - glm::dot(subPos, subPos) + lf * lf);
+        s = node.circleCollider.radius * node.circleCollider.radius - glm::dot(subPos, subPos) + lf * lf;
+        if (s < 0)
+            return false;
+        s = std::sqrtf(s);
 
-        if (lf < s) return false;
+        if (lf < s) 
+            return false;
 
         intersection = direction * (lf - s);
         intersection2 = direction * (lf + s);
-        subPos = position - intersection;
-        dist1 = subPos.x * subPos.x + subPos.y * subPos.y;
-        subPos = position - intersection2;
-        dist2 = subPos.x * subPos.x + subPos.y * subPos.y;
+        dist1 = intersection.x * intersection.x + intersection.y * intersection.y;
+        dist2 = intersection2.x * intersection2.x + intersection2.y * intersection2.y;
         if (dist2 < dist1)
         {
             intersection = intersection2;
         }
+        intersection += position;
 
         return true;
     }
@@ -294,7 +299,7 @@ private:
         for (auto& node : Physics::cacheNodes)
         {
             if (node.first == ignoredGameObject) continue;
-            if (node.second.collider.type == Collider::ColliderTypes::TRIGGER || node.second.collider.shape == Collider::ColliderShapes::GRAVITY) continue;
+            if (node.second.collider.type == Collider::ColliderTypes::TRIGGER || node.second.collider.shape == Collider::ColliderShapes::GRAVITY || node.second.hasRigidBody) continue;
 
             tmpPos = node.second.position - position;
             tmpCheck = tmpPos * direction;

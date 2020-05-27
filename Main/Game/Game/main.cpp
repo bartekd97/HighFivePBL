@@ -52,6 +52,9 @@ int main()
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 
+	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
+	prefabCircle->Instantiate({ 90.0f, 0.0f, 90.0f });
+
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
