@@ -84,7 +84,7 @@ void PhysicsSystem::Update(float dt)
                     {
                         if (distLen <= (cacheNode.circleCollider.radius + std::max(otherCacheNode.boxCollider.width, otherCacheNode.boxCollider.height)))
                         {
-                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode.position, otherCacheNode.rotation, otherCacheNode.boxCollider, sepVector))
+                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherObject, sepVector))
                             {
                                 collided = true;
                                 localCollided = true;

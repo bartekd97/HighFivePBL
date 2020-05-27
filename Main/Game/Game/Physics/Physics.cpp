@@ -169,7 +169,51 @@ namespace Physics
         return true;
     }
 
-    bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector)
+    bool DetectCollision(const glm::vec3& pos1, glm::quat& rotation1, const BoxCollider& c1, GameObject box2GameObject)
+    {
+        glm::vec2 boxPoints[4];
+        glm::vec3 boxBPoint;
+        for (int i = 0; i < 4; i++)
+        {
+            boxBPoint = rotation1 * c1.bPoints[i];
+            boxPoints[i].x = boxBPoint.x + pos1.x;
+            boxPoints[i].y = boxBPoint.z + pos1.z;
+        }
+        auto& box2Points = cacheNodes[box2GameObject].boxRealPoints;
+        auto& pos2 = cacheNodes[box2GameObject].position;
+
+        for (int i = 0; i < 4; i++)
+        {
+            auto current = boxPoints[i];
+            auto next = boxPoints[(i + 1) % 4];
+            glm::vec2 axis = glm::normalize(next - current);
+
+            auto aMaxProj = -std::numeric_limits<float>::max();
+            auto aMinProj = std::numeric_limits<float>::max();
+            auto bMaxProj = -std::numeric_limits<float>::max();
+            auto bMinProj = std::numeric_limits<float>::max();
+            for (int j = 0; j < 4; j++)
+            {
+                auto proj = glm::dot(boxPoints[j], axis);
+                if (proj < aMinProj) aMinProj = proj;
+                if (proj > aMaxProj) aMaxProj = proj;
+
+                proj = glm::dot(box2Points[j], axis);
+                if (proj < bMinProj) bMinProj = proj;
+                if (proj > bMaxProj) bMaxProj = proj;
+            }
+
+            if (aMaxProj < bMinProj || aMinProj > bMaxProj)
+            {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector) // TODO: poczyœciæ z sepVector
     {
         glm::vec2 boxPoints[4];
         glm::vec2 boxPos(pos2.x, pos2.z);
@@ -243,17 +287,18 @@ namespace Physics
 
         if (mtvAxisIndex == -1) return false; //TODO: DEV
 
-        auto p2top1 = glm::vec2(pos2.x - pos1.x, pos2.z - pos1.z);
+        /*auto p2top1 = glm::vec2(pos2.x - pos1.x, pos2.z - pos1.z);
         if (glm::dot(axes[mtvAxisIndex], p2top1) >= 0)
         {
             axes[mtvAxisIndex] *= -1.0f;
         }
         sepVector.x = axes[mtvAxisIndex].x * minOverlap;
-        sepVector.z = axes[mtvAxisIndex].y * minOverlap;
+        sepVector.z = axes[mtvAxisIndex].y * minOverlap;*/
 
         return true;
     }
 
+    /*
     float isLeft(glm::vec2& P0, glm::vec2& P1, glm::vec2& P2)
     {
         return ((P1.x - P0.x) * (P2.y - P0.y) - (P2.x - P0.x) * (P1.y - P0.y));
@@ -285,23 +330,27 @@ namespace Physics
         glm::vec3 subPos = pos1 - pos2;
         float dist = VECLEN(subPos);
         return (dist <= c2.radius);
-    }
+    }*/
 
-    bool Raycast(glm::vec3& position, const BoxCollider& boxCollider, RaycastHit& out)
+    bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject)
     {
         glm::vec3 sepVector;
         for (auto& node : cacheNodes)
         {
+            if (node.first == ignoredGameObject || !node.second.active) continue;
             if (node.second.collider.shape == Collider::ColliderShapes::BOX)
             {
-                //TODO: box-box SAT
-                //if (DetectCollision())
+                if (DetectCollision(position, rotation, boxCollider, node.first))
+                {
+                    out.hittedObject = node.first;
+                    return true;
+                }
             }
             else if (node.second.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                glm::quat rotation;
                 if (DetectCollision(node.second.position, node.second.circleCollider, position, rotation, boxCollider, sepVector))
                 {
+                    out.hittedObject = node.first;
                     return true;
                 }
             }
@@ -310,24 +359,25 @@ namespace Physics
         return false;
     }
 
-    bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out)
+    bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject) // TODO: przy jednym odpaleniu ³apa³o ca³y czas jakiœ gameObject koñcowy
     {
         glm::vec3 sepVector;
         for (auto& node : cacheNodes)
         {
+            if (node.first == ignoredGameObject || !node.second.active) continue;
             if (node.second.collider.shape == Collider::ColliderShapes::BOX)
             {
                 if (DetectCollision(position, circleCollider, node.second.position, node.second.rotation, node.second.boxCollider, sepVector))
                 {
-
+                    out.hittedObject = node.first;
                     return true;
                 }
             }
             else if (node.second.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                glm::quat rotation;
                 if (DetectCollision(position, circleCollider, node.second.position, node.second.circleCollider, sepVector))
                 {
+                    out.hittedObject = node.first;
                     return true;
                 }
             }

@@ -92,6 +92,31 @@ public:
 			}
 		}
 
+		if (InputManager::GetKeyDown(GLFW_KEY_B))
+		{
+			auto pos = transform.GetWorldPosition();
+			BoxCollider box;
+			box.SetWidthHeight(1.5f, 1.5f);
+			auto rot = transform.GetWorldRotation();
+			RaycastHit out;
+			if (Physics::Raycast(pos, rot, box, out, GetGameObject()))
+			{
+				LogInfo("PlayerController: raycast box ({}, {}): hitted object {}", box.width, box.height, out.hittedObject);
+			}
+		}
+
+		if (InputManager::GetKeyDown(GLFW_KEY_C))
+		{
+			auto pos = transform.GetWorldPosition();
+			CircleCollider circle;
+			circle.radius = 1.0f;
+			RaycastHit out;
+			if (Physics::Raycast(pos, circle, out, GetGameObject()))
+			{
+				LogInfo("PlayerController: raycast circle ({}): hitted object {}", circle.radius, out.hittedObject);
+			}
+		}
+
 		if (transform.GetWorldPosition().y < -15.0f)
 		{
 			transform.SetPosition(startPosition);

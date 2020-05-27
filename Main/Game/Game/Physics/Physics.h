@@ -13,7 +13,7 @@ namespace Physics
 	extern const float step;
 	extern const int maxSteps;
 
-	extern std::unordered_map<GameObject, CacheNode> cacheNodes;
+	extern std::unordered_map<GameObject, CacheNode> cacheNodes; // TODO: check if there is if !active in all places or make smth like filtered iterator
 	extern std::shared_ptr<System> rigidBodyCollector;
 
 	void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector);
@@ -21,15 +21,13 @@ namespace Physics
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers = false);
 	void RemoveNode(GameObject gameObject);
 
-	bool Raycast(glm::vec3& position, glm::vec3& direction, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT, float maxDistance = std::numeric_limits<float>::max());
-	bool Raycast(glm::vec2& start, glm::vec2& stop, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
-	bool Raycast(glm::vec3& position, const BoxCollider& boxCollider, RaycastHit& out);
-	bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out);
-	//Raycast pos + wymiary boxa + ko³o
+	bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
+	bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
 
 	bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const CircleCollider& c2, glm::vec3& sepVector);
 	bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector);
 	bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, GameObject boxGameObject, glm::vec3& sepVector);
-	bool DetectCollision(const glm::vec3& pos1, const glm::vec3& pos2, const CircleCollider& c2, glm::vec3& sepVector);
-	bool DetectCollision(const glm::vec3& pos1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector);
+
+	//bool DetectCollision(const glm::vec3& pos1, const glm::vec3& pos2, const CircleCollider& c2, glm::vec3& sepVector);
+	//bool DetectCollision(const glm::vec3& pos1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector);
 }
