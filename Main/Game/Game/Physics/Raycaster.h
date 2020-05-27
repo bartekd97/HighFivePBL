@@ -70,7 +70,15 @@ public:
             }
             else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                // ????
+                if (CircleCast(startPos, dir, gameObjectPair.second, staticIntersection))
+                {
+                    tmpPos = dynamicIntersection - startPos;
+                    raycastHitTmp.distance = VECLEN2D(tmpPos);
+                    raycastHitTmp.hittedObject = gameObjectPair.second;
+                    raycastHitTmp.hitPosition = glm::vec3(dynamicIntersection.x, 0.0f, dynamicIntersection.y);
+                    hits.push_back(raycastHitTmp);
+                    dynamicChecks += 1;
+                }
             }
         }
 
@@ -94,7 +102,14 @@ public:
             }
             else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                // ????
+                if (CircleCast(startPos, dir, gameObjectPair.second, staticIntersection))
+                {
+                    tmpPos = staticIntersection - startPos;
+                    raycastHitTmp.distance = VECLEN2D(tmpPos);
+                    raycastHitTmp.hittedObject = gameObjectPair.second;
+                    raycastHitTmp.hitPosition = glm::vec3(staticIntersection.x, 0.0f, staticIntersection.y);
+                    hits.push_back(raycastHitTmp);
+                }
             }
         }
         if (hits.size() == 0) return false;
@@ -137,6 +152,33 @@ private:
 
 	std::vector<std::pair<float, GameObject>> staticGameObjects; // TODO: co jeœli usuniête? lub disable? tyczy obu
     std::vector<std::pair<float, GameObject>> dynamicGameObjects;
+
+    bool CircleCast(glm::vec2& position, glm::vec2& direction, GameObject gameObject, glm::vec2& intersection)
+    {
+        auto node = Physics::cacheNodes[gameObject];
+
+        static glm::vec2 subPos, intersection2;
+        static float lf, s, dist1, dist2;
+        subPos = glm::vec2(node.position.x, node.position.z) - position;
+
+        lf = glm::dot(direction, subPos);
+        s = std::sqrtf(node.circleCollider.radius * node.circleCollider.radius - glm::dot(subPos, subPos) + lf * lf);
+
+        if (lf < s) return false;
+
+        intersection = direction * (lf - s);
+        intersection2 = direction * (lf + s);
+        subPos = position - intersection;
+        dist1 = subPos.x * subPos.x + subPos.y * subPos.y;
+        subPos = position - intersection2;
+        dist2 = subPos.x * subPos.x + subPos.y * subPos.y;
+        if (dist2 < dist1)
+        {
+            intersection = intersection2;
+        }
+
+        return true;
+    }
 
     bool BoxCast(glm::vec2& position, glm::vec2& direction, GameObject gameObject, glm::vec2& intersection)
     {
@@ -183,22 +225,8 @@ private:
         auto x4 = position.x + direction.x;
         auto y4 = position.y + direction.y;
 
-        /*float denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-        if (denominator == 0) // TODO: eps?
-        {
-            return false;
-        }
-
-        float xNominator = (x1 * y2 - y1 * x2) * (x3 - x4) - (x1 - x2) * (x3 * y4 - y3 * x4);
-        float yNominator = (x1 * y2 - y1 * x2) * (y3 - y4) - (y1 - y2) * (x3 * y4 - y3 * x4);
-
-        intersectPoint.x = xNominator / denominator;
-        intersectPoint.y = yNominator / denominator;
-
-        return true;*/
-
         float denominator = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-        if (denominator == 0) // TODO: eps?
+        if (denominator == 0)
         {
             return false;
         }
