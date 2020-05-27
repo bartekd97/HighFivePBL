@@ -103,16 +103,16 @@ public:
 
 		if (InputManager::GetKeyStatus(GLFW_KEY_R))
 		{
-			RaycastHit hit;
 			glm::vec2 direction;
 			direction.x = transform.GetWorldFront().x;
 			direction.y = transform.GetWorldFront().z;
 			auto pos = transform.GetWorldPosition();
-			auto dir = transform.GetWorldFront();
+			auto dir = glm::normalize(transform.GetWorldFront());
 			if (raycaster.Raycast(pos, dir))
 			{
 				//LogInfo("xD dist: {} obj: {} x: {} z: {}", hit.distance, hit.hittedObject, hit.hitPosition.x, hit.hitPosition.z);
-				PrimitiveRenderer::DrawLine(pos, hit.hitPosition);
+				auto xD = Physics::cacheNodes[raycaster.GetOut().hittedObject];
+				PrimitiveRenderer::DrawLine(pos, raycaster.GetOut().hitPosition);
 			}
 		}
 

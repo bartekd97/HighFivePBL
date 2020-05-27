@@ -23,7 +23,7 @@ struct CacheNode
 		{
 			boxBPoint = rotation * boxCollider.bPoints[i];
 			boxRealPoints[i].x = boxBPoint.x + position.x;
-			boxRealPoints[i].y = boxBPoint.z + position.y;
+			boxRealPoints[i].y = boxBPoint.z + position.z;
 		}
 		glm::vec2 min(std::numeric_limits<float>::max()), max(std::numeric_limits<float>::min());
 		for (int i = 0; i < 4; i++)
