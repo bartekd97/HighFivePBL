@@ -25,7 +25,7 @@ public:
 		for (auto& gate : gates)
 		{
 			auto& collider = HFEngine::ECS.GetComponent<Collider>(gate);
-			collider.OnTriggerEnter = TriggerMethodPointer(MapCellOptimizer::OnTriggerEnter);
+			collider.OnTriggerEnter.push_back(TriggerMethodPointer(MapCellOptimizer::OnTriggerEnter));
 		}
 
 		auto cellsContainer = HFEngine::ECS.GetGameObjectByName("Cells");
@@ -79,7 +79,7 @@ private:
 	{
 		if (currentCell != NULL_GAMEOBJECT)
 		{
-			std::set<GameObject> enabledCells;
+			tsl::robin_set<GameObject> enabledCells;
 			enabledCells.insert(currentCell);
 			auto mapCell = HFEngine::ECS.GetComponent<MapCell>(currentCell);
 			for (auto& bridge : mapCell.Bridges)

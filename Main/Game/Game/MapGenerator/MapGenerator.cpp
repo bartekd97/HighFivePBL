@@ -1,6 +1,6 @@
 #include <random>
 #include <memory>
-#include <set>
+#include <tsl/robin_set.h>
 #include <cppDelaunay/delaunay/Edge.h>
 #include <glm/glm.hpp>
 #include "MapGenerator.h"
@@ -57,7 +57,7 @@ void MapGenerator::Generate()
 	auto voronoi = DelaunayExt::VoronoiWithLloydRelaxation(points, bounds, config.layout.LloydRelaxIteraions);
     edges = voronoi->edges();
 
-    std::set<Delaunay::Site*> sites;
+    tsl::robin_set<Delaunay::Site*> sites;
     for (auto edge : edges)
     {
         sites.insert(edge->rightSite());

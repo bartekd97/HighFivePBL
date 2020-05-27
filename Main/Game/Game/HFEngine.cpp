@@ -21,6 +21,7 @@
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "GUI/GUIManager.h"
+#include "Physics/Physics.h"
 
 namespace HFEngine
 {
@@ -171,6 +172,14 @@ namespace HFEngine
 			ECS.SetSystemSignature<GravitySystem>(signature);
 		}
 		gravitySystem->SetCollector(mapCellCollectorSystem);
+		auto rigidBodyCollectorSystem = ECS.RegisterSystem<RigidBodyCollectorSystem>(); // TODO: mo¿e u¿yæ PhysicsSystem po prostu?
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			ECS.SetSystemSignature<RigidBodyCollectorSystem>(signature);
+		}
+		Physics::SetRigidBodyCollector(rigidBodyCollectorSystem);
 		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();
 		{
 			Signature signature;

@@ -110,9 +110,9 @@ std::optional<GameObject> GameObjectManager::GetGameObjectByName(std::string nam
 	return std::nullopt;
 }
 
-std::set<GameObject> GameObjectManager::GetGameObjectsByName(std::string name)
+tsl::robin_set<GameObject> GameObjectManager::GetGameObjectsByName(std::string name)
 {
-	std::set<GameObject> result;
+	tsl::robin_set<GameObject> result;
 
 	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
 	{

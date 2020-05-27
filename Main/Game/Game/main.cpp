@@ -53,6 +53,9 @@ int main()
 	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 
+	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
+	auto testCircleObject = prefabCircle->Instantiate({ 90.0f, 0.0f, 90.0f });
+
 	// particle test
 	//auto particles = HFEngine::ECS.CreateGameObject(movableTestObject);
 	//HFEngine::ECS.GetComponent<Transform>(particles).SetPosition({ 5.0f, 0.1f, 0.0f });
@@ -95,6 +98,7 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
+		//if (InputManager::GetKeyDown(GLFW_KEY_O)) HFEngine::ECS.DestroyGameObject(testCircleObject);//HFEngine::ECS.SetEnabledGameObject(testCircleObject, false);
 		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);

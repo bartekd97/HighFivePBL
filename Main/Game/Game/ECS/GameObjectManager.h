@@ -4,7 +4,7 @@
 #include <cassert>
 #include <queue>
 #include <optional>
-#include <set>
+#include <tsl/robin_set.h>
 
 #include "ECSTypes.h"
 
@@ -29,7 +29,7 @@ public:
 
 	std::optional<GameObject> GetGameObjectByName(std::string name);
 
-	std::set<GameObject> GetGameObjectsByName(std::string name);
+	tsl::robin_set<GameObject> GetGameObjectsByName(std::string name);
 
 	Signature GetSignature(GameObject gameObject);
 

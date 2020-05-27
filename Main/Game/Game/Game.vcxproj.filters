@@ -41,7 +41,6 @@
     <ClCompile Include="ECS\Systems\ScriptLateUpdateSystem.cpp" />
     <ClCompile Include="MapGenerator\CellFenceGenerator.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
-    <ClCompile Include="Physics\PhysicsCache.cpp" />
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
     <ClCompile Include="GUI\GUIManager.cpp" />
@@ -61,8 +60,10 @@
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\GravityColliderRenderSystem.cpp" />
+    <ClCompile Include="Physics\Physics.cpp" />
     <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
+    <ClCompile Include="Physics\Raycaster.cpp" />
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\ParticleRendererSystem.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
@@ -139,7 +140,6 @@
     <ClInclude Include="ECS\Systems\MapCellCollectorSystem.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Physics\CacheNode.h" />
-    <ClInclude Include="Physics\PhysicsCache.h" />
     <ClInclude Include="ECS\Components\SkinnedMeshRenderer.h" />
     <ClInclude Include="ECS\Components\SkinAnimator.h" />
     <ClInclude Include="Resourcing\AnimationClip.h" />
@@ -179,11 +179,15 @@
     <ClInclude Include="Scripting\Scripts\PlayerController.h" />
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
     <ClInclude Include="Resourcing\UniformBuffer.h" />
+    <ClInclude Include="Physics\Physics.h" />
+    <ClInclude Include="Physics\RaycastHit.h" />
     <ClInclude Include="ECS\Components\BoneAttacher.h" />
     <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
     <ClInclude Include="ECS\Components\PointLightRenderer.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
+    <ClInclude Include="Physics\Raycaster.h" />
+    <ClInclude Include="ECS\Systems\RigidBodyCollectorSystem.h" />
     <ClInclude Include="ECS\Components\ParticleContainer.h" />
     <ClInclude Include="ECS\Components\ParticleRenderer.h" />
     <ClInclude Include="ECS\Components\ParticleEmitter.h" />

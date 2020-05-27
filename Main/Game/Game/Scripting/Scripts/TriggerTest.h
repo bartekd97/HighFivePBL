@@ -19,8 +19,8 @@ public:
 			auto& collider = HFEngine::ECS.GetComponent<Collider>(GetGameObject());
 			if (collider.type == Collider::ColliderTypes::TRIGGER)
 			{
-				collider.OnTriggerEnter = TriggerMethodPointer(TriggerTest::OnTriggerEnter);
-				collider.OnTriggerExit = TriggerMethodPointer(TriggerTest::OnTriggerExit);
+				collider.OnTriggerEnter.push_back(TriggerMethodPointer(TriggerTest::OnTriggerEnter));
+				collider.OnTriggerExit.push_back(TriggerMethodPointer(TriggerTest::OnTriggerExit));
 			}
 			else
 			{

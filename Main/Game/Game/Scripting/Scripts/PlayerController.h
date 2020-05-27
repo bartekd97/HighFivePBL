@@ -8,6 +8,9 @@
 #include "ECS/Components/SkinAnimator.h"
 #include "InputManager.h"
 #include "Event/Events.h"
+#include "../../Physics/Physics.h"
+#include "../../Rendering/PrimitiveRenderer.h"
+#include "Physics/Raycaster.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -27,6 +30,7 @@ private: // variables
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
 	bool hasGhostMovement = false;
+	Raycaster raycaster;
 
 public:
 	PlayerController()
@@ -38,6 +42,7 @@ public:
 	{
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
+		raycaster.SetIgnoredGameObject(GetGameObject());
 	}
 
 	void Start()
@@ -75,6 +80,16 @@ public:
 		{
 			rigidBody.isFalling = true;
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
+		}
+
+		if (InputManager::GetKeyStatus(GLFW_KEY_R))
+		{
+			auto pos = transform.GetWorldPosition();
+			auto dir = glm::normalize(transform.GetWorldFront());
+			if (raycaster.Raycast(pos, dir))
+			{
+				PrimitiveRenderer::DrawLine(pos, raycaster.GetOut().hitPosition);
+			}
 		}
 
 		if (transform.GetWorldPosition().y < -15.0f)
