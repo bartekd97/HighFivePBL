@@ -13,7 +13,7 @@ public:
 	{
         ResetInitialized();
         maxTimeBeforeDynamicRefresh = 2.0f;
-        maxDistanceSquaredBeforeRefresh = 2.0f * 2.0f;
+        maxDistanceSquaredBeforeRefresh = 1.0f;
         maxDistance = 50.0f;
         maxDistanceSquared = maxDistance * maxDistance;
 	}
@@ -33,11 +33,15 @@ public:
         {
             RefreshDynamicGameObjects(position, direction);
         }
-        static GameObject staticGameObject, dynamicGameObject;
-        static float staticDistSquared, dynamicDistSquared;
-        staticDistSquared = dynamicDistSquared = -1.0f;
-        static glm::vec2 staticIntersection, dynamicIntersection;
         static glm::vec2 startPos, endPos, tmpPos;
+        static glm::vec2 dynamicIntersection, staticIntersection;
+        static const int maxChecks = 3; // TODO: move somewhere
+        static int dynamicChecks;
+        static std::vector<RaycastHit> hits;
+        static RaycastHit raycastHitTmp;
+
+        dynamicChecks = 0;
+        hits.clear();
 
         startPos.x = position.x;
         startPos.y = position.z;
@@ -47,11 +51,9 @@ public:
         dir.x = direction.x;
         dir.y = direction.z;
 
-        //glm::vec3 endPosss(endPos.x, 0.0f, endPos.y);
-        //PrimitiveRenderer::DrawLine(position, endPosss);
-
         for (auto& gameObjectPair : dynamicGameObjects)
         {
+            if (dynamicChecks >= maxChecks) break;
             auto node = Physics::cacheNodes[gameObjectPair.second];
 
             if (node.collider.shape == Collider::ColliderShapes::BOX)
@@ -59,9 +61,11 @@ public:
                 if (BoxCast(startPos, dir, gameObjectPair.second, dynamicIntersection))
                 {
                     tmpPos = dynamicIntersection - startPos;
-                    dynamicDistSquared = (tmpPos.x * tmpPos.x) + (tmpPos.y * tmpPos.y);
-                    dynamicGameObject = gameObjectPair.second;
-                    break;
+                    raycastHitTmp.distance = VECLEN2D(tmpPos);
+                    raycastHitTmp.hittedObject = gameObjectPair.second;
+                    raycastHitTmp.hitPosition = glm::vec3(dynamicIntersection.x, 0.0f, dynamicIntersection.y);
+                    hits.push_back(raycastHitTmp);
+                    dynamicChecks += 1;
                 }
             }
             else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
@@ -73,6 +77,7 @@ public:
         // TODO: powtarzalnoúÊ
         for (auto& gameObjectPair : staticGameObjects)
         {
+            if ((hits.size() - dynamicChecks) >= maxChecks) break;
             //LogInfo("xD {}", gameObjectPair.first);
             auto node = Physics::cacheNodes[gameObjectPair.second];
 
@@ -81,9 +86,10 @@ public:
                 if (BoxCast(startPos, dir, gameObjectPair.second, staticIntersection))
                 {
                     tmpPos = staticIntersection - startPos;
-                    staticDistSquared = (tmpPos.x * tmpPos.x) + (tmpPos.y * tmpPos.y);
-                    staticGameObject = gameObjectPair.second;
-                    break;
+                    raycastHitTmp.distance = VECLEN2D(tmpPos);
+                    raycastHitTmp.hittedObject = gameObjectPair.second;
+                    raycastHitTmp.hitPosition = glm::vec3(staticIntersection.x, 0.0f, staticIntersection.y);
+                    hits.push_back(raycastHitTmp);
                 }
             }
             else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
@@ -91,28 +97,19 @@ public:
                 // ????
             }
         }
-        if (staticDistSquared < 0.0f && dynamicDistSquared < 0.0f) return false;
-        /*if (staticDistSquared > 0.0f) // TODO: sprawdü czy warunki dobre do wybrania najmniejszego dista
+        if (hits.size() == 0) return false;
+        static float minDist;
+        static int minIndex;
+        minDist = std::numeric_limits<float>::max();
+        for (int i = 0; i < hits.size(); i++)
         {
-            if (dynamicDistSquared < 0.0f || staticDistSquared < dynamicDistSquared)
+            if (hits[i].distance < minDist)
             {
-                out.hittedObject = staticGameObject;
-                out.distance = std::sqrtf(staticDistSquared);
-                out.hitPosition.x = staticIntersection.x;
-                out.hitPosition.z = staticIntersection.y;
+                minDist = hits[i].distance;
+                minIndex = i;
             }
         }
-        else
-        {
-            out.hittedObject = dynamicGameObject;
-            out.distance = std::sqrtf(dynamicDistSquared);
-            out.hitPosition.x = dynamicIntersection.x;
-            out.hitPosition.z = dynamicIntersection.y;
-        }*/
-        out.hittedObject = staticGameObject;
-        out.distance = std::sqrtf(staticDistSquared);
-        out.hitPosition.x = staticIntersection.x;
-        out.hitPosition.z = staticIntersection.y;
+        out = hits[minIndex];
 
         return true;
 	}
@@ -269,10 +266,11 @@ private:
         for (auto& node : Physics::cacheNodes)
         {
             if (node.first == ignoredGameObject) continue;
+            if (node.second.collider.type == Collider::ColliderTypes::TRIGGER || node.second.collider.shape == Collider::ColliderShapes::GRAVITY) continue;
 
             tmpPos = node.second.position - position;
             tmpCheck = tmpPos * direction;
-            if (tmpCheck.x >= 0 && tmpCheck.z >= 0)
+            if (tmpCheck.x >= 0 || tmpCheck.z >= 0) // TODO: ?
             {
                 tmpDistance = (tmpPos.x * tmpPos.x) + (tmpPos.z * tmpPos.z);
                 if (tmpDistance <= maxDistanceSquared)
@@ -301,9 +299,11 @@ private:
             if (it == Physics::cacheNodes.end()) continue; // TODO: moøe jednak raw informacje zamiast cache? ma≥o ich w sumie
             auto node = *it;
 
+            if (node.second.collider.type == Collider::ColliderTypes::TRIGGER || node.second.collider.shape == Collider::ColliderShapes::GRAVITY) continue;
+
             tmpPos = node.second.position - position;
             tmpCheck = tmpPos * direction;
-            if (tmpCheck.x >= 0 && tmpCheck.z >= 0)
+            if (tmpCheck.x >= 0 || tmpCheck.z >= 0) // TODO: ?
             {
                 tmpDistance = (tmpPos.x * tmpPos.x) + (tmpPos.z * tmpPos.z);
                 if (tmpDistance <= maxDistanceSquared)
