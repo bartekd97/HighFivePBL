@@ -16,7 +16,7 @@ public class RangerController : EnemyController
     public bool enemyTriggered = false;
     public Quaternion startRotation;
 
-    private int state;
+    //private int state;
     public float movingDistance = 10.0f;
     public Vector3 position1;
     public Vector3 position2;
@@ -24,8 +24,9 @@ public class RangerController : EnemyController
     Vector3[] movePositions = new Vector3[2];
     private float waitTime;
     public float startWaitTime = 1.0f;
+    private bool updatedPositions = false;
 
-    public GameObject pointPrefab;
+    //public GameObject pointPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -41,9 +42,6 @@ public class RangerController : EnemyController
         SetMeshColor(defaultColor);
         startRotation = transform.rotation;
         startSpot = 0;
-        state = 0;
-        movePositions[0] = position1;
-        movePositions[1] = position2;
     }
 
     // Update is called once per frame
@@ -75,32 +73,34 @@ public class RangerController : EnemyController
 
         if (Time.time > frozenTo)
         {
-            Debug.Log("state: " + state);
+            Debug.Log("state: " + updatedPositions);
             if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) > stoppingDistance)
             {
-                state = 1; //gonienie
                 ChasePlayer();
                 canShoot = false;
+                updatedPositions = false;
             }
             else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < stoppingDistance
-                                                            && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+                                                            && Vector3.Distance(transform.position, player.transform.position) > retreatDistance + 1.0f)
             {
-                if (state == 1 || state == 4)
-                    state = 2; //szczelanie, przed policzeniem punktow
                 if (enemyTriggered == false)
                 {
                     MoveToGetBetterPosition();
                 }
-                //Debug.Log("dist: " + Vector3.Distance(transform.position, player.transform.position) + ", stopping: " + stoppingDistance + ", retreat: " + retreatDistance);
                 canShoot = true;
-                state = 3; //szczelanie, punkty policzone
-                
+                updatedPositions = true;
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < (retreatDistance + 1.0f)
+                                                            && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
+            {
+                canShoot = true;
+                updatedPositions = true;
             }
             else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
             {
-                state = 4; //ucieczka
                 RunAwayFromPlayer();
                 canShoot = false;
+                updatedPositions = false;
             }
         }
 
@@ -124,7 +124,6 @@ public class RangerController : EnemyController
         Vector3 direction = ((Vector3)player.transform.position - transform.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(new Vector3(-direction.x, 0, -direction.z));
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
-        //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
         rb.MovePosition(transform.position + direction * (-speed - slow - mudSlow) * Time.deltaTime);
     }
 
@@ -134,8 +133,7 @@ public class RangerController : EnemyController
         var distance = heading.magnitude;
         var direction = (heading / distance);
         RaycastHit hit;
-        //Debug.Log(hit.collider.gameObject);
-        Debug.DrawRay(transform.position, direction);
+        //Debug.DrawRay(transform.position, direction);
 
         if (Vector2.Distance(transform.position, player.transform.position) < playerInRange)
         {
@@ -145,37 +143,39 @@ public class RangerController : EnemyController
                 {
                     enemyTriggered = true;
                 }
-                else enemyTriggered = false;
+                else
+                {
+                    enemyTriggered = false;
+                }
             }
         }
     }
 
     void MoveToGetBetterPosition()
     {
-        //startRotation = Quaternion.AngleAxis(-90, transform.forward);
-        //transform.rotation = Quaternion.Lerp(transform.rotation, startRotation, speed / 10 * Time.deltaTime);
-        //Vector3 direction = Vector3.right;
-        //rb.MovePosition(transform.position + Vector3.forward * speed * Time.deltaTime);
-
-        if (state == 2)
+        if (updatedPositions == false)
         {
             movePositions[0] = transform.position;
-            movePositions[0].x += movingDistance;
-            movePositions[0].z += movingDistance;
             movePositions[1] = transform.position;
-            movePositions[1].x -= movingDistance;
-            movePositions[1].z -= movingDistance;
-            Instantiate(pointPrefab, movePositions[0], transform.rotation);
-            Instantiate(pointPrefab, movePositions[1], transform.rotation);
+
+            Vector3 vNormalized = (player.transform.position - transform.position).normalized;
+            Vector3 vPerpendicular = new Vector3(vNormalized.z, vNormalized.y, -vNormalized.x).normalized;
+            Vector3 vPerpendicular2 = new Vector3(-vNormalized.z, vNormalized.y, vNormalized.x).normalized;
+            Vector3 P4 = new Vector3(transform.position.x, transform.position.y, transform.position.z) + (vPerpendicular * movingDistance);
+            Vector3 P3 = new Vector3(transform.position.x, transform.position.y, transform.position.z) + (vPerpendicular2 * movingDistance);
+
+            movePositions[0] = P4;
+            movePositions[1] = P3;
+
+            //Instantiate(pointPrefab, movePositions[0], transform.rotation);
+            //Instantiate(pointPrefab, movePositions[1], transform.rotation);
         }
-        //Debug.Log("pos1= " + position1 + ", pos2= " + position2);
 
         Vector3 direction = (movePositions[startSpot] - transform.position).normalized;
         rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
 
         if (Vector2.Distance(transform.position, movePositions[startSpot]) < 0.4f)
         {
-            Debug.Log("no hej");
             if (waitTime <= 0.0f)
             {
                 startSpot += 1;
@@ -191,8 +191,6 @@ public class RangerController : EnemyController
                 waitTime -= Time.deltaTime;
             }
         }
-
-
     }
 
     void ShootWithArrow()
