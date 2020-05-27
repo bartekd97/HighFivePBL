@@ -49,6 +49,7 @@ struct CacheNode
 	tsl::robin_set<GameObject> triggers;
 
 	bool hasRigidBody = false;
+	bool active;
 
 	float lastFrameUpdate;
 };

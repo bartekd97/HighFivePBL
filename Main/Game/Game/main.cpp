@@ -53,7 +53,7 @@ int main()
 	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
 
 	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
-	prefabCircle->Instantiate({ 90.0f, 0.0f, 90.0f });
+	auto testCircleObject = prefabCircle->Instantiate({ 90.0f, 0.0f, 90.0f });
 
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
@@ -66,6 +66,7 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
+		//if (InputManager::GetKeyDown(GLFW_KEY_O)) HFEngine::ECS.DestroyGameObject(testCircleObject);//HFEngine::ECS.SetEnabledGameObject(testCircleObject, false);
 		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);

@@ -18,7 +18,7 @@ namespace Physics
 
 	void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector);
 
-	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects);
+	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers = false);
 	void RemoveNode(GameObject gameObject);
 
 	bool Raycast(glm::vec3& position, glm::vec3& direction, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT, float maxDistance = std::numeric_limits<float>::max());

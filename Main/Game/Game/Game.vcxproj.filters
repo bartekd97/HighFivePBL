@@ -63,6 +63,7 @@
     <ClCompile Include="Physics\Physics.cpp" />
     <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\PointLightRendererSystem.cpp" />
+    <ClCompile Include="Physics\Raycaster.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />

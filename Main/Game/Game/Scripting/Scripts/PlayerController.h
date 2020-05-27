@@ -82,36 +82,12 @@ public:
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
 		}
 
-		/*if (InputManager::GetKeyDown(GLFW_KEY_R))
-		{
-			RaycastHit hit;
-			glm::vec2 direction;
-			direction.x = transform.GetWorldFront().x;
-			direction.y = transform.GetWorldFront().z;
-			auto pos = transform.GetWorldPosition();
-			auto dir = transform.GetWorldFront();
-			if (Physics::Raycast(pos, dir, hit, GetGameObject(), 400.0f))
-			{
-				LogInfo("xD dist: {} obj: {} x: {} z: {}", hit.distance, hit.hittedObject, hit.hitPosition.x, hit.hitPosition.z);
-
-			}
-			else
-			{
-				LogWarning("PlayerController: raycast hit nothing");
-			}
-		}*/
-
 		if (InputManager::GetKeyStatus(GLFW_KEY_R))
 		{
-			glm::vec2 direction;
-			direction.x = transform.GetWorldFront().x;
-			direction.y = transform.GetWorldFront().z;
 			auto pos = transform.GetWorldPosition();
 			auto dir = glm::normalize(transform.GetWorldFront());
 			if (raycaster.Raycast(pos, dir))
 			{
-				//LogInfo("xD dist: {} obj: {} x: {} z: {}", hit.distance, hit.hittedObject, hit.hitPosition.x, hit.hitPosition.z);
-				auto xD = Physics::cacheNodes[raycaster.GetOut().hittedObject];
 				PrimitiveRenderer::DrawLine(pos, raycaster.GetOut().hitPosition);
 			}
 		}

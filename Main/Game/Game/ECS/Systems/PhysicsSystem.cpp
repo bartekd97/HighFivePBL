@@ -13,13 +13,12 @@ void PhysicsSystem::Init()
 }
 
 /*
- * TODO LIST:
- * -refactor
  * -what about transform scale?
+ * -replace velocity with toCheck flag?
  */
 void PhysicsSystem::Update(float dt)
 {
-    Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects);
+    Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects, true);
     bool collided, localCollided;
 	for (auto const& gameObject : gameObjects)
 	{

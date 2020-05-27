@@ -129,6 +129,7 @@
     <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
     <ClCompile Include="Physics\Physics.cpp" />
+    <ClCompile Include="Physics\Raycaster.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />

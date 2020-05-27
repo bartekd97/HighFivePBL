@@ -14,8 +14,16 @@ namespace Physics
         Physics::rigidBodyCollector = rigidBodyCollector;
     }
 
-	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects)
+	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers)
 	{
+        if (disableOthers)
+        {
+            for (auto& node : cacheNodes)
+            {
+                node.second.active = false;
+            }
+        }
+
 		for (const auto& gameObject : gameObjects)
 		{
 			auto it = cacheNodes.find(gameObject);
@@ -40,6 +48,7 @@ namespace Physics
 			}
 			else
 			{
+                it->second.active = true;
 				if (!it->second.collider.frozen)
 				{
 					auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
