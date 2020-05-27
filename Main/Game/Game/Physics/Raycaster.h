@@ -148,9 +148,9 @@ private:
 
         auto node = Physics::cacheNodes[gameObject];
 
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if (WallCast(position, direction, node.boxRealPoints[i], node.boxRealPoints[i + 1], intersectionTmp))
+            if (WallCast(position, direction, node.boxRealPoints[i], node.boxRealPoints[(i == 3) ? 0 : (i + 1)], intersectionTmp))
             {
                 subTmp = position - intersectionTmp;
                 distTmp = VECLEN2D(subTmp);
