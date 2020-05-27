@@ -6,6 +6,9 @@ public class BoxColliderXML : MonoBehaviour
 {
     public float width;
     public float height;
+    public bool frozen;
+    public enum ColliderTypes { DYNAMIC, TRIGGER, STATIC }
+    public ColliderTypes type;
 
     string output;
 
@@ -22,6 +25,9 @@ public class BoxColliderXML : MonoBehaviour
         {
             output += "<property value=\"" + height + "\" name=\"height\"/>";
         }
+        
+        output += "<property value=\"" + frozen + "\" name=\"frozen\"/>";
+        output += "<property value=\"" + type + "\" name=\"type\"/>";
 
         output += "</component>";
         return output;

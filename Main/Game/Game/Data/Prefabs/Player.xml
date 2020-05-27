@@ -8,6 +8,7 @@
         <property name="radius" value="0.75"/>
     </component>
 
+
     <component name="ScriptComponent">
         <property name="name" value="PlayerController"/>
         <property name="moveSpeed" value="12.5"/>
@@ -52,11 +53,33 @@
 
                              <children>
                                 <child name="TorchFlame" position="0,0.76,0" rotation="0,0,0" scale="1,1,1">
+                                <!--
                                     <component name="ModelHolder">
                                         <property name="model" value="Characters/Player:FireTorchFlame"/>
                                     </component>
                                     <component name="MeshRenderer">
                                         <property name="configureFromHolder" value="true" />
+                                    </component>
+                                    -->
+                                    <component name="ParticleContainer">
+                                        <property name="maxParticles" value="50"/>
+                                    </component>
+                                    <component name="ParticleEmitter">
+                                        <property name="shape" value="CIRCLE"/>
+                                        <property name="sourcShapeeSize" value="0.2,0.2"/>
+                                        <property name="targetShapeSize" value="0.5,0.5"/>
+                                        <property name="size" value="0.5,0.85"/>
+                                        <property name="lifetime" value="0.1,0.25"/>
+                                        <property name="velocity" value="3.0,4.0"/>
+                                        <property name="rate" value="200.0"/>
+                                        <property name="emitting" value="true"/>
+                                    </component>
+                                    <component name="ParticleRenderer">
+                                        <property name="spriteSheet" value="Particles:Flames"/>
+                                        <property name="spriteSheetCount" value="4"/>
+                                        <property name="colorOverTime" value="1.0,1.0,0.0;1.0,0.5,0.0;1.0,0.0,0.0"/>
+                                        <property name="opacityOverTime" value="1.0;1.0;0.0"/>
+                                        <property name="visibilityRadius" value="5.0"/>
                                     </component>
                                 </child>
                                 <child name="FlameLight" position="0,0.76,0" rotation="0,0,0" scale="1,1,1">

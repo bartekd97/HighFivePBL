@@ -5,6 +5,7 @@
 #include "../../Resourcing/Material.h"
 #include "../../Resourcing/SkinningData.h"
 #include "CulledRenderer.h"
+#include "Utility/ThreadBusiness.h"
 
 class UniformBuffer;
 struct SkinnedMeshRenderer
@@ -23,4 +24,5 @@ struct SkinnedMeshRenderer
 	bool castShadows = true;
 
 	CulledRenderer cullingData;
+	ThreadBusiness business;
 };

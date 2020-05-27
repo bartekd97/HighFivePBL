@@ -37,6 +37,7 @@ public:
 	void DestroyGameObject(GameObject gameObject);
 
 	void UpdateSystems(float dt);
+	void PostUpdateSystems(float dt);
 
 	std::shared_ptr<System> GetSystemByTypeName(const char* typeName);
 

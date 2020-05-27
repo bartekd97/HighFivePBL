@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 
-class ScriptUpdateSystem : public SystemUpdate
+class ScriptUpdateSystem : public System, public ISystemUpdate
 {
 public:
 	void Update(float dt) override;

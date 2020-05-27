@@ -3,6 +3,7 @@
 #include "ECS/Systems/Rendering/MeshRendererSystem.h"
 #include "ECS/Systems/Rendering/SkinnedMeshRendererSystem.h"
 #include "ECS/Systems/Rendering/PointLightRendererSystem.h"
+#include "ECS/Systems/Rendering/ParticleRendererSystem.h"
 #include "ECS/Systems/Rendering/BoxColliderRenderSystem.h"
 #include "ECS/Systems/Rendering/CircleColliderRenderSystem.h"
 #include "HFEngine.h"
@@ -96,6 +97,13 @@ void RenderPipeline::InitRenderSystems()
 		Signature signature;
 		signature.set(HFEngine::ECS.GetComponentType<PointLightRenderer>());
 		HFEngine::ECS.SetSystemSignature<PointLightRendererSystem>(signature);
+	}
+	RenderSystems.particleRenderer = HFEngine::ECS.RegisterSystem<ParticleRendererSystem>();
+	{
+		Signature signature;
+		signature.set(HFEngine::ECS.GetComponentType<ParticleContainer>());
+		signature.set(HFEngine::ECS.GetComponentType<ParticleRenderer>());
+		HFEngine::ECS.SetSystemSignature<ParticleRendererSystem>(signature);
 	}
 
 #ifdef _DEBUG
@@ -198,6 +206,9 @@ void RenderPipeline::Render()
 	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
 	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
 
+	// schedule particle culling
+	RenderSystems.particleRenderer->ScheduleCulling(viewFrustum, lightFrustum);
+
 	// draw to gbuffer
 	GBuffer.frameBuffer->bind();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -241,9 +252,14 @@ void RenderPipeline::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
 
+	// wait for particle culling
+	RenderSystems.particleRenderer->FinishCulling();
+
 	// draw forward
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE); // disable zbuffer writing
+	RenderSystems.particleRenderer->Render(viewCamera);
+	RenderSystems.meshRenderer->RenderForward(viewCamera, HFEngine::WorldLight);
 	RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_DEPTH_TEST);

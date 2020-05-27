@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../SystemUpdate.h"
+#include "../System.h"
 #include "../../Event/Event.h"
 
-class ScriptStartSystem : public SystemUpdate
+class ScriptStartSystem : public System, public ISystemUpdate
 {
 public:
 	void Init() override;

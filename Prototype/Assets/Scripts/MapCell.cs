@@ -12,14 +12,37 @@ public class MapCell : MonoBehaviour
         public CellBridge Bridge;
         public MapCell Cell;
         public CellGate Gate;
+        public float angle;
     }
+
+    public int SortByAngle(BridgeTo a, BridgeTo b)
+    {
+        if(a.angle < b.angle)
+        {
+            return -1;
+        }
+        else if (a.angle > b.angle)
+        {
+            return 1;
+        }
+        return 0;
+    }
+
+    public class Zone
+    {
+        public List<Vector3> Points = new List<Vector3>();
+    }
+
     public List<BridgeTo> Bridges = new List<BridgeTo>();
+
+    public List<Zone> Zones = new List<Zone>();
 
     public List<GameObject> Enemies = new List<GameObject>();
 
     public List<GameObject> Monuments = new List<GameObject>();
 
     public List<Vector3> generationPoints = new List<Vector3>();
+    public List<Vector3> pathPoints = new List<Vector3>();
 
 
 
