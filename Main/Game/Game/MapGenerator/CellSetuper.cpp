@@ -9,15 +9,46 @@
 
 void CellSetuper::Setup()
 {
+	structureContainer = HFEngine::ECS.CreateGameObject(cell, "Structures");
+	obstacleContainer = HFEngine::ECS.CreateGameObject(cell, "Obstacles");
+
 	// spawn monument only on normal cell
 	if (type == CellSetuper::Type::NORMAL)
 	{
 		// spawn main statue
-		structuresConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
+		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
+
 		MakeZones();
+
+		// TODO: better zone selecting, maybe another function?
+		for (auto& zone : zones)
+		{
+			// TODO: obstacle/structure selector
+			// maybe with few choices in case when first one can't be spawned?
+			// and maybe choose few pseudo-random points instead of center?
+			// and add raycast
+
+			auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
+				zone.points.size() % setupConfig.obstaclePrefabs.size()
+				);
+			float obstacleRotation = zone.center.x * zone.center.y;
+			TrySpawnObstacle(obstaclePrefab, zone.center, obstacleRotation);
+		}
+
 	}
 }
 
+
+// only obstacles should have "random" rotation around Y axis
+// structures should have predefined, constant rotation
+// because some models have been made just to be visible from one side(s)
+bool CellSetuper::TrySpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation)
+{
+	// TODO: check if its possible to spawn this obstacle here
+	// maybe use prefab properties to read it's size for raycast?
+	prefab->Instantiate(obstacleContainer, { localPos.x, 0.0f, localPos.y }, {0.0f, rotation, 0.0f});
+	return true;
+}
 
 void CellSetuper::MakeZones()
 {
@@ -61,19 +92,19 @@ void CellSetuper::MakeZones()
 
 	zones.resize(roads.size());
 
-	for (int i = 0; i < structuresConfig.gridSize; i += structuresConfig.gridStep)
+	for (int i = 0; i < setupConfig.gridSize; i += setupConfig.gridStep)
 	{
-		for (int j = 0; j < structuresConfig.gridSize; j += structuresConfig.gridStep)
+		for (int j = 0; j < setupConfig.gridSize; j += setupConfig.gridStep)
 		{
-			glm::vec2 point = { i - (structuresConfig.gridSize / 2), j - (structuresConfig.gridSize / 2) };
+			glm::vec2 point = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
 			float level = cellInfo.PolygonSmoothInner.GetEdgeCenterRatio(point);
 			
 			// check if it isn too far or too near
-			if (level < structuresConfig.gridInnerLevel.x || level > structuresConfig.gridInnerLevel.y)
+			if (level < setupConfig.gridInnerLevel.x || level > setupConfig.gridInnerLevel.y)
 				continue;
 
 			// check if not too near road
-			if (getDistanceToRoad(point + cellPos) < structuresConfig.gridMinRoadDistance)
+			if (getDistanceToRoad(point + cellPos) < setupConfig.gridMinRoadDistance)
 				continue;
 
 			// point correct

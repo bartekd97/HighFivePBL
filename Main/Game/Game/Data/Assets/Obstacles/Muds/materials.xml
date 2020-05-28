@@ -1,0 +1,8 @@
+<materials textureLibrary="this">
+    <material name="mudMaterial">
+        <property name="albedoMap" value="mudAlbedo"/>
+        <property name="normalMap" value="mudNormal"/>
+        <property name="metalnessMap" value="mudMetal"/>
+        <property name="roughnessMap" value="mudRough"/>
+    </material>
+</materials>

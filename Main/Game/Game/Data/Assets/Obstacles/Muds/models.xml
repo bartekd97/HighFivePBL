@@ -1,0 +1,7 @@
+<models materialLibrary="this">
+    <model name="Mud1" mesh="mud1.glb"    material="mudMaterial" />
+    <model name="Mud2" mesh="mud2.glb"    material="mudMaterial" />
+    <model name="Mud3" mesh="mud3.glb"    material="mudMaterial" />
+    <model name="Mud4" mesh="mud4.glb"    material="mudMaterial" />
+    <model name="Mud5" mesh="mud5.glb"    material="mudMaterial" />
+</models>
