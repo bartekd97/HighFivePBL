@@ -32,6 +32,7 @@ public class MapSetuper : MonoBehaviour
     public GameObject pointPrefab2;
     public GameObject pointPrefab3;
 
+    public GameObject testEnemy;
 
 
 
@@ -43,6 +44,10 @@ public class MapSetuper : MonoBehaviour
         SetupObstacles();
         SetupEnemies();
         GameManager.Instance.SetCurrentCell(startupCell);
+        //SpawnPathfindingPoints(startupCell);
+        GameObject test = Instantiate(testEnemy, startupCell.transform.position + new Vector3(5,0,10), Quaternion.identity);
+        test.GetComponent<EnemyController>().cell = startupCell;
+
     }
 
     MapCell GetStartupCell()
@@ -241,9 +246,14 @@ public class MapSetuper : MonoBehaviour
             iter_available = iter_available - 1;
         }
 
-        if (Physics.OverlapBox(finalPoint, obstacles[obstacleType].GetComponent<BoxCollider>().size / 2.0f).Length <= 1)
+        Collider[] collisions = Physics.OverlapBox(finalPoint, obstacles[obstacleType].GetComponent<BoxCollider>().size / 2.0f);
+        if (collisions.Length <= 1)
         {
             Instantiate(obstacles[obstacleType], new Vector3(finalPoint.x, obstacles[obstacleType].transform.position.y, finalPoint.z), Quaternion.identity);
+            foreach ( Collider col in collisions)
+            {
+                if(col)
+            }
         }
         else
         {
@@ -524,17 +534,21 @@ public class MapSetuper : MonoBehaviour
 
     public void SpawnPathfindingPoints(MapCell cell)
     {
+
         //Generate points
         float startX = cell.transform.position.x - 25;
         float startY = cell.transform.position.z - 25;
+
+        cell.grid = new MapCell.Grid(50, 50, startX, startY);
 
         for (float i = 0; i < 50; i = i + 1)
         {
             for (float j = 0; j < 50; j = j + 1)
             {
-                if (cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) < 0.75)
+                if (cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) > 0.85 || cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) < 0.2)
                 {
-                    cell.pathPoints.Add(new Vector3(startX + i, 0, startY + j));
+                    cell.grid.gridArray[(int)i, (int)j].isAvailable = false;
+
                 }
             }
         }
@@ -542,9 +556,13 @@ public class MapSetuper : MonoBehaviour
 
 
         // Generation remaining points
-        for (int i = 0; i < cell.pathPoints.Count; i++)
-        {
-            Instantiate(pointPrefab2, cell.pathPoints[i], Quaternion.identity);
-        }
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    for (int j = 0; j < 50; j++)
+        //    {
+        //        Instantiate(pointPrefab2, cell.grid.GetPosition(i,j), Quaternion.identity);
+
+        //    }
+        //}
     }
 }

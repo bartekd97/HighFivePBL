@@ -19,6 +19,7 @@ public class EnemyController : MonoBehaviour
 
     public int cellNumber;
     public MapCell cell;
+    public PathFinding pathfinding;
 
     public GameObject pointPrefab;
 
@@ -50,6 +51,7 @@ public class EnemyController : MonoBehaviour
     //private bool isPushedAfterAttack;
     public float pushBackForceAfterAttack = 5.0f;
     public float damage = 1.0f;
+
 
 
     public void ChasePlayer()
