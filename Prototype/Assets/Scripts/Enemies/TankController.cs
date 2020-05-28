@@ -72,11 +72,10 @@ public class TankController : EnemyController
         if (cellNumber == GameManager.Instance.currentCell.CellSiteIndex)
         {
             List<MapCell.PathNode> path = pathfinding.FindPath(transform.position.x, transform.position.z, player.transform.position.x, player.transform.position.z);
-            UnityEngine.Debug.Log(pathfinding.FindPath(transform.position.x, transform.position.z, player.transform.position.x, player.transform.position.z).Count);
-            for (int i = 0; i < path.Count; i++)
-            {
-                Destroy(Instantiate(pointPrefab, new Vector3(path[i].x, 0, path[i].y), Quaternion.identity), 0.02f);
-            }
+            //for (int i = 0; i < path.Count; i++)
+            //{
+            //    Destroy(Instantiate(pointPrefab, new Vector3(path[i].x, 0, path[i].y), Quaternion.identity), 0.02f);
+            //}
 
             if (Vector3.Distance(transform.position, player.transform.position) <= meleeRange)
             {
@@ -97,10 +96,6 @@ public class TankController : EnemyController
             }
 
         }
-
-            
-
-
         /*
         if (timestampAfterAttackPushStart >= timestampAfterAttackPushStop)
         {
@@ -115,4 +110,6 @@ public class TankController : EnemyController
         }
         */
     }
+
+   
 }

@@ -62,7 +62,8 @@ public class MapCell : MonoBehaviour
                 for (int j = 0; j < 50; j++)
                 {
                     if (Vector3.Distance(startVector, new Vector3(closestNode.x, 0, closestNode.y)) >
-                        Vector3.Distance(startVector, new Vector3(gridArray[i, j].x, 0, gridArray[i, j].y)))
+                        Vector3.Distance(startVector, new Vector3(gridArray[i, j].x, 0, gridArray[i, j].y))
+                        && gridArray[i, j].isAvailable == true)
                     {
                         closestNode = gridArray[i, j];
                     }
