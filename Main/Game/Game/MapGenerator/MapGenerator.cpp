@@ -13,9 +13,9 @@
 namespace {
 	std::vector<Delaunay::Point*> GeneratePoints(DiagramLayout layout)
 	{
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dis(0.0,1.0);
+        static std::random_device rd;
+        static std::mt19937 gen(rd());
+        static std::uniform_real_distribution<> dis(0.0,1.0);
 
 		std::vector<Delaunay::Point*> points;
         float wPart = layout.width / (float)layout.columns;
@@ -51,34 +51,57 @@ namespace {
 
 void MapGenerator::Generate()
 {
-	bounds = GetBounds(config.layout);
-	auto points = GeneratePoints(config.layout);
+    assert(!_generated && "Map already generated");
 
-	auto voronoi = DelaunayExt::VoronoiWithLloydRelaxation(points, bounds, config.layout.LloydRelaxIteraions);
-    edges = voronoi->edges();
-
+    bounds = GetBounds(config.layout);
+    std::unique_ptr<Delaunay::Voronoi> voronoi;
     std::set<Delaunay::Site*> sites;
-    for (auto edge : edges)
+    std::vector<GameObject> cells;
+    GameObject MapObject;
+    GameObject cellContainer;
+    GameObject bridgeContainer;
+
+    while (true)
     {
-        sites.insert(edge->rightSite());
-        sites.insert(edge->leftSite());
+        auto points = GeneratePoints(config.layout);
+
+        voronoi = DelaunayExt::VoronoiWithLloydRelaxation(points, bounds, config.layout.LloydRelaxIteraions);
+        edges = voronoi->edges();
+
+        for (auto edge : edges)
+        {
+            sites.insert(edge->rightSite());
+            sites.insert(edge->leftSite());
+        }
+
+        MapObject = HFEngine::ECS.CreateGameObject("Map");
+
+        // prepare cells
+        cellContainer = HFEngine::ECS.CreateGameObject(MapObject, "Cells");
+        for (auto s : sites)
+            if (!IsBorderCell(s))
+                cells.push_back(CreateCell(s, cellContainer));
+
+        // create bridges and connect references
+        bridgeContainer = HFEngine::ECS.CreateGameObject(MapObject, "Bridges");
+        CreateBridges(cells, bridgeContainer);
+
+        if (ValidateMapLayout(cells))
+        {
+            break; // all is fine, continue...
+        }
+        else
+        {
+            // somethins is wrong with map layout
+            // clear it and start process again
+            sites.clear();
+            cells.clear();
+            HFEngine::ECS.DestroyGameObject(MapObject); // map root object, it will recusively destroy everything below
+            voronoi.reset();
+        }
     }
 
-    GameObject MapObject = HFEngine::ECS.CreateGameObject("Map");
-
-    // prepare cells
-    GameObject cellContainer = HFEngine::ECS.CreateGameObject(MapObject, "Cells");
-    std::vector<GameObject> cells;
-    for (auto s : sites)
-        if (!IsBorderCell(s))
-            cells.push_back(CreateCell(s, cellContainer));
-
-    // create bridges and connect references
-    GameObject bridgeContainer = HFEngine::ECS.CreateGameObject(MapObject, "Bridges");
-    CreateBridges(cells, bridgeContainer);
-
     // now generate real cells
-    std::vector<GameObject> cellObjects;
     for (auto s : sites)
     {
         if (!IsBorderCell(s))
@@ -86,7 +109,6 @@ void MapGenerator::Generate()
             GameObject cell = *std::find_if(cells.begin(), cells.end(), [s](GameObject go) {
                 return HFEngine::ECS.GetComponent<MapCell>(go).CellSiteIndex == s->index();
                 });
-            cellObjects.push_back(cell);
             ConvexPolygon cellPolygon = CreateLocalPolygon(s, bounds);
             CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
             generator.Generate(cellPolygon, cell);
@@ -95,11 +117,16 @@ void MapGenerator::Generate()
 
 
     // and setup those cells
-    for (auto co : cellObjects)
-    {
-        CellSetuper setuper(config.cellStructuresConfig);
-        setuper.Setup(co);
-    }
+    mapSetuper = std::make_unique<MapSetuper>(config, cells);
+    mapSetuper->Setup();
+
+    _generated = true;
+}
+
+GameObject MapGenerator::GetStartupCell()
+{
+    assert(_generated && "Map not generated yet");
+    return mapSetuper->GetStartupCell();
 }
 
 
@@ -154,16 +181,8 @@ void MapGenerator::CreateBridges(std::vector<GameObject> cells, GameObject paren
             (leftVertex->y + rightVertex->y) * 0.5f
             );
 
-        /*
-        GameObject bridgeObject = Instantiate(bridgePrefab, parent.transform);
-        bridgeObject.transform.position = position;
-        bridgeObject.transform.right = (new Vector3(rightVertex.x, 0.0f, rightVertex.y) - position).normalized;
-        */
-        //GameObject bridgeObject = HFEngine::ECS.CreateGameObject(parent);
         float rotation = rad2deg(glm::atan(rightVertex->x - position.x, rightVertex->y - position.z)) + 90; // + 90 for right
         GameObject bridgeObject = config.bridgePrefab->Instantiate(parent, position, { 0.0f, rotation, 0.0f });
-        //HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetPosition(position);
-        //HFEngine::ECS.GetComponent<Transform>(bridgeObject).SetRotation({ 0.0f, rotation, 0.0f });
 
         CellBridge bridge;
         bridge.CellA = cellA;
@@ -173,4 +192,28 @@ void MapGenerator::CreateBridges(std::vector<GameObject> cells, GameObject paren
         HFEngine::ECS.GetComponent<MapCell>(cellA).Bridges.push_back({ bridgeObject, cellB, (GameObject)0 });
         HFEngine::ECS.GetComponent<MapCell>(cellB).Bridges.push_back({ bridgeObject, cellA, (GameObject)0 });
     }
+}
+
+
+bool MapGenerator::ValidateMapLayout(std::vector<GameObject> cells)
+{
+    int cellsWithOneBridgeCount = 0;
+    for (auto cell : cells)
+    {
+        MapCell mc = HFEngine::ECS.GetComponent<MapCell>(cell);
+        if (mc.Bridges.size() == 0)
+        {
+            return false; // invalid cell with no bridges, throw away whole map...
+        }
+        else if (mc.Bridges.size() == 1)
+        {
+            cellsWithOneBridgeCount++;
+        }
+    }
+
+    // there must be at least one cell with only one bridge
+    if (cellsWithOneBridgeCount >= 1)
+        return true;
+    else
+        return false;
 }

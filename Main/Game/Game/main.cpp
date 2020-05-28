@@ -48,41 +48,14 @@ int main()
 
 	MapGenerator generator;
 	generator.Generate();
+	GameObject startupCell = generator.GetStartupCell();
+	glm::vec3 startupPos = HFEngine::ECS.GetComponent<Transform>(startupCell).GetWorldPosition();
+	startupPos += glm::vec3(0.01f); // add a little offset, otherwise we have WTF floats in physics
 
-	auto prefab = PrefabManager::GetPrefab("Player");
-	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
-	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
+	auto playerPrefab = PrefabManager::GetPrefab("Player");
+	auto player = playerPrefab->Instantiate(startupPos);
+	//HFEngine::ECS.SetNameGameObject(player, "Player");
 
-	// particle test
-	//auto particles = HFEngine::ECS.CreateGameObject(movableTestObject);
-	//HFEngine::ECS.GetComponent<Transform>(particles).SetPosition({ 5.0f, 0.1f, 0.0f });
-	/*
-	ParticleContainer container;
-	container.SetMaxParticles(256);
-	ParticleEmitter emitter;
-	emitter.shape = ParticleEmitter::EmitterShape::CIRCLE;
-	emitter.sourcShapeeSize = { 0.5f, 0.5f };
-	emitter.targetShapeSize = { 0.5f, 0.5f };
-	emitter.size = { 1.9f, 1.9f };
-	emitter.lifetime = { 2.25f, 3.0f };
-	emitter.velocity = { 0.5f, 0.75f };
-	emitter.rate = 16.0f;
-	emitter.emitting = true;
-	ParticleRenderer renderer;
-	renderer.colorOverTime = TextureTools::GenerateGradientTexture(
-		{
-			{ 1.0f, 1.0f, 0.0f },
-			{ 1.0f, 1.0f, 0.0f },
-			{ 1.0f, 0.0f, 0.0f }
-		}
-	);
-	renderer.opacityOverTime = TextureTools::GenerateGradientTexture({1.0f, 1.0f, 0.0f});
-	renderer.spriteSheet = TextureManager::GetTexture("Particles", "Flames");
-	renderer.spriteSheetCount = 4;
-	HFEngine::ECS.AddComponent<ParticleContainer>(movableTestObject, container);
-	HFEngine::ECS.AddComponent<ParticleEmitter>(movableTestObject, emitter);
-	HFEngine::ECS.AddComponent<ParticleRenderer>(movableTestObject, renderer);
-	*/
 
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});

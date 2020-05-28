@@ -130,6 +130,7 @@
     <ClCompile Include="MapGenerator\ConvexPolygon.cpp" />
     <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
+    <ClCompile Include="MapGenerator\MapSetuper.cpp" />
     <ClCompile Include="Physics\PhysicsCache.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
@@ -234,6 +235,7 @@
     <ClInclude Include="MapGenerator\ConvexPolygon.h" />
     <ClInclude Include="MapGenerator\ext\LloydRelaxation.h" />
     <ClInclude Include="MapGenerator\MapGenerator.h" />
+    <ClInclude Include="MapGenerator\MapSetuper.h" />
     <ClInclude Include="Physics\CacheNode.h" />
     <ClInclude Include="Physics\PhysicsCache.h" />
     <ClInclude Include="Rendering\Camera.h" />
