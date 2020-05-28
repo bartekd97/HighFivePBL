@@ -11,6 +11,7 @@
 #include "../../Physics/Physics.h"
 #include "../../Rendering/PrimitiveRenderer.h"
 #include "Physics/Raycaster.h"
+#include "GhostController.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -32,6 +33,8 @@ private: // variables
 	bool hasGhostMovement = false;
 	Raycaster raycaster;
 
+	std::shared_ptr<GhostController> ghostController;
+
 public:
 	PlayerController()
 	{
@@ -51,12 +54,13 @@ public:
 		startPosition = GetTransform().GetWorldPosition();
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
+		auto ghostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Ghost")[0];
+		auto& ghostScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(ghostObject);
+		ghostController = ghostScriptContainer.GetScript<GhostController>();
 	}
-
 
 	void GhostMovementStart(Event& event) { hasGhostMovement = true; }
 	void GhostMovementStop(Event& event) { hasGhostMovement = false; }
-
 
 	void Update(float dt)
 	{
@@ -75,6 +79,14 @@ public:
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
 		else if (InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+
+		if (!hasGhostMovement)
+		{
+			ghostController->leftGhostDistance = std::min(
+				ghostController->maxGhostDistance,
+				ghostController->leftGhostDistance + dt * ghostController->ghostDistanceRecoverySpeed
+			);
+		}
 
 		if (InputManager::GetKeyDown(GLFW_KEY_X))
 		{
