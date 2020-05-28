@@ -108,11 +108,13 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    public void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Mud"))
         {
-            mudSlow = 2.0f;
+            UnityEngine.Debug.Log(other.tag + " enter");
+
+            mudSlow = 1.5f;
         }
         if (other.CompareTag("ToxicFog"))
         {
@@ -126,9 +128,12 @@ public class EnemyController : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+
         if (other.CompareTag("Mud"))
         {
-            slow = 0.0f;
+            UnityEngine.Debug.Log(other.tag);
+
+            mudSlow = 0.0f;
         }
         if (other.CompareTag("ToxicFog"))
         {

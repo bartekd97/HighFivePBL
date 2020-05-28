@@ -220,12 +220,23 @@ public class MapSetuper : MonoBehaviour
         if (Physics.OverlapBox(finalPoint, structures[structureNumber].GetComponent<BoxCollider>().size / 2.0f).Length <= 1)
         {
             Instantiate(structures[structureNumber], finalPoint, Quaternion.identity);
+            for (int k = 0; k < 50; k++)
+            {
+                for (int j = 0; j < 50; j++)
+                {
+                    if (cell.grid.gridArray[k, j].x < (finalPoint.x + structures[structureNumber].GetComponent<BoxCollider>().size.x/2.0f) && cell.grid.gridArray[k, j].x > (finalPoint.x - structures[structureNumber].GetComponent<BoxCollider>().size.x / 2.0f)
+                        && cell.grid.gridArray[k, j].y < (finalPoint.z + structures[structureNumber].GetComponent<BoxCollider>().size.z / 2.0f) && cell.grid.gridArray[k, j].y > (finalPoint.z - structures[structureNumber].GetComponent<BoxCollider>().size.z / 2.0f))
+                    {
+                        cell.grid.gridArray[k, j].isAvailable = false;
+                    }
+                }
+            }
         }
         else
         {
-            Instantiate(pointPrefab, finalPoint, Quaternion.identity);
-            UnityEngine.Debug.Log(structures[structureNumber]);
-            UnityEngine.Debug.Log(Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y, 0), structures[structureNumber].GetComponent<BoxCollider>().size));
+            //Instantiate(pointPrefab, finalPoint, Quaternion.identity);
+            //UnityEngine.Debug.Log(structures[structureNumber]);
+            //UnityEngine.Debug.Log(Physics.OverlapBox(finalPoint + new Vector3(0, structures[structureNumber].GetComponent<BoxCollider>().size.y, 0), structures[structureNumber].GetComponent<BoxCollider>().size));
         }
     }
 
@@ -250,16 +261,13 @@ public class MapSetuper : MonoBehaviour
         if (collisions.Length <= 1)
         {
             Instantiate(obstacles[obstacleType], new Vector3(finalPoint.x, obstacles[obstacleType].transform.position.y, finalPoint.z), Quaternion.identity);
-            foreach ( Collider col in collisions)
-            {
-                if(col)
-            }
+            
         }
         else
         {
-            Instantiate(pointPrefab, finalPoint, Quaternion.identity);
-            UnityEngine.Debug.Log(obstacles[obstacleType]);
-            UnityEngine.Debug.Log(Physics.OverlapBox(finalPoint + new Vector3(0, obstacles[obstacleType].GetComponent<BoxCollider>().size.y, 0), obstacles[obstacleType].GetComponent<BoxCollider>().size));
+            //Instantiate(pointPrefab, finalPoint, Quaternion.identity);
+            //UnityEngine.Debug.Log(obstacles[obstacleType]);
+            //UnityEngine.Debug.Log(Physics.OverlapBox(finalPoint + new Vector3(0, obstacles[obstacleType].GetComponent<BoxCollider>().size.y, 0), obstacles[obstacleType].GetComponent<BoxCollider>().size));
         }
     }
 
@@ -291,7 +299,15 @@ public class MapSetuper : MonoBehaviour
             }
         }
 
+        //for (int i = 0; i < 50; i++)
+        //{
+        //    for (int j = 0; j < 50; j++)
+        //    {
+        //        if(cell.grid.gridArray[i, j].isAvailable == true)
+        //            Instantiate(pointPrefab, cell.grid.GetPosition(i, j), Quaternion.identity);
 
+        //    }
+        //}
 
 
         //for (int i = 0; i < obstaclesCount; i++)
@@ -545,7 +561,7 @@ public class MapSetuper : MonoBehaviour
         {
             for (float j = 0; j < 50; j = j + 1)
             {
-                if (cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) > 0.85 || cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) < 0.2)
+                if (cell.PolygonSmoothInner.GetEdgeCenterRatio(new Vector2(i - 25, j - 25)) > 0.98)
                 {
                     cell.grid.gridArray[(int)i, (int)j].isAvailable = false;
 
