@@ -475,8 +475,7 @@ namespace {
 			collider.shape = Collider::ColliderShapes::BOX;
 			collider.frozen = frozen;
 			BoxCollider bc;
-			bc.width = width;
-			bc.height = height;
+			bc.SetWidthHeight(width, height);
 			HFEngine::ECS.AddComponent<Collider>(target, collider);
 			HFEngine::ECS.AddComponent<BoxCollider>(target, bc);
 		}

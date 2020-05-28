@@ -3015,7 +3015,7 @@ PrefabInstance:
     - target: {fileID: 8886014663648545004, guid: 045f9a318b5eaf3408faf5840371993c,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8058906982672374622, guid: 045f9a318b5eaf3408faf5840371993c,
         type: 3}
@@ -3075,53 +3075,29 @@ PrefabInstance:
     - target: {fileID: 3995673257784692540, guid: 045f9a318b5eaf3408faf5840371993c,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3995673257784692540, guid: 045f9a318b5eaf3408faf5840371993c,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 2066263928}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: charController
-      value: 
-      objectReference: {fileID: 2066263929}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: enemy
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: stoppingDistance
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: retreatDistance
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: startWaitTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
-        type: 3}
-      propertyPath: movingDistance
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
         type: 3}
       propertyPath: enemyWaveNumber
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
+        type: 3}
+      propertyPath: cell
+      value: 
+      objectReference: {fileID: 1626984579}
+    - target: {fileID: 5838528053766770871, guid: 045f9a318b5eaf3408faf5840371993c,
+        type: 3}
+      propertyPath: enemy
+      value: 
+      objectReference: {fileID: 5058164864356723304, guid: 9f9d9ae2051476746925ab93f8a9d644,
+        type: 3}
     - target: {fileID: 4011550119053882671, guid: 045f9a318b5eaf3408faf5840371993c,
         type: 3}
       propertyPath: charController
@@ -8124,11 +8100,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 63573587319288568, guid: a2868598c4a2223448c736dec3a8a5ef,
         type: 3}
-    - target: {fileID: 6587702953739558145, guid: 9f9d9ae2051476746925ab93f8a9d644,
-        type: 3}
-      propertyPath: movingDistance
-      value: 3
-      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7402177458343129385, guid: 9f9d9ae2051476746925ab93f8a9d644, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9f9d9ae2051476746925ab93f8a9d644, type: 3}
@@ -21238,6 +21209,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b155f2cbd095bd4f9415a87a3bcee32, type: 3}
+--- !u!114 &1626984579 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 963292229953663006, guid: b895af2dd9dd67946961d56e0b09c5bf,
+    type: 3}
+  m_PrefabInstance: {fileID: 741292289}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dbba246eb8c8dc4b88a6fb2a5d10952, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1638518973
 GameObject:
   m_ObjectHideFlags: 0

@@ -30,7 +30,7 @@ public:
 
 	std::optional<GameObject> GetGameObjectByName(std::string name);
 
-	std::set<GameObject> GetGameObjectsByName(std::string name);
+	tsl::robin_set<GameObject> GetGameObjectsByName(std::string name);
 
 	std::vector<GameObject> GetByNameInChildren(GameObject parent, std::string name);
 

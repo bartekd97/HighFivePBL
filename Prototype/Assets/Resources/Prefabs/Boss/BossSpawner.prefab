@@ -853,13 +853,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   charController: {fileID: 0}
+  gameManager: {fileID: 0}
   healthBar: {fileID: 3995673256348405370}
   rb: {fileID: 2054084409848889847}
   speed: 5
   playerInRange: 15
-  stoppingDistance: 7.5
+  stoppingDistance: 8
   maxHealth: 30
   enemyHealth: 0
+  cellNumber: 0
+  cell: {fileID: 0}
+  pointPrefab: {fileID: 63573587319288568, guid: a2868598c4a2223448c736dec3a8a5ef,
+    type: 3}
   defaultColor: {r: 0.019607844, g: 0.5411765, b: 0.87843144, a: 0}
   damagedColor: {r: 0.8980393, g: 0.011764707, b: 0.011764707, a: 0}
   dmgAnimationDuration: 0.5
@@ -881,13 +886,13 @@ MonoBehaviour:
   timestampAfterAttackPushStop: 0
   pushBackForceAfterAttack: 5
   damage: 1
-  retreatDistance: 5
+  retreatDistance: 6
   spawnDelay: 3
-  enemy: {fileID: 5058164864356723304, guid: 82cd9f3d442d0c04a98ad0b9bb61d277, type: 3}
+  enemy: {fileID: 0}
   enemyWaveNumber: 3
   delayMovement: 2
-  movingDistance: 6
-  startWaitTime: 0
+  movingDistance: 5
+  startWaitTime: 1
 --- !u!1001 &9088025645858012889
 PrefabInstance:
   m_ObjectHideFlags: 0

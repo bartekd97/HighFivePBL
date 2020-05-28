@@ -68,6 +68,7 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
+		//if (InputManager::GetKeyDown(GLFW_KEY_O)) HFEngine::ECS.DestroyGameObject(testCircleObject);//HFEngine::ECS.SetEnabledGameObject(testCircleObject, false);
 		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);

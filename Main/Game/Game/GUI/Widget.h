@@ -2,7 +2,8 @@
 
 #include <glm/glm.hpp>
 #include <functional>
-#include <set>
+#include <tsl/robin_set.h>
+#include <tsl/robin_set.h>
 
 #include "Anchor.h"
 
@@ -33,7 +34,7 @@ public:
 
 	std::shared_ptr<Widget> parent;
 	std::vector<std::shared_ptr<Widget>> children;
-	std::set<std::shared_ptr<Widget>> clippingWidgets;
+	tsl::robin_set<std::shared_ptr<Widget>> clippingWidgets;
 
 protected:
 	Widget();

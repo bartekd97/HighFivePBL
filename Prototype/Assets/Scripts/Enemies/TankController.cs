@@ -20,6 +20,7 @@ public class TankController : EnemyController
         healthBar.SetMaxHealth(maxHealth);
         SetMeshColor(defaultColor);
 
+        pathfinding = new PathFinding(cell);
 
     }
 
@@ -68,26 +69,33 @@ public class TankController : EnemyController
                 }
         }
 
-
-        if (Vector3.Distance(transform.position, player.transform.position) <= meleeRange)
+        if (cellNumber == GameManager.Instance.currentCell.CellSiteIndex)
         {
-            if (timestampAttack <= Time.time)
+            List<MapCell.PathNode> path = pathfinding.FindPath(transform.position.x, transform.position.z, player.transform.position.x, player.transform.position.z);
+            //for (int i = 0; i < path.Count; i++)
+            //{
+            //    Destroy(Instantiate(pointPrefab, new Vector3(path[i].x, 0, path[i].y), Quaternion.identity), 0.02f);
+            //}
+
+            if (Vector3.Distance(transform.position, player.transform.position) <= meleeRange)
             {
-                timestampAttack = Time.time + attackDelay;
-                player.GetComponent<CharController>().TakeDamage(damage);
+                if (timestampAttack <= Time.time)
+                {
+                    timestampAttack = Time.time + attackDelay;
+                    player.GetComponent<CharController>().TakeDamage(damage);
 
-                //isPushedAfterAttack = true;
-                timestampAfterAttackPushStart = Time.time;
-                timestampAfterAttackPushStop = Time.time + 0.1f;
+                    //isPushedAfterAttack = true;
+                    timestampAfterAttackPushStart = Time.time;
+                    timestampAfterAttackPushStop = Time.time + 0.1f;
 
-                // push after attack
-                Vector3 dir = transform.position - player.transform.position;
-                dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
-                PushEnemy(dir, pushBackForceAfterAttack);
+                    // push after attack
+                    Vector3 dir = transform.position - player.transform.position;
+                    dir = Vector3.Normalize(dir.normalized + Vector3.up * 0.75f);
+                    PushEnemy(dir, pushBackForceAfterAttack);
+                }
             }
+
         }
-
-
         /*
         if (timestampAfterAttackPushStart >= timestampAfterAttackPushStop)
         {
@@ -102,4 +110,6 @@ public class TankController : EnemyController
         }
         */
     }
+
+   
 }

@@ -294,5 +294,6 @@ void RenderPipeline::Render()
 		RenderSystems.boxColliderRenderer->Render();
 		RenderSystems.circleColliderRenderer->Render();
 	}
+	PrimitiveRenderer::DrawLines();
 #endif //  _DEBUG
 }

@@ -131,7 +131,8 @@
     <ClCompile Include="MapGenerator\ext\LloydRelaxation.cpp" />
     <ClCompile Include="MapGenerator\MapGenerator.cpp" />
     <ClCompile Include="MapGenerator\MapSetuper.cpp" />
-    <ClCompile Include="Physics\PhysicsCache.cpp" />
+    <ClCompile Include="Physics\Physics.cpp" />
+    <ClCompile Include="Physics\Raycaster.cpp" />
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
@@ -204,6 +205,7 @@
     <ClInclude Include="ECS\Systems\PhysicsSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\PointLightRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\RigidBodyCollectorSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptLateUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptStartSystem.h" />
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
@@ -237,7 +239,9 @@
     <ClInclude Include="MapGenerator\MapGenerator.h" />
     <ClInclude Include="MapGenerator\MapSetuper.h" />
     <ClInclude Include="Physics\CacheNode.h" />
-    <ClInclude Include="Physics\PhysicsCache.h" />
+    <ClInclude Include="Physics\Physics.h" />
+    <ClInclude Include="Physics\Raycaster.h" />
+    <ClInclude Include="Physics\RaycastHit.h" />
     <ClInclude Include="Rendering\Camera.h" />
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\Frustum.h" />
