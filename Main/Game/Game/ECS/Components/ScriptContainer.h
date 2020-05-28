@@ -23,6 +23,22 @@ public:
 		return instances;
 	}
 
+	template<typename T>
+	std::shared_ptr<T> GetScript()
+	{
+		if (instances)
+		{
+			for (auto it = instances->begin(); it != instances->end(); it++)
+			{
+				if (typeid(T) == typeid(**it))
+				{
+					return std::static_pointer_cast<T>(*it);
+				}
+			}
+		}
+		return nullptr;
+	}
+
 private:
 	std::vector<std::shared_ptr<Script>>* instances;
 };

@@ -11,6 +11,9 @@
 #include "../../Physics/Physics.h"
 #include "../../Rendering/PrimitiveRenderer.h"
 #include "Physics/Raycaster.h"
+#include "GhostController.h"
+#include "../../GUI/GUIManager.h"
+#include "../../GUI/Panel.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -32,6 +35,12 @@ private: // variables
 	bool hasGhostMovement = false;
 	Raycaster raycaster;
 
+	std::shared_ptr<GhostController> ghostController;
+	std::shared_ptr<Panel> ghostBarPanel;
+	std::shared_ptr<Panel> ghostValueBarPanel;
+	float ghostBarWidth = 0.6;
+	float ghostValueBarOffset = 3.0f;
+
 public:
 	PlayerController()
 	{
@@ -51,12 +60,28 @@ public:
 		startPosition = GetTransform().GetWorldPosition();
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
-	}
+		auto ghostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Ghost")[0];
+		auto& ghostScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(ghostObject);
+		ghostController = ghostScriptContainer.GetScript<GhostController>();
 
+		ghostBarPanel = std::make_shared<Panel>();
+		ghostBarPanel->SetPositionAnchor(glm::vec3(((1.0f - ghostBarWidth) / 2.0f) * WindowManager::SCREEN_WIDTH, -100.0f, 0.0f), Anchor::BOTTOMLEFT);
+		ghostBarPanel->SetSize(glm::vec2(ghostBarWidth * WindowManager::SCREEN_WIDTH, 50.0f));
+		ghostBarPanel->SetClipping(true);
+		ghostBarPanel->textureColor.color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		GUIManager::AddWidget(ghostBarPanel);
+
+		ghostValueBarPanel = std::make_shared<Panel>();
+		ghostValueBarPanel->SetPositionAnchor(glm::vec3(ghostValueBarOffset, ghostValueBarOffset, 0.0f), Anchor::TOPLEFT);
+		ghostValueBarPanel->SetSize(glm::vec2(0.0f, 50.0f - 2 * ghostValueBarOffset));
+		ghostValueBarPanel->SetClipping(true);
+		ghostValueBarPanel->textureColor.color = glm::vec4(0.0f, 0.78f, 0.76f, 0.75f);
+
+		GUIManager::AddWidget(ghostValueBarPanel, ghostBarPanel);
+	}
 
 	void GhostMovementStart(Event& event) { hasGhostMovement = true; }
 	void GhostMovementStop(Event& event) { hasGhostMovement = false; }
-
 
 	void Update(float dt)
 	{
@@ -75,6 +100,14 @@ public:
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
 		else if (InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+
+		if (!hasGhostMovement)
+		{
+			ghostController->leftGhostDistance = std::min(
+				ghostController->maxGhostDistance,
+				ghostController->leftGhostDistance + dt * ghostController->ghostDistanceRecoverySpeed
+			);
+		}
 
 		if (InputManager::GetKeyDown(GLFW_KEY_X))
 		{
@@ -122,6 +155,7 @@ public:
 			transform.SetPosition(startPosition);
 		}
 
+		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetSize().y));
 	}
 
 	bool UpdateMovement(float dt)

@@ -25,6 +25,10 @@ private: // variables
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
 public:
+	float maxGhostDistance = 8.0f;
+	float ghostDistanceRecoverySpeed = 3.0f;
+	float leftGhostDistance;
+
 	GhostController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
@@ -40,8 +44,11 @@ public:
 		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
 		moveSpeedSmoothing = moveSpeed * 4.0f;
+		leftGhostDistance = maxGhostDistance;
 		GetAnimator().SetAnimation("ghostrunning");
 	}
+
+	float GetLeftGhostLevel() { return leftGhostDistance / maxGhostDistance; }
 
 	void MovementStart(Event& event)
 	{
@@ -88,8 +95,16 @@ public:
 				currentMoveSpeed += change * glm::sign(diff);
 		}
 
+		auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
 		if (currentMoveSpeed > 0.01f)
-			transform.TranslateSelf(currentMoveSpeed * dt, transform.GetFront());
+			transform.TranslateSelf(moveBy);
+
+		leftGhostDistance -= VECLEN(moveBy);
+		if (leftGhostDistance <= 0.0f)
+		{
+			leftGhostDistance = 0.0f;
+			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+		}
 	}
 
 	float GetRotationdifferenceToMousePosition()
