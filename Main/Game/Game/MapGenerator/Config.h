@@ -100,14 +100,26 @@ struct CellTerrainConfig
 
 
 
-struct CellStructuresConfig
+struct CellSetupConfig
 {
-    std::shared_ptr<Prefab> mainStatuePrefab;
+    int gridSize = 60;
+    int gridStep = 2;
+    glm::vec2 gridInnerLevel = { 0.25f, 0.85f }; // min, max
+    float gridMinRoadDistance = 6.0f;
 
-    CellStructuresConfig()
+    std::shared_ptr<Prefab> mainStatuePrefab;
+    std::vector<std::shared_ptr<Prefab>> obstaclePrefabs;
+
+    CellSetupConfig()
     {
         // TODO: make it with cleaner way, with possibility to use different configs for different cells
         mainStatuePrefab = PrefabManager::GetPrefab("Statues/Goth");
+
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud1"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud2"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud3"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud4"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud5"));
     }
 };
 
@@ -121,7 +133,7 @@ struct MapGeneratorConig
     CellFenceConfig cellFenceConfig;
     CellTerrainConfig cellTerrainConfig;
 
-    CellStructuresConfig cellStructuresConfig;
+    CellSetupConfig cellStructuresConfig;
 
     std::shared_ptr<Prefab> bridgePrefab;
     float minEdgeLengthForBridge = 24.0f;

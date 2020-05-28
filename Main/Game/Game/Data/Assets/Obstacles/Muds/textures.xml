@@ -1,0 +1,6 @@
+<textures>
+    <texture name="mudAlbedo" file="Mud_Base_Color.png" format="srgb" />
+    <texture name="mudNormal" file="Mud_Normal.png" />
+    <texture name="mudMetal" file="Mud_Metallic.png" format="r" />
+    <texture name="mudRough" file="Mud_Roughness.png" format="r" />
+</textures>

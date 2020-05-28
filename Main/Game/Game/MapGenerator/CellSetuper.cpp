@@ -1,8 +1,138 @@
+#include <algorithm>
 #include "CellSetuper.h"
+#include "ECS/Components/MapLayoutComponents.h"
+#include "ECS/Components/Transform.h"
+#include "HFEngine.h"
+#include "Utility/Utility.h"
+#include "Utility/Logger.h"
 
 
-void CellSetuper::Setup(GameObject cell)
+void CellSetuper::Setup()
 {
-	// TODO: finish it all here
-	structuresConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
+	structureContainer = HFEngine::ECS.CreateGameObject(cell, "Structures");
+	obstacleContainer = HFEngine::ECS.CreateGameObject(cell, "Obstacles");
+
+	// spawn monument only on normal cell
+	if (type == CellSetuper::Type::NORMAL)
+	{
+		// spawn main statue
+		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
+
+		MakeZones();
+
+		// TODO: better zone selecting, maybe another function?
+		for (auto& zone : zones)
+		{
+			// TODO: obstacle/structure selector
+			// maybe with few choices in case when first one can't be spawned?
+			// and maybe choose few pseudo-random points instead of center?
+			// and add raycast
+
+			auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
+				zone.points.size() % setupConfig.obstaclePrefabs.size()
+				);
+			float obstacleRotation = zone.center.x * zone.center.y;
+			TrySpawnObstacle(obstaclePrefab, zone.center, obstacleRotation);
+		}
+
+	}
+}
+
+
+// only obstacles should have "random" rotation around Y axis
+// structures should have predefined, constant rotation
+// because some models have been made just to be visible from one side(s)
+bool CellSetuper::TrySpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation)
+{
+	// TODO: check if its possible to spawn this obstacle here
+	// maybe use prefab properties to read it's size for raycast?
+	prefab->Instantiate(obstacleContainer, { localPos.x, 0.0f, localPos.y }, {0.0f, rotation, 0.0f});
+	return true;
+}
+
+void CellSetuper::MakeZones()
+{
+	MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cell);
+	glm::vec2 cellPos = {
+		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().x,
+		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
+	};
+
+	std::vector<ZoneRoad> roads;
+	for (auto bridge : cellInfo.Bridges)
+	{
+		ZoneRoad road;
+		road.gatePosition = {
+			HFEngine::ECS.GetComponent<Transform>(bridge.Gate).GetWorldPosition().x,
+			HFEngine::ECS.GetComponent<Transform>(bridge.Gate).GetWorldPosition().z
+		};
+		road.angle = glm::atan(road.gatePosition.x - cellPos.x, road.gatePosition.y - cellPos.y);
+		roads.push_back(road);
+	}
+	std::sort(roads.begin(), roads.end(), [](ZoneRoad a, ZoneRoad b) {
+		return a.angle < b.angle;
+		});
+
+	auto getDistanceToRoad = [&](glm::vec2 point) {
+		float minDistance = 99999.9f;
+		for (auto& road : roads) {
+			minDistance = glm::min(
+				minDistance,
+				Utility::GetDistanceBetweenPointAndSegment(point, cellPos, road.gatePosition)
+				);
+		}
+		return minDistance;
+	};
+	auto findTargetZoneIndex = [&](float angle) {
+		for (int i = 1; i < roads.size(); i++)
+			if (roads[i - 1].angle < angle && angle < roads[i].angle)
+				return i;
+		return 0;
+	};
+
+	zones.resize(roads.size());
+
+	for (int i = 0; i < setupConfig.gridSize; i += setupConfig.gridStep)
+	{
+		for (int j = 0; j < setupConfig.gridSize; j += setupConfig.gridStep)
+		{
+			glm::vec2 point = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
+			float level = cellInfo.PolygonSmoothInner.GetEdgeCenterRatio(point);
+			
+			// check if it isn too far or too near
+			if (level < setupConfig.gridInnerLevel.x || level > setupConfig.gridInnerLevel.y)
+				continue;
+
+			// check if not too near road
+			if (getDistanceToRoad(point + cellPos) < setupConfig.gridMinRoadDistance)
+				continue;
+
+			// point correct
+			// get angle and target zone
+			float angle = glm::atan(point.x, point.y);
+			int zoneIndex = findTargetZoneIndex(angle);
+			zones[zoneIndex].points.push_back(point);
+		}
+	}
+
+
+	// calc zones center
+	for (auto& zone : zones)
+	{
+		if (zone.points.size() == 0)
+			continue;
+
+		glm::vec2 sum = glm::vec2(0.0f);
+		for (auto p : zone.points)
+			sum += p;
+		zone.center = sum / float(zone.points.size());
+	}
+
+
+#ifdef _DEBUG
+	std::vector<int> _sizes;
+	for (auto& zone : zones)
+		_sizes.push_back(zone.points.size());
+	LogInfo("CellSetuper::MakeZones() Cell '{}' zone sizes: {}", cellInfo.CellSiteIndex, _sizes);
+#endif
 }

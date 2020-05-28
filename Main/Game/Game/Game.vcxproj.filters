@@ -67,6 +67,7 @@
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\ParticleRendererSystem.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
+    <ClCompile Include="MapGenerator\MapSetuper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -195,6 +196,7 @@
     <ClInclude Include="ECS\Systems\Rendering\ParticleRendererSystem.h" />
     <ClInclude Include="Utility\TextureTools.h" />
     <ClInclude Include="Utility\ThreadBusiness.h" />
+    <ClInclude Include="MapGenerator\MapSetuper.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

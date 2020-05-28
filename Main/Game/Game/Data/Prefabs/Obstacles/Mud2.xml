@@ -1,0 +1,8 @@
+<prefab defaultScale="1.5,1.5,1.5">
+    <component name="ModelHolder">
+        <property name="model" value="Obstacles/Muds:Mud2"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+</prefab>
