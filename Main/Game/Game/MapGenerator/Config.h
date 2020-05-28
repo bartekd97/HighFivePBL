@@ -102,6 +102,11 @@ struct CellTerrainConfig
 
 struct CellStructuresConfig
 {
+    int gridSize = 60;
+    int gridStep = 2;
+    glm::vec2 gridInnerLevel = { 0.2f, 0.7f }; // min, max
+    float gridMinRoadDistance = 6.0f;
+
     std::shared_ptr<Prefab> mainStatuePrefab;
 
     CellStructuresConfig()
