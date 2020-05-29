@@ -1,0 +1,3 @@
+<models materialLibrary="this">
+    <model name="Chapel" mesh="chapel.glb"    material="chapelMaterial" />
+</models>

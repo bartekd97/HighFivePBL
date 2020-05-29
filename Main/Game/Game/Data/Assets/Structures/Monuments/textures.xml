@@ -1,0 +1,28 @@
+<textures>
+    <!-- standard -->
+    <texture name="standard1Albedo" file="pomnik1_Material_BaseColor.png" format="srgb" />
+    <texture name="standard1Normal" file="pomnik1_Material_Normal.png" />
+    <texture name="standard1Metal" file="pomnik1_Material_Metallic.png" format="r" />
+    <texture name="standard1Rough" file="pomnik1_Material_Roughness.png" format="r" />
+
+    <texture name="standard2Albedo" file="pomnik2_Material_BaseColor.png" format="srgb" />
+    <texture name="standard2Normal" file="pomnik2_Material_Normal.png" />
+    <texture name="standard2Metal" file="pomnik2_Material_Metallic.png" format="r" />
+    <texture name="standard2Rough" file="pomnik2_Material_Roughness.png" format="r" />
+
+    <texture name="standard3Albedo" file="pomnik3_Material_BaseColor.png" format="srgb" />
+    <texture name="standard3Normal" file="pomnik3_Material_Normal.png" />
+    <texture name="standard3Metal" file="pomnik3_Material_Metallic.png" format="r" />
+    <texture name="standard3Rough" file="pomnik3_Material_Roughness.png" format="r" />
+
+    <texture name="standard4Albedo" file="pomnik4_Material_BaseColor.png" format="srgb" />
+    <texture name="standard4Normal" file="pomnik4_Material_Normal.png" />
+    <texture name="standard4Metal" file="pomnik4_Material_Metallic.png" format="r" />
+    <texture name="standard4Rough" file="pomnik4_Material_Roughness.png" format="r" />
+
+    <!-- celtic -->
+    <texture name="celticAlbedo" file="tombstone_celtic_Material_BaseColor.png" format="srgb" />
+    <texture name="celticNormal" file="tombstone_celtic_Material_Normal.png" />
+    <texture name="celticMetal" file="tombstone_celtic_Material_Metallic.png" format="r" />
+    <texture name="celticRough" file="tombstone_celtic_Material_Roughness.png" format="r" />
+</textures>
