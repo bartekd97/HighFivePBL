@@ -197,6 +197,7 @@
     <ClInclude Include="Utility\TextureTools.h" />
     <ClInclude Include="Utility\ThreadBusiness.h" />
     <ClInclude Include="MapGenerator\MapSetuper.h" />
+    <ClInclude Include="Scripting\Scripts\EnemyController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

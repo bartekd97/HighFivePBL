@@ -1,0 +1,6 @@
+<textures>
+    <texture name="axerAlbedo" file="axer_DefaultMaterial_BaseColor.png" format="srgb" />
+    <texture name="axerNorm" file="axer_DefaultMaterial_Normal.png" />
+    <texture name="axerMetal" file="axer_DefaultMaterial_Metallic.png" format="r" />
+    <texture name="axerRough" file="axer_DefaultMaterial_Roughness.png" format="r" />
+</textures>
