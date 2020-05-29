@@ -49,9 +49,13 @@ void GravitySystem::Update(float dt)
                     if (collider.shape == Collider::ColliderShapes::CIRCLE)
                     {
                         auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
-                        glm::vec3 normal = glm::normalize(pos - cells[closestCell].first);
-                        posTemp.x -= normal.x * circleCollider.radius;
-                        posTemp.y -= normal.z * circleCollider.radius;
+                        auto subPos = pos - cells[closestCell].first;
+                        if (VECLEN(subPos) > 0.1f)
+                        {
+                            glm::vec3 normal = glm::normalize(subPos);
+                            posTemp.x -= normal.x * circleCollider.radius;
+                            posTemp.y -= normal.z * circleCollider.radius;
+                        }
                     }
                 }
                 shouldFall = GetCellYLevel(posTemp, cells[closestCell].second, level);
