@@ -55,6 +55,9 @@ int main()
 	auto player = playerPrefab->Instantiate(startupPos);
 	//HFEngine::ECS.SetNameGameObject(player, "Player");
 
+	auto enemyPrefab = PrefabManager::GetPrefab("Enemies/Axer");
+	auto enemyObject = enemyPrefab->Instantiate(startupPos + glm::vec3(5.0f, 0.0f, 5.0f));
+
 	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
 	auto testCircleObject = prefabCircle->Instantiate(startupPos - glm::vec3(10.0f, 0.0f, 10.0f));
 	HFEngine::ECS.SetNameGameObject(testCircleObject, "testCircle");

@@ -48,6 +48,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(PlayerController);
 		REGISTER_SCRIPT(PlayerCameraFollower);
 		REGISTER_SCRIPT(GhostController);
+		REGISTER_SCRIPT(EnemyController);
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(TriggerTest);
 		REGISTER_SCRIPT(GUIStatistics);
