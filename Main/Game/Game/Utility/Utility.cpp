@@ -99,3 +99,37 @@ std::uint32_t Utility::HashString(char const* s, std::size_t count)
 {
 	return fnv1a_32(s, count);
 }
+
+float Utility::GetDistanceBetweenPointAndSegment(glm::vec2 point, glm::vec2 s1, glm::vec2 s2)
+{
+	float A = point.x - s1.x;
+	float B = point.y - s1.y;
+	float C = s2.x - s1.x;
+	float D = s2.y - s1.y;
+
+	float p = A * C + B * D;
+	float lenSquare = C * C + D * D;
+	float parameter = p / lenSquare;
+
+	float shortestX;
+	float shortestY;
+
+	if (parameter < 0)
+	{
+		shortestX = s1.x;
+		shortestY = s1.y;
+	}
+	else if (parameter > 1)
+	{
+		shortestX = s2.x;
+		shortestY = s2.y;
+	}
+	else
+	{
+		shortestX = s1.x + parameter * C;
+		shortestY = s1.x + parameter * D;
+	}
+
+	float distance = glm::sqrt((point.x - shortestX) * (point.x - shortestX) + (point.y - shortestY) * (point.y - shortestY));
+	return distance;
+}
