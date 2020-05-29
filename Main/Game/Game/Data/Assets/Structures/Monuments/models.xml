@@ -1,0 +1,11 @@
+<models materialLibrary="this">
+    <!-- standard -->
+    <model name="Standard1" mesh="pomnik1.glb"    material="standardMaterial1" />
+    <model name="Standard2" mesh="pomnik2.glb"    material="standardMaterial2" />
+    <model name="Standard3" mesh="pomnik3.glb"    material="standardMaterial3" />
+    <model name="Standard5" mesh="pomnik4.glb"    material="standardMaterial4" />
+
+    <!-- celtic -->
+    <model name="Celtic1" mesh="tombstone_celtic1.glb"    material="celticMaterial" />
+    <model name="Celtic1" mesh="tombstone_celtic2.glb"    material="celticMaterial" />
+</models>
