@@ -386,6 +386,8 @@ namespace Physics
         return false;
     }
 
+   
+
     /*bool Raycast(glm::vec3& position, glm::vec2& direction, RaycastHit& out, GameObject ignoredGameObject, float maxDistance)
     {
         glm::vec2 invDirection = 1.0f / direction;

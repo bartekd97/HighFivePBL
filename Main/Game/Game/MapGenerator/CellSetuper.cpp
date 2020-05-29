@@ -1,9 +1,15 @@
 #include <algorithm>
 #include "CellSetuper.h"
 #include "ECS/Components/MapLayoutComponents.h"
+#include "ECS/Components/BoxCollider.h"
 #include "ECS/Components/Transform.h"
 #include "HFEngine.h"
+#include "Physics/Physics.h"
+#include "Resourcing/Prefab.h"
+#include "Physics/Raycaster.h"
+#include "Physics/RaycastHit.h"
 #include "Utility/Utility.h"
+#include "Scripting/Script.h"
 #include "Utility/Logger.h"
 
 
@@ -32,6 +38,14 @@ void CellSetuper::Setup()
 				zone.points.size() % setupConfig.obstaclePrefabs.size()
 				);
 			float obstacleRotation = zone.center.x * zone.center.y;
+			glm::quat q(0.0f, 0.0f, 0.0f, 0.0f);
+			float width;
+			float height;
+			obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
+			obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
+			BoxCollider box;
+			box.SetWidthHeight(width, height);
+			glm::vec2 position = DrawPointInZone(zone, box, q);
 			TrySpawnObstacle(obstaclePrefab, zone.center, obstacleRotation);
 		}
 
@@ -135,4 +149,41 @@ void CellSetuper::MakeZones()
 		_sizes.push_back(zone.points.size());
 	LogInfo("CellSetuper::MakeZones() Cell '{}' zone sizes: {}", cellInfo.CellSiteIndex, _sizes);
 #endif
+}
+
+glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation)
+{
+	zone.points.size();
+
+	int iter_available = 200;
+	int randomNumber = ((int)zone.center.x * (int)zone.center.y * zones.size() * 7 +1) % zone.points.size();
+	RaycastHit out;
+	do
+	{
+		randomNumber = (randomNumber * (int)zone.center.x * (int)zone.center.y * zones.size() * 7 + 1) % zone.points.size();
+
+		iter_available--;
+	} while (iter_available < 0);//|| Physics::Raycast(glm::vec3(zone.points[randomNumber].x, 0.0f, zone.points[randomNumber].y), rotation, boxCollider, out) == true);
+
+	if (true)
+	{
+		return zone.points[randomNumber];
+
+	}
+	else
+	{
+		return glm::vec2(0.0f);
+
+	}
+
+
+	/*if (Physics::Raycast(glm::vec3(zone.points[randomNumber].x, 0.0f, zone.points[randomNumber].y), rotation, boxCollider, out) == false)
+	{
+		return zone.points[randomNumber];
+	}
+	else
+	{
+		return NULL;
+	}*/
+
 }

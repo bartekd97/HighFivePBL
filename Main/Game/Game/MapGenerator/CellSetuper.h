@@ -2,6 +2,8 @@
 
 #include "ECS/ECSTypes.h"
 #include "Config.h"
+#include "ECS/Components/BoxCollider.h"
+
 
 class CellSetuper
 {
@@ -45,5 +47,7 @@ private:
 	bool TrySpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 
 	void MakeZones();
+
+	glm::vec2 DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation);
 };
 
