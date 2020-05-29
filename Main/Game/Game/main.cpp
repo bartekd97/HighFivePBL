@@ -50,12 +50,14 @@ int main()
 	generator.Generate();
 	GameObject startupCell = generator.GetStartupCell();
 	glm::vec3 startupPos = HFEngine::ECS.GetComponent<Transform>(startupCell).GetWorldPosition();
-	startupPos += glm::vec3(0.01f); // add a little offset, otherwise we have WTF floats in physics
 
 	auto playerPrefab = PrefabManager::GetPrefab("Player");
 	auto player = playerPrefab->Instantiate(startupPos);
 	//HFEngine::ECS.SetNameGameObject(player, "Player");
 
+	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
+	auto testCircleObject = prefabCircle->Instantiate(startupPos - glm::vec3(10.0f, 0.0f, 10.0f));
+	HFEngine::ECS.SetNameGameObject(testCircleObject, "testCircle");
 
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});

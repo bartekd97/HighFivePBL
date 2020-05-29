@@ -16,4 +16,9 @@ struct RigidBody
 		movePosition = position;
 		moved = true;
 	}
+	
+	void AddForce(glm::vec3 force)
+	{
+		velocity += force / mass;
+	}
 };
