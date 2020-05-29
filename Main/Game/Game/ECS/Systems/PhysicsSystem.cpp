@@ -20,6 +20,9 @@ void PhysicsSystem::Update(float dt)
 {
     Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects, true);
     bool collided, localCollided;
+    int steps;
+    float length;
+    glm::vec3 moveStep, tempPosition, sepVector, oldVelocity;
 	for (auto const& gameObject : gameObjects)
 	{
 		auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
@@ -42,13 +45,13 @@ void PhysicsSystem::Update(float dt)
             continue;
         }
 
-        float length = VECLEN(displacement);
+        length = VECLEN(displacement);
 
-        int steps = std::min(std::max(1, (int)std::round(length / Physics::step)), Physics::maxSteps);
-		glm::vec3 moveStep = displacement / (float)steps;
-        glm::vec3 tempPosition = transform.GetWorldPosition();
-        glm::vec3 sepVector(0.0f);
-        glm::vec3 oldVelocity = rigidBody.velocity;
+        steps = std::min(std::max(1, (int)std::round(length / Physics::step)), Physics::maxSteps);
+		moveStep = displacement / (float)steps;
+        tempPosition = transform.GetWorldPosition();
+        sepVector = glm::vec3(0.0f);
+        oldVelocity = rigidBody.velocity;
 
         auto& cacheNode = Physics::cacheNodes[gameObject];
 
@@ -129,24 +132,17 @@ void PhysicsSystem::Update(float dt)
                                 float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
                                 otherTransform.TranslateSelf(-(sepVector * massFactor));
                                 otherCacheNode.position = otherTransform.GetWorldPosition();
-                                otherRb.velocity.x -= sepVector.x / dt * massFactor;
-                                otherRb.velocity.z -= sepVector.z / dt * massFactor;
                                 sepVector *= 1.0f - massFactor;
                             }
 
                             tempPosition += sepVector;
-                            rigidBody.velocity.x += sepVector.x / dt;
-                            rigidBody.velocity.z += sepVector.z / dt;
                         }
                     }
                 }
             }
-            //if (collided) break;
         }
         transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
         cacheNode.position = transform.GetWorldPosition();
-        if (rigidBody.velocity.x * oldVelocity.x < 0) rigidBody.velocity.x = 0.0f;
-        if (rigidBody.velocity.z * oldVelocity.z < 0) rigidBody.velocity.z = 0.0f;
         rigidBody.velocity.x *= 0.75f;
         rigidBody.velocity.z *= 0.75f;
         rigidBody.moved = false;

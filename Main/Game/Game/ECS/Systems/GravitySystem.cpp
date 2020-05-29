@@ -50,7 +50,7 @@ void GravitySystem::Update(float dt)
                     {
                         auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
                         auto subPos = pos - cells[closestCell].first;
-                        if (VECLEN(subPos) > 0.1f)
+                        if (VECLEN(subPos) > circleCollider.radius)
                         {
                             glm::vec3 normal = glm::normalize(subPos);
                             posTemp.x -= normal.x * circleCollider.radius;
