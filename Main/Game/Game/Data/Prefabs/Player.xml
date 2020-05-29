@@ -2,7 +2,7 @@
     <component name="RigidBody">
         <property name="velocity" value="0.0,0.0,0.0"/>
         <property name="acceleration" value="0.0,0.0,0.0"/>
-        <property name="mass" value="10.0"/>
+        <property name="mass" value="1.0"/>
     </component>
     <component name="CircleCollider">
         <property name="radius" value="0.75"/>

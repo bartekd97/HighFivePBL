@@ -143,8 +143,6 @@ void PhysicsSystem::Update(float dt)
         }
         transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
         cacheNode.position = transform.GetWorldPosition();
-        rigidBody.velocity.x *= 0.75f;
-        rigidBody.velocity.z *= 0.75f;
         rigidBody.moved = false;
 	}
 }

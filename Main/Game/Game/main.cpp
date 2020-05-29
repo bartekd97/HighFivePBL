@@ -55,6 +55,7 @@ int main()
 
 	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
 	auto testCircleObject = prefabCircle->Instantiate({ 90.0f, 0.0f, 90.0f });
+	HFEngine::ECS.SetNameGameObject(testCircleObject, "testCircle");
 
 	// particle test
 	//auto particles = HFEngine::ECS.CreateGameObject(movableTestObject);

@@ -31,6 +31,8 @@ private: // variables
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
+	float pushBackDistance = 5.0f;
+	float pushBackForce = 15.0f;
 
 	bool hasGhostMovement = false;
 	Raycaster raycaster;
@@ -125,6 +127,11 @@ public:
 			}
 		}
 
+		if (InputManager::GetKeyDown(GLFW_KEY_SPACE))
+		{
+			PushbackTest();
+		}
+
 		if (InputManager::GetKeyDown(GLFW_KEY_B))
 		{
 			auto pos = transform.GetWorldPosition();
@@ -209,6 +216,23 @@ public:
 			rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
 
 		return isMoving;
+	}
+
+	void PushbackTest()
+	{
+		auto objects = HFEngine::ECS.GetGameObjectsByName("testCircle");
+		glm::vec3 dir;
+		auto pos = GetTransform().GetWorldPosition();
+		for (auto& object : objects)
+		{
+			auto objPos = HFEngine::ECS.GetComponent<Transform>(object).GetWorldPosition();
+			dir = objPos - pos;
+			if (VECLEN(dir) < pushBackDistance)
+			{
+				auto& objectRb = HFEngine::ECS.GetComponent<RigidBody>(object);
+				objectRb.AddForce(glm::normalize(glm::normalize(dir / 2.0f) + glm::vec3(0.0f, 0.75f, 0.0f)) * pushBackForce);
+			}
+		}
 	}
 };
 

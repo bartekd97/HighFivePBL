@@ -19,11 +19,11 @@ void GravitySystem::Update(float dt)
         auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 
-        rigidBody.acceleration.y = gravityAcceleration;
+        rigidBody.acceleration.y = -gravityAcceleration;
 
         rigidBody.velocity.y += dt * rigidBody.acceleration.y;
         auto pos = transform.GetWorldPosition();
-        auto posYSub = dt * (rigidBody.velocity.y + dt * rigidBody.acceleration.y / 2.0f);
+        auto posYDiff = dt * (rigidBody.velocity.y + dt * rigidBody.acceleration.y / 2.0f);
 
         int closestCell = GetClosestCellIndex(pos);
         /*if (closestCell == -1)
@@ -63,10 +63,14 @@ void GravitySystem::Update(float dt)
             
             if (!shouldFall)
             {
-                if ((pos.y - posYSub) <= level || (!rigidBody.isFalling && posYSub < minFallingDist))
+                if ((pos.y + posYDiff) <= level)// || (!rigidBody.isFalling && posYDiff < -minFallingDist))
                 {
                     rigidBody.isFalling = false;
                     rigidBody.velocity.y = 0;
+
+                    rigidBody.velocity.x *= 0.75f;
+                    rigidBody.velocity.z *= 0.75f;
+
                     pos.y = level;
                     transform.SetPosition(pos);
                     continue;
@@ -76,7 +80,7 @@ void GravitySystem::Update(float dt)
             {
                 rigidBody.isFalling = true;
             }
-            transform.TranslateSelf(glm::vec3(0.0f, -posYSub, 0.0f));
+            transform.TranslateSelf(glm::vec3(0.0f, posYDiff, 0.0f));
         }
         
     }
