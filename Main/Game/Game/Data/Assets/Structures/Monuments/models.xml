@@ -7,5 +7,5 @@
 
     <!-- celtic -->
     <model name="Celtic1" mesh="tombstone_celtic1.glb"    material="celticMaterial" />
-    <model name="Celtic1" mesh="tombstone_celtic2.glb"    material="celticMaterial" />
+    <model name="Celtic2" mesh="tombstone_celtic2.glb"    material="celticMaterial" />
 </models>

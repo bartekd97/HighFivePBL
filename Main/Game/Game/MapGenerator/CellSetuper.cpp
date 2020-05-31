@@ -257,8 +257,8 @@ void CellSetuper::PrepareColliders()
 void CellSetuper::UpdateColliders()
 {
 	// THIS BELOW DOESNT WORK FOR SOME REASON
-	//auto allCellColliders = HFEngine::ECS.GetGameObjectsWithComponentInChildren<Collider>(cell, true);
-	//Physics::ProcessGameObjects(allCellColliders, true);
+	auto allCellColliders = HFEngine::ECS.GetGameObjectsWithComponentInChildren<Collider>(cell, true);
+	Physics::ProcessGameObjects(allCellColliders, true);
 	// true to disable others and do calculations only for cell colliders;
 }
 
