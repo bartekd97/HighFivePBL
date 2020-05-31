@@ -21,7 +21,7 @@ public class CircleCollider : MonoBehaviour
         {
             output += "<property value=\"" + radius + "\" name=\"radius\"/>";
         }
-        output += "<property value=\"" + frozen + "\" name=\"frozen\"/>";
+        output += "<property value=\"" + frozen.ToString().ToLower() + "\" name=\"frozen\"/>";
         output += "<property value=\"" + type + "\" name=\"type\"/>";
 
         output += "</component>";

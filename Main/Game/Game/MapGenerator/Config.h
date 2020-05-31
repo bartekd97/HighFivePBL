@@ -104,11 +104,13 @@ struct CellSetupConfig
 {
     int gridSize = 60;
     int gridStep = 2;
-    glm::vec2 gridInnerLevel = { 0.25f, 0.85f }; // min, max
-    float gridMinRoadDistance = 6.0f;
+    glm::vec2 gridInnerLevel = { 0.20f, 0.75f }; // min, max
+    float gridMinRoadDistance = 20.0f;
 
     std::shared_ptr<Prefab> mainStatuePrefab;
     std::vector<std::shared_ptr<Prefab>> obstaclePrefabs;
+    std::vector<std::shared_ptr<Prefab>> structurePrefabs;
+
 
     CellSetupConfig()
     {
@@ -120,6 +122,14 @@ struct CellSetupConfig
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud3"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud4"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud5"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik1"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik2"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik3"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik4"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/tombstone_celtic1"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/tombstone_celtic2"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/littleFenceFirst"));
+        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/chapel"));
     }
 };
 

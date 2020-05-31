@@ -34,19 +34,69 @@ void CellSetuper::Setup()
 			// and maybe choose few pseudo-random points instead of center?
 			// and add raycast
 
-			auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
-				zone.points.size() % setupConfig.obstaclePrefabs.size()
-				);
-			float obstacleRotation = zone.center.x * zone.center.y;
-			glm::quat q(0.0f, 0.0f, 0.0f, 0.0f);
-			float width;
-			float height;
-			obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
-			obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
-			BoxCollider box;
-			box.SetWidthHeight(width, height);
-			glm::vec2 position = DrawPointInZone(zone, box, q);
-			TrySpawnObstacle(obstaclePrefab, zone.center, obstacleRotation);
+
+			int objectsToGenerate;
+			if (zone.points.size() > 200)
+			{
+				objectsToGenerate = 2;
+			}
+			else
+			{
+				objectsToGenerate = 1;
+			}
+
+			for (int i = 0; i < objectsToGenerate; i++)
+			{
+				if (zone.ind == 1)
+				{
+					auto structurePrefab = setupConfig.structurePrefabs.at(
+						zone.points.size() * objectsToGenerate % setupConfig.structurePrefabs.size()
+					);
+					float obstacleRotation = 0.0f;// zone.center.x* zone.center.y;
+					glm::quat q(0.0f, 0.0f, 0.0f, 0.0f);
+					float width;
+					float height;
+					structurePrefab->Properties().GetFloat("width", width, 1.0f);
+					structurePrefab->Properties().GetFloat("height", height, 1.0f);
+					BoxCollider box;
+					box.SetWidthHeight(width, height);
+					if (zone.points.size() > 0)
+					{
+						glm::vec2 position = DrawPointInZone(zone, box, q, i);
+						LogInfo("CellSetuper::MakeZones() Cell '{}' zone sizes: {}", position.x, position.y);
+						if (position != glm::vec2(0.0f))
+						{
+							TrySpawnObstacle(structurePrefab, position, obstacleRotation);
+						}
+					}
+				}
+				else
+				{
+					auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
+						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
+					);
+					float obstacleRotation = zone.center.x * zone.center.y;
+					glm::quat q(0.0f, 0.0f, 0.0f, 0.0f);
+					float width;
+					float height;
+					obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
+					obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
+					BoxCollider box;
+					box.SetWidthHeight(width, height);
+					if (zone.points.size() > 0)
+					{
+						glm::vec2 position = DrawPointInZone(zone, box, q, i);
+						LogInfo("CellSetuper::MakeZones() Cell '{}' zone sizes: {}", position.x, position.y);
+						if (position != glm::vec2(0.0f))
+						{
+							TrySpawnObstacle(obstaclePrefab, position, obstacleRotation);
+						}
+					}
+					
+				}
+			}
+
+			
 		}
 
 	}
@@ -126,6 +176,7 @@ void CellSetuper::MakeZones()
 			float angle = glm::atan(point.x, point.y);
 			int zoneIndex = findTargetZoneIndex(angle);
 			zones[zoneIndex].points.push_back(point);
+			zones[zoneIndex].ind = zoneIndex;
 		}
 	}
 
@@ -151,21 +202,21 @@ void CellSetuper::MakeZones()
 #endif
 }
 
-glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation)
+glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation, int number)
 {
 	zone.points.size();
-
+	glm::vec3 pos;
 	int iter_available = 200;
-	int randomNumber = ((int)zone.center.x * (int)zone.center.y * zones.size() * 7 +1) % zone.points.size();
+	int randomNumber = ((int)zone.center.x * (int)zone.center.y * zones.size() * number * 7 +1) % zone.points.size();
 	RaycastHit out;
 	do
 	{
-		randomNumber = (randomNumber * (int)zone.center.x * (int)zone.center.y * zones.size() * 7 + 1) % zone.points.size();
-
+		randomNumber = (randomNumber * (int)zone.center.x * (int)zone.center.y * zones.size() * number * 7 + 1) % zone.points.size();
+		pos = glm::vec3(zone.points[randomNumber].x, 0.0f, zone.points[randomNumber].y);
 		iter_available--;
-	} while (iter_available < 0);//|| Physics::Raycast(glm::vec3(zone.points[randomNumber].x, 0.0f, zone.points[randomNumber].y), rotation, boxCollider, out) == true);
+	} while (iter_available > 0 && Physics::Raycast(pos, rotation, boxCollider, out) == true);
 
-	if (true)
+	if (Physics::Raycast(pos, rotation, boxCollider, out) == false)
 	{
 		return zone.points[randomNumber];
 

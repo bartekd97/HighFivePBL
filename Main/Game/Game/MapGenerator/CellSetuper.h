@@ -18,6 +18,7 @@ public:
 		// all in local positions
 		std::vector<glm::vec2> points;
 		glm::vec2 center;
+		int ind;
 	};
 	struct ZoneRoad {
 		glm::vec2 gatePosition;
@@ -48,6 +49,6 @@ private:
 
 	void MakeZones();
 
-	glm::vec2 DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation);
+	glm::vec2 DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation, int number);
 };
 

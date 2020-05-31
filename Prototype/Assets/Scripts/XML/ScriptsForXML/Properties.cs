@@ -7,6 +7,9 @@ public class Properties : MonoBehaviour
     public Vector3 localPosition;
     public Vector3 localRotation;
     public Vector3 localScale;
+
+    public float widthBC;
+    public float heightBC;
     string output;
 
     public float length;
@@ -91,6 +94,14 @@ public class Properties : MonoBehaviour
         if (isMaxForFill)
         {
             output += "<property value=\"" + maxForFill + "\" name=\"maxForFill\"/>";
+        }
+        if (widthBC > 0.0f)
+        {
+            output += "<property value=\"" + widthBC + "\" name=\"width\"/>";
+        }
+        if (heightBC > 0.0f)
+        {
+            output += "<property value=\"" + heightBC + "\" name=\"height\"/>";
         }
 
 
