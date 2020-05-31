@@ -105,7 +105,8 @@ struct CellSetupConfig
     int gridSize = 60;
     int gridStep = 2;
     glm::vec2 gridInnerLevel = { 0.20f, 0.75f }; // min, max
-    float gridMinRoadDistance = 20.0f;
+    float gridInnerRadius = 6.0f;
+    float gridMinRoadDistance = 4.0f;
 
     std::shared_ptr<Prefab> mainStatuePrefab;
     std::vector<std::shared_ptr<Prefab>> obstaclePrefabs;

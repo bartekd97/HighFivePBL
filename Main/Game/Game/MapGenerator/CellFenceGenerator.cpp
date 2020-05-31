@@ -101,7 +101,8 @@ void CellFenceGenerator::PrepareBrokenCurves()
         {
             if (toIndex == fromIndex || (toIndex - fromIndex) < 2)
             {
-                assert(false && "CHECK IF THIS FIX IS CORRECT");
+                // FINALLY HAPPENED AND ITS FINE
+                //assert(false && "CHECK IF THIS FIX IS CORRECT");
                 toIndex += polygon.Points.size();
             }
         }
