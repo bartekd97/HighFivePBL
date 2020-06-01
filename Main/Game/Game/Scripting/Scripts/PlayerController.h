@@ -180,7 +180,7 @@ public:
 			if (Physics::Raycast(pos, circle, out, GetGameObject()))
 			{
 				LogInfo("PlayerController: raycast circle ({}): hitted object {}", circle.radius, out.hittedObject);
-			}
+			} 
 		}
 
 		if (transform.GetWorldPosition().y < -15.0f)

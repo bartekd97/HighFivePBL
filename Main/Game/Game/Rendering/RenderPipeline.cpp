@@ -283,17 +283,18 @@ void RenderPipeline::Render()
 
 	// debug rendering
 #ifdef _DEBUG
-	static bool colliderRendering = false;
+	static bool debugRendering = false;
 	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
-		colliderRendering = !colliderRendering;
-		LogInfo("[DEBUG] Collider Rendering set to: {}", colliderRendering);
+		debugRendering = !debugRendering;
+		LogInfo("[DEBUG] Debug Rendering set to: {}", debugRendering);
 	}
 
-	if (colliderRendering)
+	if (debugRendering)
 	{
 		RenderSystems.boxColliderRenderer->Render();
 		RenderSystems.circleColliderRenderer->Render();
+		PrimitiveRenderer::DrawLines();
+		PrimitiveRenderer::DrawStickyPoints();
 	}
-	PrimitiveRenderer::DrawLines();
 #endif //  _DEBUG
 }

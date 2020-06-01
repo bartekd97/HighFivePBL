@@ -12,6 +12,10 @@ GameObject:
   - component: {fileID: 251621872104768298}
   - component: {fileID: 5783037164288606163}
   - component: {fileID: 4277367085109857278}
+  - component: {fileID: 5593906422589854717}
+  - component: {fileID: -8897125153624344623}
+  - component: {fileID: -8542486451186284072}
+  - component: {fileID: 3535821562922696409}
   m_Layer: 0
   m_Name: tombstone_celtic2
   m_TagString: Untagged
@@ -28,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 5223524268337253135}
   m_LocalRotation: {x: 0, y: 0.7072302, z: 0.7069834, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 150, y: 150, z: 150}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -92,3 +96,74 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.004743699, y: 0.001131533, z: 0.013009461}
   m_Center: {x: 0.0000961211, y: 0, z: 0.006018782}
+--- !u!114 &5593906422589854717
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223524268337253135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
+  localScale: {x: 4, y: 4, z: 4}
+  widthBC: 1
+  heightBC: 1
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
+  isParent: 1
+--- !u!114 &-8897125153624344623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223524268337253135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff07da345cbb7c74bb7d185cd7bf2bb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 2
+  height: 2
+  frozen: 1
+  type: 2
+--- !u!114 &-8542486451186284072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223524268337253135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6b6315018c741c42823b53b1cbd2b41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  libraryName: Structures
+  model: Monuments:Celtic2
+--- !u!114 &3535821562922696409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5223524268337253135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  configureFromHolder: 1
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 

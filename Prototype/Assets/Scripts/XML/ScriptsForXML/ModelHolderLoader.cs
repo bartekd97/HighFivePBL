@@ -13,11 +13,11 @@ public class ModelHolderLoader : MonoBehaviour
     public override string ToString()
     {
         output = "";
-        output += "<component name=\"ModelHolderLoader\">";
+        output += "<component name=\"ModelHolder\">";
 
         if (libraryName != "Wpisz nazwę katalogu z modelem")
         {
-            output += "<property value=\"" + libraryName + ":" + model + "\" name=\"model\"/>";
+            output += "<property value=\"" + libraryName + "/" + model + "\" name=\"model\"/>";
         }
 
         output += "</component>";

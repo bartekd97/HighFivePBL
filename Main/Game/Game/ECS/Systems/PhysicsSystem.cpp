@@ -103,7 +103,7 @@ void PhysicsSystem::Update(float dt)
                             if (it == cacheNode.triggers.end())
                             {
                                 cacheNode.triggers.insert(otherObject);
-                                for (const auto& onTriggerEnter : otherCacheNode.collider.OnTriggerEnter)
+                                for (const auto& onTriggerEnter : HFEngine::ECS.GetComponent<Collider>(otherObject).OnTriggerEnter)
                                 {
                                     onTriggerEnter(otherObject, gameObject);
                                 }
@@ -114,7 +114,7 @@ void PhysicsSystem::Update(float dt)
                             if (it != cacheNode.triggers.end())
                             {
                                 cacheNode.triggers.erase(it);
-                                for (const auto& onTriggerExit : otherCacheNode.collider.OnTriggerExit)
+                                for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>(otherObject).OnTriggerExit)
                                 {
                                     onTriggerExit(otherObject, gameObject);
                                 }
