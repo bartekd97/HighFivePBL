@@ -12,6 +12,7 @@ struct ParticleEmitter
 	EmitterShape shape;
 	glm::vec2 sourcShapeeSize; // x,y
 	glm::vec2 targetShapeSize; // x,y
+	float shapeInnerLevel = 0.0f;
 
 	glm::vec2 lifetime; // min,max
 	glm::vec2 velocity; // min,max

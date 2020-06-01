@@ -14,6 +14,7 @@
 #include "GhostController.h"
 #include "../../GUI/GUIManager.h"
 #include "../../GUI/Panel.h"
+#include "Utility/TimerAnimator.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -27,6 +28,7 @@ private: // parameters
 private: // variables
 	glm::vec3 startPosition;
 	GameObject visualObject;
+	GameObject attackSmokeObject;
 
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing; // set in Start()
@@ -46,6 +48,8 @@ private: // variables
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
 
+	TimerAnimator timerAnimator;
+
 public:
 	PlayerController()
 	{
@@ -62,6 +66,8 @@ public:
 	void Start()
 	{
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
+		attackSmokeObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "AttackSmoke")[0];
+
 		startPosition = GetTransform().GetWorldPosition();
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
@@ -90,6 +96,8 @@ public:
 
 	void Update(float dt)
 	{
+		timerAnimator.Process(dt);
+
 		auto& transform = GetTransform();
 		auto& animator = GetAnimator();
 		auto& rigidBody = GetRigidBody();
@@ -239,7 +247,15 @@ public:
 
 	void StartAttack()
 	{
-		PushbackTest();
+		timerAnimator.DelayAction(0.2f, [&]() {
+			HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject).emitting = true;
+			});
+		timerAnimator.DelayAction(0.35f, [&]() {
+			PushbackTest();
+			});
+		timerAnimator.DelayAction(0.5f, [&]() {
+			HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject).emitting = false;
+			});
 	}
 
 	void PushbackTest()

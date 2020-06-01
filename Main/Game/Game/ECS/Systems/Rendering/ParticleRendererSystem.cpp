@@ -92,6 +92,8 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 			continue;
 		if (!renderer.cullingData.visibleByViewCamera)
 			continue;
+		if (container._activeParticles == 0)
+			continue;
 
 		CheckParticlesBuffer(container, renderer);
 		renderer.particlesBuffer->bind(ParticlesBinding::BUFFER);
