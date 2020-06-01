@@ -40,15 +40,3 @@ GameObject Prefab::Instantiate(GameObject parent, glm::vec3 position, glm::vec3 
 	MakeChildren(object, children);
 	return object;
 }
-
-std::shared_ptr<IPrefabComponentLoader> Prefab::GetPrefabComponentOfType(std::string type)
-{
-	for (auto& component : components)
-	{
-		if (typeid(component).name() == "BoxCollider")
-		{
-			return component;
-		}
-	}
-	return NULL;
-}

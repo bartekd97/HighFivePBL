@@ -127,7 +127,7 @@ float Utility::GetDistanceBetweenPointAndSegment(glm::vec2 point, glm::vec2 s1, 
 	else
 	{
 		shortestX = s1.x + parameter * C;
-		shortestY = s1.x + parameter * D;
+		shortestY = s1.y + parameter * D;
 	}
 
 	float distance = glm::sqrt((point.x - shortestX) * (point.x - shortestX) + (point.y - shortestY) * (point.y - shortestY));

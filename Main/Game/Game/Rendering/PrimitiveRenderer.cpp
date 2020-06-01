@@ -7,7 +7,10 @@
 #include "../Resourcing/Shader.h"
 #include "../HFEngine.h"
 
+#define MAX_STICKY_POINTS 64000
+
 std::vector<glm::vec3> linePoints;
+std::vector<glm::vec3> stickyPoints;
 
 void PrimitiveRenderer::DrawScreenQuad()
 {
@@ -74,4 +77,46 @@ void PrimitiveRenderer::DrawLines()
 
 	linePoints.clear();
 	glDeleteVertexArrays(1, &lineVAO);
+}
+
+
+
+void PrimitiveRenderer::DrawStickyPoint(glm::vec3 pos)
+{
+	assert(stickyPoints.size() < MAX_STICKY_POINTS && "Too many Sticky points");
+	stickyPoints.push_back(pos);
+}
+
+void PrimitiveRenderer::DrawStickyPoints()
+{
+	if (stickyPoints.size() == 0) return;
+
+	static glm::vec3 color(5.0f, 1.0f, 1.0f);
+	auto shader = ShaderManager::GetShader("CubeShader");
+	shader->use();
+
+	HFEngine::MainCamera.Use(shader);
+	shader->setMat4("gModel", glm::mat4(1.0f));
+	shader->setVector3F("uColor", color);
+
+	static GLuint pointsVAO = 0;
+	static GLuint pointsVBO = 0;
+
+	if (pointsVAO == 0)
+	{
+		glGenVertexArrays(1, &pointsVAO);
+		glGenBuffers(1, &pointsVBO);
+		glBindVertexArray(pointsVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec3) * MAX_STICKY_POINTS, NULL, GL_DYNAMIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+	}
+
+	glBindVertexArray(pointsVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, pointsVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(glm::vec3) * stickyPoints.size(), stickyPoints.data());
+	glPointSize(4.0f);
+	glDrawArrays(GL_POINTS, 0, stickyPoints.size());
+	glBindVertexArray(0);
 }

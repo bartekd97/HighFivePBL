@@ -18,11 +18,11 @@ public class MeshRendererXML : MonoBehaviour
     public override string ToString()
     {
         output = "";
-        output += "<component name=\"MeshRendererLoader\">";
-        output += "<property value=\"" + configureFromHolder + "\" name=\"configureFromHolder\"/>";
+        output += "<component name=\"MeshRenderer\">";
+        output += "<property value=\"" + configureFromHolder.ToString().ToLower() + "\" name=\"configureFromHolder\"/>";
 
-        output += "<property value=\"" + useMeshPath + "\" name=\"useMeshPath\"/>";
-        output += "<property value=\"" + useMaterialPath + "\" name=\"useMaterialPath\"/>";
+        output += "<property value=\"" + useMeshPath.ToString().ToLower() + "\" name=\"useMeshPath\"/>";
+        output += "<property value=\"" + useMaterialPath.ToString().ToLower() + "\" name=\"useMaterialPath\"/>";
 
         if (useMeshPath == true)
         {
