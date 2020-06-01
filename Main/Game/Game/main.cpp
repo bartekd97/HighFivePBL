@@ -30,6 +30,8 @@
 
 #include "GUI/Button.h"
 
+#include <Audio/AudioController.h>
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
@@ -66,6 +68,11 @@ int main()
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
+
+	AudioController ac;
+	ac.init_al();
+	ac.generateBuffers();
+	ac.loadSound();
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
