@@ -25,10 +25,25 @@ public:
 		float angle;
 	};
 
+	struct PathNode {
+		// all in local positions
+		glm::vec2 position;
+		glm::vec2 index;
+		bool isAvailable = true;
+	};
+
+	struct Grid {
+		// all in local positions
+		int width;
+		int height;
+		std::vector<std::vector<PathNode>> points;
+	};
+
 private:
 	CellSetupConfig setupConfig;
 	GameObject structureContainer;
 	GameObject obstacleContainer;
+	Grid grid;
 
 public:
 	const GameObject cell;
@@ -45,11 +60,16 @@ public:
 
 	void Setup();
 
+	glm::vec2 FindClosestNode(float xPosition, float yPosition);
+
 private:;
 	void SpawnStructure(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 	void SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 
 	void MakeZones();
+	void MakeGrid();
+
+	float Distance(glm::vec2 a, glm::vec2 b);
 
 	void PrepareColliders();
 	void UpdateColliders();
