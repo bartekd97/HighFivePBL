@@ -248,6 +248,9 @@ namespace {
 			if (!properties.GetVec2("targetShapeSize", emitter.targetShapeSize, emitter.targetShapeSize)) {
 				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'targetShapeSize' value. Using default: {}", emitter.targetShapeSize);
 			}
+			if (!properties.GetFloat("shapeInnerLevel", emitter.shapeInnerLevel, emitter.shapeInnerLevel)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'shapeInnerLevel' value. Using default: {}", emitter.shapeInnerLevel);
+			}
 			if (!properties.GetVec2("lifetime", emitter.lifetime, emitter.lifetime)) {
 				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'lifetime' value. Using default: {}", emitter.lifetime);
 			}
@@ -262,6 +265,7 @@ namespace {
 			}
 
 			properties.GetBool("emitting", emitter.emitting, emitter.emitting);
+
 		}
 
 		virtual void Create(GameObject target) override {

@@ -19,11 +19,13 @@ namespace {
 
 	void UpdateParticles(ParticleContainer& container, float dt)
 	{
+		container._activeParticles = 0;
 		for (auto& particle : container.particles)
 		{
 			if (particle.IsExpired()) continue;
 			particle.position += particle.direction * particle.velocity * dt;
 			particle.currentLifetime += dt;
+			container._activeParticles++;
 		}
 	}
 
@@ -35,11 +37,16 @@ namespace {
 		case ParticleEmitter::EmitterShape::CIRCLE:
 			emitPlane.x = RandomFloat(-1.0f, 1.0f);
 			emitPlane.y = RandomFloat(-1.0f, 1.0f);
-			emitPlane = glm::normalize(emitPlane) * RandomFloat();
+
+			emitPlane = glm::normalize(emitPlane) * glm::mix(emitter.shapeInnerLevel, 1.0f, RandomFloat());
 			break;
 		case ParticleEmitter::EmitterShape::RECTANGLE:
 			emitPlane.x = RandomFloat(-1.0f, 1.0f);
 			emitPlane.y = RandomFloat(-1.0f, 1.0f);
+
+			emitPlane.x = glm::mix(emitter.shapeInnerLevel, 1.0f, glm::abs(emitPlane.x)) * glm::sign(emitPlane.x);
+			emitPlane.y = glm::mix(emitter.shapeInnerLevel, 1.0f, glm::abs(emitPlane.y)) * glm::sign(emitPlane.y);
+
 			break;
 		default:
 			break;
@@ -70,7 +77,9 @@ void ParticleEmitterSystem::WorkUpdateQueue(float dt)
 		auto& container = HFEngine::ECS.GetComponent<ParticleContainer>(gameObject);
 		auto& emitter = HFEngine::ECS.GetComponent<ParticleEmitter>(gameObject);
 
-		UpdateParticles(container, dt);
+		if (container._activeParticles > 0)
+			UpdateParticles(container, dt);
+
 		container.lastUpdate = HFEngine::CURRENT_FRAME_NUMBER;
 
 		if (emitter.emitting)
@@ -106,6 +115,7 @@ void ParticleEmitterSystem::WorkEmitQueue(float dt)
 			if (particle == NULL) break;
 
 			EmitParticle(particle, emitter, transform);
+			container._activeParticles++;
 
 			emitter.timeLeftSinceEmit -= emitTimeStep;
 			spawned++;

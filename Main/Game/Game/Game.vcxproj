@@ -63,7 +63,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Debug-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;cppDelaunay.lib;freetype.lib;OpenAL32.lib;EFX-Util.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;tinyxml2.lib;zlibstaticd.lib;assimp-vc142-mtd.lib;cppDelaunay.lib;freetype.lib;OpenAL32.lib;EFX-Util.lib;alut_static.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -84,7 +84,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\3rd\Release-Bin32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;cppDelaunay.lib;freetype.lib;OpenAL32.lib;EFX-Util.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3dll.lib;tinyxml2.lib;zlib.lib;assimp-vc142-mt.lib;cppDelaunay.lib;freetype.lib;OpenAL32.lib;EFX-Util.lib;alut.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -151,6 +151,7 @@
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
+    <ClCompile Include="Utility\TimerAnimator.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
     <ClCompile Include="WindowManager.cpp" />
     <ClCompile Include="_NvOptimus.cpp" />
@@ -283,6 +284,7 @@
     <ClInclude Include="Utility\PropertyReader.h" />
     <ClInclude Include="Utility\TextureTools.h" />
     <ClInclude Include="Utility\ThreadBusiness.h" />
+    <ClInclude Include="Utility\TimerAnimator.h" />
     <ClInclude Include="Utility\Utility.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
