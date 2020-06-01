@@ -34,7 +34,10 @@ private: // variables
 	float pushBackDistance = 5.0f;
 	float pushBackForce = 15.0f;
 
+	float attackAnimationLevel = 0.5f;
+
 	bool hasGhostMovement = false;
+	bool isAttacking = false;
 	Raycaster raycaster;
 
 	std::shared_ptr<GhostController> ghostController;
@@ -95,15 +98,33 @@ public:
 
 		if (isMoving)
 			animator.TransitToAnimation("running", 0.2f);
+		else if (isAttacking)
+			animator.TransitToAnimation("attack", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 		else if (hasGhostMovement)
 			animator.TransitToAnimation("standToCrouch", 0.15f, AnimationClip::PlaybackMode::SINGLE);
 		else
 			animator.TransitToAnimation("idle", 0.2f);
 
-		if (InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
-			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
-		else if (InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
-			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+		if (!isAttacking)
+		{
+			if (!hasGhostMovement && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
+			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
+				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+
+			else if (InputManager::GetKeyDown(GLFW_KEY_SPACE))
+			{
+				StartAttack();
+				isAttacking = true;
+			}
+		}
+		else
+		{
+			if (animator.GetCurrentClipLevel() >= attackAnimationLevel)
+			{
+				isAttacking = false;
+			}
+		}
 
 		if (!hasGhostMovement)
 		{
@@ -127,11 +148,6 @@ public:
 			{
 				PrimitiveRenderer::DrawLine(pos, raycaster.GetOut().hitPosition);
 			}
-		}
-
-		if (InputManager::GetKeyDown(GLFW_KEY_SPACE))
-		{
-			PushbackTest();
 		}
 
 		if (InputManager::GetKeyDown(GLFW_KEY_B))
@@ -173,7 +189,7 @@ public:
 		auto& rigidBody = GetRigidBody();
 
 		glm::vec3 direction(0.0f);
-		if (!hasGhostMovement)
+		if (!hasGhostMovement && !isAttacking)
 		{
 			if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
 			else if (InputManager::GetKeyStatus(GLFW_KEY_D)) direction.x = 1.0f;
@@ -218,6 +234,12 @@ public:
 			rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
 
 		return isMoving;
+	}
+
+
+	void StartAttack()
+	{
+		PushbackTest();
 	}
 
 	void PushbackTest()

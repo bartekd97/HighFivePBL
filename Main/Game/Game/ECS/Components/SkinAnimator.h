@@ -63,7 +63,13 @@ public:
 
 	float GetCurrentClipLevel()
 	{
-		if (currentClip == nullptr) return 0.0f;
-		return currentClip->GetClipLevel(animTime, currentClipMode);
+		if (transitioning) {
+			if (nextClip == nullptr) return 0.0f;
+			return nextClip->GetClipLevel(nextAnimTime, nextClipMode);
+		}
+		else {
+			if (currentClip == nullptr) return 0.0f;
+			return currentClip->GetClipLevel(animTime, currentClipMode);
+		}
 	}
 };

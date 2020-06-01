@@ -161,7 +161,7 @@ public:
 		float time = 0.0f;
 		if (playbackMode == PlaybackMode::LOOP)
 			time = glm::mod(timeInTicks, duration);
-		else if (playbackMode == PlaybackMode::LOOP)
+		else if (playbackMode == PlaybackMode::SINGLE)
 			time = glm::min(timeInTicks, duration);
 		return time / duration;
 	}
