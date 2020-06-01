@@ -107,6 +107,29 @@ public:
 		}
 		return std::nullopt;
 	}
+	template<typename T>
+	tsl::robin_set<GameObject> GetGameObjectsWithComponentInChildren(GameObject gameObject, bool includeParent = false)
+	{
+		tsl::robin_set<GameObject> objects;
+		if (includeParent)
+			if (SearchComponent<T>(gameObject))
+				objects.insert(gameObject);
+		
+		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(gameObject);
+		GameObject child;
+		while (!children.empty())
+		{
+			child = children.back();
+			children.pop_back();
+
+			if (SearchComponent<T>(child))
+				objects.insert(child);
+
+			children.insert(children.end(), gameObjectHierarchy.GetChildren(child).begin(), gameObjectHierarchy.GetChildren(child).end());
+		}
+
+		return objects;
+	}
 
 	template<typename T>
 	std::span<T> GetAllComponents()

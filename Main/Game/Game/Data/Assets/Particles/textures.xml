@@ -1,3 +1,4 @@
 <textures>
     <texture name="Flames" file="flames.png" format="rgba" />
+    <texture name="Smokes" file="smokes.png" format="rgba" />
 </textures>

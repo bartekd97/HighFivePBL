@@ -55,5 +55,7 @@ struct ParticleContainer
 		return NULL;
 	}
 
+	int _activeParticles = 0;
+
 	ThreadBusiness business;
 };

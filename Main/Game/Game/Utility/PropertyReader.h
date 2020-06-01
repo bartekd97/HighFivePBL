@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <algorithm>
 #include <unordered_map>
 #include <stdexcept>
 #include <glm/glm.hpp>
@@ -112,6 +113,7 @@ public:
 	{
 		static std::unordered_map<std::string, bool>::iterator __boolval;
 		static std::unordered_map<std::string, std::string>::iterator __boolstrval;
+		//std::transform(name.begin(), name.end(), name.begin(), std::tolower);
 
 		if ((__boolval = bools.find(name)) != bools.end()) {
 			target = __boolval->second; return true;

@@ -68,6 +68,7 @@
     <ClCompile Include="ECS\Systems\Rendering\ParticleRendererSystem.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
     <ClCompile Include="MapGenerator\MapSetuper.cpp" />
+    <ClCompile Include="Utility\TimerAnimator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Utility\ThreadBusiness.h" />
     <ClInclude Include="MapGenerator\MapSetuper.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
+    <ClInclude Include="Utility\TimerAnimator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

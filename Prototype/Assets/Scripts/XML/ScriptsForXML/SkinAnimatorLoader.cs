@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class SkinAnimatorLoader : MonoBehaviour
 {
-    public bool configureFromHolder = false;
 
     public bool useClipsPath = false;
     public string clipsPath;

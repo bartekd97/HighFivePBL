@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6542321936665399832}
   - component: {fileID: 3130731952565874934}
   - component: {fileID: 1302693739262373859}
+  - component: {fileID: 1808978948961738480}
   m_Layer: 0
   m_Name: Cylinder.003
   m_TagString: Untagged
@@ -78,6 +79,30 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &1808978948961738480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2471168931877338793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0.0011734773, y: -0.0038486344, z: 0.0021246516}
+  localRotation: {x: 270, y: 179.99998, z: 0}
+  localScale: {x: 100, y: 100, z: 100}
+  widthBC: 0
+  heightBC: 0
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
+  isParent: 0
 --- !u!1 &4501427394220812480
 GameObject:
   m_ObjectHideFlags: 0
@@ -89,6 +114,7 @@ GameObject:
   - component: {fileID: 4751736194397133328}
   - component: {fileID: 7513254832761493840}
   - component: {fileID: 5779737057758152532}
+  - component: {fileID: 4291989381203650660}
   m_Layer: 0
   m_Name: Cone.007
   m_TagString: Untagged
@@ -156,6 +182,30 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &4291989381203650660
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4501427394220812480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0.00117348, y: -0.0038486344, z: 0.0021246518}
+  localRotation: {x: 89.98022, y: 179.99998, z: 0}
+  localScale: {x: 100, y: 100, z: 100}
+  widthBC: 0
+  heightBC: 0
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
+  isParent: 0
 --- !u!1 &6561358692216116455
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,6 +216,10 @@ GameObject:
   m_Component:
   - component: {fileID: 7878477105072203508}
   - component: {fileID: -7345926549210679915}
+  - component: {fileID: 808910480637767587}
+  - component: {fileID: 4104886578270612381}
+  - component: {fileID: 124334874949356901}
+  - component: {fileID: 4786966205211723486}
   m_Layer: 0
   m_Name: littleFenceFirst
   m_TagString: Untagged
@@ -182,7 +236,7 @@ Transform:
   m_GameObject: {fileID: 6561358692216116455}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.6, z: 0.6}
   m_Children:
   - {fileID: 4751736194397133328}
   - {fileID: 6542321936665399832}
@@ -202,3 +256,74 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.4603784, y: 1.4156026, z: 0.20275223}
   m_Center: {x: 0.008436799, y: 0.6260349, z: 0.009692311}
+--- !u!114 &808910480637767587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6561358692216116455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
+  localScale: {x: 0.3, y: 0.6, z: 0.6}
+  widthBC: 5
+  heightBC: 2
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
+  isParent: 1
+--- !u!114 &4104886578270612381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6561358692216116455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff07da345cbb7c74bb7d185cd7bf2bb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 4
+  height: 1
+  frozen: 1
+  type: 2
+--- !u!114 &124334874949356901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6561358692216116455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6b6315018c741c42823b53b1cbd2b41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  libraryName: Structures/Fences
+  model: PrototypeSet:LowFence
+--- !u!114 &4786966205211723486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6561358692216116455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  configureFromHolder: 1
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 

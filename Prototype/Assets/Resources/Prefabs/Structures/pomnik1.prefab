@@ -12,6 +12,10 @@ GameObject:
   - component: {fileID: 1821468501084012285}
   - component: {fileID: 5367075352229642756}
   - component: {fileID: 2406775436491972334}
+  - component: {fileID: 2009306411667480972}
+  - component: {fileID: 1980456367598217096}
+  - component: {fileID: 5443472372056184912}
+  - component: {fileID: 4627806434329434902}
   m_Layer: 0
   m_Name: pomnik1
   m_TagString: Untagged
@@ -28,7 +32,7 @@ Transform:
   m_GameObject: {fileID: 5928840013553153752}
   m_LocalRotation: {x: 0, y: 0.7072302, z: 0.7069834, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 20}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -92,3 +96,74 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.026532318, y: 0.019999996, z: 0.04588053}
   m_Center: {x: 0.00051705306, y: -0.00021100785, z: 0.023043728}
+--- !u!114 &2009306411667480972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928840013553153752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localPosition: {x: 0, y: 0, z: 0}
+  localRotation: {x: 0, y: 0, z: 0}
+  localScale: {x: 2, y: 2, z: 2}
+  widthBC: 2.5
+  heightBC: 2.5
+  length: 0
+  isLength: 0
+  minForFill: 0
+  isMinForFill: 0
+  maxForFill: 0
+  isMaxForFill: 0
+  isParent: 1
+--- !u!114 &1980456367598217096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928840013553153752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff07da345cbb7c74bb7d185cd7bf2bb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 1.9
+  height: 1.8
+  frozen: 1
+  type: 2
+--- !u!114 &5443472372056184912
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928840013553153752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6b6315018c741c42823b53b1cbd2b41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  libraryName: Structures
+  model: Monuments:Standard1
+--- !u!114 &4627806434329434902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5928840013553153752}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21734fb81301664429cd14398dd40688, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  configureFromHolder: 1
+  useMeshPath: 0
+  meshPath: 
+  useMaterialPath: 0
+  materialPath: 

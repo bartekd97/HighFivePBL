@@ -18,6 +18,7 @@ public:
 		// all in local positions
 		std::vector<glm::vec2> points;
 		glm::vec2 center;
+		int ind;
 	};
 	struct ZoneRoad {
 		glm::vec2 gatePosition;
@@ -36,6 +37,7 @@ public:
 
 private:
 	std::vector<Zone> zones;
+	std::vector<GameObject> tempColliders;
 
 public:
 	CellSetuper(CellSetupConfig& setupConfig, GameObject cell, Type type)
@@ -43,11 +45,16 @@ public:
 
 	void Setup();
 
-private:
-	bool TrySpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
+private:;
+	void SpawnStructure(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
+	void SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 
 	void MakeZones();
 
-	glm::vec2 DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation);
+	void PrepareColliders();
+	void UpdateColliders();
+	void ClearTempColliders();
+
+	glm::vec2 DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation, int number);
 };
 

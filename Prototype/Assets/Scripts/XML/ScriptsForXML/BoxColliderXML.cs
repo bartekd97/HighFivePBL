@@ -17,16 +17,22 @@ public class BoxColliderXML : MonoBehaviour
         output = "";
         output += "<component name=\"BoxCollider\">";
 
-        if (width < 0.0f)
+        if (width > 0.0f)
         {
-            output += "<property value=\"" + width + "\" name=\"width\"/>";
+            string widthstring = width.ToString("F2");
+            widthstring = widthstring.Replace(",", ".");
+
+            output += "<property value=\"" + widthstring + "\" name=\"width\"/>";
         }
-        if (height < 0.0f)
+        if (height > 0.0f)
         {
-            output += "<property value=\"" + height + "\" name=\"height\"/>";
+            string heightstring = height.ToString("F2");
+            heightstring = heightstring.Replace(",", ".");
+
+            output += "<property value=\"" + heightstring + "\" name=\"height\"/>";
         }
         
-        output += "<property value=\"" + frozen + "\" name=\"frozen\"/>";
+        output += "<property value=\"" + frozen.ToString().ToLower() + "\" name=\"frozen\"/>";
         output += "<property value=\"" + type + "\" name=\"type\"/>";
 
         output += "</component>";
