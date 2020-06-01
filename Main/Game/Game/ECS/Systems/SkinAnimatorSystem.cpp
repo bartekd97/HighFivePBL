@@ -35,6 +35,7 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			{
 				animator.currentClip = animator.nextClip;
 				animator.animTime = animator.nextAnimTime;
+				animator.currentClipMode = animator.nextClipMode;
 				animator.transitioning = false;
 			}
 		}
@@ -54,11 +55,11 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			{
 				globalTransform = animator.currentClip->EvaluateChannel
 				(
-					node->name, animator.animTime, node->nodeTransform
+					node->name, animator.animTime, node->nodeTransform, animator.currentClipMode
 					);
 				globalTransformNext = animator.nextClip->EvaluateChannel
 				(
-					node->name, animator.nextAnimTime, node->nodeTransform
+					node->name, animator.nextAnimTime, node->nodeTransform, animator.nextClipMode
 					);
 				// TODO: Make this interpolation in more proper way if bug occurs
 				globalTransform = i.second * (
@@ -70,7 +71,7 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			{
 				globalTransform = i.second * animator.currentClip->EvaluateChannel
 				(
-					node->name, animator.animTime, node->nodeTransform
+					node->name, animator.animTime, node->nodeTransform, animator.currentClipMode
 					);
 			}
 

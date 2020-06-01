@@ -16,6 +16,11 @@
 class AnimationClip
 {
 public:
+	enum class PlaybackMode {
+		LOOP,
+		SINGLE
+	};
+
 	class Channel
 	{
 	public:
@@ -124,14 +129,18 @@ public:
 		channels[name] = channel;
 	}
 
-	inline glm::mat4 EvaluateChannel(std::string name, float timeInSeconds, glm::mat4& fallback)
+	inline glm::mat4 EvaluateChannel(std::string name, float timeInSeconds, glm::mat4& fallback, PlaybackMode playbackMode = PlaybackMode::LOOP)
 	{
 		if (!channels.contains(name))
 			return fallback;
 
 		float timeInTicks = timeInSeconds * 1000.0f; // to ms
-		float time = glm::mod(timeInTicks, duration);
-		//time = 0.0f;
+		float time = 0.0f;
+		if (playbackMode == PlaybackMode::LOOP)
+			time = glm::mod(timeInTicks, duration);
+		else if (playbackMode == PlaybackMode::SINGLE)
+			time = glm::min(timeInTicks, duration);
+
 		float frame = time / framerate;
 		int from = glm::min( int(frame), int(framecount) - 2);
 		float t = frame - float(from);
@@ -144,5 +153,16 @@ public:
 
 		//return fallback;
 		return glm::translate(glm::mat4(1.0), position) * glm::mat4_cast(rotation) /** glm::scale(glm::mat4(1.0), scale)*/;
+	}
+
+	inline float GetClipLevel(float timeInSeconds, PlaybackMode playbackMode = PlaybackMode::LOOP)
+	{
+		float timeInTicks = timeInSeconds * 1000.0f; // to ms
+		float time = 0.0f;
+		if (playbackMode == PlaybackMode::LOOP)
+			time = glm::mod(timeInTicks, duration);
+		else if (playbackMode == PlaybackMode::LOOP)
+			time = glm::min(timeInTicks, duration);
+		return time / duration;
 	}
 };

@@ -95,6 +95,8 @@ public:
 
 		if (isMoving)
 			animator.TransitToAnimation("running", 0.2f);
+		else if (hasGhostMovement)
+			animator.TransitToAnimation("standToCrouch", 0.15f, AnimationClip::PlaybackMode::SINGLE);
 		else
 			animator.TransitToAnimation("idle", 0.2f);
 
