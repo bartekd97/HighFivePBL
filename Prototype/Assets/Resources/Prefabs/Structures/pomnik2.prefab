@@ -111,8 +111,8 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 20, y: 20, z: 20}
-  widthBC: 1
-  heightBC: 1
+  widthBC: 2.5
+  heightBC: 2.5
   length: 0
   isLength: 0
   minForFill: 0
@@ -132,8 +132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff07da345cbb7c74bb7d185cd7bf2bb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 2
-  height: 2
+  width: 1.8
+  height: 0.9
   frozen: 1
   type: 2
 --- !u!114 &329950939152237203

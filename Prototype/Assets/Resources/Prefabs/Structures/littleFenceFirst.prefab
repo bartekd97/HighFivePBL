@@ -91,9 +91,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0, z: 0}
-  localRotation: {x: 0, y: 0, z: 0}
-  localScale: {x: 0, y: 0, z: 0}
+  localPosition: {x: 0.0011734773, y: -0.0038486344, z: 0.0021246516}
+  localRotation: {x: 270, y: 179.99998, z: 0}
+  localScale: {x: 100, y: 100, z: 100}
   widthBC: 0
   heightBC: 0
   length: 0
@@ -194,9 +194,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3211e0b08a59b2488457065b5afe55f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  localPosition: {x: 0, y: 0, z: 0}
-  localRotation: {x: 0, y: 0, z: 0}
-  localScale: {x: 0, y: 0, z: 0}
+  localPosition: {x: 0.00117348, y: -0.0038486344, z: 0.0021246518}
+  localRotation: {x: 89.98022, y: 179.99998, z: 0}
+  localScale: {x: 100, y: 100, z: 100}
   widthBC: 0
   heightBC: 0
   length: 0
@@ -236,7 +236,7 @@ Transform:
   m_GameObject: {fileID: 6561358692216116455}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.6, z: 0.6}
   m_Children:
   - {fileID: 4751736194397133328}
   - {fileID: 6542321936665399832}
@@ -270,9 +270,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
-  localScale: {x: 0, y: 0, z: 0}
-  widthBC: 1
-  heightBC: 1
+  localScale: {x: 0.3, y: 0.6, z: 0.6}
+  widthBC: 5
+  heightBC: 2
   length: 0
   isLength: 0
   minForFill: 0
@@ -292,8 +292,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff07da345cbb7c74bb7d185cd7bf2bb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 14
-  height: 2
+  width: 4
+  height: 1
   frozen: 1
   type: 2
 --- !u!114 &124334874949356901
@@ -308,7 +308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6b6315018c741c42823b53b1cbd2b41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  libraryName: Fences
+  libraryName: Structures/Fences
   model: PrototypeSet:LowFence
 --- !u!114 &4786966205211723486
 MonoBehaviour:

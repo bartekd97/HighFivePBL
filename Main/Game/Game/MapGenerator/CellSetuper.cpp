@@ -66,6 +66,8 @@ void CellSetuper::Setup()
 					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
 					structurePrefab->Properties().GetFloat("width", width, 1.0f);
 					structurePrefab->Properties().GetFloat("height", height, 1.0f);
+					structurePrefab->Properties().GetFloat("roty", structureRotation, 1.0f);
+
 					box.SetWidthHeight(width, height);
 					if (zone.points.size() > 0)
 					{
