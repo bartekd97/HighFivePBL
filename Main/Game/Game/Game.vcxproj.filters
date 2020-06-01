@@ -69,6 +69,7 @@
     <ClCompile Include="Utility\TextureTools.cpp" />
     <ClCompile Include="MapGenerator\MapSetuper.cpp" />
     <ClCompile Include="Utility\TimerAnimator.cpp" />
+    <ClCompile Include="Audio\AudioController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="MapGenerator\MapSetuper.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Utility\TimerAnimator.h" />
+    <ClInclude Include="Audio\AudioController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
