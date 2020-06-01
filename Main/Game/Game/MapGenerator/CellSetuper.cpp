@@ -11,8 +11,8 @@
 #include "Physics/Raycaster.h"
 #include "Physics/RaycastHit.h"
 #include "Utility/Utility.h"
-#include "Scripting/Script.h"
 #include "Utility/Logger.h"
+#include "Rendering/PrimitiveRenderer.h"
 
 
 void CellSetuper::Setup()
@@ -32,7 +32,7 @@ void CellSetuper::Setup()
 		UpdateColliders();
 
 
-		glm::quat identity(1.0f, 0.0f, 0.0f, 0.0f); // w,x,y,z
+		glm::quat boxRot;
 		float width;
 		float height;
 		BoxCollider box;
@@ -63,12 +63,13 @@ void CellSetuper::Setup()
 						zone.points.size() * objectsToGenerate % setupConfig.structurePrefabs.size()
 					);
 					float structureRotation = 0.0f;// zone.center.x* zone.center.y;
+					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
 					structurePrefab->Properties().GetFloat("width", width, 1.0f);
 					structurePrefab->Properties().GetFloat("height", height, 1.0f);
 					box.SetWidthHeight(width, height);
 					if (zone.points.size() > 0)
 					{
-						glm::vec2 position = DrawPointInZone(zone, box, identity, i);
+						glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
 						if (glm::length2(position) > 0.001f)
 						{
 							LogInfo("CellSetuper::Setup() Zone {} got spawned structure at: {}, {}", zone.ind, position.x, position.y);
@@ -83,12 +84,13 @@ void CellSetuper::Setup()
 						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
 					);
 					float obstacleRotation = zone.center.x * zone.center.y;
+					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
 					obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
 					obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
 					box.SetWidthHeight(width, height);
 					if (zone.points.size() > 0)
 					{
-						glm::vec2 position = DrawPointInZone(zone, box, identity, i);
+						glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
 						if (glm::length2(position) > 0.001f)
 						{
 							LogInfo("CellSetuper::Setup() Zone {} got spawned obstacle at: {}, {}", zone.ind, position.x, position.y);
@@ -196,7 +198,12 @@ void CellSetuper::MakeZones()
 
 		glm::vec2 sum = glm::vec2(0.0f);
 		for (auto p : zone.points)
+		{
 			sum += p;
+#ifdef _DEBUG
+			PrimitiveRenderer::DrawStickyPoint({ cellPos.x + p.x, 0.0f, cellPos.y + p.y });
+#endif // _DEBUG
+		}
 		zone.center = sum / float(zone.points.size());
 	}
 
@@ -276,7 +283,12 @@ void CellSetuper::ClearTempColliders()
 glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation, int number)
 {
 	glm::vec3 pos;
-	int iter_available = 20;
+	glm::vec2 cellPos = {
+		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().x,
+		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
+	};
+
+	int iter_available = glm::min(20, (int)zone.points.size());
 	int someSeed = ((int)glm::abs(zone.center.x * zone.center.y) + zone.points.size())* zones.size() + (int)(glm::length2(zone.center) * number);
 	//int randomNumber = ((int)zone.center.x * (int)zone.center.y * zones.size() * number * 7 +1) % zone.points.size();
 	int randomNumber = (someSeed + number) % zone.points.size();
@@ -291,7 +303,11 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollide
 			randomNumber = (randomNumber + 1) % zone.points.size();
 		usedNumbers.insert(randomNumber);
 		
-		pos = glm::vec3(zone.points[randomNumber].x, 0.0f, zone.points[randomNumber].y);
+		pos = glm::vec3(
+			zone.points[randomNumber].x + cellPos.x,
+			0.0f,
+			zone.points[randomNumber].y + cellPos.y
+		);
 		iter_available--;
 	} while (iter_available > 0 && Physics::Raycast(pos, rotation, boxCollider, out) == true);
 
