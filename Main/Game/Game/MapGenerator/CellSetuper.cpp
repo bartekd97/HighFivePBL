@@ -172,10 +172,11 @@ void CellSetuper::SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec2 localPos,
 		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().x,
 		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
 	};
-	prefab->Instantiate(enemiesContainer,
+	GameObject enemy = prefab->Instantiate(enemiesContainer,
 		{ cellPos.x + localPos.x, 0.0f, cellPos.y + localPos.y },
 		{ 0.0f, rotation, 0.0f }
 	);
+	HFEngine::ECS.AddComponent<CellChild>(enemy, { cell });
 }
 
 void CellSetuper::MakeZones()

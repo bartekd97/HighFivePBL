@@ -51,3 +51,9 @@ struct CellBridge
     GameObject CellB;
     GameObject GateB;
 };
+
+
+struct CellChild
+{
+    GameObject cell;
+};

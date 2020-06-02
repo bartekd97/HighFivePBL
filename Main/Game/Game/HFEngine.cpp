@@ -113,6 +113,7 @@ namespace HFEngine
 		ECS.RegisterComponent<MapCell>();
 		ECS.RegisterComponent<CellGate>();
 		ECS.RegisterComponent<CellBridge>();
+		ECS.RegisterComponent<CellChild>();
 
 		auto mapCellCollectorSystem = ECS.RegisterSystem<MapCellCollectorSystem>();
 		{
