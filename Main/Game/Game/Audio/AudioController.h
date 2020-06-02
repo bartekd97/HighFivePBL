@@ -1,5 +1,6 @@
 #include <AL/al.h>
 #include <AL/alc.h>
+#include <AL/alut.h>
 #include <vector>
 
 class AudioController 
@@ -9,7 +10,7 @@ public:
 	void exit_al();
 	int generateBuffers();
 	int loadSound();
-	int setSources();
+	int setSources(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir);
 	int setListener(ALfloat const* listenerPos, ALfloat const* listenerVel, ALfloat const* listenerOri);
 
 private:

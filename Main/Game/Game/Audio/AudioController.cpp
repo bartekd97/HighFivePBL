@@ -8,10 +8,11 @@ void AudioController::init_al()
 	ALCcontext* ctx = NULL;
 
 	const char* defname = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
-		
+
 	dev = alcOpenDevice(defname);
 	ctx = alcCreateContext(dev, NULL);
 	alcMakeContextCurrent(ctx);
+	alutInitWithoutContext(NULL, NULL);
 	error = alGetError(); //clear error code
 }
 
@@ -19,7 +20,7 @@ void AudioController::exit_al()
 {
 	//alDeleteSources(NUM_SOURCES, source); 
 	//alDeleteBuffers(NUM_BUFFERS, buffers);
-	
+
 	ALCdevice* dev = NULL;
 	ALCcontext* ctx = NULL;
 	ctx = alcGetCurrentContext();
@@ -27,6 +28,7 @@ void AudioController::exit_al()
 
 	alcMakeContextCurrent(NULL);
 	alcDestroyContext(ctx);
+	alutExit();
 	alcCloseDevice(dev);
 }
 
@@ -35,68 +37,69 @@ int AudioController::generateBuffers()
 	//generete buffers
 	alGenBuffers(10, buffers);
 
-	if ((error = alGetError()) != AL_NO_ERROR) 
-	{ 
-		printf("alGenBuffers : %d", error); 
-		return 0; 
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alGenBuffers : %d", error);
+		return 0;
 	}
 }
 
 int AudioController::loadSound()
 {
 	//load the sound
-	alutLoadWAVFile("exciting_sound.wav", &format, &data, &size, &freq, &loop); 
-	if ((error = alGetError()) != AL_NO_ERROR) 
+	//alutLoadWAVFile("exciting_sound.wav", &format, &data, &size, &freq, &loop); 
+	buffers[0] = alutCreateBufferFromFile("exciting_sound.wav");
+	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("alutLoadWAVFile exciting_sound.wav : %d", error); 
+		printf("alutLoadWAVFile exciting_sound.wav : %d", error);
 		//Delete Buffers 
-		alDeleteBuffers(NUM_BUFFERS, buffers); 
-		return 0; 
+		alDeleteBuffers(NUM_BUFFERS, buffers);
+		return 0;
 	}
 
 	//load to the buffer
-	alBufferData(buffers[0], format, data, size, freq); 
-	if ((error = alGetError()) != AL_NO_ERROR) 
+	alBufferData(buffers[0], format, data, size, freq);
+	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("alBufferData buffer 0 : %d", error); 
+		printf("alBufferData buffer 0 : %d", error);
 		// Delete buffers 
-		alDeleteBuffers(NUM_BUFFERS, buffers); 
-		return 0; 
+		alDeleteBuffers(NUM_BUFFERS, buffers);
+		return 0;
 	}
-
+	/*
 	//unload memory
-	alutUnloadWAV(format, data, size, freq); 
-	if ((error = alGetError()) != AL_NO_ERROR) 
+	//alutUnloadWAV(format, data, size, freq);
+	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("alutUnloadWAV : %d", error); 
-		// Delete buffers 
-		alDeleteBuffers(NUM_BUFFERS, buffers); 
-		return 0; 
-	}
+		printf("alutUnloadWAV : %d", error);
+		// Delete buffers
+		alDeleteBuffers(NUM_BUFFERS, buffers);
+		return 0;
+	}*/
 }
 
-int AudioController::setSources()
+int AudioController::setSources(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir)
 {
 	ALuint source[10]; //fucking random number again monkaS
 	// Generate the sources 
 	alGenSources(10, source);
-	if ((error = alGetError()) != AL_NO_ERROR) 
-	{ 
-		printf("alGenSources : %d", error); 
-		return 0; 
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alGenSources : %d", error);
+		return 0;
 	}
 
 	//atach buffers to sources
-	alSourcei(source[0], AL_BUFFER, buffers[0]); 
-	if ((error = alGetError()) != AL_NO_ERROR) 
-	{ 
-		printf("alSourcei : %d", error); 
-		return 0; 
+	alSourcei(source[0], AL_BUFFER, buffers[0]);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alSourcei : %d", error);
+		return 0;
 	}
 
-	alSourcefv(source[0], AL_POSITION, 0); //pos do przemyslenia
-	alSourcefv(source[0], AL_VELOCITY, 0); //velocity do przemyslenia
-	alSourcefv(source[0], AL_DIRECTION, 0); //dir do przemyslenia
+	alSourcefv(source[0], AL_POSITION, sourcePos); //pos do przemyslenia
+	alSourcefv(source[0], AL_VELOCITY, sourceVel); //velocity do przemyslenia
+	alSourcefv(source[0], AL_DIRECTION, sourceDir); //dir do przemyslenia
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alSourcefv : %d", error);
@@ -104,6 +107,7 @@ int AudioController::setSources()
 	}
 }
 
+//player
 int AudioController::setListener(ALfloat const* listenerPos, ALfloat const* listenerVel, ALfloat const* listenerOri)
 {
 	alListenerfv(AL_POSITION, listenerPos); //pos do przemyslenia
@@ -116,8 +120,8 @@ int AudioController::setListener(ALfloat const* listenerPos, ALfloat const* list
 	}
 }
 
-	
-	
+
+
 
 
 
