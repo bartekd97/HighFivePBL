@@ -1,5 +1,6 @@
 #include <AL/alut.h>
 #include "AudioController.h"
+#include <string>
 
 
 void AudioController::init_al()
@@ -44,11 +45,11 @@ int AudioController::generateBuffers()
 	}
 }
 
-int AudioController::loadSound()
+int AudioController::loadSound(char path[])
 {
 	//load the sound
 	//alutLoadWAVFile("exciting_sound.wav", &format, &data, &size, &freq, &loop); 
-	buffers[0] = alutCreateBufferFromFile("exciting_sound.wav");
+	buffers[0] = alutCreateBufferFromFile(path);
 	//buffers[0] = alutCreateBufferHelloWorld();
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
@@ -190,14 +191,8 @@ int AudioController::setListener()
 int AudioController::playSound(ALuint source)
 {
 	alSourcePlay(source);
-	printf("played sound");
 
 	alGetSourcei(source, AL_SOURCE_STATE, &source_state);
-	// check for errors
-	while (source_state == AL_PLAYING) {
-		alGetSourcei(source, AL_SOURCE_STATE, &source_state);
-		//check for errors
-	}
 
 	return 0;
 }

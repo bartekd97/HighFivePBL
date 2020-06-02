@@ -1,7 +1,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 #include <AL/alut.h>
-#include <vector>
+#include <string>
 
 class AudioController 
 {
@@ -9,7 +9,7 @@ public:
 	void init_al();
 	void exit_al();
 	int generateBuffers();
-	int loadSound();
+	int loadSound(char path[]);
 	ALuint setSource(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, ALboolean loop);
 	int setListener();
 	int playSound(ALuint source);
