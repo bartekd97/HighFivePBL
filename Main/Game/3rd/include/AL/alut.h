@@ -2,8 +2,8 @@
 #define AL_ALUT_H
 
 #if defined(_MSC_VER)
-#include <alc.h>
-#include <al.h>
+#include <AL/alc.h>
+#include <AL/al.h>
 #elif defined(__APPLE__)
 #include <OpenAL/alc.h>
 #include <OpenAL/al.h>
@@ -20,7 +20,7 @@ extern "C" {
  #if defined (ALUT_BUILD_LIBRARY)
   #define ALUT_API __declspec(dllexport)
  #else
-  #define ALUT_API __declspec(dllimport)
+  #define ALUT_API
  #endif
 #else
  #if defined(ALUT_BUILD_LIBRARY) && defined(HAVE_GCC_VISIBILITY)

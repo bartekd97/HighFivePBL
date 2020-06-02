@@ -362,7 +362,9 @@ void CellSetuper::MakePathfindingGrid()
 			node.position = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
 			node.index = { i, j };
 			node.isAvailable = true;
-
+			node.gCost = 2147483647;
+			node.CalculateFCost();
+			node.cameFromNode = NULL;
 			// check availability
 			{
 				// check if it isn too far or too near
