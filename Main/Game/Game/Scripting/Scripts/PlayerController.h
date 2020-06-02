@@ -6,6 +6,7 @@
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
+#include "ECS/Components/PointLightRenderer.h"
 #include "InputManager.h"
 #include "Event/Events.h"
 #include "../../Physics/Physics.h"
@@ -15,6 +16,7 @@
 #include "../../GUI/GUIManager.h"
 #include "../../GUI/Panel.h"
 #include "Utility/TimerAnimator.h"
+#include "Resourcing/Prefab.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -28,7 +30,10 @@ private: // parameters
 private: // variables
 	glm::vec3 startPosition;
 	GameObject visualObject;
+	GameObject ghostObject;
 	GameObject attackSmokeObject;
+	GameObject torchFlameLightObject;
+	GameObject torchFlameParticleObject;
 
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing; // set in Start()
@@ -49,6 +54,7 @@ private: // variables
 	float ghostValueBarOffset = 3.0f;
 
 	TimerAnimator timerAnimator;
+	float torchLightDefaultIntensity;
 
 public:
 	PlayerController()
@@ -61,17 +67,23 @@ public:
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
+		ghostObject = PrefabManager::GetPrefab("PlayerGhost")->Instantiate();
 	}
 
 	void Start()
 	{
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
 		attackSmokeObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "AttackSmoke")[0];
+		torchFlameLightObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "FlameLight")[0];
+		torchFlameParticleObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "TorchFlame")[0];
+
+		torchLightDefaultIntensity = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject).light.intensity;
 
 		startPosition = GetTransform().GetWorldPosition();
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
-		auto ghostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Ghost")[0];
+
+
 		auto& ghostScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(ghostObject);
 		ghostController = ghostScriptContainer.GetScript<GhostController>();
 
@@ -91,8 +103,18 @@ public:
 		GUIManager::AddWidget(ghostValueBarPanel, ghostBarPanel);
 	}
 
-	void GhostMovementStart(Event& event) { hasGhostMovement = true; }
-	void GhostMovementStop(Event& event) { hasGhostMovement = false; }
+	void GhostMovementStart(Event& event) {
+		hasGhostMovement = true;
+		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, 0.0f, 0.3f);
+		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = false;
+	}
+	void GhostMovementStop(Event& event) {
+		hasGhostMovement = false;
+		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, torchLightDefaultIntensity, 0.3f);
+		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = true;
+	}
 
 	void Update(float dt)
 	{
