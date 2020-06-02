@@ -200,6 +200,7 @@
     <ClInclude Include="MapGenerator\MapSetuper.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Utility\TimerAnimator.h" />
+    <ClInclude Include="Utility\Pathfinding.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

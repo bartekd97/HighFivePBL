@@ -13,6 +13,7 @@
 #include "Utility/Utility.h"
 #include "Utility/Logger.h"
 #include "Rendering/PrimitiveRenderer.h"
+#include "Utility/Pathfinding.h"
 
 
 void CellSetuper::Setup()
@@ -114,8 +115,10 @@ void CellSetuper::Setup()
 
 	// clear temp colliders
 	ClearTempColliders();
+	UpdateColliders();
 
-	MakeGrid(50, 50);
+	// create pathfinding grid
+	MakePathfindingGrid();
 
 
 
@@ -337,15 +340,9 @@ void CellSetuper::ClearTempColliders()
 }
 
 
-void CellSetuper::MakeGrid()
+void CellSetuper::MakePathfindingGrid()
 {
-	grid.height = setupConfig.gridSize;
-	grid.width = setupConfig.gridSize;
-	/*grid.points = new PathNode * [setupConfig.gridSize];
-	for (int i = 0; i < setupConfig.gridSize; i++)
-	{
-		grid.points[i] = new PathNode[setupConfig.gridSize];
-	}*/
+	auto grid = PathfindingGrid::Create(setupConfig.gridSize, setupConfig.gridSize);
 
 	MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cell);
 	glm::vec2 cellPos = {
@@ -353,34 +350,53 @@ void CellSetuper::MakeGrid()
 		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
 	};
 
+	CircleCollider nodeCollider;
+	nodeCollider.radius = 0.4f;
+	RaycastHit out;
 
+	PathfindingGrid::PathNode node;
 	for (int i = 0; i < setupConfig.gridSize; i ++)
 	{
-		grid.points.push_back(std::vector<PathNode>());
 		for (int j = 0; j < setupConfig.gridSize; j ++)
 		{
-			grid.points[i].push_back(PathNode());
-			grid.points[i][j].position = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
-			grid.points[i][j].index = { i, j };
+			node.position = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
+			node.index = { i, j };
+			node.isAvailable = true;
 
-			float level = cellInfo.PolygonSmoothInner.GetEdgeCenterRatio(grid.points[i][j].position);
+			// check availability
+			{
+				// check if it isn too far or too near
+				float level = cellInfo.PolygonSmoothInner.GetEdgeCenterRatio(node.position);
+				if (level > 0.9f) {
+					node.isAvailable = false;
+				}
+				else {
+					// now check raycast
+					glm::vec3 wpos = { cellPos.x + node.position.x, 0.0f, cellPos.y + node.position.y };
+					if (Physics::Raycast(wpos, nodeCollider, out))
+						node.isAvailable = false;
+				}
+			}
 
-			// check if it isn too far or too near
-			if ( level > 0.9f)
-				grid.points[i][j].isAvailable = false;
+			// and now set it
+			grid->SetNode(i, j, node);
 		}
 	}
 
+	// assign grid to cell
+	cellInfo.PathFindingGrid = grid;
+
+#ifdef _DEBUG
 	for (int i = 0; i < setupConfig.gridSize; i++)
 	{
 		for (int j = 0; j < setupConfig.gridSize; j++)
 		{
-			
-			// check if it isn too far or too near
-			if (grid.points[i][j].isAvailable == true)
-				PrimitiveRenderer::DrawStickyPoint({ cellPos.x + grid.points[i][j].position.x, 0.0f, cellPos.y + grid.points[i][j].position.y });
+			const auto& node = grid->GetNode(i, j);
+			if (node.isAvailable)
+				PrimitiveRenderer::DrawStickyPoint({ cellPos.x + node.position.x, 0.0f, cellPos.y + node.position.y });
 		}
 	}
+#endif
 }
 
 
@@ -467,12 +483,7 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const CircleCollider& circleC
 	}
 }
 
-float CellSetuper::Distance(glm::vec2 a, glm::vec2 b)
-{
-	return sqrt(pow(b.x - a.x, 2) +
-		pow(b.y - a.y, 2) * 1.0);
-}
-
+/*
 glm::vec2 CellSetuper::FindClosestNode(float xPosition, float yPosition)
 {
 	glm::vec2 objectPosition = glm::vec2(xPosition, yPosition);
@@ -481,8 +492,8 @@ glm::vec2 CellSetuper::FindClosestNode(float xPosition, float yPosition)
 	{
 		for (int j = 0; j < setupConfig.gridSize; j++)
 		{
-			if (Distance(objectPosition, closestNode) >
-				Distance(objectPosition, glm::vec2(grid.points[i][j].position))
+			if (glm::distance2(objectPosition, closestNode) >
+				glm::distance2(objectPosition, glm::vec2(grid.points[i][j].position))
 				&& grid.points[i][j].isAvailable == true)
 			{
 				closestNode = grid.points[i][j].index;
@@ -491,4 +502,4 @@ glm::vec2 CellSetuper::FindClosestNode(float xPosition, float yPosition)
 	}
 	return closestNode;
 }
-
+*/

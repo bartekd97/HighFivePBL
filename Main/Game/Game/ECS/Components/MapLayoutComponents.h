@@ -4,6 +4,7 @@
 #include "MapGenerator/ConvexPolygon.h"
 #include "ECS/ECSTypes.h"
 
+class PathfindingGrid;
 class MapCell
 {
 public:
@@ -17,6 +18,7 @@ public:
     std::vector<BridgeTo> Bridges;
     GameObject EnemyContainer = NULL_GAMEOBJECT;
 
+    std::shared_ptr<PathfindingGrid> PathFindingGrid;
     //std::vector<GameObject> Enemies;
     //std::vector<GameObject> Monuments;
 
