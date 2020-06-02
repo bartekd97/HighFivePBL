@@ -20,7 +20,7 @@ extern "C" {
  #if defined (ALUT_BUILD_LIBRARY)
   #define ALUT_API __declspec(dllexport)
  #else
-  #define ALUT_API __declspec(dllimport)
+  #define ALUT_API
  #endif
 #else
  #if defined(ALUT_BUILD_LIBRARY) && defined(HAVE_GCC_VISIBILITY)
