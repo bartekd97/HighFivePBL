@@ -62,8 +62,9 @@ void ParticleRendererSystem::Init()
 }
 
 
-void ParticleRendererSystem::Render(Camera& viewCamera)
+unsigned int ParticleRendererSystem::Render(Camera& viewCamera)
 {
+	unsigned int rendered = 0;
 	particleShader->use();
 
 	glm::mat4 viewMatrix = viewCamera.GetViewMatrix();
@@ -103,7 +104,10 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 		particleShader->setInt("gSpriteSheetCount", renderer.spriteSheetCount);
 
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, container.particles.size());
+		rendered++;
 	}
 	glBindVertexArray(0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	return rendered;
 }

@@ -15,5 +15,5 @@ private:
 
 public:
 	void Init() override;
-	void Render(Camera& viewCamera, glm::vec2 viewportSize);
+	unsigned int Render(Camera& viewCamera, glm::vec2 viewportSize);
 };

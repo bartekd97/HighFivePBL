@@ -176,6 +176,8 @@ void RenderPipeline::Init()
 
 void RenderPipeline::Render()
 {
+	LastFrameStats = FrameStatsStruct();
+
 	// clear texture bound cache
 	Texture::NoBindAll(true);
 
@@ -214,8 +216,8 @@ void RenderPipeline::Render()
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
-	RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
+	LastFrameStats.renderedObjects += RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
+	LastFrameStats.renderedObjects += RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	//RenderSystems.cubeRenderer->Render();
 
 	// synchronize light rendering with finished gbuffer, make  write to emissive safely
@@ -235,7 +237,7 @@ void RenderPipeline::Render()
 
 	// draw point lights
 	glm::vec2 viewportSize = { GBuffer.frameBuffer->width, GBuffer.frameBuffer->height };
-	RenderSystems.pointLightRenderer->Render(viewCamera, viewportSize);
+	LastFrameStats.renderedPointLights += RenderSystems.pointLightRenderer->Render(viewCamera, viewportSize);
 
 	// combine gbuffer
 	//FrameBuffer::BindDefaultScreen();
@@ -258,9 +260,9 @@ void RenderPipeline::Render()
 	// draw forward
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE); // disable zbuffer writing
-	RenderSystems.particleRenderer->Render(viewCamera);
-	RenderSystems.meshRenderer->RenderForward(viewCamera, HFEngine::WorldLight);
-	RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
+	LastFrameStats.renderedParticleEmitters += RenderSystems.particleRenderer->Render(viewCamera);
+	LastFrameStats.renderedObjects += RenderSystems.meshRenderer->RenderForward(viewCamera, HFEngine::WorldLight);
+	LastFrameStats.renderedObjects += RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_DEPTH_TEST);
 

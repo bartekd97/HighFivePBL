@@ -23,8 +23,10 @@ void MeshRendererSystem::Init()
 	MaterialBindingPoint::AssignToShader(forwardShader);
 }
 
-void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
+unsigned int MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 {
+	unsigned int rendered = 0;
+
 	toShadowmapShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -43,13 +45,18 @@ void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 
 		renderer.mesh->bind();
 		renderer.mesh->draw();
+		rendered++;
 	}
 	Mesh::NoBind();
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }
 
-void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
+unsigned int MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
 {
+	unsigned int rendered = 0;
+
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -78,16 +85,19 @@ void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
 		renderer.mesh->draw();
+		rendered++;
 	}
 	Mesh::NoBind();
 	Material::NoApply(toGBufferShader);
 
 	glDisable(GL_CULL_FACE);
+	return rendered;
 }
 
-void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
+unsigned int MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
 {
-	if (delayedForward.empty()) return;
+	unsigned int rendered = 0;
+	if (delayedForward.empty()) return rendered;
 
 	forwardShader->use();
 	glEnable(GL_CULL_FACE);
@@ -102,6 +112,7 @@ void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dir
 		renderer->material->apply(forwardShader);
 		renderer->mesh->bind();
 		renderer->mesh->draw();
+		rendered++;
 
 		delayedForward.pop_back();
 	} while (!delayedForward.empty());
@@ -109,4 +120,6 @@ void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dir
 	Material::NoApply(forwardShader);
 
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }

@@ -52,11 +52,19 @@ public:
 #endif
 	};
 
+	struct FrameStatsStruct {
+		unsigned int renderedObjects = 0;
+		unsigned int renderedPointLights = 0;
+		unsigned int renderedParticleEmitters = 0;
+	};
+
 private:
 	GBufferStruct GBuffer;
 	std::shared_ptr<FrameBuffer> PostprocessingSwapBuffers[2];
 	ShadowmapStruct Shadowmap;
 	RenderSystemsStruct RenderSystems;
+
+	FrameStatsStruct LastFrameStats;
 
 	bool initialized = false;
 	std::shared_ptr<Shader> combineGBufferShader;
@@ -73,5 +81,6 @@ public:
 	void Render();
 
 	inline const GBufferStruct& const GetGBuffer() { return GBuffer; }
+	inline const FrameStatsStruct& const GetLastFrameStats() { return LastFrameStats; }
 };
 
