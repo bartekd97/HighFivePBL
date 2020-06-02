@@ -337,7 +337,7 @@ namespace Physics
         glm::vec3 sepVector;
         for (auto& node : cacheNodes)
         {
-            if (node.first == ignoredGameObject || !node.second.active) continue;
+            if (node.first == ignoredGameObject || !node.second.active || node.second.collider.type == Collider::ColliderTypes::TRIGGER) continue;
             if (node.second.collider.shape == Collider::ColliderShapes::BOX)
             {
                 if (DetectCollision(position, rotation, boxCollider, node.first))
@@ -364,7 +364,7 @@ namespace Physics
         glm::vec3 sepVector;
         for (auto& node : cacheNodes)
         {
-            if (node.first == ignoredGameObject || !node.second.active) continue;
+            if (node.first == ignoredGameObject || !node.second.active || node.second.collider.type == Collider::ColliderTypes::TRIGGER) continue;
             if (node.second.collider.shape == Collider::ColliderShapes::BOX)
             {
                 if (DetectCollision(position, circleCollider, node.second.position, node.second.rotation, node.second.boxCollider, sepVector))
