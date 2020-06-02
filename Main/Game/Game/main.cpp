@@ -76,9 +76,9 @@ int main()
 	ac->generateBuffers();
 	ac->loadSound();
 	ac->setListener();
-	ALfloat pos = ALfloat();
-	ALfloat vel = ALfloat();
-	ALfloat dir = ALfloat();
+	//ALfloat pos = ALfloat();
+	//ALfloat vel = ALfloat();
+	//ALfloat dir = ALfloat();
 	//ALint source_state = 0;
 	//std::thread t (ac.playSound(ac.setSource(&pos, &vel, &dir, false), source_state));
 	std::thread t(&AudioController::playBackgroundMusic, ac);
@@ -104,10 +104,9 @@ int main()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 		
 	}
+	
 	t.join();
-	delete ac;
 	ac->exit_al();
-
 	HFEngine::Terminate();
 
 	return 0;

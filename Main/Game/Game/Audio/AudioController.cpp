@@ -146,6 +146,7 @@ void AudioController::playBackgroundMusic()
 	{
 		printf("alSourcefv : %d", error);
 	}
+	alSourcef(source[0], AL_GAIN, 0.3f);
 	
 	setListener();
 	playSound(source[0]);
