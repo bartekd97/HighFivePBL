@@ -5,6 +5,8 @@
 #include "../Resourcing/ShaderManager.h"
 #include "Text/TextRenderer.h"
 #include "../Utility/Logger.h"
+#include "../Event/EventManager.h"
+#include "../Event/Events.h"
 
 namespace GUIManager
 {
@@ -13,6 +15,24 @@ namespace GUIManager
 	std::shared_ptr<Shader> guiShader;
 	std::shared_ptr<Texture> defaultTexture;
 	bool initialized = false;
+
+	void OnWindowResize(Event& ev)
+	{
+		std::vector<std::shared_ptr<Widget>> all = root;
+		int i = 0, max = 1;
+
+		while (i < max)
+		{
+			for (auto child : all[i]->children) all.push_back(child);
+			max += all[i]->children.size();
+			i++;
+		}
+
+		for (auto& widget : all)
+		{
+			widget->Recalculate();
+		}
+	}
 
 	void Initialize()
 	{
@@ -27,6 +47,7 @@ namespace GUIManager
 
 		guiShader = ShaderManager::GetShader("GUIShader");
 		defaultTexture = TextureManager::GetLibrary("GUI")->GetTexture("blank");
+		EventManager::AddListener(FUNCTION_LISTENER(Events::General::WINDOW_RESIZE, OnWindowResize));
 	}
 
 	void Terminate()

@@ -29,6 +29,7 @@ public:
 	void SetClipping(bool clipping);
 	void SetEnabled(bool enabled);
 	bool GetEnabled();
+	void Recalculate();
 	
 	bool useWorldSpace;
 
@@ -39,12 +40,12 @@ public:
 protected:
 	Widget();
 	bool IsMouseOver(const glm::vec2& mousePosition);
-	void CalculateAbsolutePosition();
 	void UpdateClipping(bool clipping, std::shared_ptr<Widget> clippingWidget);
 	int GetLevel(); // TODO: potrzebne?
 	void SetLevel(int level);
 
 private:
+	void CalculateAbsolutePosition();
 	void UpdateChildrenWorldPosition();
 
 	Anchor anchor;

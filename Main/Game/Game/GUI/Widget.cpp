@@ -46,7 +46,6 @@ void Widget::SetPosition(glm::vec3 position)
 {
 	this->position = position;
 	CalculateAbsolutePosition();
-	UpdateChildrenWorldPosition();
 }
 
 void Widget::SetAnchor(Anchor anchor)
@@ -139,6 +138,12 @@ bool Widget::IsMouseOver(const glm::vec2& mousePosition)
 			|| mousePosition.y > (clippingArea.y + clippingArea.w)) return false;
 	}
 	return true;
+}
+
+void Widget::Recalculate()
+{
+	CalculateAbsolutePosition();
+	UpdateChildrenWorldPosition();
 }
 
 void Widget::UpdateChildrenWorldPosition()
