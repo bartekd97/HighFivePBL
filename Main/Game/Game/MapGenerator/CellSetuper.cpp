@@ -115,6 +115,10 @@ void CellSetuper::Setup()
 	// clear temp colliders
 	ClearTempColliders();
 
+	MakeGrid(50, 50);
+
+
+
 	// now spawn enemies
 	if (type == CellSetuper::Type::NORMAL)
 	{
@@ -257,7 +261,7 @@ void CellSetuper::MakeZones()
 		{
 			sum += p;
 #ifdef _DEBUG
-			PrimitiveRenderer::DrawStickyPoint({ cellPos.x + p.x, 0.0f, cellPos.y + p.y });
+			//PrimitiveRenderer::DrawStickyPoint({ cellPos.x + p.x, 0.0f, cellPos.y + p.y });
 #endif // _DEBUG
 		}
 		zone.center = sum / float(zone.points.size());
@@ -333,7 +337,51 @@ void CellSetuper::ClearTempColliders()
 }
 
 
+void CellSetuper::MakeGrid()
+{
+	grid.height = setupConfig.gridSize;
+	grid.width = setupConfig.gridSize;
+	/*grid.points = new PathNode * [setupConfig.gridSize];
+	for (int i = 0; i < setupConfig.gridSize; i++)
+	{
+		grid.points[i] = new PathNode[setupConfig.gridSize];
+	}*/
 
+	MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cell);
+	glm::vec2 cellPos = {
+		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().x,
+		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
+	};
+
+
+	for (int i = 0; i < setupConfig.gridSize; i ++)
+	{
+		grid.points.push_back(std::vector<PathNode>());
+		for (int j = 0; j < setupConfig.gridSize; j ++)
+		{
+			grid.points[i].push_back(PathNode());
+			grid.points[i][j].position = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
+			grid.points[i][j].index = { i, j };
+
+			float level = cellInfo.PolygonSmoothInner.GetEdgeCenterRatio(grid.points[i][j].position);
+
+			// check if it isn too far or too near
+			if ( level > 0.9f)
+				grid.points[i][j].isAvailable = false;
+		}
+	}
+
+	for (int i = 0; i < setupConfig.gridSize; i++)
+	{
+		for (int j = 0; j < setupConfig.gridSize; j++)
+		{
+			
+			// check if it isn too far or too near
+			if (grid.points[i][j].isAvailable == true)
+				PrimitiveRenderer::DrawStickyPoint({ cellPos.x + grid.points[i][j].position.x, 0.0f, cellPos.y + grid.points[i][j].position.y });
+		}
+	}
+}
 
 
 glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation, int number)
@@ -418,3 +466,29 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const CircleCollider& circleC
 		return glm::vec2(0.0f);
 	}
 }
+
+float CellSetuper::Distance(glm::vec2 a, glm::vec2 b)
+{
+	return sqrt(pow(b.x - a.x, 2) +
+		pow(b.y - a.y, 2) * 1.0);
+}
+
+glm::vec2 CellSetuper::FindClosestNode(float xPosition, float yPosition)
+{
+	glm::vec2 objectPosition = glm::vec2(xPosition, yPosition);
+	glm::vec2 closestNode = glm::vec2(grid.points[0][0].position);
+	for (int i = 0; i < setupConfig.gridSize; i++)
+	{
+		for (int j = 0; j < setupConfig.gridSize; j++)
+		{
+			if (Distance(objectPosition, closestNode) >
+				Distance(objectPosition, glm::vec2(grid.points[i][j].position))
+				&& grid.points[i][j].isAvailable == true)
+			{
+				closestNode = grid.points[i][j].index;
+			}
+		}
+	}
+	return closestNode;
+}
+
