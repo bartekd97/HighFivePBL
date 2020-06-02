@@ -27,7 +27,7 @@ public:
 
 		bool operator==(const PathNode& q)
 		{
-			return (position == q.position && gCost == q.gCost && hCost == q.hCost && cameFromNode == q.cameFromNode);
+			return (index == q.index && gCost == q.gCost && hCost == q.hCost && cameFromNode == q.cameFromNode);
 		}
 	};
 
@@ -47,11 +47,11 @@ private:
 		for (auto& col : grid) col.resize(height);
 	}
 
-	glm::vec2 FindClosestNode(float xPosition, float yPosition)
+	glm::ivec2 FindClosestNode(float xPosition, float yPosition)
 	{
 		glm::vec2 objectPosition = glm::vec2(xPosition, yPosition);
 		glm::vec2 closestNodePos = glm::vec2(grid[0][0].position);
-		glm::vec2 closestNodeIndex = glm::vec2(grid[0][0].index);
+		glm::ivec2 closestNodeIndex = glm::ivec2(grid[0][0].index);
 
 		for (int i = 0; i < width; i++)
 		{
@@ -80,15 +80,11 @@ private:
 				neighboursList.push_back(grid[currentNode.index.x - 1][currentNode.index.y - 1]);
 
 			}
-			if (currentNode.index.y + 1 < width)
+			if (currentNode.index.y + 1 < height)
 			{
 				neighboursList.push_back(grid[currentNode.index.x - 1][currentNode.index.y + 1]);
 
 			}
-		}
-		if (currentNode.index.y - 1 >= 0)
-		{
-			neighboursList.push_back(grid[currentNode.index.x][currentNode.index.y - 1]);
 		}
 		if (currentNode.index.x + 1 < width)
 		{
@@ -108,6 +104,10 @@ private:
 		{
 			neighboursList.push_back(grid[currentNode.index.x][currentNode.index.y + 1]);
 		}
+		if (currentNode.index.y - 1 >= 0)
+		{
+			neighboursList.push_back(grid[currentNode.index.x][currentNode.index.y - 1]);
+		}
 		return neighboursList;
 	}
 
@@ -117,12 +117,12 @@ private:
 		path.push_back(glm::vec3(endNode.position.x + cellPos.x, 0.0f, endNode.position.y + cellPos.z));
 		PathNode currentNode = endNode;
 
-		/*while (currentNode.cameFromNode != NULL)
+		while (currentNode.cameFromNode != NULL)
 		{
 			currentNode = *currentNode.cameFromNode;
 
 			path.push_back(glm::vec3(currentNode.position.x + cellPos.x, 0.0f, currentNode.position.y + cellPos.z));
-		}*/
+		}
 		reverse(path.begin(), path.end());
 		return path;
 	}
@@ -137,7 +137,7 @@ private:
 
 	PathNode GetLowestFCostNode(std::list<PathNode>* pathNodeList)
 	{
-		std::list<PathNode>::iterator it = pathNodeList->begin();
+		//std::list<PathNode>::iterator it = pathNodeList->begin();
 
 		PathNode lowestFCostNode = pathNodeList->front();
 		for (std::list<PathNode>::iterator it = pathNodeList->begin(); it != pathNodeList->end(); ++it)
@@ -174,8 +174,8 @@ public:
 
 		std::deque <glm::vec3> path;
 
-		glm::vec2 startNodeInd = FindClosestNode(startPos.x - cellPos.x, startPos.z - cellPos.z);
-		glm::vec2 endNodeInd = FindClosestNode(endPos.x - cellPos.x, endPos.z - cellPos.z);;
+		glm::ivec2 startNodeInd = FindClosestNode(startPos.x - cellPos.x, startPos.z - cellPos.z);
+		glm::ivec2 endNodeInd = FindClosestNode(endPos.x - cellPos.x, endPos.z - cellPos.z);;
 
 		PathNode startNode = grid[startNodeInd.x][startNodeInd.y];
 		PathNode endNode = grid[endNodeInd.x][endNodeInd.y];
@@ -196,7 +196,7 @@ public:
 		while (openList.size() > 0)
 		{
 			PathNode currentNode = GetLowestFCostNode(&openList);
-			if (currentNode.position == endNode.position)
+			if (currentNode.index == endNode.index)
 			{
 				return CalculatePath(currentNode, cellPos);
 			}
@@ -204,7 +204,7 @@ public:
 			std::list<PathNode>::iterator toErase;
 			for (std::list<PathNode>::iterator it = openList.begin(); it != openList.end(); it++)
 			{
-				if (it->position == currentNode.position && it->hCost == currentNode.hCost && it->gCost == currentNode.gCost && it->cameFromNode == currentNode.cameFromNode)
+				if (it->index == currentNode.index && it->hCost == currentNode.hCost && it->gCost == currentNode.gCost && it->cameFromNode == currentNode.cameFromNode)
 				{
 					toErase = it;
 
@@ -232,6 +232,9 @@ public:
 				int tentativeGCost = currentNode.gCost + CalculateDistanceCost(currentNode, neighbour);
 				if (tentativeGCost < neighbour.gCost)
 				{
+					//LogInfo("TEST1: {}", neighbour.cameFromNode->position.x);
+					//LogInfo("TEST2: {}", &currentNode.position.x);
+
 					neighbour.cameFromNode = &currentNode;
 					neighbour.gCost = tentativeGCost;
 					neighbour.hCost = CalculateDistanceCost(neighbour, endNode);
