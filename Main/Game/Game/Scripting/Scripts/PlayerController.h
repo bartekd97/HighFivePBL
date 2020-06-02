@@ -64,10 +64,10 @@ public:
 
 	void Awake()
 	{
+		ghostObject = PrefabManager::GetPrefab("PlayerGhost")->Instantiate();
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
-		ghostObject = PrefabManager::GetPrefab("PlayerGhost")->Instantiate();
 	}
 
 	void Start()
