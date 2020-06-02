@@ -6,9 +6,11 @@
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/SkinAnimator.h"
+#include "ECS/Components/MapLayoutComponents.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Rendering/PrimitiveRenderer.h"
+#include "Utility/Pathfinding.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -29,6 +31,7 @@ private: // variables
 	float nextPointMinDistance2 = 1.5f;
 
 	GameObject playerObject;
+	GameObject cellObject;
 
 public:
 
@@ -45,23 +48,27 @@ public:
 		GetAnimator().SetAnimation("move"); // TODO: idle
 
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
+		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
 	}
 
 
 	float pathdt = 0.0f;
 	void Update(float dt)
 	{
+		auto& transform = GetTransform();
+
 		// update test path
 		{
 			pathdt += dt;
 			if (pathdt >= 1.0f)
 			{
-				targetPath.push_back(HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition());
+				glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition();
+				if (glm::distance(playerPos, transform.GetWorldPosition()) < 20.0f)
+					CalculatePathToPlayer(playerPos);
+
 				pathdt -= 1.0f;
 			}
 		}
-
-		auto& transform = GetTransform();
 
 		auto targetPoint = GetTargetPoint();
 		if (targetPoint.has_value())
@@ -93,6 +100,37 @@ public:
 		if (currentMoveSpeed > 0.01f)
 			transform.TranslateSelf(moveBy);
 	}
+
+
+
+
+
+	void CalculatePathToPlayer(glm::vec3& playerPos) // in world space
+	{
+		auto& transform = GetTransform();
+		glm::vec3 myPos = transform.GetWorldPosition(); // in world space
+		glm::vec3 cellPos = HFEngine::ECS.GetComponent<Transform>(cellObject).GetWorldPosition(); // in world space
+		
+		MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cellObject);
+		std::shared_ptr<PathfindingGrid> grid = cellInfo.PathFindingGrid;
+
+		LogInfo("CalculatePathToPlayer");
+
+		// uncomment to clear current path
+		//targetPath.clear();
+		// and assign points for new path from myPos to playerPos with targetPath.push_back();
+
+		// CALCULATE PATH HERE
+
+	}
+
+
+
+
+
+
+
+
 
 	void LateUpdate(float dt)
 	{

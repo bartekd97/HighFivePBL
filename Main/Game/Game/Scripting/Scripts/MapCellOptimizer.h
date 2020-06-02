@@ -88,13 +88,16 @@ private:
 			}
 			for (auto& cell : cells)
 			{
+				const auto& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cell);
 				if (enabledCells.find(cell) != enabledCells.end())
 				{
 					HFEngine::ECS.SetEnabledGameObject(cell, true);
+					HFEngine::ECS.SetEnabledGameObject(cellInfo.EnemyContainer, true);
 				}
 				else
 				{
 					HFEngine::ECS.SetEnabledGameObject(cell, false);
+					HFEngine::ECS.SetEnabledGameObject(cellInfo.EnemyContainer, false);
 				}
 			}
 		}
