@@ -5,9 +5,12 @@
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/SkinAnimator.h"
+#include "ECS/Components/SkinnedMeshRenderer.h"
+#include "ECS/Components/PointLightRenderer.h"
 #include "InputManager.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
+#include "Utility/TimerAnimator.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -18,14 +21,22 @@ private: // parameters
 	float moveSpeed = 10.0f;
 
 private: // variables
+	bool hasGhostMovement = false;
+
+	GameObject playerObject;
 	GameObject visualObject;
+	GameObject ghostLightObject;
 
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
+	TimerAnimator timerAnimator;
+	float ghostLightDefaultIntensity;
+	float ghostMaterialDefaultOpacity;
+
 public:
-	float maxGhostDistance = 8.0f;
+	float maxGhostDistance = 10.0f;
 	float ghostDistanceRecoverySpeed = 3.0f;
 	float leftGhostDistance;
 
@@ -41,8 +52,15 @@ public:
 	}
 	void Start()
 	{
+		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
+
 		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
+		ghostLightObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "GhostLight")[0];
+
+		ghostLightDefaultIntensity = HFEngine::ECS.GetComponent<PointLightRenderer>(ghostLightObject).light.intensity;
+		ghostMaterialDefaultOpacity = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject).material->opacityValue;
+
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		leftGhostDistance = maxGhostDistance;
 		GetAnimator().SetAnimation("ghostrunning");
@@ -53,22 +71,43 @@ public:
 	void MovementStart(Event& event)
 	{
 		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), true);
+		hasGhostMovement = true;
+
 		auto& transform = GetTransform();
-		transform.SetPosition({ 0.0f,0.0f,0.0f });
+		transform.SetPosition(HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition());
 		transform.RotateSelf(
 			glm::degrees(GetRotationdifferenceToMousePosition()),
 			transform.GetUp()
 			);
 		currentMoveSpeed = 0.0f;
+
+		auto& ghostLight = HFEngine::ECS.GetComponent<PointLightRenderer>(ghostLightObject);
+		auto& ghostMesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
+		timerAnimator.AnimateVariable(&ghostLight.light.intensity, 0.0f, ghostLightDefaultIntensity, 0.3f);
+		timerAnimator.AnimateVariable(&ghostMesh.material->opacityValue, 0.0f, ghostMaterialDefaultOpacity, 0.3f);
 	}
 	void MovementStop(Event& event)
 	{
-		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
+		hasGhostMovement = false;
+
+		auto& ghostLight = HFEngine::ECS.GetComponent<PointLightRenderer>(ghostLightObject);
+		auto& ghostMesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
+		timerAnimator.AnimateVariable(&ghostLight.light.intensity, ghostLight.light.intensity, 0.0f, 0.3f);
+		timerAnimator.AnimateVariable(&ghostMesh.material->opacityValue, ghostMesh.material->opacityValue, 0.0f, 0.3f);
+
+		timerAnimator.DelayAction(0.5f, [&]() {
+			if (ghostLight.light.intensity < 0.0001f)
+				HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
+			});
 	}
 
 
 	void Update(float dt)
 	{
+		timerAnimator.Process(dt);
+
+		if (!hasGhostMovement) return;
+
 		auto& transform = GetTransform();
 
 		// smooth rotate

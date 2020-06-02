@@ -27,7 +27,7 @@ public:
 	};
 
 	void Init() override;
-	void RenderToShadowmap(Camera& lightCamera);
-	void RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap);
-	void RenderForward(Camera& viewCamera, DirectionalLight& dirLight);
+	unsigned int RenderToShadowmap(Camera& lightCamera);
+	unsigned int RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap);
+	unsigned int RenderForward(Camera& viewCamera, DirectionalLight& dirLight);
 };

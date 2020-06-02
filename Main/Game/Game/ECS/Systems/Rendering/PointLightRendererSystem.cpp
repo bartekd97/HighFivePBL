@@ -78,8 +78,10 @@ void PointLightRendererSystem::Init()
     pointLightShader->setInt("gMetalnessRoughnessShadow", (int)RenderPipeline::GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 }
 
-void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize)
+unsigned int PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize)
 {
+    unsigned int rendered = 0;
+
     pointLightShader->use();
     pointLightShader->setVector2F("viewportSize", viewportSize);
     viewCamera.Use(pointLightShader);
@@ -98,6 +100,9 @@ void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
         auto& renderer = HFEngine::ECS.GetComponent<PointLightRenderer>(gameObject);
 
+        if (renderer.light.intensity < 0.001f || renderer.light.radius < 0.001f)
+            continue;
+
         renderer.light.position = transform.GetWorldPosition();
         renderer.light.Apply(pointLightShader);
 
@@ -105,9 +110,12 @@ void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize
             * glm::scale(glm::mat4(1.0f), glm::vec3(renderer.light.radius));
         pointLightShader->setMat4("gModel", model);
         sphereMesh->draw();
+        rendered++;
     }
 
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     glDepthMask(GL_TRUE);
+
+    return rendered;
 }

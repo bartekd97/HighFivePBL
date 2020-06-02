@@ -7,7 +7,7 @@
 // use {} to replace parameters
 // example: LogWarning("This is {} world", "hello") -> "This is hello world"
 
-#ifdef _DEBUG
+#ifdef HF_LOGGER
 	#define LogInfo(message, ...) Logger::Info(message, __VA_ARGS__)
 	#define LogWarning(message, ...) Logger::Warning(message, __VA_ARGS__)
 	#define LogError(message, ...) Logger::Error(message, __VA_ARGS__)
@@ -18,14 +18,14 @@
 #endif
 
 // use it only once in main
-#ifdef _DEBUG
+#ifdef HF_LOGGER
 	#define LoggerInitialize() Logger::Initialize()
 #else
 	#define LoggerInitialize()
 #endif
 
 // DON'T USE Logger:: FUNCTIONS DIRECTLY !!!!!
-#ifdef _DEBUG
+#ifdef HF_LOGGER
 namespace Logger {
 
 	void Info(std::string message);

@@ -29,7 +29,8 @@ public:
 	void Start()
 	{
 		mortalObject = GetGameObject();
-		ghostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Ghost")[0];
+		// TODO: load it from some external, global structure
+		ghostObject = HFEngine::ECS.GetGameObjectByName("PlayerGhost").value();
 
 		currentCameraTarget = GetCameraTargetPosition();
 	}

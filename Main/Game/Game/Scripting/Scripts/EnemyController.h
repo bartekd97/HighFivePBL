@@ -63,7 +63,7 @@ public:
 			if (pathdt >= 1.0f)
 			{
 				glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition();
-				if (glm::distance(playerPos, transform.GetWorldPosition()) < 20.0f)
+				if (glm::distance(playerPos, transform.GetWorldPosition()) < 30.0f)
 					CalculatePathToPlayer(playerPos);
 
 				pathdt -= 1.0f;
@@ -139,7 +139,7 @@ public:
 
 	void LateUpdate(float dt)
 	{
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 		glm::vec3 last = GetTransform().GetWorldPosition();
 		for (auto p : targetPath)
 		{
@@ -153,6 +153,10 @@ public:
 	std::optional<glm::vec3> GetTargetPoint()
 	{
 		auto& transform = GetTransform();
+		while (targetPath.size() > 1
+			&& glm::distance2(targetPath[0], transform.GetWorldPosition()) >
+			glm::distance2(targetPath[1], transform.GetWorldPosition()))
+			targetPath.pop_front();
 		while (targetPath.size() > 0
 			&& glm::distance2(targetPath.front(), transform.GetWorldPosition()) < nextPointMinDistance2)
 			targetPath.pop_front();

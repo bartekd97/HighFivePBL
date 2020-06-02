@@ -24,5 +24,5 @@ public:
 	};
 
 	void Init() override;
-	void Render(Camera& viewCamera);
+	unsigned int Render(Camera& viewCamera);
 };

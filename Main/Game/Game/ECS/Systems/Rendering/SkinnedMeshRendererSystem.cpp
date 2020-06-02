@@ -50,8 +50,10 @@ void SkinnedMeshRendererSystem::Init()
 	MaterialBindingPoint::AssignToShader(forwardShader);
 }
 
-void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
+unsigned int SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 {
+	unsigned int rendered = 0;
+
 	toShadowmapShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -72,12 +74,17 @@ void SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 
 		renderer.mesh->bind();
 		renderer.mesh->draw();
+		rendered++;
 	}
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }
 
-void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
+unsigned int SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
 {
+	unsigned int rendered = 0;
+
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -109,16 +116,21 @@ void SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& ligh
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
 		renderer.mesh->draw();
+		rendered++;
 	}
 	Mesh::NoBind();
 	Material::NoApply(toGBufferShader);
 
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }
 
-void SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
+unsigned int SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
 {
-	if (delayedForward.empty()) return;
+	unsigned int rendered = 0;
+
+	if (delayedForward.empty()) return rendered;
 
 	forwardShader->use();
 	glEnable(GL_CULL_FACE);
@@ -136,6 +148,7 @@ void SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLig
 		renderer->material->apply(forwardShader);
 		renderer->mesh->bind();
 		renderer->mesh->draw();
+		rendered++;
 
 		delayedForward.pop_back();
 	} while (!delayedForward.empty());
@@ -143,4 +156,6 @@ void SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLig
 	Material::NoApply(forwardShader);
 
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }

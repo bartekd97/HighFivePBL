@@ -45,11 +45,17 @@ public:
 		std::shared_ptr<SkinnedMeshRendererSystem> skinnedMeshRender;
 		std::shared_ptr<PointLightRendererSystem> pointLightRenderer;
 		std::shared_ptr<ParticleRendererSystem> particleRenderer;
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 		std::shared_ptr<CubeRenderSystem> cubeRenderer;
 		std::shared_ptr<BoxColliderRenderSystem> boxColliderRenderer;
 		std::shared_ptr<CircleColliderRenderSystem> circleColliderRenderer;
 #endif
+	};
+
+	struct FrameStatsStruct {
+		unsigned int renderedObjects = 0;
+		unsigned int renderedPointLights = 0;
+		unsigned int renderedParticleEmitters = 0;
 	};
 
 private:
@@ -57,6 +63,8 @@ private:
 	std::shared_ptr<FrameBuffer> PostprocessingSwapBuffers[2];
 	ShadowmapStruct Shadowmap;
 	RenderSystemsStruct RenderSystems;
+
+	FrameStatsStruct LastFrameStats;
 
 	bool initialized = false;
 	std::shared_ptr<Shader> combineGBufferShader;
@@ -73,5 +81,6 @@ public:
 	void Render();
 
 	inline const GBufferStruct& const GetGBuffer() { return GBuffer; }
+	inline const FrameStatsStruct& const GetLastFrameStats() { return LastFrameStats; }
 };
 
