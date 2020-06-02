@@ -73,6 +73,12 @@ int main()
 	ac.init_al();
 	ac.generateBuffers();
 	ac.loadSound();
+	ac.setListener();
+	ALfloat pos = ALfloat();
+	ALfloat vel = ALfloat();
+	ALfloat dir = ALfloat();
+	ALint source_state = 0;
+	
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
@@ -93,6 +99,7 @@ int main()
 		
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
+		ac.playSound(ac.setSource(&pos, &vel, &dir), source_state);
 	}
 
 	HFEngine::Terminate();

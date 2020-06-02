@@ -49,6 +49,7 @@ int AudioController::loadSound()
 	//load the sound
 	//alutLoadWAVFile("exciting_sound.wav", &format, &data, &size, &freq, &loop); 
 	buffers[0] = alutCreateBufferFromFile("exciting_sound.wav");
+	//buffers[0] = alutCreateBufferHelloWorld();
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alutLoadWAVFile exciting_sound.wav : %d", error);
@@ -56,7 +57,7 @@ int AudioController::loadSound()
 		alDeleteBuffers(NUM_BUFFERS, buffers);
 		return 0;
 	}
-
+	/*
 	//load to the buffer
 	alBufferData(buffers[0], format, data, size, freq);
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -66,7 +67,7 @@ int AudioController::loadSound()
 		alDeleteBuffers(NUM_BUFFERS, buffers);
 		return 0;
 	}
-	/*
+	
 	//unload memory
 	//alutUnloadWAV(format, data, size, freq);
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -78,11 +79,11 @@ int AudioController::loadSound()
 	}*/
 }
 
-int AudioController::setSources(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir)
+ALuint AudioController::setSource(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir)
 {
-	ALuint source[10]; //fucking random number again monkaS
+	ALuint source[1]; 
 	// Generate the sources 
-	alGenSources(10, source);
+	alGenSources(1, source);
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alGenSources : %d", error);
@@ -105,9 +106,11 @@ int AudioController::setSources(ALfloat const* sourcePos, ALfloat const* sourceV
 		printf("alSourcefv : %d", error);
 		return 0;
 	}
+
+	return source[0];
 }
 
-//player
+/*//player
 int AudioController::setListener(ALfloat const* listenerPos, ALfloat const* listenerVel, ALfloat const* listenerOri)
 {
 	alListenerfv(AL_POSITION, listenerPos); //pos do przemyslenia
@@ -117,7 +120,44 @@ int AudioController::setListener(ALfloat const* listenerPos, ALfloat const* list
 	{
 		printf("alListenerfv : %d", error);
 		return 0;
+	}*/
+int AudioController::setListener()
+{
+	ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+
+	alListener3f(AL_POSITION, 0, 0, 1.0f);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alListenerfv pos : %d", error);
+		return 0;
 	}
+	alListener3f(AL_VELOCITY, 0, 0, 0);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alListenerfv  vel : %d", error);
+		return 0;
+	}
+	alListenerfv(AL_ORIENTATION, listenerOri);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alListenerfv ori : %d", error);
+		return 0;
+	}
+}
+
+int AudioController::playSound(ALuint source, ALint source_state)
+{
+	alSourcePlay(source);
+	printf("played sound");
+
+	alGetSourcei(source, AL_SOURCE_STATE, &source_state);
+	// check for errors
+	//while (source_state == AL_PLAYING) {
+		//alGetSourcei(source, AL_SOURCE_STATE, &source_state);
+		// check for errors
+	//}
+
+	return 0;
 }
 
 
