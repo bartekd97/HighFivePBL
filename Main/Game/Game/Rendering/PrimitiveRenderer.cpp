@@ -52,7 +52,7 @@ void PrimitiveRenderer::DrawLines()
 {
 	if (linePoints.size() == 0) return;
 
-	static glm::vec3 color(1.0f, 0.0f, 0.0f);
+	static glm::vec3 color(0.4f, 1.0f, 0.0f);
 	auto shader = ShaderManager::GetShader("CubeShader");
 	shader->use();
 
@@ -72,6 +72,7 @@ void PrimitiveRenderer::DrawLines()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
 
 	glBindVertexArray(lineVAO);
+	glLineWidth(2.0f);
 	glDrawArrays(GL_LINES, 0, linePoints.size());
 	glBindVertexArray(0);
 
