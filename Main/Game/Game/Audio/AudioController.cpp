@@ -35,7 +35,7 @@ void AudioController::exit_al()
 int AudioController::generateBuffers()
 {
 	//generete buffers
-	alGenBuffers(10, buffers);
+	alGenBuffers(1, buffers);
 
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
@@ -79,7 +79,7 @@ int AudioController::loadSound()
 	}*/
 }
 
-ALuint AudioController::setSource(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir)
+ALuint AudioController::setSource(ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, ALboolean loop)
 {
 	ALuint source[1]; 
 	// Generate the sources 
@@ -92,6 +92,13 @@ ALuint AudioController::setSource(ALfloat const* sourcePos, ALfloat const* sourc
 
 	//atach buffers to sources
 	alSourcei(source[0], AL_BUFFER, buffers[0]);
+
+	if (loop == true)
+	{
+		alSourcei(source[0], AL_LOOPING, AL_TRUE);
+	}
+	else alSourcei(source[0], AL_LOOPING, AL_FALSE);
+	
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alSourcei : %d", error);
@@ -108,6 +115,40 @@ ALuint AudioController::setSource(ALfloat const* sourcePos, ALfloat const* sourc
 	}
 
 	return source[0];
+}
+
+void AudioController::playBackgroundMusic()
+{
+	ALuint source[1];
+	// Generate the sources 
+	alGenSources(1, source);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alGenSources : %d", error);
+	}
+
+	//atach buffers to sources
+	alSourcei(source[0], AL_BUFFER, buffers[0]);
+	alSourcei(source[0], AL_LOOPING, AL_TRUE);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alSourcei : %d", error);
+	}
+
+	ALfloat pos = ALfloat();
+	ALfloat vel = ALfloat();
+	ALfloat dir = ALfloat();
+
+	alSourcefv(source[0], AL_POSITION, &pos); //pos do przemyslenia
+	alSourcefv(source[0], AL_VELOCITY, &vel); //velocity do przemyslenia
+	alSourcefv(source[0], AL_DIRECTION, &dir); //dir do przemyslenia
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alSourcefv : %d", error);
+	}
+	
+	setListener();
+	playSound(source[0]);
 }
 
 /*//player
@@ -145,17 +186,17 @@ int AudioController::setListener()
 	}
 }
 
-int AudioController::playSound(ALuint source, ALint source_state)
+int AudioController::playSound(ALuint source)
 {
 	alSourcePlay(source);
 	printf("played sound");
 
 	alGetSourcei(source, AL_SOURCE_STATE, &source_state);
 	// check for errors
-	//while (source_state == AL_PLAYING) {
-		//alGetSourcei(source, AL_SOURCE_STATE, &source_state);
-		// check for errors
-	//}
+	while (source_state == AL_PLAYING) {
+		alGetSourcei(source, AL_SOURCE_STATE, &source_state);
+		//check for errors
+	}
 
 	return 0;
 }

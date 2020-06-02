@@ -30,7 +30,8 @@
 
 #include "GUI/Button.h"
 
-#include <Audio/AudioController.h>
+#include <thread>
+#include "Audio/AudioController.h""
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -69,16 +70,18 @@ int main()
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
-	AudioController ac;
-	ac.init_al();
-	ac.generateBuffers();
-	ac.loadSound();
-	ac.setListener();
+	//std::thread t(AudioController ac);
+	AudioController* ac = new AudioController();
+	ac->init_al();
+	ac->generateBuffers();
+	ac->loadSound();
+	ac->setListener();
 	ALfloat pos = ALfloat();
 	ALfloat vel = ALfloat();
 	ALfloat dir = ALfloat();
-	ALint source_state = 0;
-	
+	//ALint source_state = 0;
+	//std::thread t (ac.playSound(ac.setSource(&pos, &vel, &dir, false), source_state));
+	std::thread t(&AudioController::playBackgroundMusic, ac);
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
@@ -99,8 +102,11 @@ int main()
 		
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
-		ac.playSound(ac.setSource(&pos, &vel, &dir), source_state);
+		
 	}
+	t.join();
+	delete ac;
+	ac->exit_al();
 
 	HFEngine::Terminate();
 
