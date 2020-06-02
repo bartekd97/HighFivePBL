@@ -351,7 +351,7 @@ void CellSetuper::MakePathfindingGrid()
 	};
 
 	CircleCollider nodeCollider;
-	nodeCollider.radius = 0.4f;
+	nodeCollider.radius = 0.7f;
 	RaycastHit out;
 
 	PathfindingGrid::PathNode node;
