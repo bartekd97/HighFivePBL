@@ -139,7 +139,7 @@ public:
 
 	void LateUpdate(float dt)
 	{
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 		glm::vec3 last = GetTransform().GetWorldPosition();
 		for (auto p : targetPath)
 		{

@@ -7,7 +7,7 @@
 #include <filesystem>
 #include "Logger.h"
 
-#ifdef _DEBUG
+#ifdef HF_LOGGER
 
 // variables
 namespace Logger {
