@@ -1,0 +1,14 @@
+<textures>
+    <texture name="albedo" file="Vampire_albedo.png" format="srgb" />
+    <texture name="norm" file="Vampire_normal.png" />
+    <texture name="metal" file="Vampire_metalness.png" format="r" />
+    <texture name="rough" file="Vampire_roughness.png" format="r" />
+    <texture name="emis" file="Vampire_emissive.png" format="srgb" />
+
+    <texture name="torch_albedo" file="firetorch_Material.005_BaseColor.png" format="srgb" />
+    <texture name="torch_norm" file="firetorch_Material.005_Normal.png" />
+    <texture name="torch_metal" file="firetorch_Material.005_Metallic.png" format="r" />
+    <texture name="torch_rough" file="firetorch_Material.005_Roughness.png" format="r" />
+
+    <texture name="torch_flame_emiss" file="flame_emissive.png" format="srgb" />
+</textures>

@@ -1,0 +1,8 @@
+<materials textureLibrary="this">
+    <material name="AxerMat">
+        <property name="albedoMap" value="axerAlbedo"/>
+        <property name="normalMap" value="axerNorm"/>
+        <property name="metalnessMap" value="axerMetal"/>
+        <property name="roughnessMap" value="axerRough"/>
+    </material>
+</materials>

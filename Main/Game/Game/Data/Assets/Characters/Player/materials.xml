@@ -1,0 +1,27 @@
+<materials textureLibrary="this">
+    <material name="VampireMortalMat">
+        <property name="albedoMap" value="albedo"/>
+        <property name="normalMap" value="norm"/>
+        <property name="metalnessMap" value="metal"/>
+        <property name="roughnessMap" value="rough"/>
+        <property name="emissiveMap" value="emis"/>
+    </material>
+
+    <material name="VampireGhostMat" type="FORWARD">
+        <property name="albedoColor" value="0.4,2.5,1.0"/>
+        <property name="emissiveColor" value="0.1,0.5,0.25"/>
+        <property name="specularValue" value="4.0"/>
+        <property name="opacityValue" value="0.4"/>
+    </material>
+
+     <material name="FireTorchMat">
+        <property name="albedoMap" value="torch_albedo"/>
+        <property name="normalMap" value="torch_norm"/>
+        <property name="metalnessMap" value="torch_metal"/>
+        <property name="roughnessMap" value="torch_rough"/>
+    </material>
+
+    <material name="FireTorcFlamehMat">
+        <property name="emissiveMap" value="torch_flame_emiss"/>
+    </material>
+</materials>

@@ -1,0 +1,5 @@
+<textures>
+    <texture name="Grass" file="tilable-img_0044-lush.png" format="srgb" />
+    <texture name="Road" file="01tizeta_asphalts.png" format="srgb" />
+    <texture name="Cliff" file="tileable2e.png" format="srgb" />
+</textures>

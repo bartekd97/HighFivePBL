@@ -1,0 +1,3 @@
+<models materialLibrary="this">
+    <model name="Bridge1" mesh="first_bridge.glb"    material="firstBridgeMaterial" />
+</models>

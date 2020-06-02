@@ -1,0 +1,8 @@
+<materials textureLibrary="this">
+    <material name="gothMaterial">
+        <property name="albedoMap" value="gothAlbedo"/>
+        <property name="normalMap" value="gothNormal"/>
+        <property name="metalnessMap" value="gothMetal"/>
+        <property name="roughnessMap" value="gothRough"/>
+    </material>
+</materials>

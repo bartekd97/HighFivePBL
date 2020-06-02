@@ -1,0 +1,45 @@
+<prefab defaultScale="1.0,1.0,1.0">
+<!--
+    <component name="MeshRenderer">
+        <property name="model" value="Structures/Bridges:Bridge1"/>
+    </component>
+
+    temporar bridge orientation fix
+    -->
+  <component name="BoxCollider">
+    <property name="type" value="TRIGGER"/>
+    <property name="width" value="2.6"/>
+    <property name="height" value="14.0"/>
+    <property name="frozen" value="true"/>
+  </component>
+    <children>
+        <child name="bridgefix" position="0,0,0" rotation="0,90,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Structures/Bridges:Bridge1"/>
+            </component>
+            <component name="MeshRenderer">
+              <property name="configureFromHolder" value="true" />
+            </component>
+            <component name="GravityCollider">
+                <property name="ZValues" value="-8.0,-7.0,-2.1,2.1,7.0,8.0"/>
+                <property name="heights" value="0.0,0.2,0.96,0.96,0.2,0.0"/>
+            </component>
+        </child>
+        <child name="BridgeColTop" position="-2.75,0,0" rotation="0,90,0" scale="1,1,1">
+          <component name="BoxCollider">
+            <property name="type" value="STATIC"/>
+            <property name="width" value="15.0"/>
+            <property name="height" value="0.6"/>
+            <property name="frozen" value="true"/>
+          </component>
+        </child>
+      <child name="BridgeColBottom" position="2.75,0,0" rotation="0,90,0" scale="1,1,1">
+        <component name="BoxCollider">
+          <property name="type" value="STATIC"/>
+          <property name="width" value="15.0"/>
+          <property name="height" value="0.6"/>
+          <property name="frozen" value="true"/>
+        </component>
+      </child>
+    </children>
+</prefab>

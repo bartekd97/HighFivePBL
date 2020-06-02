@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Ghost : MonoBehaviour
@@ -51,6 +52,19 @@ public class Ghost : MonoBehaviour
     public int numberOfEnemyToHit;
     public int numberOfEnemyHit;
 
+    public MonumentController monumentController;
+    public float lineSlow = 0.0f;
+    public float ghostFreezeTime = 0.0f;
+    public float dotTick = 0.0f;
+    public float dotDmg = 0.0f;
+
+    private float lastDotTick = 0.0f;
+
+    public ParticleSystem sparkCrossing;
+
+    public BossSpawnerController bossController;
+    public bool bossHit;
+
     public bool IsMarking { get; private set; }
     private void Awake()
     {
@@ -58,6 +72,7 @@ public class Ghost : MonoBehaviour
         firstEnemyHit = false;
         numberOfEnemyToHit = 1;
         numberOfEnemyHit = 1;
+        bossHit = false;
     }
     private void Start()
     {
@@ -104,6 +119,49 @@ public class Ghost : MonoBehaviour
             }
             */
         }
+
+        List<GameObject> enemies = new List<GameObject>(GameObject.FindGameObjectsWithTag("Enemy"));
+        
+        enemies.ForEach(enemy => enemy.GetComponent<EnemyController>().slow = 0.0f);
+
+        bool isTimeToStrikexD = false;
+        if (dotDmg > 0 && dotTick > 0)
+        {
+            if ((Time.time - lastDotTick) >= dotTick)
+            {
+                lastDotTick = Time.time;
+                isTimeToStrikexD = true;
+            }
+        }
+
+        //Slow + DoT
+        activeLines.ForEach(line =>
+        {
+            line.ghosts.ForEach(ghost =>
+            {
+                BoxCollider coll = ghost.GetComponentInParent<BoxCollider>();
+                enemies.ForEach(enemy =>
+                {
+                    BoxCollider enemyColl = enemy.GetComponent<BoxCollider>();
+                    if (coll.bounds.Intersects(enemyColl.bounds))
+                    {
+                        enemy.GetComponent<EnemyController>().slow = lineSlow;
+                        if (isTimeToStrikexD) enemy.GetComponent<EnemyController>().TakeDamage(dotDmg);
+                    }
+                });
+            });
+        });
+
+        //Freeze
+        enemies.ForEach(enemy =>
+        {
+            BoxCollider enemyColl = enemy.GetComponent<BoxCollider>();
+            if (enemyColl.bounds.Intersects(GetComponentInParent<BoxCollider>().bounds))
+            {
+                enemy.GetComponent<EnemyController>().frozenTo = Time.time + ghostFreezeTime;
+            }
+        });
+
     }
 
     public void Show(Transform start)
@@ -142,6 +200,7 @@ public class Ghost : MonoBehaviour
         spawnedMiniGhostsCurrent = new List<MiniGhost>();
         IsMarking = true;
         firstEnemyHit = true;
+        bossHit = true;
         numberOfEnemyHit = 0;
     }
 
@@ -190,8 +249,10 @@ public class Ghost : MonoBehaviour
         CheckClosedLines();
 
         if (activeLines.Count > maxActiveLines)
+        {
             //while (activeLines.Count > 0)
-                FadeOutLine(activeLines[0]);
+            FadeOutLine(activeLines[0]);
+        }
     }
 
     void UpdateLineCrossings()
@@ -254,6 +315,11 @@ public class Ghost : MonoBehaviour
             line.ghosts.ForEach(g => g.DoAttack(center3));
             Destroy(line.lineRend);
             activeLines.Remove(line);
+            var clones = GameObject.FindGameObjectsWithTag("Spark");
+            foreach (var clone in clones)
+            {
+                Destroy(clone);
+            }
         }
 
     }
@@ -269,13 +335,16 @@ public class Ghost : MonoBehaviour
                         l1.points[i], l1.points[i + 1],
                         l2.points[j], l2.points[j + 1]
                     );
-                if (p != Vector2.zero)
-                    crossing.Add( new GhostCrossing()
+                if (p != Vector2.zero) {
+                    crossing.Add(new GhostCrossing()
                     {
                         a = l1,
                         b = l2,
                         position = p
                     });
+                    Vector3 sparkPosition = new Vector3(p.x, 0.4f, p.y);
+                    Instantiate(sparkCrossing, sparkPosition, Quaternion.identity);
+                }
             }
         }
         return crossing;
@@ -331,7 +400,7 @@ public class Ghost : MonoBehaviour
         if (!IsMarking)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Monument") && !other.gameObject.CompareTag("Boss"))
             return;
 
         enemyController = other.GetComponent<EnemyController>();
@@ -340,6 +409,19 @@ public class Ghost : MonoBehaviour
             enemyController.TakeDamage(damageToEnemies);
             numberOfEnemyHit++;
             firstEnemyHit = false;
+        }
+        
+        monumentController = other.GetComponent<MonumentController>();
+        if (monumentController != null)
+        {
+            monumentController.ApplyDamageToMonument(damageToEnemies);
+        }
+
+        bossController = other.GetComponent<BossSpawnerController>();
+        if (bossController != null && bossHit == true)
+        {
+            bossController.TakeDamage(damageToEnemies);
+            bossHit = false;
         }
     }
 
@@ -362,5 +444,16 @@ public class Ghost : MonoBehaviour
 
         IRend.positionCount = linePointsV.Length;
         IRend.SetPositions(linePointsV);
+    }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }

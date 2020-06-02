@@ -1,92 +1,144 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
 #include <tinyxml2.h>
+#include <chrono>
+#include <math.h>
 
-#include "Texture.h"
-#include "Material.h"
-#include "Shader.h"
-#include "PrimitiveRenderer.h"
-#include "Logger.h"
+#include "ECS/Components.h"
+
+#include "Resourcing/Texture.h"
+#include "Resourcing/Material.h"
+#include "Resourcing/Model.h"
+#include "Resourcing/Shader.h"
+#include "Resourcing/Prefab.h"
+#include "Rendering/PrimitiveRenderer.h"
+#include "Utility/Logger.h"
+#include "Utility/TextureTools.h"
+
+#include "HFEngine.h"
+#include "WindowManager.h"
+#include "InputManager.h"
+#include "Event/EventManager.h"
+#include "Event/Events.h"
+
+#include "MapGenerator/MapGenerator.h"
+
+#include "Resourcing/MeshFileLoader.h"
+
+#include "GUI/Button.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
+void ReportGameObjects(float dt);
+void doCameraMovement(GameObject cameraObject, float dt);
 
 int main()
 {
-	LoggerInitialize();
-
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", nullptr, nullptr);
-
-	if (window == nullptr)
+	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "HFEngine test"))
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
+		std::cout << "Failed to initialize engine" << std::endl;
 		return -1;
 	}
 
-	glfwMakeContextCurrent(window);
+	GLFWwindow* window = WindowManager::GetWindow();
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
+	MapGenerator generator;
+	generator.Generate();
+	GameObject startupCell = generator.GetStartupCell();
+	glm::vec3 startupPos = HFEngine::ECS.GetComponent<Transform>(startupCell).GetWorldPosition();
 
+	auto playerPrefab = PrefabManager::GetPrefab("Player");
+	auto player = playerPrefab->Instantiate(startupPos);
+	//HFEngine::ECS.SetNameGameObject(player, "Player");
 
+	//auto enemyPrefab = PrefabManager::GetPrefab("Enemies/Axer");
+	//auto enemyObject = enemyPrefab->Instantiate(startupPos + glm::vec3(5.0f, 0.0f, 5.0f));
 
-	//glViewport(0,0, 1280, 720);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
+	auto testCircleObject = prefabCircle->Instantiate(startupPos - glm::vec3(10.0f, 0.0f, 10.0f));
+	HFEngine::ECS.SetNameGameObject(testCircleObject, "testCircle");
 
+	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
+	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
+	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
+	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
-	ShaderManager::Initialize();
-	TextureManager::Initialize();
-	MaterialManager::Initialize();
-
-	auto hwShader = ShaderManager::GetShader("HelloWorldShader");
-	hwShader->use();
-	hwShader->setInt("albedoMap", MaterialBindingPoint::ALBEDO_MAP);
-	hwShader->setInt("normalMap", MaterialBindingPoint::NORMAL_MAP);
-	hwShader->setInt("metalnessMap", MaterialBindingPoint::METALNESS_MAP);
-	hwShader->setInt("roughnessMap", MaterialBindingPoint::ROUGHNESS_MAP);
-	hwShader->setInt("emissiveMap", MaterialBindingPoint::EMISSIVE_MAP);
-
-	//auto sampleTex = TextureManager::GetTexture("Sample", "albedo");
-	//sampleTex->bind(1);
-
-	auto sampleMat = MaterialManager::GetMaterial("Sample", "mat");
-	sampleMat->apply();
-
-
+	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();
+		auto startTime = std::chrono::high_resolution_clock::now();
 
-		glClearColor(0.2f, 0.7f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		InputManager::PollEvents();
+		//if (InputManager::GetKeyDown(GLFW_KEY_O)) HFEngine::ECS.DestroyGameObject(testCircleObject);//HFEngine::ECS.SetEnabledGameObject(testCircleObject, false);
+		//doCameraMovement(cameraObject, dt);
 
-		hwShader->use();
-		PrimitiveRenderer::DrawScreenQuad();
+		HFEngine::ProcessGameFrame(dt);
+
+		ReportGameObjects(dt);
 
 		glfwSwapBuffers(window);
+
+		ModelManager::UnloadUnused();
+		
+		auto stopTime = std::chrono::high_resolution_clock::now();
+		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
 
-	glfwTerminate();
+	HFEngine::Terminate();
+
 	return 0;
 }
 
-
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void ReportGameObjects(float dt)
 {
-	glViewport(0, 0, width, height);
+	const float interval = 5.0f;
+	static int frames = 0;
+	static float accumulator = 0.0f;
+	accumulator += dt;
+	frames += 1;
+	if (isgreaterequal(accumulator, interval))
+	{
+		LogInfo("FPS: {}; GameObjects count: {}", frames / interval, HFEngine::ECS.GetLivingGameObjectsCount());
+		accumulator = 0.0f;
+		frames = 0;
+	}
+}
+
+void doCameraMovement(GameObject cameraObject, float dt)
+{
+	const float moveSpeed = 25.0f;
+	const float rotateSpeed = 90.0f;
+	Transform& trans = HFEngine::ECS.GetComponent<Transform>(cameraObject);
+
+	if (InputManager::GetKeyStatus(GLFW_KEY_W))
+		trans.TranslateSelf(moveSpeed * dt, trans.GetFront());
+	if (InputManager::GetKeyStatus(GLFW_KEY_S))
+		trans.TranslateSelf(moveSpeed * dt, -trans.GetFront());
+	if (InputManager::GetKeyStatus(GLFW_KEY_A))
+		trans.TranslateSelf(moveSpeed * dt, -trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_D))
+		trans.TranslateSelf(moveSpeed * dt, trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_SPACE))
+		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, 1, 0));
+	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT_SHIFT))
+		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, -1, 0));
+
+	if (InputManager::GetKeyStatus(GLFW_KEY_UP))
+		trans.RotateSelf(rotateSpeed * dt, trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_DOWN))
+		trans.RotateSelf(rotateSpeed * dt, -trans.GetRight());
+	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT))
+		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, 1, 0));
+	if (InputManager::GetKeyStatus(GLFW_KEY_RIGHT))
+		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, -1, 0));
+	/*
+	if (input.getKeyStatus(GLFW_KEY_PAGE_UP))
+		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, 1));
+	if (input.getKeyStatus(GLFW_KEY_PAGE_DOWN))
+		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, -1));
+		*/
 }

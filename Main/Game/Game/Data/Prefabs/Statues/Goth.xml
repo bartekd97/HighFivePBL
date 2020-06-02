@@ -1,0 +1,14 @@
+<prefab defaultScale="1.25,1.25,1.25">
+    <component name="ModelHolder">
+        <property name="model" value="Structures/Statues:Goth"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+    <component name="BoxCollider">
+        <property name="width" value="3.25"/>
+        <property name="height" value="3.25"/>
+        <property name="frozen" value="true"/>
+        <property name="type" value="STATIC"/>
+    </component>
+</prefab>

@@ -1,7 +1,0 @@
-<textures>
-    <texture name="albedo" file="albedo.jpg" format="srgb" />
-    <texture name="norm" file="normal.jpg" />
-    <texture name="metal" file="metalness.jpg" />
-    <texture name="rough" file="roughness.jpg" />
-    <texture name="emis" file="emissive.jpg" format="srgb" />
-</textures>

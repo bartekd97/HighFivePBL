@@ -8,6 +8,7 @@ public class CharController : MonoBehaviour
 {
     public bool ghostMovement { get; private set; }
 
+    public ParticleSystem smokePush;
 
     public Ghost ghost;
     public HealthBar healthBar;
@@ -24,6 +25,8 @@ public class CharController : MonoBehaviour
 
     [SerializeField]
     public float speed = 4.0f;
+    public float slow = 0.0f;
+
     [SerializeField]
     public float ghostSpeed = 8.0f;
     [SerializeField]
@@ -46,6 +49,16 @@ public class CharController : MonoBehaviour
     public float nextGhostTime = 0.0f;
 
     //public bool pushedEnemies;
+
+    bool isPoisoned;
+    public float poisonCooldownTime = 1.0f;
+    float nextPoisonTime = 0.0f;
+    float poisoningStart = -1.0f;
+    float poisoningEnd = -1.0f;
+
+    bool isBurnt;
+    public float burningCooldownTime = 1.0f;
+    float nextBurnTime = 0.0f;
 
     // Start is called before the first frame update
     void Start()
@@ -70,6 +83,23 @@ public class CharController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if ((isPoisoned) && Time.time >= nextPoisonTime)
+        {
+            TakeDamage(0.5f);
+            nextPoisonTime = Time.time + poisonCooldownTime;
+        }
+        if ((poisoningEnd >= Time.time && Time.time >= poisoningStart) && Time.time >= nextPoisonTime)
+        {
+            TakeDamage(0.5f);
+            nextPoisonTime = Time.time + poisonCooldownTime;
+        }
+        if ((isBurnt) && Time.time >= nextBurnTime)
+        {
+            TakeDamage(1.0f);
+            nextBurnTime = Time.time + burningCooldownTime;
+        }
+
+
         CalculateColor();
         if (Input.GetKeyDown(KeyCode.Mouse0) && leftGhostDistance > 0.0f && Time.time >= nextGhostTime)
         {
@@ -120,6 +150,20 @@ public class CharController : MonoBehaviour
 
     void PushEnemiesBack()
     {
+        smokePush.transform.eulerAngles = new Vector3(
+            transform.eulerAngles.x - 90,
+            transform.eulerAngles.y,
+            transform.eulerAngles.z
+        );
+
+        smokePush.transform.position = new Vector3(
+            transform.position.x,
+            transform.position.y + 0.5f,
+            transform.position.z
+        );
+
+        Instantiate(smokePush, smokePush.transform.position, smokePush.transform.rotation);
+
         foreach (EnemyController ec in FindObjectsOfType<EnemyController>())
         {
             Vector3 dir = ec.transform.position - transform.position;
@@ -185,8 +229,8 @@ public class CharController : MonoBehaviour
     void Move()
     {
         Vector3 direction = new Vector3(Input.GetAxis("HorizontalKey"), 0, Input.GetAxis("VerticalKey"));
-        Vector3 rightMovement = right * speed * Time.deltaTime * Input.GetAxis("HorizontalKey");
-        Vector3 forwardMovement = forward * speed * Time.deltaTime * Input.GetAxis("VerticalKey");
+        Vector3 rightMovement = right * (speed - slow) * Time.deltaTime * Input.GetAxis("HorizontalKey");
+        Vector3 forwardMovement = forward * (speed - slow) * Time.deltaTime * Input.GetAxis("VerticalKey");
 
         Vector3 heading = Vector3.Normalize(rightMovement + forwardMovement);
 
@@ -199,6 +243,18 @@ public class CharController : MonoBehaviour
     {
         lastDmgTime = Time.time;
         health -= damage;
+        healthBar.SetHealth(health);
+        Debug.Log("Health remaining: " + health);
+        if (health <= 0)
+        {
+            KillPlayer();
+        }
+    }
+
+    public void TakeDamage(Arrow arrow)
+    {
+        lastDmgTime = Time.time;
+        health -= arrow.arrowDamage;
         healthBar.SetHealth(health);
         Debug.Log("Health remaining: " + health);
         if (health <= 0)
@@ -243,5 +299,46 @@ public class CharController : MonoBehaviour
                 GameManager.Instance.SetCurrentCell(gate.Cell);
             }
         }
+        if (other.CompareTag("Mud"))
+        {
+            slow = 3.0f;
+        }       
+        if (other.CompareTag("ToxicFog"))
+        {
+            isPoisoned = true;
+        }
+        if (other.CompareTag("Fire"))
+        {
+            isBurnt = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Mud"))
+        {
+            slow = 0.0f;
+        }
+        if (other.CompareTag("ToxicFog"))
+        {
+            isPoisoned = false;
+            poisoningStart = Time.time;
+            poisoningEnd = Time.time + 2.0f;
+        }
+        if (other.CompareTag("Fire"))
+        {
+            isBurnt = false;
+        }
+    }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }

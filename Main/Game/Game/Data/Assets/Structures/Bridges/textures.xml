@@ -1,0 +1,6 @@
+<textures>
+    <texture name="firstBridgeAlbedo" file="FirstBridge_Base_Color.png" format="srgb" />
+    <texture name="firstBridgeNormal" file="FirstBridge_Normal.png" />
+    <texture name="firstBridgeMetal" file="FirstBridge_Metallic.png" format="r" />
+    <texture name="firstBridgeRough" file="FirstBridge_Roughness.png" format="r" />
+</textures>

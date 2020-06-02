@@ -1,0 +1,17 @@
+<prefab defaultScale="1.25,1.25,1.25">
+    <component name="ModelHolder">
+        <property name="model" value="Structures/Statues:Goth"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+    <component name="CircleCollider">
+        <property name="radius" value="3.25"/>
+        <property name="type" value="DYNAMIC"/>
+    </component>
+  <component name="RigidBody">
+    <property name="velocity" value="0.0,0.0,0.0"/>
+    <property name="acceleration" value="0.0,0.0,0.0"/>
+    <property name="mass" value="1.0"/>
+  </component>
+</prefab>
