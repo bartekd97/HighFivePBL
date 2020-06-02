@@ -89,6 +89,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioController.cpp" />
+    <ClCompile Include="Audio\AudioManager.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio\AudioController.h" />
+    <ClInclude Include="Audio\AudioManager.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
     <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
     <ClInclude Include="Data\Shaders\Vertex\Text.glsl" />
