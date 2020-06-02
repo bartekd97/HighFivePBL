@@ -15,6 +15,7 @@ public:
     };
 
     std::vector<BridgeTo> Bridges;
+    GameObject EnemyContainer = NULL_GAMEOBJECT;
 
     //std::vector<GameObject> Enemies;
     //std::vector<GameObject> Monuments;

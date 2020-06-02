@@ -108,9 +108,13 @@ struct CellSetupConfig
     float gridInnerRadius = 6.0f;
     float gridMinRoadDistance = 4.0f;
 
+    float enemiesCountFactor = 1.0f; //2.2f; // how many enemies per 100 points in zone grid
+
     std::shared_ptr<Prefab> mainStatuePrefab;
     std::vector<std::shared_ptr<Prefab>> obstaclePrefabs;
     std::vector<std::shared_ptr<Prefab>> structurePrefabs;
+
+    std::vector<std::shared_ptr<Prefab>> enemyPrefabs;
 
 
     CellSetupConfig()
@@ -123,6 +127,7 @@ struct CellSetupConfig
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud3"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud4"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud5"));
+
         structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik1"));
         structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik2"));
         structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik3"));
@@ -133,6 +138,8 @@ struct CellSetupConfig
         //structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/chapel"));
         //structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR1"));
 
+
+        enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Axer"));
     }
 };
 

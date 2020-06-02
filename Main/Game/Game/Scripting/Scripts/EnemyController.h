@@ -52,6 +52,7 @@ public:
 	void Update(float dt)
 	{
 		// update test path
+		/*
 		{
 			pathdt += dt;
 			if (pathdt >= 1.0f)
@@ -60,6 +61,7 @@ public:
 				pathdt -= 1.0f;
 			}
 		}
+		*/
 
 		auto& transform = GetTransform();
 

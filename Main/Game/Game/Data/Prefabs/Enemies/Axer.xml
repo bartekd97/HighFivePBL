@@ -1,4 +1,6 @@
 <prefab defaultScale="0.75,0.75,0.75">
+    <property name="radius" value="1.2"/>
+
     <component name="RigidBody">
         <property name="velocity" value="0.0,0.0,0.0"/>
         <property name="acceleration" value="0.0,0.0,0.0"/>
