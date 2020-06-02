@@ -115,12 +115,17 @@ public:
 		std::shared_ptr<PathfindingGrid> grid = cellInfo.PathFindingGrid;
 
 		LogInfo("CalculatePathToPlayer");
-
 		// uncomment to clear current path
-		//targetPath.clear();
+		targetPath.clear();
 		// and assign points for new path from myPos to playerPos with targetPath.push_back();
 
 		// CALCULATE PATH HERE
+		LogInfo("EnemyPos: {}", myPos - cellPos);
+		LogInfo("PlayerPos: {}", playerPos - cellPos);
+
+		targetPath = grid->FindPath(myPos, playerPos, cellPos);
+		LogInfo("path size: {}", targetPath.size());
+
 
 	}
 
