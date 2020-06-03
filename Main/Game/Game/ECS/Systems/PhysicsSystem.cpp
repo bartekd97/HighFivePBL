@@ -136,8 +136,12 @@ void PhysicsSystem::Update(float dt)
                 }
             }
         }
-        transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
-        cacheNode.position = transform.GetWorldPosition();
+        tempPosition -= transform.GetWorldPosition();
+        if (VECLEN(tempPosition) >= 0.05f)
+        {
+            transform.TranslateSelf(tempPosition);
+            cacheNode.position = transform.GetWorldPosition();
+        }
         rigidBody.moved = false;
 	}
 }
