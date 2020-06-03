@@ -41,6 +41,7 @@ struct CacheNode
 		}
 		boxMinMax[0] = min;
 		boxMinMax[1] = max;
+		maxSide = std::max(boxCollider.width, boxCollider.height);
 	}
 
 	glm::vec3 position;
@@ -50,6 +51,7 @@ struct CacheNode
 	BoxCollider boxCollider;
 	glm::vec2 boxRealPoints[4];
 	glm::vec2 boxMinMax[2];
+	float maxSide;
 
 	CircleCollider circleCollider;
 	tsl::robin_set<GameObject> triggers;

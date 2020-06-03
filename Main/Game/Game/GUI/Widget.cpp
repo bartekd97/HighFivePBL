@@ -71,6 +71,8 @@ void Widget::SetPivot(Anchor pivot)
 void Widget::SetSize(glm::vec2 size)
 {
 	this->size = size;
+	if (this->size.x < 0.0f) this->size.x = 0.0f;
+	if (this->size.y < 0.0f) this->size.y = 0.0f;
 	CalculateAbsolutePosition();
 }
 
