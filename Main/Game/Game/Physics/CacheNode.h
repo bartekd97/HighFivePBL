@@ -6,6 +6,13 @@
 
 struct CacheNode
 {
+	enum class STATE
+	{
+		ACTIVE,
+		INACTIVE,
+		REMOVED
+	};
+
 	CacheNode() {}
 	CacheNode(Transform& transform, const Collider& collider) : position(transform.GetWorldPosition()), rotation(transform.GetWorldRotation()), collider(collider), lastFrameUpdate(transform.LastFrameUpdate())
 	{
@@ -49,7 +56,7 @@ struct CacheNode
 	tsl::robin_set<GameObject> triggers;
 
 	bool hasRigidBody = false;
-	bool active;
+	STATE state = STATE::REMOVED;
 
 	float lastFrameUpdate;
 };
