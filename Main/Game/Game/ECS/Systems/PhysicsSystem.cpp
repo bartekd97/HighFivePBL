@@ -21,13 +21,13 @@ void PhysicsSystem::Update(float dt)
     glm::vec3 moveStep, tempPosition, sepVector, oldVelocity, dist;
 	for (auto const& gameObject : gameObjects)
 	{
+        auto& cacheNode = Physics::cacheNodes[gameObject];
 		auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 
 		glm::vec3 displacement;
 		if (rigidBody.moved && !rigidBody.isFalling)
 		{
-			displacement = rigidBody.movePosition - transform.GetWorldPosition();
+			displacement = rigidBody.movePosition - cacheNode.position;
 		}
 		else
 		{
@@ -35,21 +35,13 @@ void PhysicsSystem::Update(float dt)
 		}
         displacement.y = 0.0f;
 
-        if (!HFEngine::ECS.SearchComponent<Collider>(gameObject))
-        {
-            transform.SetPosition(transform.GetWorldPosition() + displacement);
-            continue;
-        }
-
         length = VECLEN(displacement);
 
         steps = std::min(std::max(1, (int)std::round(length / Physics::step)), Physics::maxSteps);
 		moveStep = displacement / (float)steps;
-        tempPosition = transform.GetWorldPosition();
+        tempPosition = cacheNode.position;
         sepVector = glm::vec3(0.0f);
         oldVelocity = rigidBody.velocity;
-
-        auto& cacheNode = Physics::cacheNodes[gameObject];
 
         for (int s = 0; s < steps; s++)
         {
@@ -134,9 +126,10 @@ void PhysicsSystem::Update(float dt)
                 }
             }
         }
-        tempPosition -= transform.GetWorldPosition();
+        tempPosition -= cacheNode.position;
         if (VECLEN(tempPosition) >= minimalMovement)
         {
+            auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
             transform.TranslateSelf(tempPosition);
             cacheNode.position = transform.GetWorldPosition();
         }
