@@ -13,8 +13,7 @@ struct CacheNode
 		REMOVED
 	};
 
-	CacheNode() {}
-	CacheNode(Transform& transform, const Collider& collider) : position(transform.GetWorldPosition()), rotation(transform.GetWorldRotation()), collider(collider), lastFrameUpdate(transform.LastFrameUpdate())
+	CacheNode()
 	{
 	}
 

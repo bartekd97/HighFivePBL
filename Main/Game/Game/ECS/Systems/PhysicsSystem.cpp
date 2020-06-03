@@ -9,13 +9,9 @@
 
 void PhysicsSystem::Init()
 {
-
+    minimalMovement = 0.01f;
 }
 
-/*
- * -what about transform scale?
- * -replace velocity with toCheck flag?
- */
 void PhysicsSystem::Update(float dt)
 {
     Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects, true);
@@ -137,7 +133,7 @@ void PhysicsSystem::Update(float dt)
             }
         }
         tempPosition -= transform.GetWorldPosition();
-        if (VECLEN(tempPosition) >= 0.05f)
+        if (VECLEN(tempPosition) >= minimalMovement)
         {
             transform.TranslateSelf(tempPosition);
             cacheNode.position = transform.GetWorldPosition();
