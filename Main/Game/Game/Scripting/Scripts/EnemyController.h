@@ -114,7 +114,7 @@ public:
 		MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cellObject);
 		std::shared_ptr<PathfindingGrid> grid = cellInfo.PathFindingGrid;
 
-		LogInfo("CalculatePathToPlayer");
+		//LogInfo("CalculatePathToPlayer");
 
 		// uncomment to clear current path
 		//targetPath.clear();

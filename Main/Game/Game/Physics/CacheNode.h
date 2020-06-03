@@ -6,6 +6,7 @@
 
 struct CacheNode
 {
+	const float GRID_SIZE = 25.0f;
 	enum class STATE
 	{
 		ACTIVE,
@@ -44,6 +45,24 @@ struct CacheNode
 		maxSide = std::max(boxCollider.width, boxCollider.height);
 	}
 
+	void CalculateGrid()
+	{
+		if (collider.shape == Collider::ColliderShapes::BOX)
+		{
+			gridMinX = boxMinMax[0].x / GRID_SIZE;
+			gridMinY = boxMinMax[0].y / GRID_SIZE;
+			gridMaxX = std::ceil(boxMinMax[1].x / GRID_SIZE);
+			gridMaxY = std::ceil(boxMinMax[1].y / GRID_SIZE);
+		}
+		else if (collider.shape == Collider::ColliderShapes::CIRCLE)
+		{
+			gridMinX = (position.x - circleCollider.radius) / GRID_SIZE;
+			gridMinY = (position.z - circleCollider.radius) / GRID_SIZE;
+			gridMaxX = (position.x + circleCollider.radius) / GRID_SIZE;
+			gridMaxY = (position.z + circleCollider.radius) / GRID_SIZE;
+		}
+	}
+
 	glm::vec3 position;
 	glm::quat rotation;
 	Collider collider;
@@ -60,4 +79,8 @@ struct CacheNode
 	STATE state = STATE::REMOVED;
 
 	float lastFrameUpdate;
+	int gridMinX;
+	int gridMinY;
+	int gridMaxX;
+	int gridMaxY;
 };

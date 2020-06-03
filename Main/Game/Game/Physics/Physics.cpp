@@ -48,6 +48,7 @@ namespace Physics
 				{
                     cacheNode.circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 				}
+                cacheNode.CalculateGrid();
 			}
 			else
 			{
@@ -59,6 +60,7 @@ namespace Physics
                         cacheNode.position = transform.GetWorldPosition();
                         cacheNode.rotation = transform.GetWorldRotation();
                         cacheNode.CalculateBoxPoints();
+                        cacheNode.CalculateGrid();
                     }
 				}
 			}

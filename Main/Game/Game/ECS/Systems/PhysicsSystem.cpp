@@ -55,6 +55,10 @@ void PhysicsSystem::Update(float dt)
                 //auto& otherCacheNode = Physics::cacheNodes[i];
                 if (gameObject != i && otherCacheNode->state == CacheNode::STATE::ACTIVE)
                 {
+                    if (cacheNode.gridMaxX < otherCacheNode->gridMinX
+                        || cacheNode.gridMinX > otherCacheNode->gridMaxX
+                        || cacheNode.gridMaxY < otherCacheNode->gridMinY
+                        || cacheNode.gridMinY > otherCacheNode->gridMaxY) continue;
                     dist = tempPosition - otherCacheNode->position;
                     distLen = VECLEN(dist);
 
