@@ -62,32 +62,30 @@ void PhysicsSystem::Update(float dt)
             collided = false;
 
             // get gameObjects from colliderCollectingSystem
-            for (auto const& otherObject : colliderCollectorSystem->gameObjects)
+            for (auto& otherCacheNode : Physics::cacheNodes)
             {
-                if (gameObject != otherObject)
+                if (gameObject != otherCacheNode.first &&  otherCacheNode.second.active)
                 {
-                    auto& otherCacheNode = Physics::cacheNodes[otherObject];
-
-                    auto dist = tempPosition - otherCacheNode.position;
+                    auto dist = tempPosition - otherCacheNode.second.position;
                     float distLen = VECLEN(dist);
 
                     localCollided = false;
 
-                    if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.collider.shape == Collider::ColliderShapes::CIRCLE)
+                    if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.second.collider.shape == Collider::ColliderShapes::CIRCLE)
                     {
-                        if (distLen <= (cacheNode.circleCollider.radius + otherCacheNode.circleCollider.radius))
+                        if (distLen <= (cacheNode.circleCollider.radius + otherCacheNode.second.circleCollider.radius))
                         {
-                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode.position, otherCacheNode.circleCollider, sepVector))
+                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode.second.position, otherCacheNode.second.circleCollider, sepVector))
                             {
                                 collided = true;
                                 localCollided = true;
                             }
                         }
-                    } else if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.collider.shape == Collider::ColliderShapes::BOX)
+                    } else if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.second.collider.shape == Collider::ColliderShapes::BOX)
                     {
-                        if (distLen <= (cacheNode.circleCollider.radius + std::max(otherCacheNode.boxCollider.width, otherCacheNode.boxCollider.height)))
+                        if (distLen <= (cacheNode.circleCollider.radius + std::max(otherCacheNode.second.boxCollider.width, otherCacheNode.second.boxCollider.height)))
                         {
-                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherObject, sepVector))
+                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider,  otherCacheNode.first, sepVector))
                             {
                                 collided = true;
                                 localCollided = true;
@@ -95,17 +93,17 @@ void PhysicsSystem::Update(float dt)
                         }
                     }
 
-                    if (otherCacheNode.collider.type == Collider::ColliderTypes::TRIGGER)
+                    if (otherCacheNode.second.collider.type == Collider::ColliderTypes::TRIGGER)
                     {
-                        auto it = cacheNode.triggers.find(otherObject);
+                        auto it = cacheNode.triggers.find( otherCacheNode.first);
                         if (localCollided)
                         {
                             if (it == cacheNode.triggers.end())
                             {
-                                cacheNode.triggers.insert(otherObject);
-                                for (const auto& onTriggerEnter : HFEngine::ECS.GetComponent<Collider>(otherObject).OnTriggerEnter)
+                                cacheNode.triggers.insert( otherCacheNode.first);
+                                for (const auto& onTriggerEnter : HFEngine::ECS.GetComponent<Collider>( otherCacheNode.first).OnTriggerEnter)
                                 {
-                                    onTriggerEnter(otherObject, gameObject);
+                                    onTriggerEnter( otherCacheNode.first, gameObject);
                                 }
                             }
                         }
@@ -114,9 +112,9 @@ void PhysicsSystem::Update(float dt)
                             if (it != cacheNode.triggers.end())
                             {
                                 cacheNode.triggers.erase(it);
-                                for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>(otherObject).OnTriggerExit)
+                                for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>( otherCacheNode.first).OnTriggerExit)
                                 {
-                                    onTriggerExit(otherObject, gameObject);
+                                    onTriggerExit( otherCacheNode.first, gameObject);
                                 }
                             }
                         }
@@ -125,13 +123,13 @@ void PhysicsSystem::Update(float dt)
                     {
                         if (localCollided)
                         {
-                            if (otherCacheNode.collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
+                            if (otherCacheNode.second.collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>( otherCacheNode.first))
                             {
-                                auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
-                                auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
+                                auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>( otherCacheNode.first);
+                                auto& otherTransform = HFEngine::ECS.GetComponent<Transform>( otherCacheNode.first);
                                 float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
                                 otherTransform.TranslateSelf(-(sepVector * massFactor));
-                                otherCacheNode.position = otherTransform.GetWorldPosition();
+                                otherCacheNode.second.position = otherTransform.GetWorldPosition();
                                 sepVector *= 1.0f - massFactor;
                             }
 
