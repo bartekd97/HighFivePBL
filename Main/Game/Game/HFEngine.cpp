@@ -21,6 +21,7 @@
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "GUI/GUIManager.h"
+#include "Scene/SceneManager.h"
 #include "Physics/Physics.h"
 
 namespace HFEngine
@@ -78,13 +79,15 @@ namespace HFEngine
 		ScriptManager::Initialize();
 		EventManager::Initialize();
 		GUIManager::Initialize();
+		SceneManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
-		MainCamera.SetSize((float)RENDER_WIDTH / 100.0f, (float)RENDER_HEIGHT / 100.0f);
+		MainCamera.SetSize((float)RENDER_WIDTH / (float)RENDER_HEIGHT, 1.0f);
+		//MainCamera.SetSize((float)RENDER_WIDTH / 100.0f, (float)RENDER_HEIGHT / 100.0f);
 		//MainCamera.SetScale(0.015625f); // 1/64
 		//MainCamera.SetScale(0.03125f); // 1/32
 		//MainCamera.SetScale(0.0625f); // 1/16
-		MainCamera.SetScale(1.75f);
+		//MainCamera.SetScale(1.75f);
 
 		ECS.Init();
 
@@ -226,6 +229,9 @@ namespace HFEngine
 /*
 	=================== FRAME START ====================
 
+	      | <-- Send General::FRAME_START event
+		  |
+		  \/
 	--------------
 	| Update GUI |
 	--------------
@@ -274,6 +280,8 @@ namespace HFEngine
 	void ProcessGameFrame(float dt)
 	{
 		CURRENT_FRAME_NUMBER++;
+
+		EventManager::FireEvent(Events::General::FRAME_START);
 
 		GUIManager::Update();
 

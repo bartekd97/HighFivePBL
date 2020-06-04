@@ -24,6 +24,8 @@ public:
 
 	bool IsEnabledGameObject(GameObject gameObject);
 
+	bool IsValidGameObject(GameObject gameObject);
+
 	const char* GetNameGameObject(GameObject gameObject);
 
 	void SetNameGameObject(GameObject gameObject, std::string name);
