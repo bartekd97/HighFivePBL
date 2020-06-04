@@ -298,5 +298,9 @@ void RenderPipeline::Render()
 		PrimitiveRenderer::DrawLines();
 		PrimitiveRenderer::DrawStickyPoints();
 	}
+	else
+	{
+		PrimitiveRenderer::RejectLines();
+	}
 #endif //  HF_DEBUG_RENDER
 }
