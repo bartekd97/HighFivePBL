@@ -70,6 +70,8 @@
     <ClCompile Include="MapGenerator\MapSetuper.cpp" />
     <ClCompile Include="Utility\TimerAnimator.cpp" />
     <ClCompile Include="Audio\AudioController.cpp" />
+    <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
+    <ClCompile Include="Utility\TaskPool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -203,6 +205,8 @@
     <ClInclude Include="Utility\TimerAnimator.h" />
     <ClInclude Include="Utility\Pathfinding.h" />
     <ClInclude Include="Audio\AudioController.h" />
+    <ClInclude Include="ECS\Components\CellPathfinder.h" />
+    <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

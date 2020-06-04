@@ -36,7 +36,6 @@ const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 void ReportGameObjects(float dt);
-void doCameraMovement(GameObject cameraObject, float dt);
 
 int main()
 {
@@ -84,8 +83,6 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
-		//if (InputManager::GetKeyDown(GLFW_KEY_O)) HFEngine::ECS.DestroyGameObject(testCircleObject);//HFEngine::ECS.SetEnabledGameObject(testCircleObject, false);
-		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);
 
@@ -118,39 +115,4 @@ void ReportGameObjects(float dt)
 		accumulator = 0.0f;
 		frames = 0;
 	}
-}
-
-void doCameraMovement(GameObject cameraObject, float dt)
-{
-	const float moveSpeed = 25.0f;
-	const float rotateSpeed = 90.0f;
-	Transform& trans = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-
-	if (InputManager::GetKeyStatus(GLFW_KEY_W))
-		trans.TranslateSelf(moveSpeed * dt, trans.GetFront());
-	if (InputManager::GetKeyStatus(GLFW_KEY_S))
-		trans.TranslateSelf(moveSpeed * dt, -trans.GetFront());
-	if (InputManager::GetKeyStatus(GLFW_KEY_A))
-		trans.TranslateSelf(moveSpeed * dt, -trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_D))
-		trans.TranslateSelf(moveSpeed * dt, trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_SPACE))
-		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, 1, 0));
-	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT_SHIFT))
-		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, -1, 0));
-
-	if (InputManager::GetKeyStatus(GLFW_KEY_UP))
-		trans.RotateSelf(rotateSpeed * dt, trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_DOWN))
-		trans.RotateSelf(rotateSpeed * dt, -trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT))
-		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, 1, 0));
-	if (InputManager::GetKeyStatus(GLFW_KEY_RIGHT))
-		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, -1, 0));
-	/*
-	if (input.getKeyStatus(GLFW_KEY_PAGE_UP))
-		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, 1));
-	if (input.getKeyStatus(GLFW_KEY_PAGE_DOWN))
-		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, -1));
-		*/
 }

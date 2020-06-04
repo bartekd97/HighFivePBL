@@ -20,12 +20,12 @@ public:
 		bool isAvailable = false;
 		PathNode* cameFromNode;
 
-		void CalculateFCost()
+		inline void CalculateFCost()
 		{
 			fCost = gCost + hCost;
 		}
 
-		bool operator==(const PathNode& q)
+		inline bool operator==(const PathNode& q)
 		{
 			return (index == q.index);
 		}
@@ -47,7 +47,7 @@ private:
 		for (auto& col : grid) col.resize(height);
 	}
 
-	PathNode* FindClosestNode(float xPosition, float yPosition)
+	inline PathNode* FindClosestNode(float xPosition, float yPosition)
 	{
 		glm::vec2 objectPosition = glm::vec2(xPosition, yPosition);
 		PathNode* closestNode = NULL;
@@ -105,7 +105,7 @@ private:
 		return closestNode;
 	}
 
-	void GetNeighboursList(PathNode& currentNode, std::vector<PathNode*>& list)
+	inline void GetNeighboursList(PathNode& currentNode, std::vector<PathNode*>& list)
 	{
 		if (currentNode.index.x - 1 >= 0)
 		{
@@ -129,7 +129,7 @@ private:
 			list.push_back(&grid[currentNode.index.x][currentNode.index.y - 1]);
 	}
 
-	std::deque<glm::vec3> CalculatePath(PathNode* endNode, glm::vec3 cellPos)
+	inline std::deque<glm::vec3> CalculatePath(PathNode* endNode, glm::vec3 cellPos)
 	{
 		std::deque<glm::vec3> path;
 		path.push_back(glm::vec3(endNode->position.x + cellPos.x, 0.0f, endNode->position.y + cellPos.z));
@@ -146,7 +146,7 @@ private:
 		return path;
 	}
 
-	int CalculateDistanceCost(PathNode* a, PathNode* b)
+	inline int CalculateDistanceCost(PathNode* a, PathNode* b)
 	{
 		int xDistance = abs(a->index.x - b->index.x);
 		int yDistance = abs(a->index.y - b->index.y);
@@ -154,7 +154,7 @@ private:
 		return MOVE_DIAGONAL_COST * glm::min(xDistance, yDistance) + MOVE_STRAIGHT_COST * remaining;
 	}
 
-	PathNode* GetLowestFCostNode(tsl::robin_set<PathNode*>& pathNodeList)
+	inline PathNode* GetLowestFCostNode(tsl::robin_set<PathNode*>& pathNodeList)
 	{
 		//std::list<PathNode>::iterator it = pathNodeList->begin();
 
@@ -186,7 +186,7 @@ public:
 		return grid[x][y];
 	}
 
-	std::deque<glm::vec3> FindPath(glm::vec3 startPos, glm::vec3 endPos, glm::vec3 cellPos)
+	inline std::deque<glm::vec3> FindPath(glm::vec3 startPos, glm::vec3 endPos, glm::vec3 cellPos)
 	{
 		tsl::robin_set<PathNode*> openList;
 		tsl::robin_set<PathNode*> closedList;
@@ -248,7 +248,5 @@ public:
 
 		return path;
 	}
-
-
 
 };

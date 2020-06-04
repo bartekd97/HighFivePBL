@@ -7,13 +7,15 @@
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/MapLayoutComponents.h"
+#include "ECS/Components/CellPathfinder.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Rendering/PrimitiveRenderer.h"
-#include "Utility/Pathfinding.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
+#define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
+#define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
 class EnemyController : public Script
 {
@@ -25,10 +27,12 @@ private: // variables
 
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
-	float rotateSpeedSmoothing = 1.0f * M_PI;
+	float rotateSpeedSmoothing = 2.0f * M_PI;
 
 	std::deque<glm::vec3> targetPath;
-	float nextPointMinDistance2 = 1.5f;
+	float nextPointMinDistance2 = 2.0f;
+
+	int PathUpdateFrameMod = 4; // every 4rd frame queue pathfinding
 
 	GameObject playerObject;
 	GameObject cellObject;
@@ -43,6 +47,10 @@ public:
 
 	void Start()
 	{
+		if (!HFEngine::ECS.SearchComponent<CellPathfinder>(GetGameObject()))
+			HFEngine::ECS.AddComponent<CellPathfinder>(GetGameObject(), {});
+		GetPathfinder().onPathReady = PathReadyMethodPointer(EnemyController::OnNewPathToPlayer);
+
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("move"); // TODO: idle
@@ -52,23 +60,28 @@ public:
 	}
 
 
-	float pathdt = 0.0f;
+	bool CanQueuePathThisFrame()
+	{
+		unsigned long long num = GetGameObject() + HFEngine::CURRENT_FRAME_NUMBER;
+		return num % PathUpdateFrameMod == 0;
+	}
+
+	//float pathdt = 0.0f;
 	void Update(float dt)
 	{
 		auto& transform = GetTransform();
+		auto& rigidBody = GetRigidBody();
+		auto& pathfinder = GetPathfinder();
 
 		// update test path
+		if (CanQueuePathThisFrame())
 		{
-			pathdt += dt;
-			if (pathdt >= 1.0f)
-			{
-				glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition();
-				if (glm::distance(playerPos, transform.GetWorldPosition()) < 30.0f)
-					CalculatePathToPlayer(playerPos);
-
-				pathdt -= 1.0f;
-			}
+			glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
+			if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
+				&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f)
+				pathfinder.QueuePath(playerPos);
 		}
+
 
 		auto targetPoint = GetTargetPoint();
 		if (targetPoint.has_value())
@@ -98,49 +111,29 @@ public:
 
 		auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
 		if (currentMoveSpeed > 0.01f)
-			transform.TranslateSelf(moveBy);
+			rigidBody.Move(transform.GetPosition() + moveBy);
 	}
 
 
 
-
-
-	void CalculatePathToPlayer(glm::vec3& playerPos) // in world space
+	void OnNewPathToPlayer(const std::deque<glm::vec3>& path)
 	{
-		auto& transform = GetTransform();
-		glm::vec3 myPos = transform.GetWorldPosition(); // in world space
-		glm::vec3 cellPos = HFEngine::ECS.GetComponent<Transform>(cellObject).GetWorldPosition(); // in world space
-		
-		MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cellObject);
-		std::shared_ptr<PathfindingGrid> grid = cellInfo.PathFindingGrid;
-
-		LogInfo("CalculatePathToPlayer");
-		// uncomment to clear current path
 		targetPath.clear();
-		// and assign points for new path from myPos to playerPos with targetPath.push_back();
+		for (auto& point : path)
+			targetPath.push_back(point);
 
-		// CALCULATE PATH HERE
-		LogInfo("EnemyPos: {}", myPos - cellPos);
-		LogInfo("PlayerPos: {}", playerPos - cellPos);
+		if (targetPath.size() > 0)
+			targetPath.pop_front(); // get rid of first point cuz its may be too near
 
-		targetPath = grid->FindPath(myPos, playerPos, cellPos);
-		LogInfo("path size: {}", targetPath.size());
-
-
+		//LogInfo("EnemyController::OnNewPathToPlayer(): Path size: {}", targetPath.size());
 	}
-
-
-
-
-
-
 
 
 
 	void LateUpdate(float dt)
 	{
 #ifdef HF_DEBUG_RENDER
-		glm::vec3 last = GetTransform().GetWorldPosition();
+		glm::vec3 last = GetTransform().GetPosition();
 		for (auto p : targetPath)
 		{
 			PrimitiveRenderer::DrawLine(last, p);
@@ -154,11 +147,11 @@ public:
 	{
 		auto& transform = GetTransform();
 		while (targetPath.size() > 1
-			&& glm::distance2(targetPath[0], transform.GetWorldPosition()) >
-			glm::distance2(targetPath[1], transform.GetWorldPosition()))
+			&& glm::distance2(targetPath[0], transform.GetPosition()) >
+			glm::distance2(targetPath[1], transform.GetPosition()))
 			targetPath.pop_front();
 		while (targetPath.size() > 0
-			&& glm::distance2(targetPath.front(), transform.GetWorldPosition()) < nextPointMinDistance2)
+			&& glm::distance2(targetPath.front(), transform.GetPosition()) < nextPointMinDistance2)
 			targetPath.pop_front();
 
 		if (targetPath.size() == 0)
@@ -171,8 +164,8 @@ public:
 	{
 		auto& transform = GetTransform();
 
-		glm::vec3 direction = glm::normalize(point - transform.GetWorldPosition());
-		glm::vec3 front3 = transform.GetWorldFront();
+		glm::vec3 direction = glm::normalize(point - transform.GetPosition());
+		glm::vec3 front3 = transform.GetFront();
 		float diff = glm::orientedAngle(
 			glm::normalize(glm::vec2(direction.x, direction.z)),
 			glm::normalize(glm::vec2(front3.x, front3.z))
@@ -184,4 +177,6 @@ public:
 
 
 #undef GetTransform()
+#undef GetPathfinder()
 #undef GetAnimator()
+#undef GetRigidBody()

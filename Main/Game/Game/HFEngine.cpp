@@ -109,6 +109,7 @@ namespace HFEngine
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<ScriptContainer>();
+		ECS.RegisterComponent<CellPathfinder>();
 		// map layout components
 		ECS.RegisterComponent<MapCell>();
 		ECS.RegisterComponent<CellGate>();
@@ -186,6 +187,13 @@ namespace HFEngine
 			Signature signature;
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
+		}
+		auto cellPathfinderSystem = ECS.RegisterSystem<CellPathfinderSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<CellChild>());
+			signature.set(ECS.GetComponentType<CellPathfinder>());
+			ECS.SetSystemSignature<CellPathfinderSystem>(signature);
 		}
 
 
