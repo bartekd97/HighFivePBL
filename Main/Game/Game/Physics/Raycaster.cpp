@@ -46,7 +46,7 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
     {
         if (dynamicChecks >= maxChecks) break;
         auto& node = Physics::cacheNodes[gameObjectPair.second];
-        if (!node.active) continue;
+        if (node.state != CacheNode::STATE::ACTIVE) continue;
 
         if (node.collider.shape == Collider::ColliderShapes::BOX)
         {
@@ -81,7 +81,7 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
         if ((hits.size() - dynamicChecks) >= maxChecks) break;
         //LogInfo("xD {}", gameObjectPair.first);
         auto& node = Physics::cacheNodes[gameObjectPair.second];
-        if (!node.active) continue;
+        if (node.state != CacheNode::STATE::ACTIVE) continue;
 
         if (node.collider.shape == Collider::ColliderShapes::BOX)
         {
@@ -271,19 +271,21 @@ void Raycaster::RefreshStaticGameObjects(glm::vec3& position, glm::vec3& directi
 
     glm::vec3 tmpPos, tmpCheck;
     float tmpDistance;
-    for (auto& node : Physics::cacheNodes)
+    for (int i = 0; i <= Physics::maxGameObject; i++)
     {
-        if (node.first == ignoredGameObject) continue;
-        if (node.second.collider.type == Collider::ColliderTypes::TRIGGER || node.second.collider.shape == Collider::ColliderShapes::GRAVITY || node.second.hasRigidBody) continue;
+        if (i == ignoredGameObject) continue;
+        auto& node = Physics::cacheNodes[i];
+        if (node.state != CacheNode::STATE::ACTIVE) continue;
+        if (node.collider.type == Collider::ColliderTypes::TRIGGER || node.collider.shape == Collider::ColliderShapes::GRAVITY || node.hasRigidBody) continue;
 
-        tmpPos = node.second.position - position;
+        tmpPos = node.position - position;
         tmpCheck = tmpPos * direction;
         if (tmpCheck.x >= 0 || tmpCheck.z >= 0) // TODO: ?
         {
             tmpDistance = (tmpPos.x * tmpPos.x) + (tmpPos.z * tmpPos.z);
             if (tmpDistance <= maxDistanceSquared)
             {
-                staticGameObjects.push_back(std::make_pair(tmpDistance, node.first));
+                staticGameObjects.push_back(std::make_pair(tmpDistance, i));
             }
         }
     }
@@ -303,13 +305,12 @@ void Raycaster::RefreshDynamicGameObjects(glm::vec3& position, glm::vec3& direct
         if (gameObject == ignoredGameObject) continue;
         if (!HFEngine::ECS.SearchComponent<Collider>(gameObject)) continue;
 
-        auto it = Physics::cacheNodes.find(gameObject);
-        if (it == Physics::cacheNodes.end()) continue; // TODO: mo¿e jednak raw informacje zamiast cache? ma³o ich w sumie
-        auto& node = *it;
+        auto& node = Physics::cacheNodes[gameObject];
+        if (node.state != CacheNode::STATE::ACTIVE) continue;
 
-        if (node.second.collider.type == Collider::ColliderTypes::TRIGGER || node.second.collider.shape == Collider::ColliderShapes::GRAVITY) continue;
+        if (node.collider.type == Collider::ColliderTypes::TRIGGER || node.collider.shape == Collider::ColliderShapes::GRAVITY) continue;
 
-        tmpPos = node.second.position - position;
+        tmpPos = node.position - position;
         tmpCheck = tmpPos * direction;
         if (tmpCheck.x >= 0 || tmpCheck.z >= 0) // TODO: ?
         {

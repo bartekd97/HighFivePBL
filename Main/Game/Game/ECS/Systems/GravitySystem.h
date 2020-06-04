@@ -11,6 +11,7 @@
 class GravitySystem : public System, public ISystemUpdate
 {
 public:
+	void Init() override;
 	void Update(float dt) override;
 	void SetCollector(std::shared_ptr<MapCellCollectorSystem> mapCellCollectorSystem);
 private:
@@ -20,6 +21,7 @@ private:
 	GameObject GetBridge(GameObject gameObject, int closestCell);
 	float GetBridgeLevel(glm::vec3& position, GameObject bridge);
 
+	float minimalMovement;
 	std::vector<std::pair<glm::vec3, MapCell>> cells;
 	std::shared_ptr<MapCellCollectorSystem> mapCellCollectorSystem;
 	CellMeshConfig config;

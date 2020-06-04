@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include "CacheNode.h"
 #include "../HFEngine.h"
 #include "RaycastHit.h"
@@ -13,7 +15,8 @@ namespace Physics
 	extern const float step;
 	extern const int maxSteps;
 
-	extern std::unordered_map<GameObject, CacheNode> cacheNodes; // TODO: check if there is if !active in all places or make smth like filtered iterator
+	extern std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
+	extern int maxGameObject;
 	extern std::shared_ptr<System> rigidBodyCollector;
 
 	void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector);

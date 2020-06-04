@@ -6,8 +6,15 @@
 
 struct CacheNode
 {
-	CacheNode() {}
-	CacheNode(Transform& transform, const Collider& collider) : position(transform.GetWorldPosition()), rotation(transform.GetWorldRotation()), collider(collider), lastFrameUpdate(transform.LastFrameUpdate())
+	const float GRID_SIZE = 25.0f;
+	enum class STATE
+	{
+		ACTIVE,
+		INACTIVE,
+		REMOVED
+	};
+
+	CacheNode()
 	{
 	}
 
@@ -35,6 +42,25 @@ struct CacheNode
 		}
 		boxMinMax[0] = min;
 		boxMinMax[1] = max;
+		maxSide = std::max(boxCollider.width, boxCollider.height);
+	}
+
+	void CalculateGrid()
+	{
+		if (collider.shape == Collider::ColliderShapes::BOX)
+		{
+			gridMinX = boxMinMax[0].x / GRID_SIZE;
+			gridMinY = boxMinMax[0].y / GRID_SIZE;
+			gridMaxX = std::ceil(boxMinMax[1].x / GRID_SIZE);
+			gridMaxY = std::ceil(boxMinMax[1].y / GRID_SIZE);
+		}
+		else if (collider.shape == Collider::ColliderShapes::CIRCLE)
+		{
+			gridMinX = (position.x - circleCollider.radius) / GRID_SIZE;
+			gridMinY = (position.z - circleCollider.radius) / GRID_SIZE;
+			gridMaxX = (position.x + circleCollider.radius) / GRID_SIZE;
+			gridMaxY = (position.z + circleCollider.radius) / GRID_SIZE;
+		}
 	}
 
 	glm::vec3 position;
@@ -44,12 +70,17 @@ struct CacheNode
 	BoxCollider boxCollider;
 	glm::vec2 boxRealPoints[4];
 	glm::vec2 boxMinMax[2];
+	float maxSide;
 
 	CircleCollider circleCollider;
 	tsl::robin_set<GameObject> triggers;
 
 	bool hasRigidBody = false;
-	bool active;
+	STATE state = STATE::REMOVED;
 
 	float lastFrameUpdate;
+	int gridMinX;
+	int gridMinY;
+	int gridMaxX;
+	int gridMaxY;
 };

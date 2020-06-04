@@ -5,7 +5,8 @@ namespace Physics
 	const float step = 0.15f;
 	const int maxSteps = 20;
 
-	std::unordered_map<GameObject, CacheNode> cacheNodes;
+    std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
+    int maxGameObject = -1;
     std::shared_ptr<System> rigidBodyCollector;
 
 
@@ -18,54 +19,58 @@ namespace Physics
 	{
         if (disableOthers)
         {
-            for (auto& node : cacheNodes)
+            for (int i = 0; i <= maxGameObject; i++)
             {
-                node.second.active = false;
+                if (cacheNodes[i].state == CacheNode::STATE::ACTIVE) cacheNodes[i].state = CacheNode::STATE::INACTIVE;
             }
+            maxGameObject = -1;
         }
 
 		for (const auto& gameObject : gameObjects)
 		{
-			auto it = cacheNodes.find(gameObject);
-			if (it == cacheNodes.end())
+            if ((int)gameObject > maxGameObject) maxGameObject = gameObject;
+            auto& cacheNode = cacheNodes[gameObject];
+			if (cacheNode.state == CacheNode::STATE::REMOVED)
 			{
 				auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 				auto const& collider = HFEngine::ECS.GetComponent<Collider>(gameObject);
-				cacheNodes[gameObject] = CacheNode(transform, collider);
-                if (HFEngine::ECS.SearchComponent<RigidBody>(gameObject))
-                {
-                    cacheNodes[gameObject].hasRigidBody = true;
-                }
+                cacheNode.position = transform.GetWorldPosition();
+                cacheNode.rotation = transform.GetWorldRotation();
+                cacheNode.collider = collider;
+                cacheNode.lastFrameUpdate = transform.LastFrameUpdate();
+                cacheNode.hasRigidBody = HFEngine::ECS.SearchComponent<RigidBody>(gameObject);
 				if (collider.shape == Collider::ColliderShapes::BOX)
 				{
-					cacheNodes[gameObject].boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
-                    cacheNodes[gameObject].CalculateBoxPoints();
+                    cacheNode.boxCollider = HFEngine::ECS.GetComponent<BoxCollider>(gameObject);
+                    cacheNode.CalculateBoxPoints();
 				}
 				else if (collider.shape == Collider::ColliderShapes::CIRCLE)
 				{
-					cacheNodes[gameObject].circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
+                    cacheNode.circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
 				}
+                cacheNode.CalculateGrid();
 			}
 			else
 			{
-                it->second.active = true;
-				if (!it->second.collider.frozen)
+				if (!cacheNode.collider.frozen)
 				{
 					auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
-                    if (transform.LastFrameUpdate() != it->second.lastFrameUpdate)
+                    if (transform.LastFrameUpdate() != cacheNode.lastFrameUpdate)
                     {
-                        it->second.position = transform.GetWorldPosition();
-                        it->second.rotation = transform.GetWorldRotation();
-                        cacheNodes[gameObject].CalculateBoxPoints();
+                        cacheNode.position = transform.GetWorldPosition();
+                        cacheNode.rotation = transform.GetWorldRotation();
+                        cacheNode.CalculateBoxPoints();
+                        cacheNode.CalculateGrid();
                     }
 				}
 			}
+            cacheNode.state = CacheNode::STATE::ACTIVE;
 		}
 	}
 
 	void RemoveNode(GameObject gameObject)
 	{
-		cacheNodes.erase(gameObject);
+        cacheNodes[gameObject].state = CacheNode::STATE::REMOVED;
 	}
 
     bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const CircleCollider& c2, glm::vec3& sepVector)
@@ -179,8 +184,10 @@ namespace Physics
             boxPoints[i].x = boxBPoint.x + pos1.x;
             boxPoints[i].y = boxBPoint.z + pos1.z;
         }
-        auto& box2Points = cacheNodes[box2GameObject].boxRealPoints;
-        auto& pos2 = cacheNodes[box2GameObject].position;
+
+        auto& box2CacheNode = cacheNodes[box2GameObject];
+        auto& box2Points = box2CacheNode.boxRealPoints;
+        auto& pos2 = box2CacheNode.position;
 
         for (int i = 0; i < 4; i++)
         {
@@ -335,22 +342,24 @@ namespace Physics
     bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject)
     {
         glm::vec3 sepVector;
-        for (auto& node : cacheNodes)
+        for (int i = 0; i <= maxGameObject; i++)
         {
-            if (node.first == ignoredGameObject || !node.second.active || node.second.collider.type == Collider::ColliderTypes::TRIGGER) continue;
-            if (node.second.collider.shape == Collider::ColliderShapes::BOX)
+            auto& node = cacheNodes[i];
+            if (node.state != CacheNode::STATE::ACTIVE) continue;
+            if (i == ignoredGameObject || node.collider.type == Collider::ColliderTypes::TRIGGER) continue;
+            if (node.collider.shape == Collider::ColliderShapes::BOX)
             {
-                if (DetectCollision(position, rotation, boxCollider, node.first))
+                if (DetectCollision(position, rotation, boxCollider, i))
                 {
-                    out.hittedObject = node.first;
+                    out.hittedObject = i;
                     return true;
                 }
             }
-            else if (node.second.collider.shape == Collider::ColliderShapes::CIRCLE)
+            else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                if (DetectCollision(node.second.position, node.second.circleCollider, position, rotation, boxCollider, sepVector))
+                if (DetectCollision(node.position, node.circleCollider, position, rotation, boxCollider, sepVector))
                 {
-                    out.hittedObject = node.first;
+                    out.hittedObject = i;
                     return true;
                 }
             }
@@ -362,22 +371,24 @@ namespace Physics
     bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject) // TODO: przy jednym odpaleniu ³apa³o ca³y czas jakiœ gameObject koñcowy
     {
         glm::vec3 sepVector;
-        for (auto& node : cacheNodes)
+        for (int i = 0; i <= maxGameObject; i++)
         {
-            if (node.first == ignoredGameObject || !node.second.active || node.second.collider.type == Collider::ColliderTypes::TRIGGER) continue;
-            if (node.second.collider.shape == Collider::ColliderShapes::BOX)
+            auto& node = cacheNodes[i];
+            if (node.state != CacheNode::STATE::ACTIVE) continue;
+            if (i == ignoredGameObject || node.collider.type == Collider::ColliderTypes::TRIGGER) continue;
+            if (node.collider.shape == Collider::ColliderShapes::BOX)
             {
-                if (DetectCollision(position, circleCollider, node.second.position, node.second.rotation, node.second.boxCollider, sepVector))
+                if (DetectCollision(position, circleCollider, node.position, node.rotation, node.boxCollider, sepVector))
                 {
-                    out.hittedObject = node.first;
+                    out.hittedObject = i;
                     return true;
                 }
             }
-            else if (node.second.collider.shape == Collider::ColliderShapes::CIRCLE)
+            else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
-                if (DetectCollision(position, circleCollider, node.second.position, node.second.circleCollider, sepVector))
+                if (DetectCollision(position, circleCollider, node.position, node.circleCollider, sepVector))
                 {
-                    out.hittedObject = node.first;
+                    out.hittedObject = i;
                     return true;
                 }
             }
@@ -400,17 +411,17 @@ namespace Physics
 
         for (auto& node : cacheNodes)
         {
-            if (node.first == ignoredGameObject) continue;
+            if (node.gameObject == ignoredGameObject) continue;
 
-            distVec = position - node.second.position;
+            distVec = position - node.position;
             if (VECLEN(distVec) > maxDistance) continue;
 
-            if (node.second.collider.shape == Collider::ColliderShapes::BOX)
+            if (node.collider.shape == Collider::ColliderShapes::BOX)
             {
-                tmin = (node.second.boxMinMax[sign[0]].x - position.x) * invDirection.x;
-                tmax = (node.second.boxMinMax[1 - sign[0]].x - position.x) * invDirection.x;
-                tymin = (node.second.boxMinMax[sign[1]].y - position.z) * invDirection.y;
-                tymax = (node.second.boxMinMax[1 - sign[1]].y - position.z) * invDirection.y;
+                tmin = (node.boxMinMax[sign[0]].x - position.x) * invDirection.x;
+                tmax = (node.boxMinMax[1 - sign[0]].x - position.x) * invDirection.x;
+                tymin = (node.boxMinMax[sign[1]].y - position.z) * invDirection.y;
+                tymax = (node.boxMinMax[1 - sign[1]].y - position.z) * invDirection.y;
 
                 if ((tmin > tymax) || (tymin > tmax))
                     continue;
@@ -422,11 +433,11 @@ namespace Physics
                 out.hitPosition = glm::vec3(tymin, 0.0f, tymax);
                 distVec = out.hitPosition - position;
                 out.distance = VECLEN(distVec);
-                out.hittedObject = node.first;
+                out.hittedObject = node.gameObject;
 
                 return true;
             }
-            else if (node.second.collider.shape == Collider::ColliderShapes::CIRCLE)
+            else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
             {
 
             }
@@ -444,14 +455,14 @@ namespace Physics
         {
             for (auto& node : cacheNodes)
             {
-                if (node.first == ignoredGameObject) continue;
+                if (node.gameObject == ignoredGameObject) continue;
 
-                if (node.second.collider.shape == Collider::ColliderShapes::BOX)
+                if (node.collider.shape == Collider::ColliderShapes::BOX)
                 {
-                    if (DetectCollision(currentPosition, node.second.position, node.second.rotation, node.second.boxCollider, sepVector))
+                    if (DetectCollision(currentPosition, node.position, node.rotation, node.boxCollider, sepVector))
                     {
                         out.hitPosition = currentPosition;
-                        out.hittedObject = node.first;
+                        out.hittedObject = node.gameObject;
                         out.distance = distance;
                         return true;
                     }
@@ -468,29 +479,30 @@ namespace Physics
 
     bool Raycast(glm::vec3& position, glm::vec3& direction, RaycastHit& out, GameObject ignoredGameObject, float maxDistance)
     {
-        std::vector<std::pair<float, GameObject>> objects;
+        /*std::vector<std::pair<float, GameObject>> objects;
         glm::vec3 tmpPos;
         glm::vec3 tmpCheck;
         float tmpDistance;
         float maxDistanceSquared = maxDistance * maxDistance;
         for (auto& node : cacheNodes)
         {
-            if (node.first == ignoredGameObject) continue;
+            if (node.gameObject == ignoredGameObject) continue;
 
-            tmpPos = node.second.position - position;
+            tmpPos = node.position - position;
             tmpCheck = tmpPos * direction;
             if (tmpCheck.x >= 0 && tmpCheck.z >= 0)
             {
                 tmpDistance = (tmpPos.x * tmpPos.x) + (tmpPos.z * tmpPos.z);
                 if (tmpDistance <= maxDistanceSquared)
                 {
-                    objects.push_back(std::make_pair(tmpDistance, node.first));
+                    objects.push_back(std::make_pair(tmpDistance, node.gameObject));
                 }
             }
         }
         std::sort(objects.begin(), objects.end(), [](const std::pair<float, GameObject>& a, const std::pair<float, GameObject>& b) {
             return a.first < b.first;
         });
+        return false;*/
         return false;
     }
 }

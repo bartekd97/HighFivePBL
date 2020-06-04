@@ -14,6 +14,7 @@ class Transform
 private:
 	GameObject gameObject;
 	FrameCounter lastFrameUpdate = 0;
+	FrameCounter lastGravityUpdate = 0;
 	bool needWorldDecompose = true;
 
 public:
@@ -23,6 +24,8 @@ public:
 #define CheckWorld() if (needWorldDecompose) DecomposeWorldTransform()
 
 	inline FrameCounter LastFrameUpdate() { return lastFrameUpdate; }
+	inline FrameCounter LastGravityUpdate() { return lastGravityUpdate; }
+	inline void MarkGravityUpdate() { lastGravityUpdate = lastFrameUpdate; }
 
 	inline glm::vec3 GetPosition() { return this->position; }
 	inline glm::quat GetRotation() { return this->rotation; }
