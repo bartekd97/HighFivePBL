@@ -113,5 +113,6 @@ void SkinAnimatorSystem::Update(float dt)
 		workerQueue.push(gameObject);
 	}
 
-	skinAimatorWorker.FillWorkers([this, dt]() {this->WorkQueue(dt);});
+	skinAimatorWorker.FillWorkers(std::bind(&SkinAnimatorSystem::WorkQueue, this, dt));
+	//skinAimatorWorker.FillWorkers([this, dt]() {this->WorkQueue(dt);});
 }

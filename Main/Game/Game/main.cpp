@@ -30,11 +30,12 @@
 
 #include "GUI/Button.h"
 
+#include "Audio/AudioController.h""
+
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 void ReportGameObjects(float dt);
-void doCameraMovement(GameObject cameraObject, float dt);
 
 int main()
 {
@@ -67,14 +68,21 @@ int main()
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
+	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
+
+	AudioController* ac = new AudioController();
+	ac->init_al();
+	ac->generateBuffers();
+	ac->loadSound(pathToFile);
+	//ac->setListener();
+	ac->playBackgroundMusic();
+
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
-		//if (InputManager::GetKeyDown(GLFW_KEY_O)) HFEngine::ECS.DestroyGameObject(testCircleObject);//HFEngine::ECS.SetEnabledGameObject(testCircleObject, false);
-		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);
 
@@ -87,7 +95,8 @@ int main()
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
-
+	
+	ac->exit_al();
 	HFEngine::Terminate();
 
 	return 0;
@@ -106,39 +115,4 @@ void ReportGameObjects(float dt)
 		accumulator = 0.0f;
 		frames = 0;
 	}
-}
-
-void doCameraMovement(GameObject cameraObject, float dt)
-{
-	const float moveSpeed = 25.0f;
-	const float rotateSpeed = 90.0f;
-	Transform& trans = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-
-	if (InputManager::GetKeyStatus(GLFW_KEY_W))
-		trans.TranslateSelf(moveSpeed * dt, trans.GetFront());
-	if (InputManager::GetKeyStatus(GLFW_KEY_S))
-		trans.TranslateSelf(moveSpeed * dt, -trans.GetFront());
-	if (InputManager::GetKeyStatus(GLFW_KEY_A))
-		trans.TranslateSelf(moveSpeed * dt, -trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_D))
-		trans.TranslateSelf(moveSpeed * dt, trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_SPACE))
-		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, 1, 0));
-	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT_SHIFT))
-		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, -1, 0));
-
-	if (InputManager::GetKeyStatus(GLFW_KEY_UP))
-		trans.RotateSelf(rotateSpeed * dt, trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_DOWN))
-		trans.RotateSelf(rotateSpeed * dt, -trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT))
-		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, 1, 0));
-	if (InputManager::GetKeyStatus(GLFW_KEY_RIGHT))
-		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, -1, 0));
-	/*
-	if (input.getKeyStatus(GLFW_KEY_PAGE_UP))
-		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, 1));
-	if (input.getKeyStatus(GLFW_KEY_PAGE_DOWN))
-		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, -1));
-		*/
 }

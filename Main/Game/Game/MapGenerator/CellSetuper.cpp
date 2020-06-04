@@ -135,7 +135,7 @@ void CellSetuper::Setup()
 		std::vector<Zone*> pZones;
 		for (auto& zone : zones) pZones.push_back(&zone);
 
-		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * zonesSum * 0.01f);
+		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * float(zonesSum) * 0.01f);
 		while (enemiesCount > 0 && pZones.size() > 0)
 		{
 			for (auto pZone : pZones)
@@ -263,15 +263,15 @@ void CellSetuper::MakeZones()
 		for (auto p : zone.points)
 		{
 			sum += p;
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 			//PrimitiveRenderer::DrawStickyPoint({ cellPos.x + p.x, 0.0f, cellPos.y + p.y });
-#endif // _DEBUG
+#endif // HF_DEBUG_RENDER
 		}
 		zone.center = sum / float(zone.points.size());
 	}
 
 
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 	std::vector<int> _sizes;
 	for (auto& zone : zones)
 		_sizes.push_back(zone.points.size());
@@ -362,7 +362,9 @@ void CellSetuper::MakePathfindingGrid()
 			node.position = { i - (setupConfig.gridSize / 2), j - (setupConfig.gridSize / 2) };
 			node.index = { i, j };
 			node.isAvailable = true;
-
+			node.gCost = 2147483647;
+			node.CalculateFCost();
+			node.cameFromNode = NULL;
 			// check availability
 			{
 				// check if it isn too far or too near
@@ -386,7 +388,7 @@ void CellSetuper::MakePathfindingGrid()
 	// assign grid to cell
 	cellInfo.PathFindingGrid = grid;
 
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 	for (int i = 0; i < setupConfig.gridSize; i++)
 	{
 		for (int j = 0; j < setupConfig.gridSize; j++)

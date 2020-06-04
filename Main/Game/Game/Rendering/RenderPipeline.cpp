@@ -106,7 +106,7 @@ void RenderPipeline::InitRenderSystems()
 		HFEngine::ECS.SetSystemSignature<ParticleRendererSystem>(signature);
 	}
 
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
 	{
 		Signature signature;
@@ -119,7 +119,7 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<CircleCollider>());
 		HFEngine::ECS.SetSystemSignature<CircleColliderRenderSystem>(signature);
 	}
-#endif //  _DEBUG
+#endif //  HF_DEBUG_RENDER
 }
 
 void RenderPipeline::InitPostprocessingEffects()
@@ -284,7 +284,7 @@ void RenderPipeline::Render()
 	FrameBuffer::BlitColor(PostprocessingSwapBuffers[0], nullptr, 0);
 
 	// debug rendering
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 	static bool debugRendering = false;
 	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
 		debugRendering = !debugRendering;
@@ -298,5 +298,5 @@ void RenderPipeline::Render()
 		PrimitiveRenderer::DrawLines();
 		PrimitiveRenderer::DrawStickyPoints();
 	}
-#endif //  _DEBUG
+#endif //  HF_DEBUG_RENDER
 }

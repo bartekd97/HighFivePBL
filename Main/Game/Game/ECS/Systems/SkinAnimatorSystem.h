@@ -8,7 +8,7 @@
 class SkinAnimatorSystem : public System, public ISystemUpdate
 {
 private:
-	TaskPool<1> skinAimatorWorker;
+	TaskPool<1, ITaskPool::Priority::BELOW_NORMAL> skinAimatorWorker;
 	concurrency::concurrent_queue<GameObject> workerQueue;
 
 	void WorkQueue(float dt);

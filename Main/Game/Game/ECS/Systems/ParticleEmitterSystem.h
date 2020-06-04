@@ -9,7 +9,7 @@
 class ParticleEmitterSystem : public System, public ISystemUpdate, public ISystemPostUpdate
 {
 private:
-	TaskPool<1> particleEmitterWorker; // only 1 thread for particle system is supported DON'T CHANGE IT
+	TaskPool<1, ITaskPool::Priority::BELOW_NORMAL> particleEmitterWorker; // only 1 thread for particle system is supported DON'T CHANGE IT
 	concurrency::concurrent_queue<GameObject> workerUpdateQueue;
 	concurrency::concurrent_queue<GameObject> workerEmitQueue;
 	bool doEmit = false;

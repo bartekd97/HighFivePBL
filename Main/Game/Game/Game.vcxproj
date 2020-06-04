@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;HF_LOGGER;HF_DEBUG_RENDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -72,7 +72,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;HF_LOGGER;HF_DEBUG_RENDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -88,11 +88,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Audio\AudioController.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
     <ClCompile Include="ECS\GameObjectManager.cpp" />
     <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
+    <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
@@ -150,6 +152,7 @@
     <ClCompile Include="Resourcing\TextureManager.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
+    <ClCompile Include="Utility\TaskPool.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
     <ClCompile Include="Utility\TimerAnimator.cpp" />
     <ClCompile Include="Utility\Utility.cpp" />
@@ -158,6 +161,7 @@
     <ClCompile Include="_stb_impl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Audio\AudioController.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
     <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
     <ClInclude Include="Data\Shaders\Vertex\Text.glsl" />
@@ -166,6 +170,7 @@
     <ClInclude Include="ECS\Components.h" />
     <ClInclude Include="ECS\Components\BoneAttacher.h" />
     <ClInclude Include="ECS\Components\BoxCollider.h" />
+    <ClInclude Include="ECS\Components\CellPathfinder.h" />
     <ClInclude Include="ECS\Components\CircleCollider.h" />
     <ClInclude Include="ECS\Components\Collider.h" />
     <ClInclude Include="ECS\Components\CulledRenderer.h" />
@@ -193,6 +198,7 @@
     <ClInclude Include="ECS\SystemRender.h" />
     <ClInclude Include="ECS\Systems.h" />
     <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
+    <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
