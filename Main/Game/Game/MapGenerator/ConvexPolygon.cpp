@@ -1,5 +1,17 @@
+#include <algorithm>
 #include "ConvexPolygon.h"
 #include "Utility/Utility.h"
+
+void ConvexPolygon::CalculatePointAngles()
+{
+    pointAngles.reserve(Points.size());
+    for (auto& p : Points)
+        pointAngles.push_back({ p, glm::atan(p.x, p.y) });
+
+    std::sort(pointAngles.begin(), pointAngles.end(), [](PointAngle& a, PointAngle& b) {
+        return a.angle < b.angle;
+        });
+}
 
 ConvexPolygon ConvexPolygon::CreateCircular(int segments, int precision)
 {
@@ -47,6 +59,8 @@ bool ConvexPolygon::IsPointInside(glm::vec2 point)
     float pos = 0;
     float neg = 0;
 
+    int i, i2;
+    float x1, y1, x2, y2;
     for (int i = 0; i < Points.size(); i++)
     {
         //If point is in the polygon
@@ -54,20 +68,17 @@ bool ConvexPolygon::IsPointInside(glm::vec2 point)
             return true;
 
         //Form a segment between the i'th point
-        auto x1 = Points[i].x;
-        auto y1 = Points[i].y;
+        x1 = Points[i].x;
+        y1 = Points[i].y;
 
         //And the i+1'th, or if i is the last, with the first point
-        auto i2 = i < Points.size() - 1 ? i + 1 : 0;
+        i2 = i < Points.size() - 1 ? i + 1 : 0;
 
-        auto x2 = Points[i2].x;
-        auto y2 = Points[i2].y;
-
-        auto x = point.x;
-        auto y = point.y;
+        x2 = Points[i2].x;
+        y2 = Points[i2].y;
 
         //Compute the cross product
-        auto d = (x - x1) * (y2 - y1) - (y - y1) * (x2 - x1);
+        auto d = (point.x - x1) * (y2 - y1) - (point.y - y1) * (x2 - x1);
 
         if (d > 0) pos++;
         if (d < 0) neg++;
@@ -86,26 +97,26 @@ float ConvexPolygon::GetEdgeCenterRatio(glm::vec2 point, int precision)
     if (!IsPointInside(point))
         return 1.0f;
 
-    if (glm::length(point) < 0.01f)
+    float plen = glm::length(point);
+    if (plen < 0.01f)
         return 0.0f;
 
-    glm::vec2 direction = glm::normalize(point);
-    glm::vec2 edgePoint = point + direction;
-    while (IsPointInside(edgePoint))
-        edgePoint += direction;
+    float angle = glm::atan(point.x, point.y);
 
-    direction *= 0.5f;
-    edgePoint -= direction;
-    for (int j = 0; j < precision; j++)
-    {
-        direction *= 0.5f;
-        if (IsPointInside(edgePoint))
-            edgePoint += direction;
-        else
-            edgePoint -= direction;
-    }
+    glm::vec2 pA = pointAngles[pointAngles.size() - 1].point;
+    glm::vec2 pB = pointAngles[0].point;
+    for (int i = 1; i < pointAngles.size(); i++)
+        if (pointAngles[i - 1].angle <= angle && angle <= pointAngles[i].angle)
+        {
+            pA = pointAngles[i - 1].point;
+            pB = pointAngles[i].point;
+        }
 
-    return glm::length(point) / glm::length(edgePoint);
+
+
+    float edgeDist = Utility::GetDistanceBetweenPointAndSegment(point, pA, pB);
+
+    return plen / (plen + edgeDist);
 }
 
 ConvexPolygon ConvexPolygon::ShellScaledBy(float mult)

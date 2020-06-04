@@ -36,7 +36,7 @@ namespace Utility {
 
 	// Math funkcions
 
-	float GetDistanceBetweenPointAndSegment(glm::vec2 point, glm::vec2 s1, glm::vec2 s2);
+	float GetDistanceBetweenPointAndSegment(glm::vec2& point, glm::vec2& s1, glm::vec2& s2);
 }
 
 

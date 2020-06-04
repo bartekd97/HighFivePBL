@@ -108,7 +108,7 @@ struct CellSetupConfig
     float gridInnerRadius = 6.0f;
     float gridMinRoadDistance = 4.0f;
 
-    float enemiesCountFactor = 1.0f; //2.2f; // how many enemies per 100 points in zone grid
+    float enemiesCountFactor = 2.2f; //2.2f; // how many enemies per 100 points in zone grid
 
     std::shared_ptr<Prefab> mainStatuePrefab;
     std::vector<std::shared_ptr<Prefab>> obstaclePrefabs;

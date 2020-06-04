@@ -135,7 +135,7 @@ void CellSetuper::Setup()
 		std::vector<Zone*> pZones;
 		for (auto& zone : zones) pZones.push_back(&zone);
 
-		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * zonesSum * 0.01f);
+		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * float(zonesSum) * 0.01f);
 		while (enemiesCount > 0 && pZones.size() > 0)
 		{
 			for (auto pZone : pZones)
