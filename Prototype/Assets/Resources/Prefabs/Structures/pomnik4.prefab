@@ -44,7 +44,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3859250235692135035}
-  m_Mesh: {fileID: -5495902117074765545, guid: a2ac5ecffbdc2e14e959c2e7136c1ff7, type: 3}
+  m_Mesh: {fileID: -5495902117074765545, guid: efb0813db0bee6e4db95dc35bb936cde, type: 3}
 --- !u!23 &3292722490401851047
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -110,7 +110,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
-  localScale: {x: 20, y: 20, z: 20}
+  localScale: {x: 3, y: 3, z: 3}
+  fixRotation: 1
   widthBC: 2.5
   heightBC: 2
   length: 0

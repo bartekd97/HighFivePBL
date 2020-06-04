@@ -111,6 +111,7 @@ MonoBehaviour:
   localPosition: {x: 0, y: 0, z: 0}
   localRotation: {x: 0, y: 0, z: 0}
   localScale: {x: 2, y: 2, z: 2}
+  fixRotation: 1
   widthBC: 11
   heightBC: 8
   length: 0
