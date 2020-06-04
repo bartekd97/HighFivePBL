@@ -149,7 +149,8 @@ void ParticleEmitterSystem::Update(float dt)
 		container.business.MakeBusy();
 		workerUpdateQueue.push(gameObject);
 	}
-	particleEmitterWorker.FillWorkers([this, dt]() {this->WorkUpdateQueue(dt);});
+	particleEmitterWorker.FillWorkers(std::bind(&ParticleEmitterSystem::WorkUpdateQueue, this, dt));
+	//particleEmitterWorker.FillWorkers([this, dt]() {this->WorkUpdateQueue(dt);});
 }
 
 void ParticleEmitterSystem::PostUpdate(float dt)
@@ -168,5 +169,6 @@ void ParticleEmitterSystem::PostUpdate(float dt)
 		awaitingEmitters.pop();
 	}
 
-	particleEmitterWorker.FillWorkers([this, dt]() {this->WorkEmitQueue(dt);});
+	particleEmitterWorker.FillWorkers(std::bind(&ParticleEmitterSystem::WorkEmitQueue, this, dt));
+	//particleEmitterWorker.FillWorkers([this, dt]() {this->WorkEmitQueue(dt);});
 }

@@ -100,7 +100,7 @@ std::uint32_t Utility::HashString(char const* s, std::size_t count)
 	return fnv1a_32(s, count);
 }
 
-float Utility::GetDistanceBetweenPointAndSegment(glm::vec2 point, glm::vec2 s1, glm::vec2 s2)
+float Utility::GetDistanceBetweenPointAndSegment(glm::vec2& point, glm::vec2& s1, glm::vec2& s2)
 {
 	float A = point.x - s1.x;
 	float B = point.y - s1.y;

@@ -10,6 +10,7 @@
 #include "Systems/PhysicsSystem.h"
 
 #include "Systems/ParticleEmitterSystem.h"
+#include "Systems/CellPathfinderSystem.h"
 
 #include "Systems/ScriptLateUpdateSystem.h"
 
