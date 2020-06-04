@@ -163,6 +163,7 @@ namespace HFEngine
 			Signature signature;
 			signature.set(ECS.GetComponentType<Transform>());
 			signature.set(ECS.GetComponentType<RigidBody>());
+			signature.set(ECS.GetComponentType<Collider>());
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
 		physicsSystem->SetCollector(colliderCollectorSystem);

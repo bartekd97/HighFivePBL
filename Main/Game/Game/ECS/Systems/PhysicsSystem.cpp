@@ -9,29 +9,25 @@
 
 void PhysicsSystem::Init()
 {
-
+    minimalMovement = 0.01f;
 }
 
-/*
- * -what about transform scale?
- * -replace velocity with toCheck flag?
- */
 void PhysicsSystem::Update(float dt)
 {
     Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects, true);
-    bool collided, localCollided;
+    bool localCollided;
     int steps;
-    float length;
-    glm::vec3 moveStep, tempPosition, sepVector, oldVelocity;
+    float length, distLen;
+    glm::vec3 moveStep, tempPosition, sepVector, oldVelocity, dist;
 	for (auto const& gameObject : gameObjects)
 	{
+        auto& cacheNode = Physics::cacheNodes[gameObject];
 		auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
-		auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
 
 		glm::vec3 displacement;
 		if (rigidBody.moved && !rigidBody.isFalling)
 		{
-			displacement = rigidBody.movePosition - transform.GetWorldPosition();
+			displacement = rigidBody.movePosition - cacheNode.position;
 		}
 		else
 		{
@@ -39,73 +35,66 @@ void PhysicsSystem::Update(float dt)
 		}
         displacement.y = 0.0f;
 
-        if (!HFEngine::ECS.SearchComponent<Collider>(gameObject))
-        {
-            transform.SetPosition(transform.GetWorldPosition() + displacement);
-            continue;
-        }
-
         length = VECLEN(displacement);
 
         steps = std::min(std::max(1, (int)std::round(length / Physics::step)), Physics::maxSteps);
 		moveStep = displacement / (float)steps;
-        tempPosition = transform.GetWorldPosition();
+        tempPosition = cacheNode.position;
         sepVector = glm::vec3(0.0f);
         oldVelocity = rigidBody.velocity;
-
-        auto& cacheNode = Physics::cacheNodes[gameObject];
 
         for (int s = 0; s < steps; s++)
         {
             tempPosition += moveStep;
-            
-            collided = false;
 
             // get gameObjects from colliderCollectingSystem
-            for (auto const& otherObject : colliderCollectorSystem->gameObjects)
+            //for (int i = 0; i <= Physics::maxGameObject; i++)
+            CacheNode* otherCacheNode = Physics::cacheNodes.data();
+            for (int i = 0; i <= Physics::maxGameObject; i++, otherCacheNode++)
             {
-                if (gameObject != otherObject)
+                //auto& otherCacheNode = Physics::cacheNodes[i];
+                if (gameObject != i && otherCacheNode->state == CacheNode::STATE::ACTIVE)
                 {
-                    auto& otherCacheNode = Physics::cacheNodes[otherObject];
-
-                    auto dist = tempPosition - otherCacheNode.position;
-                    float distLen = VECLEN(dist);
+                    if (cacheNode.gridMaxX < otherCacheNode->gridMinX
+                        || cacheNode.gridMinX > otherCacheNode->gridMaxX
+                        || cacheNode.gridMaxY < otherCacheNode->gridMinY
+                        || cacheNode.gridMinY > otherCacheNode->gridMaxY) continue;
+                    dist = tempPosition - otherCacheNode->position;
+                    distLen = VECLEN(dist);
 
                     localCollided = false;
 
-                    if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.collider.shape == Collider::ColliderShapes::CIRCLE)
+                    if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode->collider.shape == Collider::ColliderShapes::CIRCLE)
                     {
-                        if (distLen <= (cacheNode.circleCollider.radius + otherCacheNode.circleCollider.radius))
+                        if (distLen <= (cacheNode.circleCollider.radius + otherCacheNode->circleCollider.radius))
                         {
-                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode.position, otherCacheNode.circleCollider, sepVector))
+                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherCacheNode->position, otherCacheNode->circleCollider, sepVector))
                             {
-                                collided = true;
                                 localCollided = true;
                             }
                         }
-                    } else if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode.collider.shape == Collider::ColliderShapes::BOX)
+                    } else if (cacheNode.collider.shape == Collider::ColliderShapes::CIRCLE && otherCacheNode->collider.shape == Collider::ColliderShapes::BOX)
                     {
-                        if (distLen <= (cacheNode.circleCollider.radius + std::max(otherCacheNode.boxCollider.width, otherCacheNode.boxCollider.height)))
+                        if (distLen <= (cacheNode.circleCollider.radius + otherCacheNode->maxSide))
                         {
-                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, otherObject, sepVector))
+                            if (Physics::DetectCollision(tempPosition, cacheNode.circleCollider, i, sepVector))
                             {
-                                collided = true;
                                 localCollided = true;
                             }
                         }
                     }
 
-                    if (otherCacheNode.collider.type == Collider::ColliderTypes::TRIGGER)
+                    if (otherCacheNode->collider.type == Collider::ColliderTypes::TRIGGER)
                     {
-                        auto it = cacheNode.triggers.find(otherObject);
+                        auto it = cacheNode.triggers.find(i);
                         if (localCollided)
                         {
                             if (it == cacheNode.triggers.end())
                             {
-                                cacheNode.triggers.insert(otherObject);
-                                for (const auto& onTriggerEnter : HFEngine::ECS.GetComponent<Collider>(otherObject).OnTriggerEnter)
+                                cacheNode.triggers.insert(i);
+                                for (const auto& onTriggerEnter : HFEngine::ECS.GetComponent<Collider>(i).OnTriggerEnter)
                                 {
-                                    onTriggerEnter(otherObject, gameObject);
+                                    onTriggerEnter(i, gameObject);
                                 }
                             }
                         }
@@ -114,9 +103,9 @@ void PhysicsSystem::Update(float dt)
                             if (it != cacheNode.triggers.end())
                             {
                                 cacheNode.triggers.erase(it);
-                                for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>(otherObject).OnTriggerExit)
+                                for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>(i).OnTriggerExit)
                                 {
-                                    onTriggerExit(otherObject, gameObject);
+                                    onTriggerExit(i, gameObject);
                                 }
                             }
                         }
@@ -125,13 +114,13 @@ void PhysicsSystem::Update(float dt)
                     {
                         if (localCollided)
                         {
-                            if (otherCacheNode.collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(otherObject))
+                            if (otherCacheNode->collider.type == Collider::ColliderTypes::DYNAMIC && HFEngine::ECS.SearchComponent<RigidBody>(i))
                             {
-                                auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(otherObject);
-                                auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(otherObject);
+                                auto& otherRb = HFEngine::ECS.GetComponent<RigidBody>(i);
+                                auto& otherTransform = HFEngine::ECS.GetComponent<Transform>(i);
                                 float massFactor = rigidBody.mass / (rigidBody.mass + otherRb.mass);
                                 otherTransform.TranslateSelf(-(sepVector * massFactor));
-                                otherCacheNode.position = otherTransform.GetWorldPosition();
+                                otherCacheNode->position = otherTransform.GetWorldPosition();
                                 sepVector *= 1.0f - massFactor;
                             }
 
@@ -141,8 +130,13 @@ void PhysicsSystem::Update(float dt)
                 }
             }
         }
-        transform.TranslateSelf(tempPosition - transform.GetWorldPosition());
-        cacheNode.position = transform.GetWorldPosition();
+        tempPosition -= cacheNode.position;
+        if (VECLEN(tempPosition) >= minimalMovement)
+        {
+            auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+            transform.TranslateSelf(tempPosition);
+            cacheNode.position = transform.GetWorldPosition();
+        }
         rigidBody.moved = false;
 	}
 }

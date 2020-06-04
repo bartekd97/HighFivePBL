@@ -13,6 +13,6 @@ public:
 	void Update(float dt) override;
 	void SetCollector(std::shared_ptr<ColliderCollectorSystem> colliderCollectorSystem);
 private:
-
+	float minimalMovement;
 	std::shared_ptr<ColliderCollectorSystem> colliderCollectorSystem;
 };

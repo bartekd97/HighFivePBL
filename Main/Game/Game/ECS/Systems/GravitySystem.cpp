@@ -9,15 +9,31 @@ extern GameObjectHierarchy gameObjectHierarchy;
 const float gravityAcceleration = 9.81f * 5.0f;
 const float minFallingDist = 0.01f;
 
+void GravitySystem::Init()
+{
+    minimalMovement = 0.01f;
+}
+
 void GravitySystem::Update(float dt)
 {
+    /*static bool check = true;
+    if (!check)
+    {
+        check = true;
+        return;
+    }
+    else
+    {
+        check = false;
+    }*/
     float level;
     if (cells.size() == 0) LoadCells();
 
     for (auto const& gameObject : gameObjects)
     {
-        auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+        auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
+        if (transform.LastFrameUpdate() == transform.LastGravityUpdate() && !rigidBody.isFalling) continue;
 
         rigidBody.acceleration.y = -gravityAcceleration;
 
@@ -71,8 +87,12 @@ void GravitySystem::Update(float dt)
                     rigidBody.velocity.x *= 0.75f;
                     rigidBody.velocity.z *= 0.75f;
 
-                    pos.y = level;
-                    transform.SetPosition(pos);
+                    if (std::abs(level - pos.y) > minimalMovement)
+                    {
+                        pos.y = level;
+                        transform.SetPosition(pos);
+                    }
+                    transform.MarkGravityUpdate();
                     continue;
                 }
             }
@@ -80,15 +100,15 @@ void GravitySystem::Update(float dt)
             {
                 rigidBody.isFalling = true;
             }
-            transform.TranslateSelf(glm::vec3(0.0f, posYDiff, 0.0f));
+            if (std::abs(posYDiff) > minimalMovement) transform.TranslateSelf(glm::vec3(0.0f, posYDiff, 0.0f));
+            transform.MarkGravityUpdate();
         }
-        
     }
 }
 
 bool GravitySystem::GetCellYLevel(glm::vec2& position, MapCell& cell, float& level)
 {
-    float coRatio = cell.PolygonSmooth.GetEdgeCenterRatio(position);
+    float coRatio = cell.PolygonSmooth.GetEdgeCenterRatio(position, 2);
     if (fabs(coRatio - 1.0f) < std::numeric_limits<float>::epsilon()) return true;
 
     float innerLevel = glm::clamp((1.0f - coRatio) / (1.0f - config.innerScale), 0.0f, 1.0f);
