@@ -70,10 +70,11 @@ namespace MainMenuUI
 			MainMenuUI::buttons[index] = button;
 		};
 
-		MakeButton("btnStart", 0, -72.0f * 5.0f);
-		MakeButton("btnStartLite", 1, -72.0f * 4.0f);
-		MakeButton("btnCredits", 2, -72.0f * 3.0f);
-		MakeButton("btnQuit", 3, -72.0f * 2.0f);
+		// 72 + 1 to fix hovering 2 buttons at once
+		MakeButton("btnStart", 0, -73.0f * 5.0f);
+		MakeButton("btnStartLite", 1, -73.0f * 4.0f);
+		MakeButton("btnCredits", 2, -73.0f * 3.0f);
+		MakeButton("btnQuit", 3, -73.0f * 2.0f);
 	}
 
 	void Hide()
@@ -90,7 +91,7 @@ namespace MainMenuUI
 		}
 		else if (btnNaame == "btnStartLite")
 		{
-			//
+			SceneManager::RequestLoadScene("GameLite");
 		}
 		else if (btnNaame == "btnCredits")
 		{

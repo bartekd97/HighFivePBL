@@ -26,7 +26,7 @@ void CellSetuper::Setup()
 	cellInfo.EnemyContainer = enemiesContainer;
 
 	// spawn monument only on normal cell
-	if (type == CellSetuper::Type::NORMAL)
+	if (type == MapCell::Type::NORMAL)
 	{
 		// spawn main statue
 		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
@@ -59,11 +59,16 @@ void CellSetuper::Setup()
 			{
 				objectsToGenerate = 2;
 			}
+			if (_debugLiteMode) objectsToGenerate = 1;
 
 			for (int i = 0; i < objectsToGenerate; i++)
 			{
 				if (zone.points.size() == largestZoneSize || zone.ind % 2 == 1 )
 				{
+					// skip structures in lite mode
+					if (_debugLiteMode) continue;
+					// it can be later improved to spawn only specific structure in lite mode
+
 					int spawnTries = 10;
 					while (spawnTries > 0)
 					{
@@ -98,9 +103,14 @@ void CellSetuper::Setup()
 				}
 				else
 				{
+					// skip obstacles in lite mode
+					if (_debugLiteMode) continue;
+					// it can be later improved to spawn only specific obstacle in lite mode
+
 					auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
 						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
 					);
+
 					float obstacleRotation = zone.center.x * zone.center.y;
 					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
 					obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
@@ -134,7 +144,7 @@ void CellSetuper::Setup()
 
 
 	// now spawn enemies
-	if (type == CellSetuper::Type::NORMAL)
+	if (type == MapCell::Type::NORMAL)
 	{
 		int zonesSum = 0;
 		for (auto& zone : zones) zonesSum += zone.points.size();
