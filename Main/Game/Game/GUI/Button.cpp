@@ -62,6 +62,7 @@ void Button::Update(const glm::vec2& mousePosition)
 
 	if (!isOver)
 	{
+		if (state != STATE::NORMAL && OnStateChanged) OnStateChanged(STATE::NORMAL);
 		state = STATE::NORMAL;
 	}
 	else
@@ -72,10 +73,12 @@ void Button::Update(const glm::vec2& mousePosition)
 			{
 				OnClickListener();
 			}
+			if (state != STATE::PRESSED && OnStateChanged) OnStateChanged(STATE::PRESSED);
 			state = STATE::PRESSED;
 		}
 		else
 		{
+			if (state != STATE::HOVER && OnStateChanged) OnStateChanged(STATE::HOVER);
 			state = STATE::HOVER;
 		}
 	}

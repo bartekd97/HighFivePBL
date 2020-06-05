@@ -8,6 +8,9 @@ namespace WindowManager
 
 	GLFWwindow* GetWindow();
 
+	bool IsClosing();
+	void Close();
+
 	extern int SCREEN_WIDTH;
 	extern int SCREEN_HEIGHT;
 }

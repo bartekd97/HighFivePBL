@@ -22,6 +22,7 @@ struct SkinnedMeshRenderer
 	bool needMatricesBufferUpdate = false;
 
 	bool castShadows = true;
+	bool doubleSided = false;
 
 	CulledRenderer cullingData;
 	ThreadBusiness business;

@@ -18,6 +18,7 @@ namespace Events::Test
 
 namespace Events::General
 {
+	const EventId FRAME_START = "Events::General::FRAME_START"_hash;
 	const EventId UPDATE = "Events::General::UPDATE"_hash;
 	const EventId POST_UPDATE = "Events::General::POST_UPDATE"_hash;
 }

@@ -39,4 +39,13 @@ namespace WindowManager
 	{
 		return window;
 	}
+
+	bool IsClosing()
+	{
+		return glfwWindowShouldClose(window);
+	}
+	void Close()
+	{
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
 }

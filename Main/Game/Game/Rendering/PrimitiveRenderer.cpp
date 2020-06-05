@@ -80,6 +80,11 @@ void PrimitiveRenderer::DrawLines()
 	glDeleteVertexArrays(1, &lineVAO);
 }
 
+void PrimitiveRenderer::RejectLines()
+{
+	linePoints.clear();
+}
+
 
 
 void PrimitiveRenderer::DrawStickyPoint(glm::vec3 pos)

@@ -25,6 +25,7 @@ public:
 	std::unordered_map<STATE, TextureColor> textureColors;
 
 	std::function<void()> OnClickListener;
+	std::function<void(STATE)> OnStateChanged;
 private:
 	static GLuint vao;
 	static GLuint vboVertices;

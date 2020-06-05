@@ -21,6 +21,8 @@ public:
 
 	bool IsEnabled(GameObject gameObject);
 
+	bool IsValid(GameObject gameObject);
+
 	void SetSignature(GameObject gameObject, Signature signature);
 
 	const char* GetName(GameObject gameObject);

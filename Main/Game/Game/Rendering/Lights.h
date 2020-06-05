@@ -11,6 +11,9 @@ public:
 	glm::vec3 ambient = { 0.005f, 0.01f, 0.02f };
 	float shadowIntensity = 1.0f;
 
+	float shadowmapMaxDistanceSteps = 50.0f;
+	float shadowmapScale = 1.25f;
+
 	inline void Apply(std::shared_ptr<Shader> shader)
 	{
 		shader->setVector3F("gDirectionalLight.Direction", direction);

@@ -21,7 +21,8 @@ namespace {
 		glm::vec3 mainCameraPosition = viewCamera.GetPosition();
 		glm::vec3 mainCameraDirection = viewCamera.GetViewDiorection();
 
-		float stepsToZero = -(mainCameraPosition.y / mainCameraDirection.y);
+		float stepsToZero = (mainCameraPosition.y / glm::abs(mainCameraDirection.y));
+		stepsToZero = glm::clamp(stepsToZero, -HFEngine::WorldLight.shadowmapMaxDistanceSteps, HFEngine::WorldLight.shadowmapMaxDistanceSteps);
 		glm::vec3 zeroPos = mainCameraPosition + (mainCameraDirection * stepsToZero);
 
 		glm::vec3 lightDirection = glm::normalize(HFEngine::WorldLight.direction);
@@ -32,7 +33,7 @@ namespace {
 		glm::vec2 camSize = viewCamera.GetSize();
 		float camSizeMax = glm::max(camSize.x, camSize.y);
 		lightCamera.SetSize(camSizeMax, camSizeMax);
-		lightCamera.SetScale(viewCamera.GetScale() * 1.25f);
+		lightCamera.SetScale(viewCamera.GetScale() * HFEngine::WorldLight.shadowmapScale);
 		lightCamera.SetView(lightPosition, lightPosition + lightDirection);
 	}
 }
@@ -183,6 +184,8 @@ void RenderPipeline::Render()
 
 	// prepare cameras
 	static Camera lightCamera;
+	//Camera& viewCamera = lightCamera; // to visualise shadowmap camera
+	//CalculateLightCamera( HFEngine::MainCamera, lightCamera); // to visualise shadowmap camera
 	Camera& viewCamera = HFEngine::MainCamera;
 	CalculateLightCamera(viewCamera, lightCamera);
 
@@ -297,6 +300,10 @@ void RenderPipeline::Render()
 		RenderSystems.circleColliderRenderer->Render();
 		PrimitiveRenderer::DrawLines();
 		PrimitiveRenderer::DrawStickyPoints();
+	}
+	else
+	{
+		PrimitiveRenderer::RejectLines();
 	}
 #endif //  HF_DEBUG_RENDER
 }

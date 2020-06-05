@@ -8,7 +8,7 @@ Camera::Camera()
 	target = glm::vec3(0, 0, 0);
 	up = glm::vec3(0, 1, 0);
 
-	scale = 0.2f;
+	scale = 10.0f;
 	fov = 45.0f;
 	width = 1280;
 	height = 720;
