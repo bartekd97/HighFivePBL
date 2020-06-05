@@ -40,6 +40,7 @@ public:
 private:
 	std::vector<Zone> zones;
 	std::vector<GameObject> tempColliders;
+	int largestZoneSize;
 
 public:
 	CellSetuper(CellSetupConfig& setupConfig, GameObject cell, Type type)

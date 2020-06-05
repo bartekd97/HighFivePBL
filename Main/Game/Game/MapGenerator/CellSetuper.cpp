@@ -53,36 +53,47 @@ void CellSetuper::Setup()
 			int objectsToGenerate;
 			if (zone.points.size() > 200)
 			{
-				objectsToGenerate = 2;
+				objectsToGenerate = 3;
 			}
 			else
 			{
-				objectsToGenerate = 1;
+				objectsToGenerate = 2;
 			}
 
 			for (int i = 0; i < objectsToGenerate; i++)
 			{
-				if (zone.ind == 1)
+				if (zone.points.size() == largestZoneSize || zone.ind % 2 == 1 )
 				{
-					auto structurePrefab = setupConfig.structurePrefabs.at(
-						zone.points.size() * objectsToGenerate % setupConfig.structurePrefabs.size()
-					);
-					float structureRotation = 0.0f;// zone.center.x* zone.center.y;
-					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
-					structurePrefab->Properties().GetFloat("width", width, 1.0f);
-					structurePrefab->Properties().GetFloat("height", height, 1.0f);
-					structurePrefab->Properties().GetFloat("roty", structureRotation, 1.0f);
-
-					box.SetWidthHeight(width, height);
-					if (zone.points.size() > 0)
+					int spawnTries = 10;
+					while (spawnTries > 0)
 					{
-						glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
-						if (glm::length2(position) > 0.001f)
+						auto structurePrefab = setupConfig.structurePrefabs.at(
+							(zone.points.size() * (i + 1) + spawnTries) % setupConfig.structurePrefabs.size()
+						);
+						float structureRotation = 0.0f;// zone.center.x* zone.center.y;
+						structureRotation = (float)((int)zone.center.x * (int)zone.center.y  * spawnTries * (i + 1) % 100 - 50);
+						boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
+						structurePrefab->Properties().GetFloat("width", width, 1.0f);
+						structurePrefab->Properties().GetFloat("height", height, 1.0f);
+						//structurePrefab->Properties().GetFloat("roty", structureRotation, 1.0f);
+
+						box.SetWidthHeight(width, height);
+						if (zone.points.size() > 0)
 						{
-							LogInfo("CellSetuper::Setup() Zone {} got spawned structure at: {}, {}", zone.ind, position.x, position.y);
-							SpawnStructure(structurePrefab, position, structureRotation);
-							UpdateColliders();
+							glm::vec2 position = DrawPointInZone(zone, box, boxRot, i* spawnTries);
+							if (glm::length2(position) > 0.001f)
+							{
+								LogInfo("CellSetuper::Setup() Zone {} got spawned structure at: {}, {}", zone.ind, position.x, position.y);
+								SpawnStructure(structurePrefab, position, structureRotation);
+								spawnTries = 0;
+								UpdateColliders();
+							}
 						}
+						else
+						{
+							spawnTries = 0;
+						}
+						spawnTries -= 1;
 					}
 				}
 				else
@@ -268,6 +279,9 @@ void CellSetuper::MakeZones()
 #endif // HF_DEBUG_RENDER
 		}
 		zone.center = sum / float(zone.points.size());
+
+		if(zone.points.size() > largestZoneSize)
+			largestZoneSize = zone.points.size();
 	}
 
 
@@ -410,7 +424,7 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollide
 		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
 	};
 
-	int iter_available = glm::min(20, (int)zone.points.size());
+	int iter_available = glm::min(100, (int)zone.points.size());
 	int someSeed = ((int)glm::abs(zone.center.x * zone.center.y) + zone.points.size())* zones.size() + (int)(glm::length2(zone.center) * number);
 	//int randomNumber = ((int)zone.center.x * (int)zone.center.y * zones.size() * number * 7 +1) % zone.points.size();
 	int randomNumber = (someSeed + number) % zone.points.size();
