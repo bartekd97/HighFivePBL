@@ -21,6 +21,7 @@
 
 #include "Scene/SceneManager.h"
 #include "Scene/Scenes/Game.h"
+#include "Scene/Scenes/GameLite.h"
 #include "Scene/Scenes/MainMenu.h"
 
 const int SCREEN_WIDTH = 1280;
@@ -40,6 +41,7 @@ int main()
 
 	// register scenes
 	SceneManager::RegisterScene("Game", std::make_shared<GameScene>());
+	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
 	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
 	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";

@@ -2,26 +2,56 @@
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/Transform.h"
 #include "HFEngine.h"
+#include "CellGenerator.h"
 
-#define MAKE_SETUPER(cell, type) std::make_shared<CellSetuper>(config.cellStructuresConfig, cell, type);
+#define MAKE_SETUPER(cell, type) HFEngine::ECS.GetComponent<MapCell>(cell).CellType = type; cellSetupers[cell] = std::make_shared<CellSetuper>(config.cellStructuresConfig, cell);
 
 void MapSetuper::Setup()
 {
     GameObject startupCell = GetStartupCell();
     GameObject bossCell = CalculateBossCell(startupCell);
 
-    cellSetupers[startupCell] = MAKE_SETUPER(startupCell,   CellSetuper::Type::STARTUP);
-    cellSetupers[bossCell] =    MAKE_SETUPER(bossCell,      CellSetuper::Type::BOSS);
+    MAKE_SETUPER(startupCell,   MapCell::Type::STARTUP);
+    MAKE_SETUPER(bossCell,      MapCell::Type::BOSS);
 
     for (auto cell : cells)
     {
         if (!cellSetupers.contains(cell))
         {
-            cellSetupers[cell] = MAKE_SETUPER(cell,         CellSetuper::Type::NORMAL);
+            MAKE_SETUPER(cell,  MapCell::Type::NORMAL);
         }
     }
 
+    if (_debugLiteMode)
+    {
+        GameObject secondCell = HFEngine::ECS.GetComponent<MapCell>(startupCell).Bridges[0].Cell;
 
+        GenerateCell(startupCell);
+        GenerateCell(secondCell);
+
+        cellSetupers[startupCell]->_debugLiteMode = true;
+        cellSetupers[secondCell]->_debugLiteMode = true;
+        cellSetupers[startupCell]->Setup();
+        cellSetupers[secondCell]->Setup();
+
+        // fix enemy container null gameobject
+        for (auto cell : cells)
+        {
+            MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(cell);
+            if (mc.EnemyContainer == NULL_GAMEOBJECT)
+                mc.EnemyContainer = HFEngine::ECS.CreateGameObject("Enemies");
+        }
+
+        return;
+    }
+
+    // first, generate cells
+    for (auto cell : cells)
+    {
+        GenerateCell(cell);
+    }
+
+    // then setup
     for (auto& cs : cellSetupers)
     {
         cs.second->Setup();
@@ -33,7 +63,7 @@ GameObject MapSetuper::GetStartupCell()
 {
     for (auto cell : cells)
     {
-        MapCell mc = HFEngine::ECS.GetComponent<MapCell>(cell);
+        MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(cell);
         if (mc.Bridges.size() == 1)
         {
             return cell;
@@ -41,6 +71,13 @@ GameObject MapSetuper::GetStartupCell()
     }
     assert(false && "No one-bridge startup cell");
     return cells[0]; // fallback
+}
+
+void MapSetuper::GenerateCell(GameObject cell)
+{
+    ConvexPolygon& cellPolygon = HFEngine::ECS.GetComponent<MapCell>(cell)._BaseDelaunayPolygon;
+    CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
+    generator.Generate(cellPolygon, cell);
 }
 
 GameObject MapSetuper::CalculateBossCell(GameObject startupCell)
