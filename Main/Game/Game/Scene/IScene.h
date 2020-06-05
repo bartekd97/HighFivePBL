@@ -3,6 +3,6 @@
 class IScene
 {
 public:
-	virtual void Load() = 0;
-	virtual void Unload() = 0;
+	virtual void OnLoad() = 0;
+	virtual void OnUnload() = 0;
 };

@@ -57,6 +57,7 @@ unsigned int SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 	toShadowmapShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	bool lastDoubleSided = false;
 
 	lightCamera.Use(toShadowmapShader);
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
@@ -67,6 +68,11 @@ unsigned int SkinnedMeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 			continue;
 		if (!renderer.cullingData.visibleByLightCamera || !renderer.castShadows)
 			continue;
+
+		if (renderer.doubleSided != lastDoubleSided) {
+			lastDoubleSided = renderer.doubleSided;
+			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+		}
 
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
 		CheckBoneMatricesBuffer(renderer);
@@ -88,6 +94,7 @@ unsigned int SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Came
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	bool lastDoubleSided = false;
 
 	viewCamera.Use(toGBufferShader);
 	glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
@@ -107,6 +114,11 @@ unsigned int SkinnedMeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Came
 		if (renderer.material->type == MaterialType::FORWARD) {
 			delayedForward.emplace_back(&renderer);
 			continue;
+		}
+
+		if (renderer.doubleSided != lastDoubleSided) {
+			lastDoubleSided = renderer.doubleSided;
+			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
 		}
 
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
@@ -135,11 +147,17 @@ unsigned int SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, Direct
 	forwardShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	bool lastDoubleSided = false;
 
 	viewCamera.Use(forwardShader);
 	dirLight.Apply(forwardShader);
 	do {
 		SkinnedMeshRenderer* renderer = delayedForward.back();
+
+		if (renderer->doubleSided != lastDoubleSided) {
+			lastDoubleSided = renderer->doubleSided;
+			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+		}
 
 		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
 		CheckBoneMatricesBuffer(*renderer);

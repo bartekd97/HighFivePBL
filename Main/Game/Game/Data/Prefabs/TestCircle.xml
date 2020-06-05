@@ -1,4 +1,4 @@
-<prefab defaultScale="1.25,1.25,1.25">
+<prefab defaultScale="2.963,2.963,2.963">
     <component name="ModelHolder">
         <property name="model" value="Structures/Statues:Goth"/>
     </component>

@@ -222,8 +222,16 @@ namespace HFEngine
 			LogError("HFEngine not initialized");
 			return;
 		}
-		glfwTerminate();
-		GUIManager::Terminate();
+
+		if (WindowManager::IsClosing())
+		{
+			glfwTerminate();
+			GUIManager::Terminate();
+		}
+		else
+		{
+			WindowManager::Close();
+		}
 	}
 
 /*

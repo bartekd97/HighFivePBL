@@ -152,6 +152,7 @@
     <ClCompile Include="Resourcing\TextureManager.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\Scenes\Game.cpp" />
+    <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
@@ -278,6 +279,7 @@
     <ClInclude Include="Scene\IScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\Scenes\Game.h" />
+    <ClInclude Include="Scene\Scenes\MainMenu.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />

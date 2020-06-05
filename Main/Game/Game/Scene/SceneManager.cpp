@@ -5,6 +5,9 @@
 #include "Utility/Logger.h"
 #include "Event/Events.h"
 #include "HFEngine.h"
+#include "GUI/GUIManager.h"
+#include "GUI/Widgets.h"
+#include "Resourcing/Texture.h"
 
 
 // variables
@@ -13,6 +16,8 @@ namespace SceneManager
 	std::unordered_map<std::string, std::shared_ptr<IScene>> scenes;
 	std::shared_ptr<IScene> currentScene;
 	std::shared_ptr<IScene> requestedScene;
+
+	std::shared_ptr<Panel> LoadingScreenPanel = nullptr;
 
 	bool Initialized = false;
 }
@@ -24,16 +29,33 @@ namespace SceneManager
 	{
 		if (requestedScene == nullptr) return;
 
-		if (currentScene)
-			currentScene->Unload();
+		// step 1 - enable loading screen
+		if (!LoadingScreenPanel->GetEnabled())
+		{
+			LoadingScreenPanel->SetEnabled(true);
+			return;
+		}
 
-		for (GameObject gameObject = 0; gameObject < MAX_GAMEOBJECTS; ++gameObject)
-			if (HFEngine::ECS.IsValidGameObject(gameObject))
-				HFEngine::ECS.DestroyGameObject(gameObject);
+		// step 2 - switch scene
+		if (requestedScene != currentScene)
+		{
+			if (currentScene)
+				currentScene->OnUnload();
 
-		currentScene = requestedScene;
-		currentScene->Load();
-		requestedScene = nullptr;
+			for (GameObject gameObject = 0; gameObject < MAX_GAMEOBJECTS; ++gameObject)
+				if (HFEngine::ECS.IsValidGameObject(gameObject))
+					HFEngine::ECS.DestroyGameObject(gameObject);
+
+			currentScene = requestedScene;
+			currentScene->OnLoad();
+			return;
+		}
+
+		// step 3 - disable loading screen
+		{
+			LoadingScreenPanel->SetEnabled(false);
+			requestedScene = nullptr;
+		}
 	}
 }
 
@@ -48,6 +70,13 @@ void SceneManager::Initialize()
 	}
 
 	EventManager::AddListener(FUNCTION_LISTENER(Events::General::FRAME_START, SceneManager::FrameStart));
+
+	LoadingScreenPanel = std::make_shared<Panel>();
+	LoadingScreenPanel->SetPosition({ 0.0f, 0.0f, 0.0f });
+	LoadingScreenPanel->SetSize({ WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
+	LoadingScreenPanel->textureColor.texture = TextureManager::GetTexture("LoadingScreen", "Screen");
+	LoadingScreenPanel->SetEnabled(false);
+	GUIManager::AddWidget(LoadingScreenPanel, nullptr, 255);
 
 	Initialized = true;
 	LogInfo("SceneManager initialized.");

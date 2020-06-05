@@ -74,6 +74,7 @@
     <ClCompile Include="Utility\TaskPool.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\Scenes\Game.cpp" />
+    <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\IScene.h" />
     <ClInclude Include="Scene\Scenes\Game.h" />
+    <ClInclude Include="Scene\Scenes\MainMenu.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

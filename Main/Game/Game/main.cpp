@@ -21,6 +21,7 @@
 
 #include "Scene/SceneManager.h"
 #include "Scene/Scenes/Game.h"
+#include "Scene/Scenes/MainMenu.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -39,6 +40,7 @@ int main()
 
 	// register scenes
 	SceneManager::RegisterScene("Game", std::make_shared<GameScene>());
+	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
 	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
 
@@ -50,7 +52,7 @@ int main()
 	ac->playBackgroundMusic();
 
 	// request initial scene
-	SceneManager::RequestLoadScene("Game");
+	SceneManager::RequestLoadScene("MainMenu");
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))

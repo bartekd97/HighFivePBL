@@ -2,7 +2,7 @@
 
 #include "../IScene.h"
 
-class GameScene : public IScene
+class MainMenuScene : public IScene
 {
 public:
 	virtual void OnLoad() override;

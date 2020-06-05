@@ -4,7 +4,7 @@
 #include "MapGenerator/MapGenerator.h"
 
 
-void GameScene::Load()
+void GameScene::OnLoad()
 {
 	//
 	// SPAWN THINGS
@@ -34,9 +34,12 @@ void GameScene::Load()
 	HFEngine::WorldLight.ambient = { 0.005f, 0.01f, 0.02f };
 	HFEngine::WorldLight.shadowIntensity = 1.0f;
 
+	HFEngine::WorldLight.shadowmapMaxDistanceSteps = 50.0f;
+	HFEngine::WorldLight.shadowmapScale = 1.25f;
+
 	HFEngine::MainCamera.SetScale(15.0f); // orig was 12.6f
 }
 
-void GameScene::Unload()
+void GameScene::OnUnload()
 {
 }
