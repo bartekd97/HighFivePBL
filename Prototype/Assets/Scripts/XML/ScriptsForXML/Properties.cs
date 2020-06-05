@@ -29,14 +29,13 @@ public class Properties : MonoBehaviour
         output = "";
 
         float rotX = localRotation.x;
-
-        
-        rotX = 0;
         
 
         if(isParent)
         {
             localScale = this.transform.localScale;
+            localRotation = this.transform.localRotation.eulerAngles;
+
             output += "<prefab defaultScale=\"";
 
             string localScaleX = localScale.x.ToString("F2");
@@ -88,7 +87,8 @@ public class Properties : MonoBehaviour
             string localRotationZZ = localRotationZ.Replace(",", ".");
 
             output += localRotationXX + "," + localRotationYY + "," + localRotationZZ + "\" position=\"";
-           
+
+            localPosition.z = -localPosition.z;
             string localPositionX = localPosition.x.ToString("F2");
             string localPositionY = localPosition.y.ToString("F2");
             string localPositionZ = localPosition.z.ToString("F2");
