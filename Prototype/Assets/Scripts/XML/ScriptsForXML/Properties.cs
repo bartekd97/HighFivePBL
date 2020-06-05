@@ -28,6 +28,12 @@ public class Properties : MonoBehaviour
     {
         output = "";
 
+        float rotX = localRotation.x;
+
+        
+        rotX = 0;
+        
+
         if(isParent)
         {
             localScale = this.transform.localScale;
@@ -43,7 +49,7 @@ public class Properties : MonoBehaviour
 
             output += localScaleXX + "," + localScaleYY + "," + localScaleZZ + "\">";
 
-            string localRotationX = localRotation.x.ToString("F2");
+            string localRotationX = rotX.ToString("F2");
             string localRotationY = localRotation.y.ToString("F2");
             string localRotationZ = localRotation.z.ToString("F2");
 
@@ -73,7 +79,7 @@ public class Properties : MonoBehaviour
 
             output += localScaleXX + "," + localScaleYY + "," + localScaleZZ + "\" rotation=\"";
 
-            string localRotationX = localRotation.x.ToString("F2");
+            string localRotationX = rotX.ToString("F2");
             string localRotationY = localRotation.y.ToString("F2");
             string localRotationZ = localRotation.z.ToString("F2");
 
