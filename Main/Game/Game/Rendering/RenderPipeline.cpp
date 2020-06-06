@@ -275,7 +275,7 @@ void RenderPipeline::Render()
 	glDepthMask(GL_FALSE);
 	for (auto fx : postprocessingEffects)
 	{
-		bool swap = postprocessingEffects[0]->Process(
+		bool swap = fx->Process(
 			PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1], GBuffer
 			);
 		if (swap)
