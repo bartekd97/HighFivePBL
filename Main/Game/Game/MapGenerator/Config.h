@@ -112,7 +112,10 @@ struct CellSetupConfig
 
     std::shared_ptr<Prefab> mainStatuePrefab;
     std::vector<std::shared_ptr<Prefab>> obstaclePrefabs;
-    std::vector<std::shared_ptr<Prefab>> structurePrefabs;
+    std::vector<std::shared_ptr<Prefab>> smallPrefabs;
+    std::vector<std::shared_ptr<Prefab>> mediumPrefabs;
+    std::vector<std::shared_ptr<Prefab>> largePrefabs;
+
 
     std::vector<std::shared_ptr<Prefab>> enemyPrefabs;
 
@@ -128,26 +131,26 @@ struct CellSetupConfig
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud4"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud5"));
 
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik1"));
-        /*structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik2"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik3"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik4"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/tombstone_celtic1"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/tombstone_celtic2"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/littleFenceFirst"));*/
-        //structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/chapel"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR1"));
-        //structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR2"));
-        //structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR3"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR6"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR7"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR8"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR10"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR11"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR12"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR13"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR14"));
-        structurePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR15"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik1"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik2"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik3"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik4"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/tombstone_celtic1"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/tombstone_celtic2"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/littleFenceFirst"));
+        largePrefabs.push_back(PrefabManager::GetPrefab("Structures/chapel"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR1"));
+        mediumPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR2"));
+        largePrefabs.push_back(PrefabManager::GetPrefab("Structures/STR3"));
+        mediumPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR6"));
+        mediumPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR7"));
+        mediumPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR8"));
+        mediumPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR10"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR11"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR12"));
+        mediumPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR13"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR14"));
+        smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR15"));
 
         enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Axer"));
     }

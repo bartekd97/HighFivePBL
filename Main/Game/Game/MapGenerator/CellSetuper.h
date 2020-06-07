@@ -40,6 +40,7 @@ public:
 private:
 	std::vector<Zone> zones;
 	std::vector<GameObject> tempColliders;
+	std::vector<float> rotations;
 	int largestZoneSize;
 
 public:
@@ -47,8 +48,6 @@ public:
 		: setupConfig(setupConfig), cell(cell), type(type) {}
 
 	void Setup();
-
-	//glm::vec2 FindClosestNode(float xPosition, float yPosition);
 
 private:;
 	void SpawnStructure(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
