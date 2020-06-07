@@ -13,6 +13,7 @@
 #include "InputManager.h"
 
 #include "Postprocessing/RiverFogEffect.h"
+#include "Postprocessing/OrthoSSREffect.h"
 
 
 namespace {
@@ -44,7 +45,7 @@ void RenderPipeline::InitGBuffer()
 {
 	const std::vector<FrameBuffer::ColorAttachement> gbufferComponents = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB16F, GL_RGB, GL_FLOAT},		// position
+		{GL_RGB32F, GL_RGB, GL_FLOAT},		// position
 		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
@@ -143,6 +144,7 @@ void RenderPipeline::InitPostprocessingEffects()
 		);
 
 	// init effects
+	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
 	
 	for (auto fx : postprocessingEffects)

@@ -55,7 +55,7 @@ std::shared_ptr<FrameBuffer> FrameBuffer::Create(
 	case FrameBuffer::DepthAttachement::CREATE_TEXTURE:
 	{
 		fb->depthAttachementTexture =
-			TextureManager::CreateEmptyTexture(width, height, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT);
+			TextureManager::CreateEmptyTexture(width, height, GL_DEPTH_COMPONENT, GL_FLOAT, GL_DEPTH_COMPONENT32);
 		glFramebufferTexture2D(
 			GL_FRAMEBUFFER,
 			GL_DEPTH_ATTACHMENT,
