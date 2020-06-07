@@ -13,6 +13,7 @@ uniform mat4 gLightViewProjection;
 
 out VS_OUT {
     vec3 FragPos;
+    vec3 FragPosWorld;
     //vec3 FragPosView;
     vec4 LightSpacePos;
     vec2 TexCoords;
@@ -24,13 +25,15 @@ void main()
     vec4 worldPosition = gModel * vec4(aPosition, 1.0f);
     gl_Position = gProjection * gView * worldPosition;
 
-    vs_out.FragPos = vec3(worldPosition);
+    vs_out.FragPos = vec3(gView * worldPosition);
+    vs_out.FragPosWorld = vec3(worldPosition);
     //vs_out.FragPosView = vec3(gView * vec4(vs_out.FragPos, 1.0));
     vs_out.LightSpacePos = gLightViewProjection * worldPosition;  
     vs_out.TexCoords = aTexCoord;
 
-    vec3 T = normalize(vec3(gModel * vec4(aTangent, 0.0)));
-    vec3 B = normalize(vec3(gModel * vec4(aBitangent, 0.0)));
-    vec3 N = normalize(vec3(gModel * vec4(aNormal, 0.0)));
+    mat4 gVM = gView * gModel;
+    vec3 T = normalize(vec3(gVM * vec4(aTangent, 0.0)));
+    vec3 B = normalize(vec3(gVM * vec4(aBitangent, 0.0)));
+    vec3 N = normalize(vec3(gVM * vec4(aNormal, 0.0)));
     vs_out.TBN = mat3(T, B, N);
 }

@@ -117,7 +117,7 @@ unsigned int MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLi
 	bool lastDoubleSided = false;
 
 	viewCamera.Use(forwardShader);
-	dirLight.Apply(forwardShader);
+	dirLight.Apply(forwardShader, viewCamera);
 	do {
 		MeshRenderer* renderer = delayedForward.back();
 

@@ -15,7 +15,7 @@ void OrthoSSREffect::Init()
 
 	ssrBlendShader = ShaderManager::GetShader("PPOrthoSSRBlend");
 	ssrBlendShader->use();
-	ssrBlendShader->setInt("gPosition", 1);
+	ssrBlendShader->setInt("gAlbedoFade", 1);
 	ssrBlendShader->setInt("gMetalnessRoughness", 2);
 	ssrBlendShader->setInt("gSSRTexture", 3);
 
@@ -43,10 +43,7 @@ bool OrthoSSREffect::Process(
 	ssrBuffer->bind();
 
 	ssrShader->use();
-	ssrShader->setVector3F("gCameraDirection", viewCamera.GetViewDiorection());
-	ssrShader->setMat4("gViewProjection",
-		viewCamera.GetProjectionMatrix() * viewCamera.GetViewMatrix()
-	);
+	ssrShader->setMat4("gProjection", viewCamera.GetProjectionMatrix());
 	gbuffer.depth->bind(0);
 	gbuffer.position->bind(1);
 	gbuffer.normal->bind(2);
@@ -63,7 +60,7 @@ bool OrthoSSREffect::Process(
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	ssrBlendShader->use();
-	gbuffer.position->bind(1);
+	gbuffer.albedoFade->bind(1);
 	gbuffer.metalnessRoughnessShadow->bind(2);
 	ssrBuffer->getColorAttachement(0)->generateMipmaps();
 	ssrBuffer->getColorAttachement(0)->bind(3);

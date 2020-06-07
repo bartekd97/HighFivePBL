@@ -9,8 +9,8 @@ uniform sampler2D gNormal;
 uniform sampler2D gMetalnessRoughness;
 uniform sampler2D gScreenTexture;
 
-uniform vec3 gCameraDirection;
-uniform mat4 gViewProjection;
+
+uniform mat4 gProjection;
 
 
 const float maxDistance = 7.0;
@@ -34,11 +34,11 @@ void main()
     if (metalness < 0.001)
         discard;
 
-    vec3 viewDir = normalize(gCameraDirection);
-    vec3 reflected = normalize(reflect(viewDir, Normal));
+    vec3 viewDir = vec3(0,0,1);
+    vec3 reflected = normalize(reflect(-viewDir, Normal));
 
-    vec3 ssThisPosition = vec3(gViewProjection * vec4(FragPos, 1.0f));
-    vec3 ssNextPosition = vec3(gViewProjection * vec4(FragPos + (reflected * maxDistance), 1.0f));
+    vec3 ssThisPosition = vec3(gProjection * vec4(FragPos, 1.0f));
+    vec3 ssNextPosition = vec3(gProjection * vec4(FragPos + (reflected * maxDistance), 1.0f));
     
     vec3 uvThis = vec3(TexCoords, ssToUV(ssThisPosition).z);
     vec3 uvDir = ssToUV(ssNextPosition) - uvThis;

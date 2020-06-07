@@ -74,7 +74,7 @@ void PointLightRendererSystem::Init()
     pointLightShader->use();
     pointLightShader->setInt("gPosition", (int)RenderPipeline::GBufferBindingPoint::POSITION);
     pointLightShader->setInt("gNormal", (int)RenderPipeline::GBufferBindingPoint::NORMAL);
-    pointLightShader->setInt("gAlbedo", (int)RenderPipeline::GBufferBindingPoint::ALBEDO);
+    pointLightShader->setInt("gAlbedoFade", (int)RenderPipeline::GBufferBindingPoint::ALBEDO_FADE);
     pointLightShader->setInt("gMetalnessRoughnessShadow", (int)RenderPipeline::GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 }
 
@@ -104,7 +104,7 @@ unsigned int PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 view
             continue;
 
         renderer.light.position = transform.GetWorldPosition();
-        renderer.light.Apply(pointLightShader);
+        renderer.light.Apply(pointLightShader, viewCamera);
 
         glm::mat4 model = glm::translate(glm::mat4(1.0f), renderer.light.position)
             * glm::scale(glm::mat4(1.0f), glm::vec3(renderer.light.radius));
