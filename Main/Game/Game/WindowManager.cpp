@@ -2,6 +2,8 @@
 
 #include "WindowManager.h"
 #include "Utility/Logger.h"
+#include "Event/EventManager.h"
+#include "Event/Events.h"
 
 namespace WindowManager
 {
@@ -12,8 +14,13 @@ namespace WindowManager
 	void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	{
 		//glViewport(0, 0, width, height);
-		SCREEN_WIDTH = width;
-		SCREEN_HEIGHT = height;
+		if (SCREEN_WIDTH != width || SCREEN_HEIGHT != height)
+		{
+			SCREEN_WIDTH = width;
+			SCREEN_HEIGHT = height;
+			Event ev(Events::General::WINDOW_RESIZE);
+			EventManager::FireEvent(ev);
+		}
 	}
 
 	void Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)

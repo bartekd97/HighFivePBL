@@ -72,8 +72,9 @@ void SceneManager::Initialize()
 	EventManager::AddListener(FUNCTION_LISTENER(Events::General::FRAME_START, SceneManager::FrameStart));
 
 	LoadingScreenPanel = std::make_shared<Panel>();
+	LoadingScreenPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 	LoadingScreenPanel->SetPosition({ 0.0f, 0.0f, 0.0f });
-	LoadingScreenPanel->SetSize({ WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
+	LoadingScreenPanel->SetSize({ 1.0f, 1.0f });
 	LoadingScreenPanel->textureColor.texture = TextureManager::GetTexture("LoadingScreen", "Screen");
 	LoadingScreenPanel->SetEnabled(false);
 	GUIManager::AddWidget(LoadingScreenPanel, nullptr, 255);
