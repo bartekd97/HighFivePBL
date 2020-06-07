@@ -45,9 +45,9 @@ void RenderPipeline::InitGBuffer()
 {
 	const std::vector<FrameBuffer::ColorAttachement> gbufferComponents = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB32F, GL_RGB, GL_FLOAT},		// position
-		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal
-		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+		{GL_RGB16F, GL_RGB, GL_FLOAT},		// position in view-space
+		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal in view-space
+		{GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},	// albedoFade fade
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
 		{GL_RGB16F, GL_RGB, GL_FLOAT}	// emissive
 	};
@@ -61,7 +61,7 @@ void RenderPipeline::InitGBuffer()
 	auto gbufferTextures = GBuffer.frameBuffer->getColorAttachements();
 	GBuffer.position = gbufferTextures[0];
 	GBuffer.normal = gbufferTextures[1];
-	GBuffer.albedo = gbufferTextures[2];
+	GBuffer.albedoFade = gbufferTextures[2];
 	GBuffer.metalnessRoughnessShadow = gbufferTextures[3];
 	GBuffer.emissive = gbufferTextures[4];
 	GBuffer.depth = GBuffer.frameBuffer->getDepthAttachement();
@@ -129,7 +129,7 @@ void RenderPipeline::InitPostprocessingEffects()
 	// init swap buffers
 	const std::vector<FrameBuffer::ColorAttachement> colorAttachement = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedoFade
 	};
 
 	PostprocessingSwapBuffers[0] = FrameBuffer::Create(
@@ -168,7 +168,7 @@ void RenderPipeline::Init()
 	combineGBufferShader->use();
 	combineGBufferShader->setInt("gPosition", (int)GBufferBindingPoint::POSITION);
 	combineGBufferShader->setInt("gNormal", (int)GBufferBindingPoint::NORMAL);
-	combineGBufferShader->setInt("gAlbedo", (int)GBufferBindingPoint::ALBEDO);
+	combineGBufferShader->setInt("gAlbedoFade", (int)GBufferBindingPoint::ALBEDO_FADE);
 	combineGBufferShader->setInt("gMetalnessRoughnessShadow", (int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	combineGBufferShader->setInt("gEmissive", (int)GBufferBindingPoint::EMISSIVE);
 
@@ -236,7 +236,7 @@ void RenderPipeline::Render()
 	// bind gbuffer textures
 	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
 	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
-	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);
+	GBuffer.albedoFade->bind((int)GBufferBindingPoint::ALBEDO_FADE);
 	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
 
@@ -251,8 +251,7 @@ void RenderPipeline::Render()
 	PostprocessingSwapBuffers[0]->bind();
 
 	combineGBufferShader->use();
-	HFEngine::MainCamera.Use(combineGBufferShader); // for gCameraPosition
-	HFEngine::WorldLight.Apply(combineGBufferShader); // for gDirectionalLight struct
+	HFEngine::WorldLight.Apply(combineGBufferShader, viewCamera); // for gDirectionalLight struct
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);

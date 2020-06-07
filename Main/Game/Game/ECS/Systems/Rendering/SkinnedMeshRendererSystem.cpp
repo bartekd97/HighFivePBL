@@ -150,7 +150,7 @@ unsigned int SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, Direct
 	bool lastDoubleSided = false;
 
 	viewCamera.Use(forwardShader);
-	dirLight.Apply(forwardShader);
+	dirLight.Apply(forwardShader, viewCamera);
 	do {
 		SkinnedMeshRenderer* renderer = delayedForward.back();
 
