@@ -138,6 +138,7 @@
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
@@ -152,6 +153,7 @@
     <ClCompile Include="Resourcing\TextureManager.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\Scenes\Game.cpp" />
+    <ClCompile Include="Scene\Scenes\GameLite.cpp" />
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
@@ -257,6 +259,7 @@
     <ClInclude Include="Rendering\Frustum.h" />
     <ClInclude Include="Rendering\Lights.h" />
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
@@ -279,6 +282,7 @@
     <ClInclude Include="Scene\IScene.h" />
     <ClInclude Include="Scene\SceneManager.h" />
     <ClInclude Include="Scene\Scenes\Game.h" />
+    <ClInclude Include="Scene\Scenes\GameLite.h" />
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />

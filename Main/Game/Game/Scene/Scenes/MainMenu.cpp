@@ -30,8 +30,10 @@ namespace MainMenuUI
 		auto library = TextureManager::GetLibrary("MainMenu");
 
 		viniete = std::make_shared<Panel>();
+		viniete->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		viniete->SetPosition({0.0f, 0.0f, 0.0f});
-		viniete->SetSize({WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
+		viniete->SetSize({ 1.0f, 1.0f });
+		//viniete->SetSize({WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
 		viniete->textureColor.texture = library->GetTexture("menuViniete");
 		GUIManager::AddWidget(viniete);
 
@@ -70,10 +72,11 @@ namespace MainMenuUI
 			MainMenuUI::buttons[index] = button;
 		};
 
-		MakeButton("btnStart", 0, -72.0f * 5.0f);
-		MakeButton("btnStartLite", 1, -72.0f * 4.0f);
-		MakeButton("btnCredits", 2, -72.0f * 3.0f);
-		MakeButton("btnQuit", 3, -72.0f * 2.0f);
+		// 72 + 1 to fix hovering 2 buttons at once
+		MakeButton("btnStart", 0, -73.0f * 5.0f);
+		MakeButton("btnStartLite", 1, -73.0f * 4.0f);
+		MakeButton("btnCredits", 2, -73.0f * 3.0f);
+		MakeButton("btnQuit", 3, -73.0f * 2.0f);
 	}
 
 	void Hide()
@@ -90,7 +93,7 @@ namespace MainMenuUI
 		}
 		else if (btnNaame == "btnStartLite")
 		{
-			//
+			SceneManager::RequestLoadScene("GameLite");
 		}
 		else if (btnNaame == "btnCredits")
 		{

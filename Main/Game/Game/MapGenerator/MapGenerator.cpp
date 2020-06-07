@@ -102,22 +102,12 @@ void MapGenerator::Generate()
     }
 
     // now generate real cells
-    for (auto s : sites)
-    {
-        if (!IsBorderCell(s))
-        {
-            GameObject cell = *std::find_if(cells.begin(), cells.end(), [s](GameObject go) {
-                return HFEngine::ECS.GetComponent<MapCell>(go).CellSiteIndex == s->index();
-                });
-            ConvexPolygon cellPolygon = CreateLocalPolygon(s, bounds);
-            CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
-            generator.Generate(cellPolygon, cell);
-        }
-    }
+    // MOVED TO MapSetuper::Setup
 
 
     // and setup those cells
     mapSetuper = std::make_unique<MapSetuper>(config, cells);
+    mapSetuper->_debugLiteMode = _debugLiteMode;
     mapSetuper->Setup();
 
     _generated = true;
@@ -146,6 +136,7 @@ GameObject MapGenerator::CreateCell(Delaunay::Site* cell, GameObject parent)
 
     MapCell mCell;
     mCell.CellSiteIndex = cell->index();
+    mCell._BaseDelaunayPolygon = CreateLocalPolygon(cell, bounds);
     HFEngine::ECS.AddComponent<MapCell>(cellObject, mCell);
     return cellObject;
 }
