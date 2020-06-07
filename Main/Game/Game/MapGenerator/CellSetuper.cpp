@@ -36,6 +36,8 @@ void CellSetuper::Setup()
 		PrepareColliders();
 		UpdateColliders();
 
+		rotations.push_back(20.0f);
+		rotations.push_back(340.0f);
 
 		glm::quat boxRot;
 		float width;
@@ -53,15 +55,15 @@ void CellSetuper::Setup()
 			int objectsToGenerate;
 			if (zone.points.size() > 200)
 			{
-				objectsToGenerate = 3;
+				objectsToGenerate = 2;
 			}
 			else
 			{
-				objectsToGenerate = 2;
+				objectsToGenerate = 1;
 			}
 			if (_debugLiteMode) objectsToGenerate = 1;
 
-			for (int i = 0; i < objectsToGenerate; i++)
+			for (int i = 0; i < objectsToGenerate; ++i)
 			{
 				if (zone.points.size() == largestZoneSize || zone.ind % 2 == 1 )
 				{
@@ -72,11 +74,47 @@ void CellSetuper::Setup()
 					int spawnTries = 10;
 					while (spawnTries > 0)
 					{
-						auto structurePrefab = setupConfig.structurePrefabs.at(
-							(zone.points.size() * (i + 1) + spawnTries) % setupConfig.structurePrefabs.size()
-						);
-						float structureRotation = 0.0f;// zone.center.x* zone.center.y;
-						structureRotation = (float)((int)zone.center.x * (int)zone.center.y  * spawnTries * (i + 1) % 100 - 50);
+						std::shared_ptr<Prefab> structurePrefab;
+						if (zone.points.size() == largestZoneSize)
+						{
+							if (spawnTries > 5)
+							{
+								structurePrefab = setupConfig.largePrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.largePrefabs.size()
+								);
+							}
+							else if (spawnTries > 3)
+							{
+								structurePrefab = setupConfig.mediumPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.mediumPrefabs.size()
+								);
+							}
+							else
+							{
+								structurePrefab = setupConfig.smallPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.smallPrefabs.size()
+								);
+							}
+						}
+						else
+						{
+							if (spawnTries > 5)
+							{
+								structurePrefab = setupConfig.mediumPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.mediumPrefabs.size()
+								);
+							}
+							else
+							{
+								structurePrefab = setupConfig.smallPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.smallPrefabs.size()
+								);
+							}
+						}
+						
+						int selectedRotation = ((int)zone.center.x * (int)zone.center.y * spawnTries * (i + 1)) % rotations.size();
+						float structureRotation = rotations[selectedRotation];// zone.center.x* zone.center.y;
+						//structureRotation = (float)((int)zone.center.x * (int)zone.center.y  * spawnTries * (i + 1) % 100 - 50);
 						boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
 						structurePrefab->Properties().GetFloat("width", width, 1.0f);
 						structurePrefab->Properties().GetFloat("height", height, 1.0f);
@@ -273,7 +311,7 @@ void CellSetuper::MakeZones()
 		}
 	}
 
-
+	largestZoneSize = 0;
 	// calc zones center
 	for (auto& zone : zones)
 	{
@@ -508,24 +546,3 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const CircleCollider& circleC
 		return glm::vec2(0.0f);
 	}
 }
-
-/*
-glm::vec2 CellSetuper::FindClosestNode(float xPosition, float yPosition)
-{
-	glm::vec2 objectPosition = glm::vec2(xPosition, yPosition);
-	glm::vec2 closestNode = glm::vec2(grid.points[0][0].position);
-	for (int i = 0; i < setupConfig.gridSize; i++)
-	{
-		for (int j = 0; j < setupConfig.gridSize; j++)
-		{
-			if (glm::distance2(objectPosition, closestNode) >
-				glm::distance2(objectPosition, glm::vec2(grid.points[i][j].position))
-				&& grid.points[i][j].isAvailable == true)
-			{
-				closestNode = grid.points[i][j].index;
-			}
-		}
-	}
-	return closestNode;
-}
-*/

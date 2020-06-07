@@ -35,6 +35,7 @@ public:
 private:
 	std::vector<Zone> zones;
 	std::vector<GameObject> tempColliders;
+	std::vector<float> rotations;
 	int largestZoneSize;
 
 public:
