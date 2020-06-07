@@ -91,7 +91,7 @@ void Button::Draw()
 	GUIManager::guiShader->use();
 
 	glm::vec3 screenPos((GetAbsolutePosition().x / WindowManager::SCREEN_WIDTH) * 2.0f - 1.0f, -(GetAbsolutePosition().y / WindowManager::SCREEN_HEIGHT) * 2.0f + 1.0f, 0.0f);
-	glm::vec2 screenSize(GetSize().x / WindowManager::SCREEN_WIDTH, GetSize().y / WindowManager::SCREEN_HEIGHT);
+	glm::vec2 screenSize(GetLocalSize().x / WindowManager::SCREEN_WIDTH, GetLocalSize().y / WindowManager::SCREEN_HEIGHT);
 
 	glm::mat4 mat(1.0f);
 	mat = glm::translate(mat, screenPos);

@@ -30,8 +30,10 @@ namespace MainMenuUI
 		auto library = TextureManager::GetLibrary("MainMenu");
 
 		viniete = std::make_shared<Panel>();
+		viniete->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		viniete->SetPosition({0.0f, 0.0f, 0.0f});
-		viniete->SetSize({WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
+		viniete->SetSize({ 1.0f, 1.0f });
+		//viniete->SetSize({WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
 		viniete->textureColor.texture = library->GetTexture("menuViniete");
 		GUIManager::AddWidget(viniete);
 

@@ -9,7 +9,7 @@
 
 void PhysicsSystem::Init()
 {
-    minimalMovement = 0.01f;
+    minimalMovement = 0.005f;
 }
 
 void PhysicsSystem::Update(float dt)
