@@ -13,6 +13,13 @@ public:
 	virtual void Draw() = 0;
 	virtual void Update(const glm::vec2& mousePosition);
 
+	enum class CoordinatesType
+	{
+		PIXEL,
+		RELATIVE,
+		WORLD
+	};
+
 	void PreDraw();
 	void PostDraw();
 	void SetPosition(glm::vec3 position);
@@ -23,14 +30,15 @@ public:
 	const glm::vec3& GetPosition();
 	const glm::vec3& GetAbsolutePosition();
 	const glm::vec2& GetSize();
+	const glm::vec2& GetLocalSize();
 	Anchor GetAnchor();
 	Anchor GetPivot();
 	void AddChild(std::shared_ptr<Widget> child);
 	void SetClipping(bool clipping);
 	void SetEnabled(bool enabled);
 	bool GetEnabled();
-	
-	bool useWorldSpace;
+	void SetCoordinatesType(CoordinatesType type);
+	void Recalculate();
 
 	std::shared_ptr<Widget> parent;
 	std::vector<std::shared_ptr<Widget>> children;
@@ -46,17 +54,23 @@ protected:
 
 private:
 	void UpdateChildrenWorldPosition();
+	glm::vec3 ToAbsolute(glm::vec3 vec);
+	glm::vec2 ToAbsolute(glm::vec2 vec);
 
 	Anchor anchor;
 	Anchor pivot;
 
 	glm::vec4 clippingArea;
-	glm::vec3 position;
-	glm::vec3 absolutePosition;
-	glm::vec3 worldPosition;
-	glm::vec2 size;
+	glm::vec3 position; //typed coordinates
+	glm::vec2 size; //typed coordinates
+
+	glm::vec3 absolutePosition; //world + local
+	glm::vec3 worldPosition; //pixel
+	glm::vec3 localPosition; //pixel
+	glm::vec2 localSize; //final
 	bool isClipping;
 	bool isClipped;
 	bool enabled;
 	int level;
+	CoordinatesType coordinatesType;
 };

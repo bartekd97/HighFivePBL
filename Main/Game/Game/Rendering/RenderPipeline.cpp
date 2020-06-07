@@ -285,6 +285,7 @@ void RenderPipeline::Render()
 
 	// show rendered
 	FrameBuffer::BlitColor(PostprocessingSwapBuffers[0], nullptr, 0);
+	FrameBuffer::BindDefaultScreen();
 
 	// debug rendering
 #ifdef HF_DEBUG_RENDER
