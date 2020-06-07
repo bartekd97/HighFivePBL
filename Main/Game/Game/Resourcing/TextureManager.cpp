@@ -227,6 +227,10 @@ TextureLibrary::TextureLibrary(std::string name) : name(name)
 		else if (node->Attribute("format", "rgba"))
 			entity->config.format = GL_RGBA8;
 		
+		entity->config.filteringMin = GL_LINEAR_MIPMAP_LINEAR;
+		entity->config.filteringMag = GL_LINEAR;
+		entity->config.generateMipmaps = true;
+
 		entities[textureName] = entity;
 	}
 	LogInfo("TextureLibrary::TextureLibrary(): Initialized '{}' library with {} entities", name, entities.size());
