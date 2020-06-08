@@ -9,8 +9,7 @@ private:
 	std::shared_ptr<Shader> SSAOShader;
 	std::shared_ptr<Shader> SSAOBlurShader;
 	std::shared_ptr<FrameBuffer> frameBuffer;
-	//std::shared_ptr<Texture> noiseTexture;
-	unsigned int noiseTexture;
+	std::shared_ptr<Texture> noiseTexture;
 
 public:
 	virtual void Init() override;

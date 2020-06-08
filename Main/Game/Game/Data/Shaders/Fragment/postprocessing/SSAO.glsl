@@ -10,16 +10,16 @@ uniform sampler2D texNoise;
 
 uniform vec3 samples[24];
 
-int kernelSize = 24;
-float radius = 1.1;
-float bias = 0.005;
-float power = 1.55;
+const int kernelSize = 24;
+const float radius = 1.1;
+const float bias = 0.005;
+const float power = 1.35;
 
 //float radius = 1.2;
 //float bias = 0.015;
 //float power = 2.25;
 
-const vec2 noiseScale = vec2(1280.0/4.0, 720.0/4.0); 
+const vec2 noiseScale = vec2(1280.0/4.0, 720.0/4.0);
 
 uniform mat4 gProjection;
 
@@ -36,15 +36,15 @@ void main()
     float occlusion = 0.0;
     for(int i = 0; i < kernelSize; ++i)
     {
-        vec3 sample = TBN * samples[i]; // from tangent to view-space
+        vec3 sample = TBN * samples[i];
         sample = fragPos + sample * radius; 
         
         vec4 offset = vec4(sample, 1.0);
-        offset = gProjection * offset; // from view to clip-space
-        offset.xyz /= offset.w; // perspective divide
-        offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
+        offset = gProjection * offset;
+        offset.xyz /= offset.w;
+        offset.xyz = offset.xyz * 0.5 + 0.5;
         
-        float sampleDepth = texture(gPosition, offset.xy).z; // get depth value of kernel sample
+        float sampleDepth = texture(gPosition, offset.xy).z;
 
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
         occlusion += (sampleDepth >= sample.z + bias ? 1.0 : 0.0) * rangeCheck;
