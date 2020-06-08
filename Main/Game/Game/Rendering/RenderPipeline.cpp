@@ -44,7 +44,7 @@ void RenderPipeline::InitGBuffer()
 {
 	const std::vector<FrameBuffer::ColorAttachement> gbufferComponents = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB16F, GL_RGB, GL_FLOAT},		// position in view-space
+		{GL_RGB32F, GL_RGB, GL_FLOAT},		// position in view-space
 		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal in view-space
 		{GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},	// albedoFade fade
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
@@ -144,9 +144,9 @@ void RenderPipeline::InitPostprocessingEffects()
 		);
 
 	// init effects
+	postprocessingEffects.push_back(std::make_shared<SSAOEffect>());
 	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
-	postprocessingEffects.push_back(std::make_shared<SSAOEffect>());
 	
 	for (auto fx : postprocessingEffects)
 		fx->Init();
@@ -298,10 +298,10 @@ void RenderPipeline::Render()
 
 	if (debugRendering)
 	{
-		RenderSystems.boxColliderRenderer->Render();
-		RenderSystems.circleColliderRenderer->Render();
-		PrimitiveRenderer::DrawLines();
-		PrimitiveRenderer::DrawStickyPoints();
+		//RenderSystems.boxColliderRenderer->Render();
+		//RenderSystems.circleColliderRenderer->Render();
+		//PrimitiveRenderer::DrawLines();
+		//PrimitiveRenderer::DrawStickyPoints();
 	}
 	else
 	{

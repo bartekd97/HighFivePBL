@@ -29,28 +29,27 @@ void SSAOEffect::Init()
 		FrameBuffer::DepthAttachement::DEFAULT
 	);
 
-	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	std::vector<glm::vec3> ssaoKernel;
-	for (unsigned int i = 0; i < 64; ++i)
+	for (unsigned int i = 0; i < 32; ++i)
 	{
 		glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
 		sample = glm::normalize(sample);
 		sample *= randomFloats(generator);
 		float scale = float(i) / 64.0;
 
-		// scale samples s.t. they're more aligned to center of kernel
 		scale = lerp(0.1f, 1.0f, scale * scale);
 		sample *= scale;
 		ssaoKernel.push_back(sample);
 	}
-	for (unsigned int i = 0; i < 64; ++i)
+	for (unsigned int i = 0; i < 32; ++i)
 		SSAOShader->setVector3F("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
 
 	std::vector<glm::vec3> ssaoNoise;
 	for (unsigned int i = 0; i < 16; i++)
 	{
-		glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f); // rotate around z-axis (in tangent space)
+		glm::vec3 noise(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);
 		ssaoNoise.push_back(noise);
 	}
 	glGenTextures(1, &noiseTexture);
@@ -65,6 +64,7 @@ void SSAOEffect::Init()
 	SSAOBlurShader->use();
 	SSAOBlurShader->setInt("ssaoInput", 0);
 	SSAOBlurShader->setInt("gTexture", 1);
+	SSAOBlurShader->setInt("gAlbedoFade", 2);
 }
 
 bool SSAOEffect::Process(
@@ -79,7 +79,7 @@ bool SSAOEffect::Process(
 	glActiveTexture(GL_TEXTURE2);
 	glBindTexture(GL_TEXTURE_2D, noiseTexture);
 
-	SSAOShader->setMat4("projectionView", HFEngine::MainCamera.GetProjectionMatrix() * HFEngine::MainCamera.GetViewMatrix());
+	SSAOShader->setMat4("gProjection", HFEngine::MainCamera.GetProjectionMatrix());
 
 	frameBuffer->bind();
 	PrimitiveRenderer::DrawScreenQuad();
@@ -93,6 +93,7 @@ bool SSAOEffect::Process(
 	SSAOBlurShader->setInt("debug", 0);
 #endif
 	source->getColorAttachement(0)->bind(1);
+	gbuffer.albedoFade->bind(2);
 
 	destination->bind();
 	PrimitiveRenderer::DrawScreenQuad();

@@ -1,6 +1,6 @@
 #version 330 core
 
-out vec4 FragColor;
+out float FragColor;
 
 in vec2 TexCoords;
 
@@ -8,16 +8,20 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D texNoise;
 
-uniform vec3 samples[64];
+uniform vec3 samples[32];
 
-int kernelSize = 64;
-float radius = 0.4;
+int kernelSize = 32;
+float radius = 1.1;
 float bias = 0.005;
-float power = 1.45;
+float power = 1.55;
+
+//float radius = 1.2;
+//float bias = 0.015;
+//float power = 2.25;
 
 const vec2 noiseScale = vec2(1280.0/4.0, 720.0/4.0); 
 
-uniform mat4 projectionView;
+uniform mat4 gProjection;
 
 void main()
 {
@@ -36,20 +40,16 @@ void main()
         sample = fragPos + sample * radius; 
         
         vec4 offset = vec4(sample, 1.0);
-        offset = projectionView * offset; // from view to clip-space
+        offset = gProjection * offset; // from view to clip-space
         offset.xyz /= offset.w; // perspective divide
         offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
         
         float sampleDepth = texture(gPosition, offset.xy).z; // get depth value of kernel sample
-        
+
         float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
         occlusion += (sampleDepth >= sample.z + bias ? 1.0 : 0.0) * rangeCheck;
+        
     }
     occlusion = 1.0 - (occlusion / kernelSize);
-    
-    //vec4 final = texture(gAlbedo, TexCoords);
-    //final += final * 0.3 * occlusion;
-    //FragColor = texture(gAlbedo, TexCoords) * 0.3 * occlusion;//occlusion;
-    //FragColor = vec4(occlusion, 0, 0, 1.0);
-    FragColor = vec4(vec3(pow(occlusion, power)), 1.0);
+    FragColor = pow(occlusion, power);
 }
