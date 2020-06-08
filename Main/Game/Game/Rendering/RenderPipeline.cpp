@@ -13,9 +13,10 @@
 #include "InputManager.h"
 
 #include "Postprocessing/RiverFogEffect.h"
+#include "Postprocessing/SSAOEffect.h"
 #include "Postprocessing/OrthoSSREffect.h"
 
-
+bool RenderPipeline::debugRendering = false;
 namespace {
 	void CalculateLightCamera(Camera& viewCamera, Camera& lightCamera)
 	{
@@ -39,13 +40,11 @@ namespace {
 	}
 }
 
-
-
 void RenderPipeline::InitGBuffer()
 {
 	const std::vector<FrameBuffer::ColorAttachement> gbufferComponents = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB16F, GL_RGB, GL_FLOAT},		// position in view-space
+		{GL_RGB32F, GL_RGB, GL_FLOAT},		// position in view-space
 		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal in view-space
 		{GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},	// albedoFade fade
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
@@ -107,6 +106,7 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<ParticleRenderer>());
 		HFEngine::ECS.SetSystemSignature<ParticleRendererSystem>(signature);
 	}
+	debugRendering = false;
 
 #ifdef HF_DEBUG_RENDER
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
@@ -144,6 +144,7 @@ void RenderPipeline::InitPostprocessingEffects()
 		);
 
 	// init effects
+	postprocessingEffects.push_back(std::make_shared<SSAOEffect>());
 	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
 	
@@ -290,7 +291,6 @@ void RenderPipeline::Render()
 
 	// debug rendering
 #ifdef HF_DEBUG_RENDER
-	static bool debugRendering = false;
 	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
 		debugRendering = !debugRendering;
 		LogInfo("[DEBUG] Debug Rendering set to: {}", debugRendering);
