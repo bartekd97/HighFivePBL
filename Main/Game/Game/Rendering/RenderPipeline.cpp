@@ -14,6 +14,7 @@
 
 #include "Postprocessing/RiverFogEffect.h"
 #include "Postprocessing/OrthoSSREffect.h"
+#include "Postprocessing/FXAAEffect.h"
 
 
 namespace {
@@ -146,6 +147,7 @@ void RenderPipeline::InitPostprocessingEffects()
 	// init effects
 	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
+	postprocessingEffects.push_back(std::make_shared<FXAAEffect>());
 	
 	for (auto fx : postprocessingEffects)
 		fx->Init();

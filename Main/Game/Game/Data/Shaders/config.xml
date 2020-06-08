@@ -22,4 +22,5 @@
     <shader name="PPRiverFog" vertex="GeometryPass.glsl" fragment="postprocessing/RiverFog.glsl"/>
     <shader name="PPOrthoSSR" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSR.glsl"/>
     <shader name="PPOrthoSSRBlend" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSRBlend.glsl"/>
+	<shader name="FXAA" vertex="ScreenPass.glsl" fragment="postprocessing/FXAA.glsl"/>
 </shaders>
