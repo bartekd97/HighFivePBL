@@ -85,7 +85,7 @@ namespace GUIManager
 				{
 					minMax[0] = glm::vec2(widget->GetAbsolutePosition());
 					minMax[1] = minMax[0] + widget->GetLocalSize();
-					if (minMax[1].x < 0.0f || minMax[1].y < 0.0f || minMax[0].x  > screen.x || minMax[0].y > screen.y) continue;
+					if (minMax[1].x < 0.0f || minMax[1].y < 0.0f || minMax[0].x > screen.x || minMax[0].y > screen.y) continue;
 					widget->PreDraw();
 					widget->Draw();
 					widget->PostDraw();
@@ -104,14 +104,20 @@ namespace GUIManager
 		}
 		else
 		{
+			if (zIndex < parent->GetZIndex())
+			{
+				zIndex = parent->GetZIndex();
+			}
 			widget->parent = parent;
 			parent->AddChild(widget);
 		}
+		widget->SetZIndex(zIndex);
 		indexedWidgets[zIndex].push_back(widget);
 	}
 
 	void RemoveWidget(std::shared_ptr<Widget> widget)
 	{
+		// TODO: check crash
 		std::vector<std::shared_ptr<Widget>> all = { widget };
 		int i = 0, max = all.size();
 

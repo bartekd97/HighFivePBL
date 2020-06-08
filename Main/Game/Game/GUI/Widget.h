@@ -33,6 +33,8 @@ public:
 	const glm::vec2& GetLocalSize();
 	Anchor GetAnchor();
 	Anchor GetPivot();
+	void SetZIndex(int zIndex);
+	int GetZIndex();
 	void AddChild(std::shared_ptr<Widget> child);
 	void SetClipping(bool clipping);
 	void SetEnabled(bool enabled);
@@ -73,4 +75,5 @@ private:
 	bool enabled;
 	int level;
 	CoordinatesType coordinatesType;
+	int zIndex;
 };

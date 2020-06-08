@@ -322,3 +322,13 @@ void Widget::Recalculate()
 	CalculateAbsolutePosition();
 	UpdateChildrenWorldPosition();
 }
+
+void Widget::SetZIndex(int zIndex)
+{
+	this->zIndex = zIndex;
+}
+
+int Widget::GetZIndex()
+{
+	return zIndex;
+}
