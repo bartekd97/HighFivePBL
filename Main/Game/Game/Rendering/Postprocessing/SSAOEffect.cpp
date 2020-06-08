@@ -71,7 +71,7 @@ void SSAOEffect::Init()
 	SSAOBlurShader->setInt("gAlbedoFade", 2);
 }
 
-bool SSAOEffect::Process(
+bool SSAOEffect::PreForwardProcess(
 	std::shared_ptr<FrameBuffer> source,
 	std::shared_ptr<FrameBuffer> destination,
 	RenderPipeline::GBufferStruct& gbuffer)
