@@ -24,18 +24,18 @@ void main()
     blurDir.x = -((lumaTL + lumaTR) - (lumaBL + lumaBR));
     blurDir.y = ((lumaTL + lumaBL) - (lumaTR + lumaBR));
     
-    float dirReduce = max((lumaTL + lumaTR + lumaBL + lumaBR) * (0.25 * ReduceMul), ReduceMin); //to avoid dividing by 0
+    float dirReduce = max((lumaTL + lumaTR + lumaBL + lumaBR) * (ReduceMul * 0.25), ReduceMin); //to avoid dividing by 0
     float inverseDirAdjustment = 1.0/(min(abs(blurDir.x), abs(blurDir.y)) + dirReduce);
 
     // clamping????
     blurDir = min(vec2(SpanMax, SpanMax), 
                 max(vec2(-SpanMax, -SpanMax), blurDir * inverseDirAdjustment)) * texCoordOffset;
 
-    vec3 result1 = (1.0/2.0) * (texture2D(gTexture, TexCoords.xy + (blurDir * vec2(1.0/3.0 - 0.5))).xyz) +
-                                (texture2D(gTexture, TexCoords.xy + (blurDir * vec2(2.0/3.0 - 0.5))).xyz);
+    vec3 result1 = (1.0/2.0) * (texture2D(gTexture, TexCoords.xy + (blurDir * vec2(1.0/3.0 - 0.5))).xyz +
+                                texture2D(gTexture, TexCoords.xy + (blurDir * vec2(2.0/3.0 - 0.5))).xyz);
     
-    vec3 result2 = result1 * (1.0/2.0) + (1.0/4.0) * (texture2D(gTexture, TexCoords.xy + (blurDir * vec2(0.0/3.0 - 0.5))).xyz) +
-                                (texture2D(gTexture, TexCoords.xy + (blurDir * vec2(3.0/3.0 - 0.5))).xyz);
+    vec3 result2 = result1 * (1.0/2.0) + (1.0/4.0) * (texture2D(gTexture, TexCoords.xy + (blurDir * vec2(0.0/3.0 - 0.5))).xyz +
+                                texture2D(gTexture, TexCoords.xy + (blurDir * vec2(3.0/3.0 - 0.5))).xyz);
     
     float lumaMin = min(lumaM, min(min(lumaTL, lumaTR), min(lumaBL, lumaBR)));
     float lumaMax = max(lumaM, max(max(lumaTL, lumaTR), max(lumaBL, lumaBR)));
