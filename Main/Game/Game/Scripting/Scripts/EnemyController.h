@@ -28,6 +28,7 @@ private: // variables
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 2.0f * M_PI;
+	float attackDistance = 1.5f;
 
 	float health;
 	float healthMax = 100.0f;
@@ -56,6 +57,11 @@ public:
 	~EnemyController()
 	{
 		GUIManager::RemoveWidget(healthBarPanel);
+	}
+
+	void Awake()
+	{
+		HFEngine::ECS.SetNameGameObject(GetGameObject(), "enemy");
 	}
 
 	void Start()
@@ -112,7 +118,9 @@ public:
 		{
 			glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 			if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
-				&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f)
+				//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
+				&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance
+				&& !rigidBody.isFalling)
 				pathfinder.QueuePath(playerPos);
 		}
 
