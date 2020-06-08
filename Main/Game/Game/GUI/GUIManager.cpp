@@ -7,6 +7,7 @@
 #include "../Utility/Logger.h"
 #include "Event/EventManager.h"
 #include "Event/Events.h"
+#include "../WindowManager.h"
 
 namespace GUIManager
 {
@@ -74,12 +75,17 @@ namespace GUIManager
 
 		TextRenderer::UpdateProjection();
 
+		glm::vec2 screen(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
+		glm::vec2 minMax[2];
 		for (auto it = indexedWidgets.begin(); it != indexedWidgets.end(); it++)
 		{
 			for (auto widget : it->second)
 			{
 				if (widget->GetEnabled())
 				{
+					minMax[0] = glm::vec2(widget->GetAbsolutePosition());
+					minMax[1] = minMax[0] + widget->GetLocalSize();
+					if (minMax[1].x < 0.0f || minMax[1].y < 0.0f || minMax[0].x  > screen.x || minMax[0].y > screen.y) continue;
 					widget->PreDraw();
 					widget->Draw();
 					widget->PostDraw();
