@@ -13,13 +13,11 @@ uniform float specularShininess = 8.0f;
 uniform float specularValue;
 uniform float opacityValue;
 
-uniform vec3 gCameraPosition;
-
 uniform float gGamma = 2.2f;
 
 struct DirectionalLight
 {
-    vec3 Direction;
+    vec3 ViewDirection;
     vec3 Color;
     vec3 Ambient;
     float ShadowIntensity;
@@ -28,6 +26,7 @@ uniform DirectionalLight gDirectionalLight;
 
 in VS_OUT {
     vec3 FragPos;
+    vec3 FragPosWorld;
     //vec3 FragPosView;
     vec4 LightSpacePos;
     vec2 TexCoords;
@@ -54,9 +53,9 @@ void main()
     vec3 albedo = texture(albedoMap, fs_in.TexCoords).rgb * albedoColor;
     vec3 emissive = texture(emissiveMap, fs_in.TexCoords).rgb * emissiveColor;
 
-    vec3 viewDir = normalize(gCameraPosition - fs_in.FragPos);
+    vec3 viewDir = normalize(-fs_in.FragPos);
 
-    vec3 lightDir = normalize(-gDirectionalLight.Direction);
+    vec3 lightDir = normalize(-gDirectionalLight.ViewDirection);
 
     // ambient
     vec3 ambient = gDirectionalLight.Ambient * albedo;

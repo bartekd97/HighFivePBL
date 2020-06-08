@@ -7,15 +7,13 @@ in vec2 TexCoords;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedo;
+uniform sampler2D gAlbedoFade;
 uniform sampler2D gMetalnessRoughnessShadow;
 uniform sampler2D gEmissive;
 
-uniform vec3 gCameraPosition;
-
 struct DirectionalLight
 {
-    vec3 Direction;
+    vec3 ViewDirection;
     vec3 Color;
     vec3 Ambient;
     float ShadowIntensity;
@@ -24,9 +22,6 @@ uniform DirectionalLight gDirectionalLight;
 
 uniform float gGamma = 2.2f;
 
-// distance fade
-uniform float fadeBelowY = -3.0f;
-uniform float fadeRangeY = 7.0f;
 
 // PBR stuff
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -40,18 +35,21 @@ void main()
 { 
     vec3 FragPos = texture(gPosition, TexCoords).rgb;
     vec3 Normal = texture(gNormal, TexCoords).rgb;
-    vec3 Albedo = texture(gAlbedo, TexCoords).rgb;
+    vec4 AlbedoFade = texture(gAlbedoFade, TexCoords).rgba;
     vec3 MetlnessRoughnessShadow = texture(gMetalnessRoughnessShadow, TexCoords).rgb;
     vec3 Emissive = texture(gEmissive, TexCoords).rgb;
+
+    vec3 Albedo = AlbedoFade.rgb;
+    float Fade = AlbedoFade.a;
 
     float metalness = MetlnessRoughnessShadow.r;
     float roughness = MetlnessRoughnessShadow.g;
     float shadow = MetlnessRoughnessShadow.b * gDirectionalLight.ShadowIntensity;
 
 
-    vec3 viewDir = normalize(gCameraPosition - FragPos);
+    vec3 viewDir = normalize(-FragPos);
     vec3 F0 = mix(vec3(0.04), Albedo, metalness);
-    vec3 lightDir = normalize(-gDirectionalLight.Direction);
+    vec3 lightDir = normalize(-gDirectionalLight.ViewDirection);
     vec3 Lo = vec3(0.0f);
 
     // cook-torrance for directional light
@@ -84,15 +82,12 @@ void main()
     color += Lo * (1.0f - shadow);
     color += Emissive;
 
-    float fadeY = -(FragPos.y - fadeBelowY);
-    fadeY = clamp(1.0f - (fadeY/fadeRangeY), 0.0, 1.0f);
-
     // tone mappimg
     //color = color / (color + vec3(1.0));
     // gamma correction
     color = pow(color, vec3(1.0f/gGamma));
     
-    FragColor = vec4(color, fadeY);
+    FragColor = vec4(color, Fade);
 }
 
 

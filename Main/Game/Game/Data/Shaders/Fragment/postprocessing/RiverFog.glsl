@@ -5,6 +5,7 @@ const float PI = 3.14159265359;
 out vec4 FragColor;
 in VS_OUT {
     vec3 FragPos;
+    vec3 FragPosWorld;
     //vec3 FragPosView;
     vec4 LightSpacePos;
     vec2 TexCoords;
@@ -43,7 +44,7 @@ void main()
     fogDepth = sin((-PI * 0.5f) + (fogDepth * PI));
     fogDepth = (fogDepth + 1.0f) * 0.5f;
 
-    float fogValue = getFogValue(fs_in.FragPos.xz / fogZoom);
+    float fogValue = getFogValue(fs_in.FragPosWorld.xz / fogZoom);
     float fog = clamp(fogDepth * fogValue, 0.0f, 1.0f);
 
     FragColor = vec4(fogColor, fog);

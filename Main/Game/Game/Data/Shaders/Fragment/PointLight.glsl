@@ -5,15 +5,14 @@ layout (location = 4) out vec3 gEmissive;
 
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
-uniform sampler2D gAlbedo;
+uniform sampler2D gAlbedoFade;
 uniform sampler2D gMetalnessRoughnessShadow;
 
 uniform vec2 viewportSize;
-uniform vec3 gCameraPosition;
 
 struct PointLight
 {
-    vec3 Position;
+    vec3 ViewPosition;
     vec3 Color;
     float Radius;
     float Intensity;
@@ -37,7 +36,7 @@ void main()
 
     vec3 FragPos = texture(gPosition, texCoords).rgb;
     vec3 Normal = texture(gNormal, texCoords).rgb;
-    vec3 Albedo = texture(gAlbedo, texCoords).rgb;
+    vec3 Albedo = texture(gAlbedoFade, texCoords).rgb;
     vec3 MetlnessRoughnessShadow = texture(gMetalnessRoughnessShadow, texCoords).rgb;
 
     float metalness = MetlnessRoughnessShadow.r;
@@ -45,12 +44,12 @@ void main()
     float shadow = MetlnessRoughnessShadow.b * gPointLight.ShadowIntensity;
 
 
-    vec3 viewDir = normalize(gCameraPosition - FragPos);
+    vec3 viewDir = normalize(-FragPos);
     vec3 F0 = mix(vec3(0.04), Albedo, metalness);
-    vec3 lightDir = normalize(gPointLight.Position - FragPos);
+    vec3 lightDir = normalize(gPointLight.ViewPosition - FragPos);
     vec3 Lo = vec3(0.0f);
 
-    float attenuation = clamp(distance(FragPos, gPointLight.Position) / gPointLight.Radius, 0, 1);
+    float attenuation = clamp(distance(FragPos, gPointLight.ViewPosition) / gPointLight.Radius, 0, 1);
     attenuation = sin((PI * 0.5f) - (attenuation * PI));
     attenuation = (attenuation + 1.0f) * 0.5f;
 
