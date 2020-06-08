@@ -15,7 +15,7 @@ private:
 
 	std::shared_ptr<FrameBuffer> framebufferA;
 	std::shared_ptr<FrameBuffer> framebufferB;
-
+	float brightnessThreshold;
 
 public:
 	virtual void Init() override;
