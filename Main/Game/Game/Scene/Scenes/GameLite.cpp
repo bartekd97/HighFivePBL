@@ -18,10 +18,6 @@ void GameLiteScene::OnLoad()
 	auto playerPrefab = PrefabManager::GetPrefab("Player");
 	auto player = playerPrefab->Instantiate(startupPos);
 
-	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
-	auto testCircleObject = prefabCircle->Instantiate(startupPos - glm::vec3(10.0f, 0.0f, 10.0f));
-	HFEngine::ECS.SetNameGameObject(testCircleObject, "testCircle");
-
 	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
 	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
