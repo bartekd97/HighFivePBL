@@ -34,7 +34,7 @@ void BloomEffect::Init()
 
 	verticalBlur = ShaderManager::GetShader("VerticalBlur");
 	verticalBlur->use();
-	horizontalBlur->setInt("image", 0);
+	verticalBlur->setInt("image", 0);
 
 	resultBloom = ShaderManager::GetShader("BloomResult");
 	resultBloom->use();
