@@ -4,7 +4,7 @@
 #include "../PrimitiveRenderer.h"
 #include "Resourcing/Shader.h"
 #include "../../HFEngine.h"
-#include "Rendering/RenderPipeline.h"
+#include "../../InputManager.h"
 
 float lerp(float a, float b, float f)
 {
@@ -76,6 +76,12 @@ bool SSAOEffect::PreForwardProcess(
 	std::shared_ptr<FrameBuffer> destination,
 	RenderPipeline::GBufferStruct& gbuffer)
 {
+	static bool debug = false;
+	if (InputManager::GetKeyDown(GLFW_KEY_F6))
+	{
+		debug = !debug;
+	}
+
 	SSAOShader->use();
 	gbuffer.position->bind(0);
 	gbuffer.normal->bind(1);
@@ -89,11 +95,7 @@ bool SSAOEffect::PreForwardProcess(
 	SSAOBlurShader->use();
 	frameBuffer->getColorAttachement(0)->bind(0);
 	SSAOBlurShader->setVector3F("ambient", HFEngine::WorldLight.ambient);
-#ifdef HF_DEBUG_RENDER
-	SSAOBlurShader->setInt("debug", RenderPipeline::debugRendering ? 1 : 0);
-#else
-	SSAOBlurShader->setInt("debug", 0);
-#endif
+	SSAOBlurShader->setInt("debug", (int)debug);
 	source->getColorAttachement(0)->bind(1);
 	gbuffer.albedoFade->bind(2);
 
