@@ -18,7 +18,6 @@
 #include "Postprocessing/BloomEffect.h"
 
 
-bool RenderPipeline::debugRendering = false;
 namespace {
 	void CalculateLightCamera(Camera& viewCamera, Camera& lightCamera)
 	{
@@ -108,7 +107,6 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<ParticleRenderer>());
 		HFEngine::ECS.SetSystemSignature<ParticleRendererSystem>(signature);
 	}
-	debugRendering = false;
 
 #ifdef HF_DEBUG_RENDER
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
@@ -308,6 +306,7 @@ void RenderPipeline::Render()
 
 	// debug rendering
 #ifdef HF_DEBUG_RENDER
+	static bool debugRendering = false;
 	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
 		debugRendering = !debugRendering;
 		LogInfo("[DEBUG] Debug Rendering set to: {}", debugRendering);

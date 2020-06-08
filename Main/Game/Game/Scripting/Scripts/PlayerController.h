@@ -62,6 +62,11 @@ public:
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 	}
 
+	~PlayerController()
+	{
+		GUIManager::RemoveWidget(ghostBarPanel);
+	}
+
 	void Awake()
 	{
 		ghostObject = PrefabManager::GetPrefab("PlayerGhost")->Instantiate();
