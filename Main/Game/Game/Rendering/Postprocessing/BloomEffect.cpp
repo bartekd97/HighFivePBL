@@ -1,5 +1,7 @@
 #include "BloomEffect.h"
 #include "HFEngine.h"
+#include "InputManager.h"
+
 #include "Resourcing/Shader.h"
 #include "Rendering/PrimitiveRenderer.h"
 
@@ -19,10 +21,12 @@ void BloomEffect::Init()
 		FrameBuffer::DepthAttachement::DEFAULT
 	);
 
-
+	brightnessThreshold = 0.55;
 	bloom = ShaderManager::GetShader("Bloom");
 	bloom->use();
 	bloom->setInt("diffuseTexture", 0);
+	bloom->setFloat("BrightnessThreshold", brightnessThreshold);
+
 
 	horizontalBlur = ShaderManager::GetShader("HorizontalBlur");
 	horizontalBlur->use();
@@ -38,11 +42,24 @@ void BloomEffect::Init()
 	resultBloom->setInt("bloomBlur", 1);
 }
 
+static bool bloomEffectEnabled = true;
+
+
 bool BloomEffect::Process(
 	std::shared_ptr<FrameBuffer> source,
 	std::shared_ptr<FrameBuffer> destination,
 	RenderPipeline::GBufferStruct& gbuffer)
 {
+	if (InputManager::GetKeyDown(GLFW_KEY_F4))
+	{
+		bloomEffectEnabled = !bloomEffectEnabled;
+	}
+	if (!bloomEffectEnabled)
+	{
+		return false;
+	}
+
+	
 	int iterations = 10;
 
 	bloom->use();
@@ -70,6 +87,7 @@ bool BloomEffect::Process(
 	resultBloom->use();
 	source->getColorAttachement(0)->bind(0);
 	framebufferB->getColorAttachement(0)->bind(1);
+
 
 	destination->bind();
 	PrimitiveRenderer::DrawScreenQuad();
