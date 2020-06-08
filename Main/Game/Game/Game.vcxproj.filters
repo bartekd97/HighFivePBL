@@ -79,6 +79,7 @@
     <ClCompile Include="Scene\Scenes\GameLite.cpp" />
     <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\BloomEffect.cpp" />
+	<ClCompile Include="Rendering\Postprocessing\FXAAEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="Scene\Scenes\GameLite.h" />
     <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
     <ClInclude Include="Rendering\Postprocessing\BloomEffect.h" />
+	<ClInclude Include="Rendering\Postprocessing\FXAAEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
