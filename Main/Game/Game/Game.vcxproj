@@ -138,7 +138,6 @@
     <ClCompile Include="Rendering\Camera.cpp" />
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
-    <ClCompile Include="Rendering\Postprocessing\FXAAEffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\BloomEffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
@@ -261,7 +260,6 @@
     <ClInclude Include="Rendering\FrameBuffer.h" />
     <ClInclude Include="Rendering\Frustum.h" />
     <ClInclude Include="Rendering\Lights.h" />
-    <ClInclude Include="Rendering\Postprocessing\FXAAEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\BloomEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
