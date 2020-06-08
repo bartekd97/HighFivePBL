@@ -117,7 +117,6 @@ namespace GUIManager
 
 	void RemoveWidget(std::shared_ptr<Widget> widget)
 	{
-		// TODO: check crash
 		std::vector<std::shared_ptr<Widget>> all = { widget };
 		int i = 0, max = all.size();
 
@@ -130,21 +129,22 @@ namespace GUIManager
 			i++;
 		}
 
+		bool removed;
 		for (auto itMap = indexedWidgets.begin(); itMap != indexedWidgets.end(); itMap++)
 		{
 			for (auto itVector = itMap->second.begin(); itVector != itMap->second.end();)
 			{
+				removed = false;
 				for (auto& toRemove : all)
 				{
 					if (*itVector == toRemove)
 					{
 						itVector = itMap->second.erase(itVector);
-					}
-					else
-					{
-						++itVector;
+						removed = true;
+						break;
 					}
 				}
+				if (removed) itVector++;
 			}
 		}
 
