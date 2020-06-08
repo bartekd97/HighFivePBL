@@ -288,6 +288,7 @@
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
+    <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
     <ClInclude Include="Scripting\Scripts\PlayerController.h" />
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />

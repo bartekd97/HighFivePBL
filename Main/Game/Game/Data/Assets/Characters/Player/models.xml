@@ -8,6 +8,10 @@
         <animation name="ghostrunning"      clip="anim/Ghost Running.glb"/>
     </model>
 
+    <model name="VampireLite" mesh="vampire_a_lusth_LITE.glb" material="VampireMortalMat" skinned="true">
+        <animation name="ghostrunning"      clip="anim/Ghost Running.glb"/>
+    </model>
+
     <model name="FireTorch" mesh="firetorch.glb"    material="FireTorchMat" />
     <model name="FireTorchFlame" mesh="flame.glb"   material="FireTorcFlamehMat" />
 </models>

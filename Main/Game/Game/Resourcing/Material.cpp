@@ -45,6 +45,22 @@ Material::Material(MaterialType type) : type(type) {
 	opacityValue = 1.0f;
 }
 
+Material::Material(const std::shared_ptr<Material>& base) : type(base->type) {
+	albedoMap = base->albedoMap;
+	normalMap = base->normalMap;
+	metalnessMap = base->metalnessMap;
+	roughnessMap = base->roughnessMap;
+	emissiveMap = base->emissiveMap;
+
+	albedoColor = base->albedoColor;
+	metalnessValue = base->metalnessValue;
+	roughnessValue = base->roughnessValue;
+	emissiveColor = base->emissiveColor;
+
+	specularValue = base->specularValue;
+	opacityValue = base->opacityValue;
+}
+
 void Material::SetLibraryProperties(PropertyReader& properties, std::shared_ptr<TextureLibrary> textureLibrary)
 {
 	static std::string albedoMapTmp;

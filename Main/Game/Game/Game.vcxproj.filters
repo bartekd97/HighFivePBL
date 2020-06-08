@@ -218,6 +218,7 @@
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
     <ClInclude Include="Scene\Scenes\GameLite.h" />
     <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
+    <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

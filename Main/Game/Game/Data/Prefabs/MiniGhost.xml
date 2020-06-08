@@ -1,0 +1,30 @@
+<prefab defaultScale="1.0,1.0,1.0">
+    <component name="ScriptComponent">
+        <property name="name" value="MiniGhost"/>
+    </component>
+
+    <children>
+        <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Characters/Player:VampireLite"/>
+            </component>
+            <component name="SkinnedMeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="material" value="Characters/Player:MiniGhostMat"/>
+                <property name="individualMaterial" value="true" />
+                <property name="castShadows" value="false" />
+            </component>
+            <component name="SkinAnimator">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+        <child name="MiniGhostLight" position="0,2.5,0" rotation="0,0,0" scale="1,1,1">
+            <component name="PointLightRenderer">
+                <property name="color" value="0.0,1.0,1.0"/>
+                <property name="radius" value="4.5"/>
+                <property name="intensity" value="1.0"/>
+                <property name="shadowIntensity" value="0.75"/>
+            </component>
+        </child>
+    </children>
+</prefab>

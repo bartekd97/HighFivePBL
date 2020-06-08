@@ -23,6 +23,7 @@ enum class MaterialType {
 class Material {
 	friend void MaterialManager::Initialize();
 	friend std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial(MaterialType type);
+	friend std::shared_ptr<Material> MaterialManager::CloneMaterial(const std::shared_ptr<Material>& source);
 	friend class MaterialLibrary;
 
 public:
@@ -48,6 +49,7 @@ private:
 
 
 	Material(MaterialType materialType);
+	Material(const std::shared_ptr<Material>& base);
 
 public:
 	void apply(std::shared_ptr<Shader> shader);

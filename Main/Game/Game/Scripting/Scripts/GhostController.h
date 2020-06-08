@@ -11,6 +11,7 @@
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Utility/TimerAnimator.h"
+#include "Resourcing/Prefab.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -19,6 +20,8 @@ class GhostController : public Script
 {
 private: // parameters
 	float moveSpeed = 10.0f;
+
+	std::shared_ptr<Prefab> miniGhostPrefab;
 
 private: // variables
 	bool hasGhostMovement = false;
@@ -40,6 +43,14 @@ public:
 	float ghostDistanceRecoverySpeed = 3.0f;
 	float leftGhostDistance;
 
+	float miniGhostSpawnDistance = 1.5f;
+	int maxActiveLines = 4;
+
+	std::vector<glm::vec2> recordedPositions;
+	float distanceReached;
+	glm::vec3 lastDistanceRecordPos;
+
+
 	GhostController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
@@ -47,6 +58,8 @@ public:
 
 	void Awake()
 	{
+		miniGhostPrefab = PrefabManager::GetPrefab("MiniGhost");
+		miniGhostPrefab->MakeWarm();
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
 	}
@@ -74,7 +87,7 @@ public:
 		hasGhostMovement = true;
 
 		auto& transform = GetTransform();
-		transform.SetPosition(HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition());
+		transform.SetPosition(HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition());
 		transform.RotateSelf(
 			glm::degrees(GetRotationdifferenceToMousePosition()),
 			transform.GetUp()
@@ -85,6 +98,8 @@ public:
 		auto& ghostMesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&ghostLight.light.intensity, 0.0f, ghostLightDefaultIntensity, 0.3f);
 		timerAnimator.AnimateVariable(&ghostMesh.material->opacityValue, 0.0f, ghostMaterialDefaultOpacity, 0.3f);
+	
+		StartMarking();
 	}
 	void MovementStop(Event& event)
 	{
@@ -99,6 +114,8 @@ public:
 			if (ghostLight.light.intensity < 0.0001f)
 				HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
 			});
+
+		EndMarking();
 	}
 
 
@@ -109,6 +126,8 @@ public:
 		if (!hasGhostMovement) return;
 
 		auto& transform = GetTransform();
+
+		UpdateMarking();
 
 		// smooth rotate
 		{
@@ -157,14 +176,144 @@ public:
 		worldDirection /= worldDirection.y;
 		glm::vec3 worldZero = world - (worldDirection * world.y);
 
-		glm::vec3 direction = glm::normalize(worldZero - transform.GetWorldPosition());
-		glm::vec3 front3 = transform.GetWorldFront();
+		glm::vec3 direction = glm::normalize(worldZero - transform.GetPosition());
+		glm::vec3 front3 = transform.GetFront();
 		float diff = glm::orientedAngle(
 			glm::normalize(glm::vec2(direction.x, direction.z)),
 			glm::normalize(glm::vec2(front3.x, front3.z))
 			);
 
 		return diff;
+	}
+
+
+
+
+
+
+
+	// GHOST MARKING FUNCTIONS
+	void StartMarking()
+	{
+		auto& transform = GetTransform();
+		glm::vec3 transformPosition = transform.GetPosition();
+
+		distanceReached = 0.0f;
+		lastDistanceRecordPos = transformPosition;
+
+		recordedPositions.clear();
+		//recordedLinePositions = new List<Vector3>();
+
+		recordedPositions.emplace_back(glm::vec2{
+			transformPosition.x,
+			transformPosition.z
+		});
+		/*
+		recordedLinePositions.Add(new Vector3(
+			transform.position.x,
+			transform.position.y,
+			transform.position.z
+			));
+		recordedLine = SpawnLineGenerator(recordedLinePositions);
+		//lastMiniGhostSpawnPosition = transform.position;
+		distanceReached = 0.0f;
+		lastDistanceRecordPos = transform.position;
+		spawnedMiniGhostsCurrent = new List<MiniGhost>();
+		IsMarking = true;
+		firstEnemyHit = true;
+		bossHit = true;
+		numberOfEnemyHit = 0;
+		*/
+	}
+	void EndMarking()
+	{
+		auto& transform = GetTransform();
+		glm::vec3 transformPosition = transform.GetPosition();
+
+		recordedPositions.emplace_back(glm::vec2{
+			transformPosition.x,
+			transformPosition.z
+			});
+
+		/*
+		recordedLinePositions.Add(new Vector3(
+			transform.position.x,
+			transform.position.y,
+			transform.position.z
+			));
+		UpdateLineRenderer(recordedLinePositions);
+
+		if (spawnedMiniGhostsCurrent.Count > 0)
+		{
+			activeLines.Add(new GhostLine()
+				{
+					//from = startPosition,
+					//to = endPosition,
+					points = recordedPositions,
+					ghosts = spawnedMiniGhostsCurrent,
+					lineRend = recordedLine
+
+				});
+		}
+
+		//SpawnLineGenerator(recordedLinePositions);
+		recordedLine = null;
+		*/
+
+		recordedPositions.clear();
+
+		/*
+		recordedLinePositions = null;
+		spawnedMiniGhostsCurrent = null;
+
+		IsMarking = false;
+
+		UpdateLineCrossings();
+		CheckClosedLines();
+
+		if (activeLines.Count > maxActiveLines)
+		{
+			//while (activeLines.Count > 0)
+			FadeOutLine(activeLines[0]);
+		}
+		*/
+	}
+	void UpdateMarking()
+	{
+		auto& transform = GetTransform();
+		glm::vec3 transformPosition = transform.GetPosition();
+
+		distanceReached += glm::distance(lastDistanceRecordPos, transformPosition);
+		lastDistanceRecordPos = transformPosition;
+
+		if (distanceReached >= miniGhostSpawnDistance)
+		{
+			GameObject mg = miniGhostPrefab->Instantiate(
+				transformPosition,
+				transform.GetRotationEuler()
+				);
+
+			SkinAnimator* mgAnimator = HFEngine::ECS.GetComponentInChildren<SkinAnimator>(mg).value();
+			mgAnimator->SetAnimation("ghostrunning");
+			mgAnimator->SetCurrentClipLevel(GetAnimator().GetCurrentClipLevel());
+			mgAnimator->SetAnimatorSpeed(0.0f);
+
+			//spawnedMiniGhostsCurrent.Add(mg);
+			recordedPositions.emplace_back(glm::vec2{
+				transformPosition.x,
+				transformPosition.z
+			});
+
+			/**
+			recordedLinePositions.Add(new Vector3(
+				transform.position.x,
+				transform.position.y,
+				transform.position.z
+				));
+			UpdateLineRenderer(recordedLinePositions);
+			*/
+			distanceReached = 0.0f;
+		}
 	}
 };
 

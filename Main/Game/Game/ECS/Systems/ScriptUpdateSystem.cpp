@@ -4,7 +4,8 @@
 
 void ScriptUpdateSystem::Update(float dt)
 {
-	for (auto const& gameObject : gameObjects)
+	auto copy = gameObjects;
+	for (auto const& gameObject : copy)
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(gameObject);
 		auto scripts = scriptContainer.GetInstances();

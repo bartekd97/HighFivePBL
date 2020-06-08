@@ -90,6 +90,11 @@ std::shared_ptr<Material> MaterialManager::CreateEmptyMaterial(MaterialType type
 	return std::shared_ptr<Material>(new Material(type));
 }
 
+std::shared_ptr<Material> MaterialManager::CloneMaterial(const std::shared_ptr<Material>& source)
+{
+	return std::shared_ptr<Material>(new Material(source));
+}
+
 std::shared_ptr<MaterialLibrary> MaterialManager::GetLibrary(std::string name)
 {
 #ifdef _DEBUG
