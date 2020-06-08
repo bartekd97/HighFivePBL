@@ -298,10 +298,10 @@ void RenderPipeline::Render()
 
 	if (debugRendering)
 	{
-		//RenderSystems.boxColliderRenderer->Render();
-		//RenderSystems.circleColliderRenderer->Render();
-		//PrimitiveRenderer::DrawLines();
-		//PrimitiveRenderer::DrawStickyPoints();
+		RenderSystems.boxColliderRenderer->Render();
+		RenderSystems.circleColliderRenderer->Render();
+		PrimitiveRenderer::DrawLines();
+		PrimitiveRenderer::DrawStickyPoints();
 	}
 	else
 	{
