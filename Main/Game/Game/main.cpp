@@ -8,15 +8,7 @@
 #include <math.h>
 
 #include "ECS/Components.h"
-
-#include "Resourcing/Texture.h"
-#include "Resourcing/Material.h"
-#include "Resourcing/Model.h"
-#include "Resourcing/Shader.h"
-#include "Resourcing/Prefab.h"
-#include "Rendering/PrimitiveRenderer.h"
 #include "Utility/Logger.h"
-#include "Utility/TextureTools.h"
 
 #include "HFEngine.h"
 #include "WindowManager.h"
@@ -24,13 +16,13 @@
 #include "Event/EventManager.h"
 #include "Event/Events.h"
 
-#include "MapGenerator/MapGenerator.h"
-
-#include "Resourcing/MeshFileLoader.h"
-
 #include "GUI/Button.h"
-
 #include "Audio/AudioController.h""
+
+#include "Scene/SceneManager.h"
+#include "Scene/Scenes/Game.h"
+#include "Scene/Scenes/GameLite.h"
+#include "Scene/Scenes/MainMenu.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -47,26 +39,10 @@ int main()
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
-	MapGenerator generator;
-	generator.Generate();
-	GameObject startupCell = generator.GetStartupCell();
-	glm::vec3 startupPos = HFEngine::ECS.GetComponent<Transform>(startupCell).GetWorldPosition();
-
-	auto playerPrefab = PrefabManager::GetPrefab("Player");
-	auto player = playerPrefab->Instantiate(startupPos);
-	//HFEngine::ECS.SetNameGameObject(player, "Player");
-
-	//auto enemyPrefab = PrefabManager::GetPrefab("Enemies/Axer");
-	//auto enemyObject = enemyPrefab->Instantiate(startupPos + glm::vec3(5.0f, 0.0f, 5.0f));
-
-	auto prefabCircle = PrefabManager::GetPrefab("TestCircle");
-	auto testCircleObject = prefabCircle->Instantiate(startupPos - glm::vec3(10.0f, 0.0f, 10.0f));
-	HFEngine::ECS.SetNameGameObject(testCircleObject, "testCircle");
-
-	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
-	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
-	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
-	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
+	// register scenes
+	SceneManager::RegisterScene("Game", std::make_shared<GameScene>());
+	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
+	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
 	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
 
@@ -76,6 +52,9 @@ int main()
 	ac->loadSound(pathToFile);
 	//ac->setListener();
 	ac->playBackgroundMusic();
+
+	// request initial scene
+	SceneManager::RequestLoadScene("MainMenu");
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))

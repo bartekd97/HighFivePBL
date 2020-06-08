@@ -20,4 +20,6 @@
 
     <!-- postprocessing -->
     <shader name="PPRiverFog" vertex="GeometryPass.glsl" fragment="postprocessing/RiverFog.glsl"/>
+    <shader name="PPOrthoSSR" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSR.glsl"/>
+    <shader name="PPOrthoSSRBlend" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSRBlend.glsl"/>
 </shaders>

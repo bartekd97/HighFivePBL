@@ -83,6 +83,12 @@ public:
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+	inline void generateMipmaps() {
+		glActiveTexture(GL_TEXTURE31); // use last slot to prevent overwriting bound texture on current slot
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 
 
 	~Texture()

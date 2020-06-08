@@ -88,8 +88,11 @@ public:
 		ghostController = ghostScriptContainer.GetScript<GhostController>();
 
 		ghostBarPanel = std::make_shared<Panel>();
-		ghostBarPanel->SetPositionAnchor(glm::vec3(((1.0f - ghostBarWidth) / 2.0f) * WindowManager::SCREEN_WIDTH, -100.0f, 0.0f), Anchor::BOTTOMLEFT);
-		ghostBarPanel->SetSize(glm::vec2(ghostBarWidth * WindowManager::SCREEN_WIDTH, 50.0f));
+		ghostBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		//ghostBarPanel->SetPositionAnchor(glm::vec3(((1.0f - ghostBarWidth) / 2.0f) * WindowManager::SCREEN_WIDTH, -100.0f, 0.0f), Anchor::BOTTOMLEFT);
+		//ghostBarPanel->SetSize(glm::vec2(ghostBarWidth * WindowManager::SCREEN_WIDTH, 50.0f));
+		ghostBarPanel->SetPositionAnchor({ (1.0f - ghostBarWidth) / 2.0f, -0.1388f, 0.0f }, Anchor::BOTTOMLEFT);
+		ghostBarPanel->SetSize({ ghostBarWidth, 0.07f });
 		ghostBarPanel->SetClipping(true);
 		ghostBarPanel->textureColor.color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		GUIManager::AddWidget(ghostBarPanel);
@@ -210,7 +213,7 @@ public:
 			transform.SetPosition(startPosition);
 		}
 
-		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetSize().y));
+		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
 	}
 
 	bool UpdateMovement(float dt)

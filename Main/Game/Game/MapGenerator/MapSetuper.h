@@ -22,7 +22,10 @@ public:
 
 	GameObject GetStartupCell();
 
+	bool _debugLiteMode = false;
 private:
+	void GenerateCell(GameObject cell);
+
 	GameObject CalculateBossCell(GameObject startupCell);
 };
 

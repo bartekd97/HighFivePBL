@@ -61,7 +61,12 @@ Signature GameObjectManager::SetEnabled(GameObject gameObject, bool enabled)
 
 bool GameObjectManager::IsEnabled(GameObject gameObject)
 {
-	return disabledSignatures[gameObject].count() == 0;
+	return disabledSignatures[gameObject].none();
+}
+
+bool GameObjectManager::IsValid(GameObject gameObject)
+{
+	return signatures[gameObject].any() || disabledSignatures[gameObject].any();
 }
 
 const char* GameObjectManager::GetName(GameObject gameObject)

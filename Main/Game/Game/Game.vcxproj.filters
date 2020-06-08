@@ -72,6 +72,11 @@
     <ClCompile Include="Audio\AudioController.cpp" />
     <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
+    <ClCompile Include="Scene\SceneManager.cpp" />
+    <ClCompile Include="Scene\Scenes\Game.cpp" />
+    <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
+    <ClCompile Include="Scene\Scenes\GameLite.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -207,6 +212,12 @@
     <ClInclude Include="Audio\AudioController.h" />
     <ClInclude Include="ECS\Components\CellPathfinder.h" />
     <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
+    <ClInclude Include="Scene\SceneManager.h" />
+    <ClInclude Include="Scene\IScene.h" />
+    <ClInclude Include="Scene\Scenes\Game.h" />
+    <ClInclude Include="Scene\Scenes\MainMenu.h" />
+    <ClInclude Include="Scene\Scenes\GameLite.h" />
+    <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

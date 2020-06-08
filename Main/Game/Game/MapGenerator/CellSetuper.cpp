@@ -26,7 +26,7 @@ void CellSetuper::Setup()
 	cellInfo.EnemyContainer = enemiesContainer;
 
 	// spawn monument only on normal cell
-	if (type == CellSetuper::Type::NORMAL)
+	if (type == MapCell::Type::NORMAL)
 	{
 		// spawn main statue
 		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
@@ -36,6 +36,8 @@ void CellSetuper::Setup()
 		PrepareColliders();
 		UpdateColliders();
 
+		rotations.push_back(20.0f);
+		rotations.push_back(340.0f);
 
 		glm::quat boxRot;
 		float width;
@@ -59,37 +61,94 @@ void CellSetuper::Setup()
 			{
 				objectsToGenerate = 1;
 			}
+			if (_debugLiteMode) objectsToGenerate = 1;
 
-			for (int i = 0; i < objectsToGenerate; i++)
+			for (int i = 0; i < objectsToGenerate; ++i)
 			{
-				if (zone.ind == 1)
+				if (zone.points.size() == largestZoneSize || zone.ind % 2 == 1 )
 				{
-					auto structurePrefab = setupConfig.structurePrefabs.at(
-						zone.points.size() * objectsToGenerate % setupConfig.structurePrefabs.size()
-					);
-					float structureRotation = 0.0f;// zone.center.x* zone.center.y;
-					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
-					structurePrefab->Properties().GetFloat("width", width, 1.0f);
-					structurePrefab->Properties().GetFloat("height", height, 1.0f);
-					structurePrefab->Properties().GetFloat("roty", structureRotation, 1.0f);
+					// skip structures in lite mode
+					if (_debugLiteMode) continue;
+					// it can be later improved to spawn only specific structure in lite mode
 
-					box.SetWidthHeight(width, height);
-					if (zone.points.size() > 0)
+					int spawnTries = 10;
+					while (spawnTries > 0)
 					{
-						glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
-						if (glm::length2(position) > 0.001f)
+						std::shared_ptr<Prefab> structurePrefab;
+						if (zone.points.size() == largestZoneSize)
 						{
-							LogInfo("CellSetuper::Setup() Zone {} got spawned structure at: {}, {}", zone.ind, position.x, position.y);
-							SpawnStructure(structurePrefab, position, structureRotation);
-							UpdateColliders();
+							if (spawnTries > 5)
+							{
+								structurePrefab = setupConfig.largePrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.largePrefabs.size()
+								);
+							}
+							else if (spawnTries > 3)
+							{
+								structurePrefab = setupConfig.mediumPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.mediumPrefabs.size()
+								);
+							}
+							else
+							{
+								structurePrefab = setupConfig.smallPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.smallPrefabs.size()
+								);
+							}
 						}
+						else
+						{
+							if (spawnTries > 5)
+							{
+								structurePrefab = setupConfig.mediumPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.mediumPrefabs.size()
+								);
+							}
+							else
+							{
+								structurePrefab = setupConfig.smallPrefabs.at(
+									(zone.points.size() * (i + 1) + spawnTries) % setupConfig.smallPrefabs.size()
+								);
+							}
+						}
+						
+						int selectedRotation = ((int)zone.center.x * (int)zone.center.y * spawnTries * (i + 1)) % rotations.size();
+						float structureRotation = rotations[selectedRotation];// zone.center.x* zone.center.y;
+						//structureRotation = (float)((int)zone.center.x * (int)zone.center.y  * spawnTries * (i + 1) % 100 - 50);
+						boxRot = glm::quat(glm::vec3(0.0f, glm::radians(structureRotation), 0.0f));
+						structurePrefab->Properties().GetFloat("width", width, 1.0f);
+						structurePrefab->Properties().GetFloat("height", height, 1.0f);
+						//structurePrefab->Properties().GetFloat("roty", structureRotation, 1.0f);
+
+						box.SetWidthHeight(width, height);
+						if (zone.points.size() > 0)
+						{
+							glm::vec2 position = DrawPointInZone(zone, box, boxRot, i* spawnTries);
+							if (glm::length2(position) > 0.001f)
+							{
+								LogInfo("CellSetuper::Setup() Zone {} got spawned structure at: {}, {}", zone.ind, position.x, position.y);
+								SpawnStructure(structurePrefab, position, structureRotation);
+								spawnTries = 0;
+								UpdateColliders();
+							}
+						}
+						else
+						{
+							spawnTries = 0;
+						}
+						spawnTries -= 1;
 					}
 				}
 				else
 				{
+					// skip obstacles in lite mode
+					if (_debugLiteMode) continue;
+					// it can be later improved to spawn only specific obstacle in lite mode
+
 					auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
 						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
 					);
+
 					float obstacleRotation = zone.center.x * zone.center.y;
 					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
 					obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
@@ -123,7 +182,7 @@ void CellSetuper::Setup()
 
 
 	// now spawn enemies
-	if (type == CellSetuper::Type::NORMAL)
+	if (type == MapCell::Type::NORMAL)
 	{
 		int zonesSum = 0;
 		for (auto& zone : zones) zonesSum += zone.points.size();
@@ -252,7 +311,7 @@ void CellSetuper::MakeZones()
 		}
 	}
 
-
+	largestZoneSize = 0;
 	// calc zones center
 	for (auto& zone : zones)
 	{
@@ -268,6 +327,9 @@ void CellSetuper::MakeZones()
 #endif // HF_DEBUG_RENDER
 		}
 		zone.center = sum / float(zone.points.size());
+
+		if(zone.points.size() > largestZoneSize)
+			largestZoneSize = zone.points.size();
 	}
 
 
@@ -410,7 +472,7 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const BoxCollider& boxCollide
 		HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition().z
 	};
 
-	int iter_available = glm::min(20, (int)zone.points.size());
+	int iter_available = glm::min(100, (int)zone.points.size());
 	int someSeed = ((int)glm::abs(zone.center.x * zone.center.y) + zone.points.size())* zones.size() + (int)(glm::length2(zone.center) * number);
 	//int randomNumber = ((int)zone.center.x * (int)zone.center.y * zones.size() * number * 7 +1) % zone.points.size();
 	int randomNumber = (someSeed + number) % zone.points.size();
@@ -484,24 +546,3 @@ glm::vec2 CellSetuper::DrawPointInZone(Zone& zone, const CircleCollider& circleC
 		return glm::vec2(0.0f);
 	}
 }
-
-/*
-glm::vec2 CellSetuper::FindClosestNode(float xPosition, float yPosition)
-{
-	glm::vec2 objectPosition = glm::vec2(xPosition, yPosition);
-	glm::vec2 closestNode = glm::vec2(grid.points[0][0].position);
-	for (int i = 0; i < setupConfig.gridSize; i++)
-	{
-		for (int j = 0; j < setupConfig.gridSize; j++)
-		{
-			if (glm::distance2(objectPosition, closestNode) >
-				glm::distance2(objectPosition, glm::vec2(grid.points[i][j].position))
-				&& grid.points[i][j].isAvailable == true)
-			{
-				closestNode = grid.points[i][j].index;
-			}
-		}
-	}
-	return closestNode;
-}
-*/

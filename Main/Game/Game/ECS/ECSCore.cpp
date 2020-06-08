@@ -73,6 +73,11 @@ bool ECSCore::IsEnabledGameObject(GameObject gameObject)
 	return gameObjectManager->IsEnabled(gameObject);
 }
 
+bool ECSCore::IsValidGameObject(GameObject gameObject)
+{
+	return gameObjectManager->IsValid(gameObject);
+}
+
 const char* ECSCore::GetNameGameObject(GameObject gameObject)
 {
 	return gameObjectManager->GetName(gameObject);

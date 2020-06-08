@@ -20,14 +20,14 @@ public:
 	enum class GBufferBindingPoint {
 		POSITION = 1,
 		NORMAL,
-		ALBEDO,
+		ALBEDO_FADE,
 		METALNESS_ROUGHNESS_SHADOW,
 		EMISSIVE
 	};
 	struct GBufferStruct {
 		std::shared_ptr<Texture> position;
 		std::shared_ptr<Texture> normal;
-		std::shared_ptr<Texture> albedo;
+		std::shared_ptr<Texture> albedoFade;
 		std::shared_ptr<Texture> metalnessRoughnessShadow;
 		std::shared_ptr<Texture> emissive;
 

@@ -1,5 +1,6 @@
 <models materialLibrary="this">
     <model name="Vampire" mesh="vampire_a_lusth.glb" material="VampireMortalMat" skinned="true">
+        <animation name="menuidle"          clip="anim/Standing Torch Idle 01.glb"/>
         <animation name="idle"              clip="anim/Standing Torch Idle 02.glb"/>
         <animation name="running"           clip="anim/Standing Torch Run Forward.glb"/>
         <animation name="attack"            clip="anim/Standing Melee Attack 360 High.glb"/>

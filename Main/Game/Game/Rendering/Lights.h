@@ -2,6 +2,7 @@
 
 #include <glm/glm.hpp>
 #include "Resourcing/Shader.h"
+#include "Rendering/Camera.h"
 
 class DirectionalLight
 {
@@ -11,9 +12,12 @@ public:
 	glm::vec3 ambient = { 0.005f, 0.01f, 0.02f };
 	float shadowIntensity = 1.0f;
 
-	inline void Apply(std::shared_ptr<Shader> shader)
+	float shadowmapMaxDistanceSteps = 50.0f;
+	float shadowmapScale = 1.25f;
+
+	inline void Apply(std::shared_ptr<Shader> shader, Camera& viewCamera)
 	{
-		shader->setVector3F("gDirectionalLight.Direction", direction);
+		shader->setVector3F("gDirectionalLight.ViewDirection", viewCamera.GetViewMatrix() * glm::vec4(direction, 0.0f));
 		shader->setVector3F("gDirectionalLight.Color", color);
 		shader->setVector3F("gDirectionalLight.Ambient", ambient);
 		shader->setFloat("gDirectionalLight.ShadowIntensity", shadowIntensity);
@@ -29,9 +33,9 @@ public:
 	float intensity = 1.0f;
 	float shadowIntensity = 0.0f;
 
-	inline void Apply(std::shared_ptr<Shader> shader)
+	inline void Apply(std::shared_ptr<Shader> shader, Camera& viewCamera)
 	{
-		shader->setVector3F("gPointLight.Position", position);
+		shader->setVector3F("gPointLight.ViewPosition", viewCamera.GetViewMatrix() * glm::vec4(position, 1.0f));
 		shader->setVector3F("gPointLight.Color", color);
 		shader->setFloat("gPointLight.Radius", radius);
 		shader->setFloat("gPointLight.Intensity", intensity);

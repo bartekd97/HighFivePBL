@@ -25,6 +25,7 @@ public:
 
     GameObject GetStartupCell();
 
+    bool _debugLiteMode = false;
 private:
     bool IsBorderCell(Delaunay::Site* cell);
     GameObject CreateCell(Delaunay::Site* cell, GameObject parent);

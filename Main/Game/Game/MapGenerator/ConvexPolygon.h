@@ -17,7 +17,7 @@ private:
 public:
 	std::vector<glm::vec2> Points = std::vector<glm::vec2>(3);
 
-	ConvexPolygon() {}
+	ConvexPolygon() { CalculatePointAngles(); }
 	ConvexPolygon(std::vector<glm::vec2>& points) : Points(points) { CalculatePointAngles(); }
 
 	ConvexPolygon CreateCircular(int segments, int precision = 4);

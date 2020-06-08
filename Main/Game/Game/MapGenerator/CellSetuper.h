@@ -4,17 +4,13 @@
 #include "Config.h"
 #include "ECS/Components/BoxCollider.h"
 #include "ECS/Components/CircleCollider.h"
+#include "ECS/Components/MapLayoutComponents.h"
+#include "HFEngine.h"
 
 
 class CellSetuper
 {
 public:
-	enum class Type {
-		STARTUP,
-		NORMAL,
-		BOSS
-	};
-
 	struct Zone {
 		// all in local positions
 		std::vector<glm::vec2> points;
@@ -34,21 +30,22 @@ private:
 
 public:
 	const GameObject cell;
-	const Type type;
-
+	const MapCell::Type type;
 
 private:
 	std::vector<Zone> zones;
 	std::vector<GameObject> tempColliders;
+	std::vector<float> rotations;
+	int largestZoneSize;
 
 public:
-	CellSetuper(CellSetupConfig& setupConfig, GameObject cell, Type type)
-		: setupConfig(setupConfig), cell(cell), type(type) {}
+	CellSetuper(CellSetupConfig& setupConfig, GameObject cell)
+		: setupConfig(setupConfig), cell(cell),
+		type(HFEngine::ECS.GetComponent<MapCell>(cell).CellType) {}
 
 	void Setup();
 
-	//glm::vec2 FindClosestNode(float xPosition, float yPosition);
-
+	bool _debugLiteMode = false;
 private:;
 	void SpawnStructure(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 	void SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);

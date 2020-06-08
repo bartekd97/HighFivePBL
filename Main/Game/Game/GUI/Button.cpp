@@ -62,6 +62,7 @@ void Button::Update(const glm::vec2& mousePosition)
 
 	if (!isOver)
 	{
+		if (state != STATE::NORMAL && OnStateChanged) OnStateChanged(STATE::NORMAL);
 		state = STATE::NORMAL;
 	}
 	else
@@ -72,10 +73,12 @@ void Button::Update(const glm::vec2& mousePosition)
 			{
 				OnClickListener();
 			}
+			if (state != STATE::PRESSED && OnStateChanged) OnStateChanged(STATE::PRESSED);
 			state = STATE::PRESSED;
 		}
 		else
 		{
+			if (state != STATE::HOVER && OnStateChanged) OnStateChanged(STATE::HOVER);
 			state = STATE::HOVER;
 		}
 	}
@@ -88,7 +91,7 @@ void Button::Draw()
 	GUIManager::guiShader->use();
 
 	glm::vec3 screenPos((GetAbsolutePosition().x / WindowManager::SCREEN_WIDTH) * 2.0f - 1.0f, -(GetAbsolutePosition().y / WindowManager::SCREEN_HEIGHT) * 2.0f + 1.0f, 0.0f);
-	glm::vec2 screenSize(GetSize().x / WindowManager::SCREEN_WIDTH, GetSize().y / WindowManager::SCREEN_HEIGHT);
+	glm::vec2 screenSize(GetLocalSize().x / WindowManager::SCREEN_WIDTH, GetLocalSize().y / WindowManager::SCREEN_HEIGHT);
 
 	glm::mat4 mat(1.0f);
 	mat = glm::translate(mat, screenPos);
