@@ -259,6 +259,20 @@ void RenderPipeline::Render()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
 
+	glDepthMask(GL_FALSE);
+	glDisable(GL_BLEND);
+	for (auto fx : postprocessingEffects)
+	{
+		bool swap = fx->PreForwardProcess(
+			PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1], GBuffer
+		);
+		if (swap)
+			std::swap(PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1]);
+	}
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_TRUE);
+
 	// wait for particle culling
 	RenderSystems.particleRenderer->FinishCulling();
 

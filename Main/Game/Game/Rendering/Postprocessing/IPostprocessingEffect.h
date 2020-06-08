@@ -12,5 +12,16 @@ public:
 	virtual bool Process(
 		std::shared_ptr<FrameBuffer> source,
 		std::shared_ptr<FrameBuffer> destination,
-		RenderPipeline::GBufferStruct& gbuffer) = 0;
+		RenderPipeline::GBufferStruct& gbuffer)
+	{
+		return false;
+	}
+
+	virtual bool PreForwardProcess(
+		std::shared_ptr<FrameBuffer> source,
+		std::shared_ptr<FrameBuffer> destination,
+		RenderPipeline::GBufferStruct& gbuffer)
+	{
+		return false;
+	}
 };
