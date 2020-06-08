@@ -22,4 +22,8 @@
     <shader name="PPRiverFog" vertex="GeometryPass.glsl" fragment="postprocessing/RiverFog.glsl"/>
     <shader name="PPOrthoSSR" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSR.glsl"/>
     <shader name="PPOrthoSSRBlend" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSRBlend.glsl"/>
+    <shader name="Bloom" vertex="ScreenPass.glsl" fragment="postprocessing/Bloom.glsl"/>
+    <shader name="HorizontalBlur" vertex="ScreenPass.glsl" fragment="postprocessing/HorizontalBlur.glsl"/>
+    <shader name="VerticalBlur" vertex="ScreenPass.glsl" fragment="postprocessing/VerticalBlur.glsl"/>
+    <shader name="BloomResult" vertex="ScreenPass.glsl" fragment="postprocessing/BloomResult.glsl"/>
 </shaders>
