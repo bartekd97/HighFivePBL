@@ -103,4 +103,39 @@ namespace GUIManager
 		}
 		indexedWidgets[zIndex].push_back(widget);
 	}
+
+	void RemoveWidget(std::shared_ptr<Widget> widget)
+	{
+		std::vector<std::shared_ptr<Widget>> all = { widget };
+		int i = 0, max = all.size();
+
+		root.erase(std::remove(root.begin(), root.end(), widget));
+
+		while (i < max)
+		{
+			for (auto child : all[i]->children) all.push_back(child);
+			max += all[i]->children.size();
+			i++;
+		}
+
+		for (auto itMap = indexedWidgets.begin(); itMap != indexedWidgets.end(); itMap++)
+		{
+			for (auto itVector = itMap->second.begin(); itVector != itMap->second.end();)
+			{
+				for (auto& toRemove : all)
+				{
+					if (*itVector == toRemove)
+					{
+						itVector = itMap->second.erase(itVector);
+					}
+					else
+					{
+						++itVector;
+					}
+				}
+			}
+		}
+
+		
+	}
 }

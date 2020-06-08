@@ -54,7 +54,7 @@ protected:
 
 private:
 	void UpdateChildrenWorldPosition();
-	glm::vec3 ToAbsolute(glm::vec3 vec);
+	glm::vec3 ToAbsolute(glm::vec3 vec, bool size = false);
 	glm::vec2 ToAbsolute(glm::vec2 vec);
 
 	Anchor anchor;
