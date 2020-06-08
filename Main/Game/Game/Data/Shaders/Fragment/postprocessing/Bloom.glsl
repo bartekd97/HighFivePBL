@@ -5,7 +5,7 @@ in  vec2 TexCoords;
 
 uniform sampler2D DiffuseTexture;
 
-uniform float BrightnessThreshold;
+const float BrightnessThreshold = 0.55f;
 
 void main()
 {           
