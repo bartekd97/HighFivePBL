@@ -24,6 +24,12 @@ void main()
     float fade = texture(gAlbedoFade, TexCoords).a;
     result /= (4.0 * 4.0);
     result = mix(1.0, result, fade);
+    if (debug ==  0)
+    {
         vec3 final = texture(gTexture, TexCoords).rgb * result;
         FragColor = vec4(final, 1.0);
+    } else
+    {
+        FragColor = vec4(vec3(result), 1.0);
+    }
 }

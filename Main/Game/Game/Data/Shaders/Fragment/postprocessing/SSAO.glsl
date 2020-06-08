@@ -8,7 +8,9 @@ uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D texNoise;
 
+uniform vec2 noiseScale;
 uniform vec3 samples[24];
+
 
 const int kernelSize = 24;
 const float radius = 1.1;
@@ -18,8 +20,6 @@ const float power = 1.35;
 //float radius = 1.2;
 //float bias = 0.015;
 //float power = 2.25;
-
-const vec2 noiseScale = vec2(1280.0/4.0, 720.0/4.0);
 
 uniform mat4 gProjection;
 

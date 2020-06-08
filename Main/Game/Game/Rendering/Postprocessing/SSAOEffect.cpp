@@ -18,6 +18,7 @@ void SSAOEffect::Init()
 	SSAOShader->setInt("gPosition", 0);
 	SSAOShader->setInt("gNormal", 1);
 	SSAOShader->setInt("texNoise", 2);
+	SSAOShader->setVector2F("noiseScale", { HFEngine::RENDER_WIDTH / 4, HFEngine::RENDER_HEIGHT / 4 });
 
 	const std::vector<FrameBuffer::ColorAttachement> colorAttachement = {
 		{ GL_RGB, GL_RGB, GL_UNSIGNED_BYTE }
@@ -32,7 +33,7 @@ void SSAOEffect::Init()
 	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	std::vector<glm::vec3> ssaoKernel;
-	for (unsigned int i = 0; i < 24; ++i)
+	for (unsigned int i = 0; i < 24; i++)
 	{
 		glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
 		sample = glm::normalize(sample);
@@ -43,8 +44,10 @@ void SSAOEffect::Init()
 		sample *= scale;
 		ssaoKernel.push_back(sample);
 	}
-	for (unsigned int i = 0; i < 24; ++i)
+	for (unsigned int i = 0; i < 24; i++)
+	{
 		SSAOShader->setVector3F("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+	}
 
 	std::vector<unsigned char> ssaoNoise;
 	for (unsigned int i = 0; i < 16; i++)
