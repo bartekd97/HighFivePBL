@@ -64,6 +64,12 @@ namespace TextureManager {
 		if (config.generateMipmaps)
 			glGenerateMipmap(GL_TEXTURE_2D);
 
+		if (config.repeat)
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		}
+
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return textureId;

@@ -139,8 +139,10 @@
     <ClCompile Include="Rendering\FrameBuffer.cpp" />
     <ClCompile Include="Rendering\Frustum.cpp" />
     <ClCompile Include="Rendering\Postprocessing\FXAAEffect.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\BloomEffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\SSAOEffect.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Resourcing\Material.cpp" />
@@ -260,9 +262,11 @@
     <ClInclude Include="Rendering\Frustum.h" />
     <ClInclude Include="Rendering\Lights.h" />
     <ClInclude Include="Rendering\Postprocessing\FXAAEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\BloomEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\IPostprocessingEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\SSAOEffect.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
     <ClInclude Include="Resourcing\AnimationClip.h" />

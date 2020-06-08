@@ -51,6 +51,7 @@ public:
 		std::shared_ptr<CircleColliderRenderSystem> circleColliderRenderer;
 #endif
 	};
+	static bool debugRendering;
 
 	struct FrameStatsStruct {
 		unsigned int renderedObjects = 0;
