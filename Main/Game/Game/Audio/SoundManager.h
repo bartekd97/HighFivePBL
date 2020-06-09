@@ -20,6 +20,7 @@ class SoundManager {
 	struct SoundSource {
 		int id;
 		bool isFree;
+		ALuint source; //actual source
 	};
 
 private:
