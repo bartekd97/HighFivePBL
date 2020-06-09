@@ -27,6 +27,8 @@ private:
 	PrefabComponents components;
 	std::vector<PrefabChild> children;
 
+	bool isWarm = false;
+
 	PropertyReader properties;
 
 	Prefab(
@@ -47,7 +49,7 @@ public:
 	GameObject Instantiate(glm::vec3 position = { 0,0,0 }, glm::vec3 rotation = { 0,0,0 }, glm::vec3 scale = { 1,1,1 });
 	GameObject Instantiate(GameObject parent, glm::vec3 position = { 0,0,0 }, glm::vec3 rotation = { 0,0,0 }, glm::vec3 scale = { 1,1,1 });
 
-
+	void MakeWarm();
 public:
 	inline PropertyReader& Properties() { return properties; }
 };

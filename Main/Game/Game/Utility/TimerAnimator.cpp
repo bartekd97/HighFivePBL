@@ -14,6 +14,23 @@ void TimerAnimator::Process(float dt)
 		}
 	}
 
+	// process updatings in time
+	for (int i = 0; i < updatingsInTime.size(); i++)
+	{
+		updatingsInTime[i].dt += dt;
+		float prog = updatingsInTime[i].dt / updatingsInTime[i].time;
+		if (prog >= 1.0f)
+		{
+			updatingsInTime[i].func(1.0f);
+			updatingsInTime.erase(updatingsInTime.begin() + i);
+			i--;
+		}
+		else
+		{
+			updatingsInTime[i].func(prog);
+		}
+	}
+
 	// process float animations
 	float* _toDelete = NULL;
 	for (auto& ffa : floatAnimations)
@@ -36,6 +53,12 @@ void TimerAnimator::Process(float dt)
 void TimerAnimator::DelayAction(float time, std::function<void()> action)
 {
 	delayedActions.emplace_back(DelayedAction{ time, action });
+}
+
+void TimerAnimator::UpdateInTime(float time, std::function<void(float)> update)
+{
+	updatingsInTime.emplace_back(UpdatingInTime{ time, 0.0f, update });
+	update(0.0f);
 }
 
 void TimerAnimator::AnimateVariable(float* variable, float from, float to, float time)

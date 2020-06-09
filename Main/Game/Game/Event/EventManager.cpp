@@ -64,4 +64,22 @@ namespace EventManager
 			}
 		}
 	}
+
+
+	void FireEventTo(GameObject gameObject, Event& event)
+	{
+		uint32_t type = event.GetType();
+		for (auto const& listener : scriptListeners[type][gameObject])
+		{
+			listener(event);
+		}
+	}
+	void FireEventTo(GameObject gameObject, EventId eventId)
+	{
+		Event event(eventId);
+		for (auto const& listener : scriptListeners[eventId][gameObject])
+		{
+			listener(event);
+		}
+	}
 }

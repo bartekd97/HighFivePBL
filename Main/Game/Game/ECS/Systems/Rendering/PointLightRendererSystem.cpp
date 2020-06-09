@@ -93,6 +93,7 @@ unsigned int PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 view
     glBlendFunc(GL_ONE, GL_ONE); // make it additive
 
     sphereMesh->bind();
+    auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
     auto it = gameObjects.begin();
     while (it != gameObjects.end())
     {
@@ -100,6 +101,10 @@ unsigned int PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 view
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
         auto& renderer = HFEngine::ECS.GetComponent<PointLightRenderer>(gameObject);
 
+        if (renderer.cullingData.lastUpdate != currentFrame)
+            continue;
+        if (!renderer.cullingData.visibleByViewCamera)
+            continue;
         if (renderer.light.intensity < 0.001f || renderer.light.radius < 0.001f)
             continue;
 

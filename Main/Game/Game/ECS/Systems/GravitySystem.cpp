@@ -189,7 +189,7 @@ float GravitySystem::GetBridgeLevel(glm::vec3& position, GameObject bridge)
 {
     int minIndex = -1, maxIndex = -1;
     auto& bridgeTransform = HFEngine::ECS.GetComponent<Transform>(bridge);
-    auto gravityCollider = HFEngine::ECS.GetComponentInChildren<GravityCollider>(bridge).value();
+    auto& gravityCollider = *HFEngine::ECS.GetComponentInChildren<GravityCollider>(bridge).value();
     if (gravityCollider.heights.size() == 0)
     {
         LogWarning("GravitySystem::GetBridgeLevel(): empty gravity collider {}", bridge);

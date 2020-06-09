@@ -133,3 +133,24 @@ float Utility::GetDistanceBetweenPointAndSegment(glm::vec2& point, glm::vec2& s1
 	float distance = glm::sqrt((point.x - shortestX) * (point.x - shortestX) + (point.y - shortestY) * (point.y - shortestY));
 	return distance;
 }
+
+glm::vec2 Utility::GetSegmentsCommonPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d)
+{
+	float
+		dXab = b.x - a.x,
+		dYab = b.y - a.y,
+
+		dXac = c.x - a.x,
+		dYac = c.y - a.y,
+
+		dXcd = d.x - c.x,
+		dYcd = d.y - c.y;
+
+	float t1 = (dXac * dYcd - dYac * dXcd) / (dXab * dYcd - dYab * dXcd);
+	float t2 = (dXac * dYab - dYac * dXab) / (dXab * dYcd - dYab * dXcd);
+
+	if (t1 < 0.0f || t1 > 1.0f || t2 < 0.0f || t2 > 1.0f)
+		return { 0.0f, 0.0f };
+
+	return glm::mix(a, b, t1);
+}

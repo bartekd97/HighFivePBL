@@ -10,6 +10,24 @@ class SkinAnimator {
 	friend class SkinAnimatorSystem;
 
 private:
+	struct StateSignature
+	{
+		uint16_t sTime;
+		uint16_t sNextTime;
+		uint16_t sTransitionDuration;
+		bool sTransitioning;
+		char* sCName;
+
+		inline bool operator==(const StateSignature& other)
+		{
+			return (sTime == other.sTime
+				&& sNextTime == other.sNextTime
+				&& sTransitionDuration == other.sTransitionDuration
+				&& sTransitioning == other.sTransitioning
+				&& sCName == other.sCName);
+		}
+	};
+
 	std::shared_ptr<AnimationClip> currentClip;
 	AnimationClip::PlaybackMode currentClipMode;
 	float animTime = 0.0f;
@@ -20,6 +38,20 @@ private:
 
 	bool transitioning = false;
 	float transitionDuration = 0.25f;
+
+	StateSignature CalculateStateSignature()
+	{
+		StateSignature sign;
+		sign.sTime = static_cast<uint16_t>(animTime * 1000.0f);
+		sign.sNextTime = static_cast<uint16_t>(nextAnimTime * 1000.0f);
+		sign.sTransitionDuration = static_cast<uint16_t>(transitionDuration * 1000.0f);
+		sign.sTransitioning = transitioning;
+		sign.sCName = (char *)currentClipName.c_str();
+		return sign;
+	}
+
+	StateSignature lastSignature;
+	float animatorSpeed = 1.0f;
 
 public:
 	std::string currentClipName;
@@ -71,5 +103,26 @@ public:
 			if (currentClip == nullptr) return 0.0f;
 			return currentClip->GetClipLevel(animTime, currentClipMode);
 		}
+	}
+
+	void SetCurrentClipLevel(float level)
+	{
+		if (transitioning) {
+			if (nextClip == nullptr) return;
+			nextAnimTime = (nextClip->duration * level) / 1000.0f;
+		}
+		else {
+			if (currentClip == nullptr) return;
+			animTime = (currentClip->duration * level) / 1000.0f;
+		}
+	}
+
+	float GetAnimatorSpeed()
+	{
+		return animatorSpeed;
+	}
+	void SetAnimatorSpeed(float speed)
+	{
+		animatorSpeed = speed;
 	}
 };

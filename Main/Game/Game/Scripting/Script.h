@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ECS/ECSTypes.h"
+#include "Event/Events.h"
 
 class Script
 {
@@ -73,6 +74,13 @@ protected:
 	inline GameObject GetGameObject()
 	{
 		return gameObject;
+	}
+
+	inline void DestroyGameObjectSafely()
+	{
+		Event ev(Events::GameObject::NEXT_FRAME_DESTROY_REQUESTED);
+		ev.SetParam<GameObject>(Events::GameObject::GameObject, this->gameObject);
+		EventManager::FireEvent(ev);
 	}
 	
 private:

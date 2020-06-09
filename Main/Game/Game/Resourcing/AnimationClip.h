@@ -110,6 +110,7 @@ public:
 
 public:
 	const float framerate = 0.0f;
+	// in miliseconds
 	const float duration = 0.0f;
 	const float framecount;
 private:
