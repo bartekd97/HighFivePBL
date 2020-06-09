@@ -76,6 +76,12 @@ bool SSAOEffect::PreForwardProcess(
 	std::shared_ptr<FrameBuffer> destination,
 	RenderPipeline::GBufferStruct& gbuffer)
 {
+	static bool enabled = true;
+	if (InputManager::GetKeyDown(GLFW_KEY_F7))
+		enabled = !enabled;
+	if (!enabled)
+		return false;
+
 	static bool debug = false;
 	if (InputManager::GetKeyDown(GLFW_KEY_F6))
 	{

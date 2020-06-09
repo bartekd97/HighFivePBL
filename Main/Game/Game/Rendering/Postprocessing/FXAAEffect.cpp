@@ -21,7 +21,7 @@ bool FXAAEffect::Process(
 	RenderPipeline::GBufferStruct& gbuffer
 )
 {
-	static bool enabled;
+	static bool enabled = true;
 	if (InputManager::GetKeyDown(GLFW_KEY_F3))
 	{
 		enabled = !enabled;

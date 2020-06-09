@@ -164,7 +164,7 @@ public:
 			rotatingToAttack = false;
 			attacking = true;
 
-			timerAnimator.DelayAction(attackTime, std::bind(&MiniGhost::FadeMeOut, this, 0.2f));
+			timerAnimator.DelayAction(attackTime, std::bind(&MiniGhost::FadeMeOut, this, 0.3f));
 		});
 	}
 };
