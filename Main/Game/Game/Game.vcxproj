@@ -96,6 +96,7 @@
     <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
     <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
+    <ClCompile Include="ECS\Systems\NextFrameDestroySystem.cpp" />
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
     <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
+    <ClInclude Include="ECS\Systems\NextFrameDestroySystem.h" />
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
@@ -297,6 +299,7 @@
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="Scripting\Types\GhostTypes.h" />
     <ClInclude Include="Utility\Pathfinding.h" />
     <ClInclude Include="Utility\TaskPool.h" />
     <ClInclude Include="Utility\Logger.h" />

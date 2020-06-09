@@ -16,6 +16,9 @@ namespace EventManager
 	void AddScriptListener(EventId eventId, GameObject gameObject, std::function<void(Event&)> const& listener);
 
 	void FireEvent(Event& event);
-
 	void FireEvent(EventId eventId);
+
+	// fire event only to script listeners attached to specific game object
+	void FireEventTo(GameObject gameObject, Event& event);
+	void FireEventTo(GameObject gameObject, EventId eventId);
 };
