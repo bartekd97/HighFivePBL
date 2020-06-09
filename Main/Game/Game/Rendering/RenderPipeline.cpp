@@ -213,8 +213,9 @@ void RenderPipeline::Render()
 	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
 	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
 
-	// schedule particle culling
+	// schedule particle & point lights culling
 	RenderSystems.particleRenderer->ScheduleCulling(viewFrustum, lightFrustum);
+	RenderSystems.pointLightRenderer->ScheduleCulling(viewFrustum, lightFrustum);
 
 	// draw to gbuffer
 	GBuffer.frameBuffer->bind();
@@ -239,6 +240,9 @@ void RenderPipeline::Render()
 	GBuffer.albedoFade->bind((int)GBufferBindingPoint::ALBEDO_FADE);
 	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
+
+	// wait for point lights culling
+	RenderSystems.pointLightRenderer->FinishCulling();
 
 	// draw point lights
 	glm::vec2 viewportSize = { GBuffer.frameBuffer->width, GBuffer.frameBuffer->height };

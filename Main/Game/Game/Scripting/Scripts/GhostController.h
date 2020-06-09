@@ -361,7 +361,7 @@ public:
 			glm::vec3 targetDir = { 0.0f, 0.0f, 0.0f };
 
 			for (auto const& g : line->ghosts)
-				targetDir += (center3 - HFEngine::ECS.GetComponent<Transform>(g).GetPosition());
+				targetDir += glm::normalize(center3 - HFEngine::ECS.GetComponent<Transform>(g).GetPosition());
 
 			targetDir /= line->ghosts.size();
 
