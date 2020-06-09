@@ -92,7 +92,7 @@ public:
 
 		if (fadingOut)
 		{
-			translateVec += transform.GetUp() * dt * 2.0f;
+			translateVec += transform.GetUp() * 2.0f;
 		}
 
 		if (rotatingToAttack)
@@ -123,10 +123,10 @@ public:
 				currentMoveSpeed += change * glm::sign(diff);
 		}
 		if (currentMoveSpeed > 0.01f)
-			translateVec += transform.GetFront() * currentMoveSpeed * dt;
+			translateVec += transform.GetFront() * currentMoveSpeed;
 
-		if (glm::length2(translateVec) > 0.01f)
-			transform.TranslateSelf(translateVec);
+		if (glm::length2(translateVec) > 0.0001f)
+			transform.TranslateSelf(translateVec * dt);
 	}
 
 	void OnFadeMeOut(Event& ev)
