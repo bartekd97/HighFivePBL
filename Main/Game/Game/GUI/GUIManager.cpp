@@ -144,7 +144,7 @@ namespace GUIManager
 						break;
 					}
 				}
-				if (removed) itVector++;
+				if (!removed) itVector++;
 			}
 		}
 
