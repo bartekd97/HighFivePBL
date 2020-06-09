@@ -61,7 +61,7 @@ namespace GUIManager
 		glm::vec2 mousePosition = InputManager::GetMousePosition();
 		for (auto widget : root)
 		{
-			if (widget->GetEnabled())
+			if (widget->GetEnabled() || widget->associatedGameObject != NULL_GAMEOBJECT)
 			{
 				widget->Update(mousePosition);
 			}

@@ -80,6 +80,7 @@ public:
 		health = 70.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (healthMax - 70.0f)));
 
 		healthBarPanel = std::make_shared<Panel>();
+		healthBarPanel->associatedGameObject = GetGameObject();
 		healthBarPanel->SetCoordinatesType(Widget::CoordinatesType::WORLD);
 		healthBarPanel->SetPivot(Anchor::CENTER);
 		healthBarPanel->SetSize(healthBarSize);
