@@ -10,6 +10,8 @@
 namespace {
 
 	class ModelHolderLoader : public IPrefabComponentLoader {
+	private:
+		std::shared_ptr<Model> _warmModel;
 	public:
 		std::string libraryName, modelName;
 
@@ -29,6 +31,11 @@ namespace {
 				LogWarning("ModelHolderLoader::Preprocess(): Missing 'model' value.");
 			}
 		}
+
+		void Warm() override {
+			_warmModel = ModelManager::GetModel(libraryName, modelName);
+		}
+
 		void Create(GameObject target) override {
 			ModelHolder holder;
 			holder.model = ModelManager::GetModel(libraryName, modelName);
@@ -43,6 +50,7 @@ namespace {
 		bool configureFromHolder = false;
 		bool castShadows = true;
 		bool doubleSided = false;
+		bool individualMaterial = false;
 
 		bool useMeshPath = false;
 		std::pair<std::string, std::string> meshPath;
@@ -50,10 +58,13 @@ namespace {
 		bool useMaterialPath = false;
 		std::pair<std::string, std::string> materialPath;
 
+		std::shared_ptr<Material> _warmMaterial;
+
 		virtual void Preprocess(PropertyReader& properties) override {
 			properties.GetBool("configureFromHolder", configureFromHolder, false);
 			properties.GetBool("castShadows", castShadows, true);
 			properties.GetBool("doubleSided", doubleSided, false);
+			properties.GetBool("individualMaterial", individualMaterial, false);
 
 			static std::string tmpMeshPath;
 			if (properties.GetString("mesh", tmpMeshPath,"")) {
@@ -80,6 +91,11 @@ namespace {
 			}
 		}
 
+		void Warm() override {
+			if (useMaterialPath || individualMaterial)
+				_warmMaterial = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
+		}
+
 		virtual void Create(GameObject target) override {
 			MeshRenderer renderer;
 			renderer.castShadows = castShadows;
@@ -96,6 +112,9 @@ namespace {
 			if (useMaterialPath) {
 				auto material = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
 				renderer.material = material;
+			}
+			if (individualMaterial) {
+				renderer.material = MaterialManager::CloneMaterial(renderer.material);
 			}
 			assert(
 				renderer.mesh != nullptr &&
@@ -131,6 +150,9 @@ namespace {
 			if (useMaterialPath) {
 				auto material = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
 				renderer.material = material;
+			}
+			if (individualMaterial) {
+				renderer.material = MaterialManager::CloneMaterial(renderer.material);
 			}
 			assert(
 				renderer.mesh != nullptr &&

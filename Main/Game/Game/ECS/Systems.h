@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Systems/NextFrameDestroySystem.h"
+
 #include "Systems/ScriptStartSystem.h"
 #include "Systems/ScriptUpdateSystem.h"
 

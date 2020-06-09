@@ -14,6 +14,13 @@ private:
 	};
 	std::vector<DelayedAction> delayedActions;
 
+	struct UpdatingInTime {
+		float time;
+		float dt;
+		std::function<void(float)> func;
+	};
+	std::vector<UpdatingInTime> updatingsInTime;
+
 	struct FloatAnimation {
 		float from;
 		float to;
@@ -30,6 +37,7 @@ public:
 	void Process(float dt);
 
 	void DelayAction(float time, std::function<void()> action);
+	void UpdateInTime(float time, std::function<void(float)> update);
 
 	void AnimateVariable(float* variable, float from, float to, float time);
 	void AnimateVariable(glm::vec2* variable, glm::vec2 from, glm::vec2 to, float time);

@@ -7,7 +7,7 @@
 #include "Rendering/Camera.h"
 
 // require MeshRenderer component
-class MeshRendererSystem : public CulledRendererSystem<MeshRenderer, 4>
+class MeshRendererSystem : public CulledRendererSystem<MeshRenderer, 3>
 {
 private:
 	std::shared_ptr<Shader> toGBufferShader;

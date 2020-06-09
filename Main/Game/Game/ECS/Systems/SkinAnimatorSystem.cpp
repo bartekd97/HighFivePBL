@@ -25,11 +25,11 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 		rec.reserve(nodes.size());
 		rec.emplace_back(IM(0, glm::mat4(1.0f)));
 
-		animator.animTime += dt;
+		animator.animTime += animator.animatorSpeed * dt;
 		float transitionFactor = 0.0f;
 		if (animator.transitioning)
 		{
-			animator.nextAnimTime += dt;
+			animator.nextAnimTime += animator.animatorSpeed * dt;
 			transitionFactor = animator.nextAnimTime / animator.transitionDuration;
 			if (transitionFactor >= 1.0f)
 			{
@@ -38,6 +38,17 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 				animator.currentClipMode = animator.nextClipMode;
 				animator.transitioning = false;
 			}
+		}
+
+		auto stateSignature = animator.CalculateStateSignature();
+		if (animator.lastSignature.operator==(stateSignature))
+		{
+			renderer.business.MakeFree();
+			continue;
+		}
+		else
+		{
+			animator.lastSignature = stateSignature;
 		}
 
 		IM i;
@@ -81,6 +92,7 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			for (ci = 0; ci < node->childCount; ci++)
 				rec.emplace_back(IM(node->childIndices[ci], globalTransform));
 		}
+
 		renderer.needMatricesBufferUpdate = true;
 		renderer.business.MakeFree();
 	}

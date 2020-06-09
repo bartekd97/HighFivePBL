@@ -85,7 +85,7 @@ public:
 	}
 
 	template<typename T>
-	std::optional<T> GetComponentInChildren(GameObject gameObject)
+	std::optional<T*> GetComponentInChildren(GameObject gameObject)
 	{
 		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(gameObject);
 		if (children.size() == 0) return std::nullopt;
@@ -94,7 +94,7 @@ public:
 		{
 			if (SearchComponent<T>(child))
 			{
-				return GetComponent<T>(child);
+				return &GetComponent<T>(child);
 			}
 
 		}

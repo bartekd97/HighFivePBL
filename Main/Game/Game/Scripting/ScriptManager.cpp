@@ -18,6 +18,9 @@ namespace ScriptManager
 	std::unordered_map<GameObject, std::vector<std::shared_ptr<Script>>> instances;
 	std::unordered_map<ScriptId, std::function<std::shared_ptr<Script>()>> scriptProviders;
 
+	std::vector<std::shared_ptr<Script>> delayedForAwake;
+	bool isAwakeSuspended = false;
+
 	void RegisterScriptProvider(std::string scriptName, std::function<std::shared_ptr<Script>()> provider)
 	{
 		ScriptId id = Utility::HashString(scriptName.c_str(), scriptName.length());
@@ -48,6 +51,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(PlayerController);
 		REGISTER_SCRIPT(PlayerCameraFollower);
 		REGISTER_SCRIPT(GhostController);
+		REGISTER_SCRIPT(MiniGhost);
 		REGISTER_SCRIPT(EnemyController);
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(TriggerTest);
@@ -63,7 +67,10 @@ namespace ScriptManager
 		std::shared_ptr<Script> instance = provider->second();
 		instance->SetGameObject(gameObject);
 		instances[gameObject].push_back(instance);
-		instance->Awake();
+		if (isAwakeSuspended)
+			delayedForAwake.push_back(instance);
+		else
+			instance->Awake();
 
 		Event ev(Events::GameObject::Script::ADDED);
 		ev.SetParam<GameObject>(Events::GameObject::GameObject, gameObject);
@@ -81,5 +88,20 @@ namespace ScriptManager
 			return &it->second;
 		}
 		return nullptr;
+	}
+
+	void SuspendAwake()
+	{
+		isAwakeSuspended = true;
+	}
+	void ResumeAwake()
+	{
+		isAwakeSuspended = false;
+		if (delayedForAwake.size() > 0)
+		{
+			auto copy = delayedForAwake;
+			delayedForAwake.clear();
+			for (auto& i : copy) i->Awake();
+		}
 	}
 }

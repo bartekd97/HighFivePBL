@@ -119,6 +119,8 @@ namespace HFEngine
 		ECS.RegisterComponent<CellBridge>();
 		ECS.RegisterComponent<CellChild>();
 
+		auto nextFrameDestroySystem = ECS.RegisterSystem<NextFrameDestroySystem>(true);
+
 		auto mapCellCollectorSystem = ECS.RegisterSystem<MapCellCollectorSystem>();
 		{
 			Signature signature;

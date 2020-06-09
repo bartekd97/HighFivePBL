@@ -2,6 +2,7 @@
 #include "Rendering/PrimitiveRenderer.h"
 #include "Resourcing/Shader.h"
 #include "HFEngine.h"
+#include "InputManager.h"
 
 void OrthoSSREffect::Init()
 {
@@ -38,6 +39,12 @@ bool OrthoSSREffect::Process(
 	RenderPipeline::GBufferStruct& gbuffer
 	)
 {
+	static bool enabled = true;
+	if (InputManager::GetKeyDown(GLFW_KEY_F5))
+		enabled = !enabled;
+	if (!enabled)
+		return false;
+
 	Camera& viewCamera = HFEngine::MainCamera;
 
 	ssrBuffer->bind();

@@ -11,6 +11,8 @@
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Utility/TimerAnimator.h"
+#include "Resourcing/Prefab.h"
+#include "../Types/GhostTypes.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -19,6 +21,8 @@ class GhostController : public Script
 {
 private: // parameters
 	float moveSpeed = 10.0f;
+
+	std::shared_ptr<Prefab> miniGhostPrefab;
 
 private: // variables
 	bool hasGhostMovement = false;
@@ -40,6 +44,17 @@ public:
 	float ghostDistanceRecoverySpeed = 3.0f;
 	float leftGhostDistance;
 
+	float miniGhostSpawnDistance = 1.5f;
+	int maxActiveLines = 4;
+
+	std::vector<std::shared_ptr<GhostLine>> activeLines;
+
+	std::vector<glm::vec2> recordedPositions;
+	float distanceReached;
+	glm::vec3 lastDistanceRecordPos;
+	std::vector<GameObject> spawnedMiniGhostsCurrent;
+
+
 	GhostController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
@@ -47,6 +62,8 @@ public:
 
 	void Awake()
 	{
+		miniGhostPrefab = PrefabManager::GetPrefab("MiniGhost");
+		miniGhostPrefab->MakeWarm();
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
 	}
@@ -74,7 +91,7 @@ public:
 		hasGhostMovement = true;
 
 		auto& transform = GetTransform();
-		transform.SetPosition(HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition());
+		transform.SetPosition(HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition());
 		transform.RotateSelf(
 			glm::degrees(GetRotationdifferenceToMousePosition()),
 			transform.GetUp()
@@ -85,6 +102,8 @@ public:
 		auto& ghostMesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&ghostLight.light.intensity, 0.0f, ghostLightDefaultIntensity, 0.3f);
 		timerAnimator.AnimateVariable(&ghostMesh.material->opacityValue, 0.0f, ghostMaterialDefaultOpacity, 0.3f);
+	
+		StartMarking();
 	}
 	void MovementStop(Event& event)
 	{
@@ -99,6 +118,8 @@ public:
 			if (ghostLight.light.intensity < 0.0001f)
 				HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
 			});
+
+		EndMarking();
 	}
 
 
@@ -109,6 +130,8 @@ public:
 		if (!hasGhostMovement) return;
 
 		auto& transform = GetTransform();
+
+		UpdateMarking();
 
 		// smooth rotate
 		{
@@ -157,14 +180,225 @@ public:
 		worldDirection /= worldDirection.y;
 		glm::vec3 worldZero = world - (worldDirection * world.y);
 
-		glm::vec3 direction = glm::normalize(worldZero - transform.GetWorldPosition());
-		glm::vec3 front3 = transform.GetWorldFront();
+		glm::vec3 direction = glm::normalize(worldZero - transform.GetPosition());
+		glm::vec3 front3 = transform.GetFront();
 		float diff = glm::orientedAngle(
 			glm::normalize(glm::vec2(direction.x, direction.z)),
 			glm::normalize(glm::vec2(front3.x, front3.z))
 			);
 
 		return diff;
+	}
+
+
+
+
+	
+
+
+
+
+	// GHOST MARKING FUNCTIONS
+	void StartMarking()
+	{
+		auto& transform = GetTransform();
+		glm::vec3 transformPosition = transform.GetPosition();
+
+		distanceReached = 0.0f;
+		lastDistanceRecordPos = transformPosition;
+
+		recordedPositions.clear();
+		recordedPositions.emplace_back(glm::vec2{
+			transformPosition.x,
+			transformPosition.z
+			});
+		spawnedMiniGhostsCurrent.clear();
+
+		/*
+		IsMarking = true;
+		firstEnemyHit = true;
+		bossHit = true;
+		numberOfEnemyHit = 0;
+		*/
+	}
+	void UpdateMarking()
+	{
+		auto& transform = GetTransform();
+		glm::vec3 transformPosition = transform.GetPosition();
+
+		distanceReached += glm::distance(lastDistanceRecordPos, transformPosition);
+		lastDistanceRecordPos = transformPosition;
+
+		if (distanceReached >= miniGhostSpawnDistance)
+		{
+			GameObject mg = miniGhostPrefab->Instantiate(
+				transformPosition,
+				transform.GetRotationEuler()
+				);
+
+			SkinAnimator* mgAnimator = HFEngine::ECS.GetComponentInChildren<SkinAnimator>(mg).value();
+			mgAnimator->SetAnimation("ghostrunning");
+			mgAnimator->SetCurrentClipLevel(GetAnimator().GetCurrentClipLevel());
+			mgAnimator->SetAnimatorSpeed(0.0f);
+
+			spawnedMiniGhostsCurrent.emplace_back(mg);
+			recordedPositions.emplace_back(glm::vec2{
+				transformPosition.x,
+				transformPosition.z
+			});
+
+			distanceReached = 0.0f;
+		}
+	}
+	void EndMarking()
+	{
+		auto& transform = GetTransform();
+		glm::vec3 transformPosition = transform.GetPosition();
+
+		recordedPositions.emplace_back(glm::vec2{
+			transformPosition.x,
+			transformPosition.z
+			});
+
+
+		if (spawnedMiniGhostsCurrent.size() > 0)
+		{
+			auto gline = std::make_shared<GhostLine>();
+			gline->points = recordedPositions;
+			gline->ghosts = spawnedMiniGhostsCurrent;
+			activeLines.emplace_back(gline);
+
+			CheckNewLineCrossings(gline);
+			CheckClosedLines();
+
+			if (activeLines.size() > maxActiveLines)
+			{
+				//while (activeLines.Count > 0)
+				FadeOutLine(activeLines[0]);
+			}
+		}
+
+		recordedPositions.clear();
+		spawnedMiniGhostsCurrent.clear();
+	}
+
+
+
+	void CheckNewLineCrossings(std::shared_ptr<GhostLine> newLine)
+	{
+		std::vector<std::shared_ptr<GhostCrossing>> crossings;
+		for (auto& line : activeLines)
+		{
+			if (line == newLine)
+				continue;
+
+			crossings.clear();
+
+			CalculateCrossings(line, newLine, crossings);
+			for (auto& crossing : crossings)
+			{
+				line->crosings.insert(crossing);
+				newLine->crosings.insert(crossing);
+			}
+		}
+	}
+
+	void CheckClosedLines()
+	{
+		std::unordered_set<std::shared_ptr<GhostLine>> possibleLines;
+		for (auto& l : activeLines)
+			if (l->crosings.size() >= 2)
+				possibleLines.insert(l);
+
+		std::unordered_set<std::shared_ptr<GhostCrossing>> figureCrossings;
+		for (auto& l : possibleLines)
+			for (auto& c : l->crosings)
+			{
+				if (possibleLines.contains(c->a) && possibleLines.contains(c->b))
+					figureCrossings.insert(c);
+			}
+
+		if (figureCrossings.size() >= possibleLines.size())
+		{
+			AttackWithClosedFigure(possibleLines, figureCrossings);
+			return;
+		}
+	}
+
+	void FadeOutLine(std::shared_ptr<GhostLine> ghostLine)
+	{
+		for (auto g : ghostLine->ghosts)
+		{
+			EventManager::FireEventTo(g, Events::Gameplay::MiniGhost::FADE_ME_OUT);
+		}
+
+		RemoveGhostLineFromData(ghostLine);
+	}
+
+
+	void RemoveGhostLineFromData(std::shared_ptr<GhostLine> ghostLine)
+	{
+		activeLines.erase(std::find(activeLines.begin(), activeLines.end(), ghostLine));
+		// clear crossings
+		for (auto& line : activeLines)
+			for (auto& crossing : ghostLine->crosings)
+				line->crosings.erase(crossing);
+		ghostLine->crosings.clear();
+	}
+
+	void AttackWithClosedFigure(
+		std::unordered_set<std::shared_ptr<GhostLine>>& lines,
+		std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
+	{
+		glm::vec2 center = { 0.0f, 0.0f };
+		for (const auto& c : crossings)
+			center += c->position;
+		center /= (float)crossings.size();
+
+		glm::vec3 center3 = { center.x, 0.0f, center.y };
+		for (const auto& line : lines)
+		{
+			glm::vec3 targetDir = { 0.0f, 0.0f, 0.0f };
+
+			for (auto const& g : line->ghosts)
+				targetDir += glm::normalize(center3 - HFEngine::ECS.GetComponent<Transform>(g).GetPosition());
+
+			targetDir /= line->ghosts.size();
+
+			Event ev(Events::Gameplay::MiniGhost::ATTACK);
+			ev.SetParam<glm::vec3>(Events::Gameplay::MiniGhost::Direction, targetDir);
+			for (auto const& g : line->ghosts)
+				EventManager::FireEventTo(g, ev);
+			
+			RemoveGhostLineFromData(line);
+		}
+	}
+
+	void CalculateCrossings(
+		std::shared_ptr<GhostLine>& l1,
+		std::shared_ptr<GhostLine>& l2,
+		std::vector<std::shared_ptr<GhostCrossing>>& crossings)
+	{
+		glm::vec2* pi = l1->points.data();
+		glm::vec2* pj;
+		for (int i = 0; i < l1->points.size() - 1; i++, pi++)
+		{
+			pj = l2->points.data();
+			for (int j = 0; j < l2->points.size() - 1; j++, pj++)
+			{
+				glm::vec2 p = Utility::GetSegmentsCommonPoint(
+					*pi, *(pi + 1),
+					*pj, *(pj + 1)
+					);
+				if (glm::length2(p) > 0.0001f) {
+					std::shared_ptr<GhostCrossing> crossing = std::make_shared<GhostCrossing>();
+					crossing->a = l1;
+					crossing->b = l2;
+					crossing->position = p;
+					crossings.push_back(crossing);
+				}
+			}
+		}
 	}
 };
 

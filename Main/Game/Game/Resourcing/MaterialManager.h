@@ -25,6 +25,7 @@ namespace MaterialManager {
 	extern std::shared_ptr<Texture> BLANK_EMISSIVE_MAP; // 4x4 black (0) srgb texture
 
 	std::shared_ptr<Material> CreateEmptyMaterial(MaterialType type);
+	std::shared_ptr<Material> CloneMaterial(const std::shared_ptr<Material>& source);
 	std::shared_ptr<MaterialLibrary> GetLibrary(std::string name);
 	std::shared_ptr<Material> GetMaterial(std::string libraryName, std::string materialName);
 }

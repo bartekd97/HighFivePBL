@@ -16,6 +16,7 @@ class IPrefabComponentLoader
 {
 public:
 	virtual void Preprocess(PropertyReader& properties) {}
+	virtual void Warm() {}
 	virtual void Create(GameObject target) = 0;
 };
 

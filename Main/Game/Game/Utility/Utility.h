@@ -37,6 +37,7 @@ namespace Utility {
 	// Math funkcions
 
 	float GetDistanceBetweenPointAndSegment(glm::vec2& point, glm::vec2& s1, glm::vec2& s2);
+	glm::vec2 GetSegmentsCommonPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d);
 }
 
 
