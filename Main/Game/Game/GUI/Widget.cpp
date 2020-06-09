@@ -7,6 +7,10 @@
 
 void Widget::Update(const glm::vec2& mousePosition)
 {
+	if (associatedGameObject != NULL_GAMEOBJECT)
+	{
+		SetEnabled(HFEngine::ECS.IsEnabledGameObject(associatedGameObject));
+	}
 	if (clippingWidgets.size() > 0)
 	{
 		float maxLeft = -1, maxTop = -1, minRight = std::numeric_limits<float>::max(), minBottom = std::numeric_limits<float>::max();

@@ -6,6 +6,7 @@
 #include <tsl/robin_set.h>
 
 #include "Anchor.h"
+#include "../ECS/ECSTypes.h"
 
 class Widget : public std::enable_shared_from_this<Widget>
 {
@@ -45,6 +46,8 @@ public:
 	std::shared_ptr<Widget> parent;
 	std::vector<std::shared_ptr<Widget>> children;
 	tsl::robin_set<std::shared_ptr<Widget>> clippingWidgets;
+
+	GameObject associatedGameObject = NULL_GAMEOBJECT;
 
 protected:
 	Widget();
