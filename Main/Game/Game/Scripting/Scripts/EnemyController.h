@@ -28,6 +28,10 @@ private: // variables
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 2.0f * M_PI;
+	float attackDistance = 1.5f;
+
+	float health;
+	float healthMax = 100.0f;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -37,6 +41,12 @@ private: // variables
 	GameObject playerObject;
 	GameObject cellObject;
 
+	std::shared_ptr<Panel> healthBarPanel;
+	std::shared_ptr<Panel> healthRedPanel;
+	std::shared_ptr<Panel> healthValuePanel;
+	glm::vec2 healthBarSize = { 60.0f, 10.0f };
+	float healthBorderSize = 2.0f;
+
 public:
 
 	EnemyController()
@@ -44,6 +54,15 @@ public:
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 	}
 
+	~EnemyController()
+	{
+		GUIManager::RemoveWidget(healthBarPanel);
+	}
+
+	void Awake()
+	{
+		HFEngine::ECS.SetNameGameObject(GetGameObject(), "enemy");
+	}
 
 	void Start()
 	{
@@ -57,6 +76,28 @@ public:
 
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
+
+		health = 70.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (healthMax - 70.0f)));
+
+		healthBarPanel = std::make_shared<Panel>();
+		healthBarPanel->associatedGameObject = GetGameObject();
+		healthBarPanel->SetCoordinatesType(Widget::CoordinatesType::WORLD);
+		healthBarPanel->SetPivot(Anchor::CENTER);
+		healthBarPanel->SetSize(healthBarSize);
+		healthBarPanel->textureColor.color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		GUIManager::AddWidget(healthBarPanel);
+
+		healthRedPanel = std::make_shared<Panel>();
+		healthRedPanel->SetSize(healthBarSize - (healthBorderSize * 2.0f));
+		healthRedPanel->SetPosition({ healthBorderSize, healthBorderSize, 0.0f });
+		healthRedPanel->textureColor.color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		GUIManager::AddWidget(healthRedPanel, healthBarPanel);
+
+		healthValuePanel = std::make_shared<Panel>();
+		healthValuePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		healthValuePanel->SetSize({ 1.0f, 1.0f });
+		healthValuePanel->textureColor.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+		GUIManager::AddWidget(healthValuePanel, healthRedPanel);
 	}
 
 
@@ -78,7 +119,9 @@ public:
 		{
 			glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 			if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
-				&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f)
+				//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
+				&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance
+				&& !rigidBody.isFalling)
 				pathfinder.QueuePath(playerPos);
 		}
 
@@ -140,6 +183,9 @@ public:
 			last = p;
 		}
 #endif
+		auto& transform = GetTransform();
+		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
+		healthValuePanel->SetSize({ health / healthMax, 1.0f });
 	}
 
 

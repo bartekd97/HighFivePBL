@@ -6,6 +6,7 @@
 #include <tsl/robin_set.h>
 
 #include "Anchor.h"
+#include "../ECS/ECSTypes.h"
 
 class Widget : public std::enable_shared_from_this<Widget>
 {
@@ -33,6 +34,8 @@ public:
 	const glm::vec2& GetLocalSize();
 	Anchor GetAnchor();
 	Anchor GetPivot();
+	void SetZIndex(int zIndex);
+	int GetZIndex();
 	void AddChild(std::shared_ptr<Widget> child);
 	void SetClipping(bool clipping);
 	void SetEnabled(bool enabled);
@@ -44,6 +47,8 @@ public:
 	std::vector<std::shared_ptr<Widget>> children;
 	tsl::robin_set<std::shared_ptr<Widget>> clippingWidgets;
 
+	GameObject associatedGameObject = NULL_GAMEOBJECT;
+
 protected:
 	Widget();
 	bool IsMouseOver(const glm::vec2& mousePosition);
@@ -54,7 +59,7 @@ protected:
 
 private:
 	void UpdateChildrenWorldPosition();
-	glm::vec3 ToAbsolute(glm::vec3 vec);
+	glm::vec3 ToAbsolute(glm::vec3 vec, bool size = false);
 	glm::vec2 ToAbsolute(glm::vec2 vec);
 
 	Anchor anchor;
@@ -73,4 +78,5 @@ private:
 	bool enabled;
 	int level;
 	CoordinatesType coordinatesType;
+	int zIndex;
 };

@@ -62,6 +62,11 @@ public:
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 	}
 
+	~PlayerController()
+	{
+		GUIManager::RemoveWidget(ghostBarPanel);
+	}
+
 	void Awake()
 	{
 		ghostObject = PrefabManager::GetPrefab("PlayerGhost")->Instantiate();
@@ -285,7 +290,7 @@ public:
 
 	void PushbackTest()
 	{
-		auto objects = HFEngine::ECS.GetGameObjectsByName("testCircle");
+		auto objects = HFEngine::ECS.GetGameObjectsByName("enemy");
 		glm::vec3 dir;
 		auto pos = GetTransform().GetWorldPosition();
 		for (auto& object : objects)
@@ -296,6 +301,7 @@ public:
 			{
 				auto& objectRb = HFEngine::ECS.GetComponent<RigidBody>(object);
 				objectRb.AddForce(glm::normalize(glm::normalize(dir / 2.0f) + glm::vec3(0.0f, 0.75f, 0.0f)) * pushBackForce);
+				objectRb.isFalling = true;
 			}
 		}
 	}

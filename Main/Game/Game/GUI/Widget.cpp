@@ -3,9 +3,14 @@
 
 #include "Widget.h"
 #include "../WindowManager.h"
+#include  "../HFEngine.h"
 
 void Widget::Update(const glm::vec2& mousePosition)
 {
+	if (associatedGameObject != NULL_GAMEOBJECT)
+	{
+		SetEnabled(HFEngine::ECS.IsEnabledGameObject(associatedGameObject));
+	}
 	if (clippingWidgets.size() > 0)
 	{
 		float maxLeft = -1, maxTop = -1, minRight = std::numeric_limits<float>::max(), minBottom = std::numeric_limits<float>::max();
@@ -162,10 +167,11 @@ void Widget::UpdateChildrenWorldPosition()
 	{
 		child->worldPosition = absolutePosition;
 		child->CalculateAbsolutePosition();
+		child->UpdateChildrenWorldPosition();
 	}
 }
 
-glm::vec3 Widget::ToAbsolute(glm::vec3 vec)
+glm::vec3 Widget::ToAbsolute(glm::vec3 vec, bool size)
 {
 	glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
 	if (parent != nullptr)
@@ -177,6 +183,10 @@ glm::vec3 Widget::ToAbsolute(glm::vec3 vec)
 		vec.x *= parentSize.x;
 		vec.y *= parentSize.y;
 	}
+	else if (coordinatesType == CoordinatesType::WORLD && !size)
+	{
+		vec = glm::vec3(HFEngine::MainCamera.WorldToScreenPosition(vec), 0.0f);
+	}
 
 	return vec;
 }
@@ -184,7 +194,7 @@ glm::vec3 Widget::ToAbsolute(glm::vec3 vec)
 glm::vec2 Widget::ToAbsolute(glm::vec2 vec)
 {
 	glm::vec3 vec3(vec.x, vec.y, 0.0f);
-	vec3 = ToAbsolute(vec3);
+	vec3 = ToAbsolute(vec3, true);
 	return glm::vec2(vec3.x, vec3.y);
 }
 
@@ -315,4 +325,14 @@ void Widget::Recalculate()
 {
 	CalculateAbsolutePosition();
 	UpdateChildrenWorldPosition();
+}
+
+void Widget::SetZIndex(int zIndex)
+{
+	this->zIndex = zIndex;
+}
+
+int Widget::GetZIndex()
+{
+	return zIndex;
 }

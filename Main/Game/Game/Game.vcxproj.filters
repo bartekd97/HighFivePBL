@@ -75,8 +75,11 @@
     <ClCompile Include="Scene\SceneManager.cpp" />
     <ClCompile Include="Scene\Scenes\Game.cpp" />
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\SSAOEffect.cpp" />
     <ClCompile Include="Scene\Scenes\GameLite.cpp" />
     <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\BloomEffect.cpp" />
+	<ClCompile Include="Rendering\Postprocessing\FXAAEffect.cpp" />
     <ClCompile Include="ECS\Systems\NextFrameDestroySystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -217,8 +220,11 @@
     <ClInclude Include="Scene\IScene.h" />
     <ClInclude Include="Scene\Scenes\Game.h" />
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
+    <ClInclude Include="Rendering\Postprocessing\SSAOEffect.h" />
     <ClInclude Include="Scene\Scenes\GameLite.h" />
     <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\BloomEffect.h" />
+	<ClInclude Include="Rendering\Postprocessing\FXAAEffect.h" />
     <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
     <ClInclude Include="Scripting\Types\GhostTypes.h" />
     <ClInclude Include="ECS\Systems\NextFrameDestroySystem.h" />
