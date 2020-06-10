@@ -61,7 +61,7 @@ void RiverFogEffect::Init()
 	EventManager::AddListener(METHOD_LISTENER(Events::General::POST_UPDATE, RiverFogEffect::LateUpdateNoise));
 }
 
-bool RiverFogEffect::Process(
+bool RiverFogEffect::PreForwardProcess(
 	std::shared_ptr<FrameBuffer> source,
 	std::shared_ptr<FrameBuffer> destination,
 	RenderPipeline::GBufferStruct& gbuffer)
