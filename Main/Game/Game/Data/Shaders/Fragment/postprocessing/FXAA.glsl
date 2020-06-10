@@ -11,7 +11,7 @@ uniform float ReduceMul;
 
 void main()
 { 
-    vec3 luma = vec3(0.299, 0.587, 0.114);  //luminosity vector
+    vec3 luma = vec3(0.299, 0.587, 0.114);  //luminosity vector, brightness of the color
     vec2 texCoordOffset = inverseFilterTextureSize.xy;
     //calculate dot(iloczyn skalarny) of luma and pixel with the x shape
     float lumaTL = dot(luma, texture2D(gTexture, TexCoords.xy + (vec2(-1.0, -1.0) * texCoordOffset)).xyz); // top left
@@ -27,7 +27,7 @@ void main()
     float dirReduce = max((lumaTL + lumaTR + lumaBL + lumaBR) * (ReduceMul * 0.25), ReduceMin); //to avoid dividing by 0
     float inverseDirAdjustment = 1.0/(min(abs(blurDir.x), abs(blurDir.y)) + dirReduce);
 
-    // clamping????
+    // clamp function
     blurDir = min(vec2(SpanMax, SpanMax), 
                 max(vec2(-SpanMax, -SpanMax), blurDir * inverseDirAdjustment)) * texCoordOffset;
 
@@ -42,14 +42,23 @@ void main()
     
     float lumaResult2 = dot(luma, result2);
 
+    vec3 result;
+
     if(lumaResult2 < lumaMin || lumaResult2 > lumaMax)
     {
-        FragColor = vec4(result1, 1.0);
+        result = result1;
     }
     else 
     {
-        FragColor = vec4(result2, 1.0);
+        result = result2;
     }
 
-    
+    float edgeLevel = min(length(blurDir) * inverseDirAdjustment, 1.0);
+    edgeLevel = pow(edgeLevel, 0.25);
+    vec3 thisPixel = texture(gTexture, TexCoords).rgb;
+
+    FragColor = vec4(mix(thisPixel, result, edgeLevel), 1.0);
+    //FragColor = vec4(result, 1.0);
+    //for debug
+    //FragColor = vec4(vec3(edgeLevel), 1.0);
 }
