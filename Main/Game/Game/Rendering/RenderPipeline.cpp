@@ -146,8 +146,8 @@ void RenderPipeline::InitPostprocessingEffects()
 
 	// init effects
 	postprocessingEffects.push_back(std::make_shared<SSAOEffect>());
-	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
+	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<BloomEffect>());
 	postprocessingEffects.push_back(std::make_shared<FXAAEffect>());
 

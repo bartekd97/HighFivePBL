@@ -29,7 +29,7 @@ public:
 	};
 
 	virtual void Init() override;
-	virtual bool Process(
+	virtual bool PreForwardProcess(
 		std::shared_ptr<FrameBuffer> source,
 		std::shared_ptr<FrameBuffer> destination,
 		RenderPipeline::GBufferStruct& gbuffer) override;

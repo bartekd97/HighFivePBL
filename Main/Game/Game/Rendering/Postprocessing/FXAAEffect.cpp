@@ -12,7 +12,7 @@ void FXAAEffect::Init()
 	shader->setVector3F("inverseFilterTextureSize", 1.0f / HFEngine::RENDER_WIDTH, 1.0f / HFEngine::RENDER_HEIGHT, 0.0f);
 	shader->setFloat("SpanMax", 8.0);
 	shader->setFloat("ReduceMin", 1.0 / 128.0);
-	shader->setFloat("ReduceMul", 1.0 / 8.0);
+	shader->setFloat("ReduceMul", 1.0 / 16.0);
 }
 
 bool FXAAEffect::Process(

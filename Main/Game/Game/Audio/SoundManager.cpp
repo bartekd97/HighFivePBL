@@ -60,7 +60,7 @@ int SoundManager::GenerateBuffersSources()
 	for (int i = 0; i < numBuffers; i++)
 	{
 		SoundBuffer buffer;
-		alGenBuffer((ALuint)1, &buffer.id);
+		//alGenBuffer((ALuint)1, &buffer.id);
 		this->buffers.push_back(buffer);
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -75,18 +75,26 @@ int SoundManager::GenerateBuffersSources()
 		buffers.at(i).id = i;
 		buffers.at(i).isFree = false;
 		buffers.at(i).filename = soundsFolderPath + soundNames.at(i);
+		buffers.at(i).buffer = alGenBuffer((ALuint)1, buffers.at(i).id);
 	}
 
 	for (int i = 0; i < numSources; i++)
 	{
 		SoundSource source;
-		alGenSources((ALuint)1, &source.id);
+		//alGenSources((ALuint)1, &source.id);
 		this->sources.push_back(source);
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alGenSources : %d", error);
 		return 0;
+	}
+
+	for (int i = 0; i < sources.size(); i++)
+	{
+		sources.at(i).id = i;
+		sources.at(i).isFree = false;
+		sources.at(i).source = alGenSources((ALuint)1, sources.at(i).id);
 	}
 
 	for (uint32 i = 0; i < this->buffers.size(); i++) 
