@@ -9,7 +9,7 @@ uniform sampler2D gAlbedoFade;
 uniform vec3 ambient;
 uniform int debug;
 
-void main() 
+void main()
 {
     vec2 texelSize = 1.0 / vec2(textureSize(ssaoInput, 0));
     float result = 0.0;

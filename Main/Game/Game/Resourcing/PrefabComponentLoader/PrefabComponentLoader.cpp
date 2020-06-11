@@ -625,8 +625,12 @@ namespace {
 				{
 					bool set = false;
 
+					static int intTmp;
+					if (Utility::TryConvertStringToInt(property.second, intTmp))
+						set = script->SetInt(property.first, intTmp);
+
 					static float floatTmp;
-					if (Utility::TryConvertStringToFloat(property.second, floatTmp))
+					if (!set && Utility::TryConvertStringToFloat(property.second, floatTmp))
 						set = script->SetFloat(property.first, floatTmp);
 
 					static glm::vec3 vec3tmp;

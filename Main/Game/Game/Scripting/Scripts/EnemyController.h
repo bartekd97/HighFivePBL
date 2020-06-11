@@ -5,12 +5,16 @@
 #include "../Script.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/CellPathfinder.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Rendering/PrimitiveRenderer.h"
+#include "GUI/GUIManager.h"
+#include "GUI/Panel.h"
+#include "Resourcing/Model.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
@@ -21,6 +25,8 @@ class EnemyController : public Script
 {
 private: // parameters
 	float moveSpeed = 5.0f;
+	float maxHealth = 10.0f;
+	float dmgAnimationDuration = 0.5f;
 
 private: // variables
 	GameObject visualObject;
@@ -31,7 +37,10 @@ private: // variables
 	float attackDistance = 1.5f;
 
 	float health;
-	float healthMax = 100.0f;
+
+	glm::vec3 defaultColor;
+	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
+	TimerAnimator timerAnimator;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -52,6 +61,8 @@ public:
 	EnemyController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("maxHealth", &maxHealth); 
+		RegisterFloatParameter("dmgAnimationDuration", &dmgAnimationDuration);
 	}
 
 	~EnemyController()
@@ -77,7 +88,10 @@ public:
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
 
-		health = 70.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (healthMax - 70.0f)));
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
+		defaultColor = mesh.material->emissiveColor;
+
+		health = maxHealth;
 
 		healthBarPanel = std::make_shared<Panel>();
 		healthBarPanel->associatedGameObject = GetGameObject();
@@ -155,6 +169,8 @@ public:
 		auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
 		if (currentMoveSpeed > 0.01f)
 			rigidBody.Move(transform.GetPosition() + moveBy);
+
+		timerAnimator.Process(dt);
 	}
 
 
@@ -171,7 +187,24 @@ public:
 		//LogInfo("EnemyController::OnNewPathToPlayer(): Path size: {}", targetPath.size());
 	}
 
+	void RestoreDefaultEmissive()
+	{
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
+		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, defaultColor, dmgAnimationDuration / 2.0f);
+	}
 
+	void TakeDamage(float value)
+	{
+		health -= value;
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
+		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
+		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
+
+		if (health <= 0)
+		{
+			DestroyGameObjectSafely();
+		}
+	}
 
 	void LateUpdate(float dt)
 	{
@@ -185,7 +218,7 @@ public:
 #endif
 		auto& transform = GetTransform();
 		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
-		healthValuePanel->SetSize({ health / healthMax, 1.0f });
+		healthValuePanel->SetSize({ health / maxHealth, 1.0f });
 	}
 
 

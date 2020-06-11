@@ -2,7 +2,15 @@
     <component name="ScriptComponent">
         <property name="name" value="GhostController"/>
         <property name="moveSpeed" value="9.0"/>
-    </component>
+		<property name="damageToEnemies" value="3.0"/>
+		<property name="maxGhostDistance" value="15.0"/>
+		<property name="ghostDistanceRecoverySpeed" value="5.0"/>
+		<property name="numberOfEnemyToHit" value="1"/>
+	</component>
+	<component name="CircleCollider">
+		<property name="radius" value="0.75"/>
+		<property name="type" value="TRIGGER"/>
+	</component>
 
     <children>
         <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
