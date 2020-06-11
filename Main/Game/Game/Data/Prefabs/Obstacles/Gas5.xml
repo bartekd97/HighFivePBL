@@ -1,0 +1,103 @@
+<prefab defaultScale="1.5,1.5,1.5">
+    <!--
+        TODO:
+        Maybe use nested prefabs? To not repeat same code with those fire particles and lights
+    -->
+
+    <children>
+        <child name="GasTrigger" position="0.747,1.5,0.059" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="1.0"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="1.5,1.5"/>
+                <property name="targetShapeSize" value="1.5,1.5"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="1.5,1.9"/>
+                <property name="velocity" value="-0.3,0.6"/>
+                <property name="rate" value="48.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="blendingMode" value="BLEND"/>
+                <property name="spriteSheet" value="Particles:Smokes"/>
+                <property name="spriteSheetCount" value="8"/>
+                <property name="colorOverTime" value="0.0,0.7,0.35;0.0,0.9,0.45"/>
+                <property name="opacityOverTime" value="0.0;0.3;0.3;0.15;0.0"/>
+                <property name="visibilityRadius" value="5.0"/>
+            </component>
+        </child>
+
+
+        <child name="GasTrigger" position="-0.807,1.5,-0.152" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.65"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="1.1,1.1"/>
+                <property name="targetShapeSize" value="1.1,1.1"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="1.5,1.9"/>
+                <property name="velocity" value="-0.3,0.6"/>
+                <property name="rate" value="30.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="blendingMode" value="BLEND"/>
+                <property name="spriteSheet" value="Particles:Smokes"/>
+                <property name="spriteSheetCount" value="8"/>
+                <property name="colorOverTime" value="0.0,0.7,0.35;0.0,0.9,0.45"/>
+                <property name="opacityOverTime" value="0.0;0.3;0.3;0.15;0.0"/>
+                <property name="visibilityRadius" value="5.0"/>
+            </component>
+        </child>
+
+
+        <child name="GasTrigger" position="-0.074,1.5,-0.266" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="1.0"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="1.5,1.5"/>
+                <property name="targetShapeSize" value="1.5,1.5"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="1.5,1.9"/>
+                <property name="velocity" value="-0.3,0.6"/>
+                <property name="rate" value="48.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="blendingMode" value="BLEND"/>
+                <property name="spriteSheet" value="Particles:Smokes"/>
+                <property name="spriteSheetCount" value="8"/>
+                <property name="colorOverTime" value="0.0,0.7,0.35;0.0,0.9,0.45"/>
+                <property name="opacityOverTime" value="0.0;0.3;0.3;0.15;0.0"/>
+                <property name="visibilityRadius" value="5.0"/>
+            </component>
+        </child>
+    </children>
+</prefab>

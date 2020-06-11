@@ -308,6 +308,18 @@ namespace {
 		inline static std::unordered_map<std::string, std::shared_ptr<Texture>> OpacitiesOverTime;
 
 		virtual void Preprocess(PropertyReader& properties) override {
+			static std::string blendingModeStr;
+			if (properties.GetString("blendingMode", blendingModeStr, "ADD")) {
+				if (blendingModeStr == "ADD")
+					renderer.blendingMode = ParticleRenderer::BlendingMode::ADD;
+				else if (blendingModeStr == "BLEND")
+					renderer.blendingMode = ParticleRenderer::BlendingMode::BLEND;
+				else {
+					LogWarning("ParticleRendererLoader::Preprocess(): Invalid 'blendingMode' value. Using default: {}", "ADD");
+					renderer.blendingMode = ParticleRenderer::BlendingMode::ADD;
+				}
+			}
+
 			// color over time
 			std::string colorOverTimeStr = "1.0,1.0,1.0";
 			if (!properties.GetString("colorOverTime", colorOverTimeStr, colorOverTimeStr)) {
