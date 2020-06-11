@@ -63,6 +63,8 @@ public:
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
 		RegisterIntParameter("numberOfEnemyToHit", &numberOfEnemyToHit);
+		RegisterFloatParameter("maxGhostDistance", &maxGhostDistance);
+		RegisterFloatParameter("ghostDistanceRecoverySpeed", &ghostDistanceRecoverySpeed);
 	}
 
 	void Awake();
