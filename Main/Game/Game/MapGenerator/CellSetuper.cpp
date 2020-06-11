@@ -142,7 +142,7 @@ void CellSetuper::Setup()
 				else
 				{
 					// skip obstacles in lite mode
-					if (_debugLiteMode) continue;
+					//if (_debugLiteMode) continue;
 					// it can be later improved to spawn only specific obstacle in lite mode
 
 					int spawnTries = 10;
@@ -209,7 +209,7 @@ void CellSetuper::Setup()
 
 		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * float(zonesSum) * 0.01f);
 
-		if (_debugLiteMode) enemiesCount = 0;
+		//if (_debugLiteMode) enemiesCount = 0;
 
 		while (enemiesCount > 0 && pZones.size() > 0)
 		{

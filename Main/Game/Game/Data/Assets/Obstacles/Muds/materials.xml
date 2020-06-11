@@ -4,6 +4,9 @@
         <property name="normalMap" value="mudNormal"/>
         <property name="metalnessMap" value="mudMetal"/>
         <property name="roughnessMap" value="mudRough"/>
+
+        <property name="emissiveMap" value="mudAlbedo"/>
+        <property name="emissiveColor" value="0.2,0.2,0.2"/>
     </material>
 
     <material name="mudFireMaterial">
