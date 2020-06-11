@@ -5,12 +5,15 @@
 #include "../Script.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/CellPathfinder.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Rendering/PrimitiveRenderer.h"
+#include "GUI/GUIManager.h"
+#include "GUI/Panel.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
@@ -77,7 +80,7 @@ public:
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
 
-		health = 70.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (healthMax - 70.0f)));
+		health = healthMax;
 
 		healthBarPanel = std::make_shared<Panel>();
 		healthBarPanel->associatedGameObject = GetGameObject();
@@ -171,7 +174,15 @@ public:
 		//LogInfo("EnemyController::OnNewPathToPlayer(): Path size: {}", targetPath.size());
 	}
 
+	void TakeDamage(float value)
+	{
+		health -= value;
 
+		if (health <= 0)
+		{
+			HFEngine::ECS.DestroyGameObject(GetGameObject());
+		}
+	}
 
 	void LateUpdate(float dt)
 	{

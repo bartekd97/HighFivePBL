@@ -3,6 +3,10 @@
         <property name="name" value="GhostController"/>
         <property name="moveSpeed" value="9.0"/>
     </component>
+	<component name="CircleCollider">
+		<property name="radius" value="0.75"/>
+		<property name="type" value="TRIGGER"/>
+	</component>
 
     <children>
         <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
