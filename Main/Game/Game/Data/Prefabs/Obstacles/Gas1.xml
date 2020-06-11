@@ -1,4 +1,7 @@
 <prefab defaultScale="1.5,1.5,1.5">
+    <property name="width" value="5.0"/>
+    <property name="height" value="3.5"/>
+    
     <!--
         TODO:
         Maybe use nested prefabs? To not repeat same code with those fire particles and lights
