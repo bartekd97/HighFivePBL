@@ -19,7 +19,7 @@ void SoundObject::LoadAllSounds()
 	for (int i = 0; i < soundNames.size(); i++)
 	{
 		SoundManager::GetBuffers().at(i).filename = soundNames.at(i);
-		SoundManager::GetBuffers().at(i) = alutCreateBufferFromFile(soundNames.at(i));
+		SoundManager::GetBuffers().at(i).buffer = alutCreateBufferFromFile(soundNames.at(i));
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alutLoadWAVFile exciting_sound.wav : %d", error);
@@ -32,7 +32,7 @@ void SoundObject::LoadAllSounds()
 
 void SoundObject::LoadAndPlaySound(int bufferID)
 {
-	this->source = SoundManager::GetInstance()->GetFreeSource();
+	this->source = SoundManager::GetInstance()->GetFreeSource();    //?????
 	alSourcef(this->source->id, AL_PITCH, this->settings.pitch);
 	alSourcef(this->source->id, AL_GAIN, this->settings.gain);
 	alSource3f(this->source->id, AL_POSITION, this->settings.pos.X, this->settings.pos.X, this->settings.pos.X);
