@@ -149,7 +149,7 @@ void CellSetuper::Setup()
 						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
 					);
 
-					if (_debugLiteMode) obstaclePrefab = setupConfig.obstaclePrefabs[4];
+					if (_debugLiteMode) obstaclePrefab = setupConfig.obstaclePrefabs[9];
 
 					float obstacleRotation = zone.center.x * zone.center.y;
 					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
