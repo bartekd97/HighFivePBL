@@ -44,8 +44,8 @@ namespace {
 			emitPlane.x = RandomFloat(-1.0f, 1.0f);
 			emitPlane.y = RandomFloat(-1.0f, 1.0f);
 
-			emitPlane.x = glm::mix(emitter.shapeInnerLevel, 1.0f, glm::abs(emitPlane.x)) * glm::sign(emitPlane.x);
-			emitPlane.y = glm::mix(emitter.shapeInnerLevel, 1.0f, glm::abs(emitPlane.y)) * glm::sign(emitPlane.y);
+			emitPlane.x = glm::mix(emitter.shapeInnerLevel, 1.0f, glm::abs(emitPlane.x * 0.5f)) * glm::sign(emitPlane.x);
+			emitPlane.y = glm::mix(emitter.shapeInnerLevel, 1.0f, glm::abs(emitPlane.y * 0.5f)) * glm::sign(emitPlane.y);
 
 			break;
 		default:

@@ -142,26 +142,39 @@ void CellSetuper::Setup()
 				else
 				{
 					// skip obstacles in lite mode
-					if (_debugLiteMode) continue;
+					//if (_debugLiteMode) continue;
 					// it can be later improved to spawn only specific obstacle in lite mode
 
-					auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
-						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
-					);
-
-					float obstacleRotation = zone.center.x * zone.center.y;
-					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
-					obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
-					obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
-					box.SetWidthHeight(width, height);
-					if (zone.points.size() > 0)
+					int spawnTries = 10;
+					while (spawnTries > 0)
 					{
-						glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
-						if (glm::length2(position) > 0.001f)
+						std::shared_ptr<Prefab> obstaclePrefab;
+						obstaclePrefab = setupConfig.obstaclePrefabs.at(
+						(zone.points.size() * (i + 1) + spawnTries) % setupConfig.obstaclePrefabs.size()
+							);
+
+						//if (_debugLiteMode) obstaclePrefab = setupConfig.obstaclePrefabs[1];
+
+						float obstacleRotation = zone.center.x * zone.center.y;
+						boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
+						obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
+						obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
+						box.SetWidthHeight(width, height);
+						if (zone.points.size() > 0)
 						{
-							LogInfo("CellSetuper::Setup() Zone {} got spawned obstacle at: {}, {}", zone.ind, position.x, position.y);
-							SpawnObstacle(obstaclePrefab, position, obstacleRotation);
+							glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
+							if (glm::length2(position) > 0.001f)
+							{
+								LogInfo("CellSetuper::Setup() Zone {} got spawned obstacle at: {}, {}", zone.ind, position.x, position.y);
+								SpawnObstacle(obstaclePrefab, position, obstacleRotation);
+								spawnTries = 0;
+							}
 						}
+						else
+						{
+							spawnTries = 0;
+						}
+						spawnTries -= 1;
 					}
 					
 				}
@@ -195,6 +208,9 @@ void CellSetuper::Setup()
 		for (auto& zone : zones) pZones.push_back(&zone);
 
 		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * float(zonesSum) * 0.01f);
+
+		//if (_debugLiteMode) enemiesCount = 0;
+
 		while (enemiesCount > 0 && pZones.size() > 0)
 		{
 			for (auto pZone : pZones)

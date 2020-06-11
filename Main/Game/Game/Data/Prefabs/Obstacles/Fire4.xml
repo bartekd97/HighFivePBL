@@ -1,0 +1,230 @@
+<prefab defaultScale="1.5,1.5,1.5">
+    <property name="width" value="6.0"/>
+    <property name="height" value="4.0"/>
+
+    <component name="ModelHolder">
+        <property name="model" value="Obstacles/Muds:Mud1"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+        <property name="material" value="Obstacles/Muds:mudFireMaterial"/>
+    </component>
+
+    <!--
+        TODO:
+        Maybe use nested prefabs? To not repeat same code with those fire particles and lights
+    -->
+
+    <children>
+        <child name="FireTrigger" position="1.067,0,0.322" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.71"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="0.95,0.95"/>
+                <property name="targetShapeSize" value="0.95,0.95"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="0.5,0.75"/>
+                <property name="velocity" value="3.0,4.0"/>
+                <property name="rate" value="48.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="spriteSheet" value="Particles:Flames"/>
+                <property name="spriteSheetCount" value="4"/>
+                <property name="colorOverTime" value="0.75,0.4,0.0;0.6,0.1,0.0;0.5,0.0,0.0"/>
+                <property name="opacityOverTime" value="0.8;0.8;0.0"/>
+                <property name="visibilityRadius" value="4.0"/>
+            </component>
+
+            <children>
+                <child name="FireLight" position="0,0.7,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="PointLightRenderer">
+                        <property name="color" value="1.0,0.3,0.0"/>
+                        <property name="radius" value="5.75"/>
+                        <property name="intensity" value="0.75"/>
+                        <property name="shadowIntensity" value="0.75"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="FireTrigger" position="-0.882,0,0.352" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.9"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="1.1,1.1"/>
+                <property name="targetShapeSize" value="1.1,1.1"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="0.5,0.75"/>
+                <property name="velocity" value="3.0,4.0"/>
+                <property name="rate" value="54.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="spriteSheet" value="Particles:Flames"/>
+                <property name="spriteSheetCount" value="4"/>
+                <property name="colorOverTime" value="0.75,0.4,0.0;0.6,0.1,0.0;0.5,0.0,0.0"/>
+                <property name="opacityOverTime" value="0.8;0.8;0.0"/>
+                <property name="visibilityRadius" value="4.0"/>
+            </component>
+
+            <children>
+                <child name="FireLight" position="0,0.7,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="PointLightRenderer">
+                        <property name="color" value="1.0,0.3,0.0"/>
+                        <property name="radius" value="6.5"/>
+                        <property name="intensity" value="0.75"/>
+                        <property name="shadowIntensity" value="0.75"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="FireTrigger" position="0.245,0,-0.213" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.88"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="1.1,1.1"/>
+                <property name="targetShapeSize" value="1.1,1.1"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="0.5,0.75"/>
+                <property name="velocity" value="3.0,4.0"/>
+                <property name="rate" value="54.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="spriteSheet" value="Particles:Flames"/>
+                <property name="spriteSheetCount" value="4"/>
+                <property name="colorOverTime" value="0.75,0.4,0.0;0.6,0.1,0.0;0.5,0.0,0.0"/>
+                <property name="opacityOverTime" value="0.8;0.8;0.0"/>
+                <property name="visibilityRadius" value="4.0"/>
+            </component>
+
+            <children>
+                <child name="FireLight" position="0,0.7,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="PointLightRenderer">
+                        <property name="color" value="1.0,0.3,0.0"/>
+                        <property name="radius" value="6.5"/>
+                        <property name="intensity" value="0.75"/>
+                        <property name="shadowIntensity" value="0.75"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="FireTrigger" position="-0.063,0,0.203" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="3.0"/>
+                <property name="height" value="1.21"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="75"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="RECTANGLE"/>
+                <property name="sourcShapeeSize" value="3.4,1.4"/>
+                <property name="targetShapeSize" value="3.4,1.4"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="0.5,0.75"/>
+                <property name="velocity" value="3.0,4.0"/>
+                <property name="rate" value="75.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="spriteSheet" value="Particles:Flames"/>
+                <property name="spriteSheetCount" value="4"/>
+                <property name="colorOverTime" value="0.75,0.4,0.0;0.6,0.1,0.0;0.5,0.0,0.0"/>
+                <property name="opacityOverTime" value="0.8;0.8;0.0"/>
+                <property name="visibilityRadius" value="4.0"/>
+            </component>
+
+            <children>
+                <child name="FireLight" position="0,0.7,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="PointLightRenderer">
+                        <property name="color" value="1.0,0.3,0.0"/>
+                        <property name="radius" value="7.5"/>
+                        <property name="intensity" value="0.75"/>
+                        <property name="shadowIntensity" value="0.75"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="FireTrigger" position="-0.612,0,-0.412" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="1.56"/>
+                <property name="height" value="0.91"/>
+                <property name="frozen" value="true"/>
+            </component>
+
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="50"/>
+            </component>
+            <component name="ParticleEmitter">
+                <property name="shape" value="RECTANGLE"/>
+                <property name="sourcShapeeSize" value="1.85,1.05"/>
+                <property name="targetShapeSize" value="1.85,1.05"/>
+                <property name="shapeInnerLevel" value="0.0"/>
+                <property name="size" value="1.5,2.0"/>
+                <property name="lifetime" value="0.5,0.75"/>
+                <property name="velocity" value="3.0,4.0"/>
+                <property name="rate" value="48.0"/>
+                <property name="emitting" value="true"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="spriteSheet" value="Particles:Flames"/>
+                <property name="spriteSheetCount" value="4"/>
+                <property name="colorOverTime" value="0.75,0.4,0.0;0.6,0.1,0.0;0.5,0.0,0.0"/>
+                <property name="opacityOverTime" value="0.8;0.8;0.0"/>
+                <property name="visibilityRadius" value="4.0"/>
+            </component>
+
+            <children>
+                <child name="FireLight" position="0,0.7,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="PointLightRenderer">
+                        <property name="color" value="1.0,0.3,0.0"/>
+                        <property name="radius" value="5.0"/>
+                        <property name="intensity" value="0.75"/>
+                        <property name="shadowIntensity" value="0.75"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+    </children>
+</prefab>

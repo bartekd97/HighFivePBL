@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include "PrefabComponentLoader.h"
 #include "Resourcing/Prefab.h"
 #include "HFEngine.h"
@@ -303,23 +304,42 @@ namespace {
 	public:
 		ParticleRenderer renderer;
 
+		inline static std::unordered_map<std::string, std::shared_ptr<Texture>> ColorsOverTime;
+		inline static std::unordered_map<std::string, std::shared_ptr<Texture>> OpacitiesOverTime;
+
 		virtual void Preprocess(PropertyReader& properties) override {
+			static std::string blendingModeStr;
+			if (properties.GetString("blendingMode", blendingModeStr, "ADD")) {
+				if (blendingModeStr == "ADD")
+					renderer.blendingMode = ParticleRenderer::BlendingMode::ADD;
+				else if (blendingModeStr == "BLEND")
+					renderer.blendingMode = ParticleRenderer::BlendingMode::BLEND;
+				else {
+					LogWarning("ParticleRendererLoader::Preprocess(): Invalid 'blendingMode' value. Using default: {}", "ADD");
+					renderer.blendingMode = ParticleRenderer::BlendingMode::ADD;
+				}
+			}
+
 			// color over time
 			std::string colorOverTimeStr = "1.0,1.0,1.0";
 			if (!properties.GetString("colorOverTime", colorOverTimeStr, colorOverTimeStr)) {
 				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'colorOverTime' value. Using default: {}", colorOverTimeStr);
 			}
 			else {
-				std::vector<glm::vec3> colorOverTimeVec3;
-				for (auto& color : Utility::StringSplit(colorOverTimeStr, ';'))
+				if (!ColorsOverTime.contains(colorOverTimeStr))
 				{
-					glm::vec3 cvec;
-					if (!Utility::TryConvertStringToVec3(color, cvec)) {
-						LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'colorOverTime' value. Using: {}", color, cvec);
+					std::vector<glm::vec3> colorOverTimeVec3;
+					for (auto& color : Utility::StringSplit(colorOverTimeStr, ';'))
+					{
+						glm::vec3 cvec;
+						if (!Utility::TryConvertStringToVec3(color, cvec)) {
+							LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'colorOverTime' value. Using: {}", color, cvec);
+						}
+						colorOverTimeVec3.push_back(cvec);
 					}
-					colorOverTimeVec3.push_back(cvec);
+					ColorsOverTime[colorOverTimeStr] = TextureTools::GenerateGradientTexture(colorOverTimeVec3);
 				}
-				renderer.colorOverTime = TextureTools::GenerateGradientTexture(colorOverTimeVec3);
+				renderer.colorOverTime = ColorsOverTime[colorOverTimeStr];
 			}
 
 			// opacity over time
@@ -328,16 +348,20 @@ namespace {
 				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'opacityOverTime' value. Using default: {}", opacityOverTimeStr);
 			}
 			else {
-				std::vector<float> opacityOverTimeFloats;
-				for (auto& opacity : Utility::StringSplit(opacityOverTimeStr, ';'))
+				if (!OpacitiesOverTime.contains(opacityOverTimeStr))
 				{
-					float of;
-					if (!Utility::TryConvertStringToFloat(opacity, of)) {
-						LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'opacityOverTime' value. Using: {}", opacity, of);
+					std::vector<float> opacityOverTimeFloats;
+					for (auto& opacity : Utility::StringSplit(opacityOverTimeStr, ';'))
+					{
+						float of;
+						if (!Utility::TryConvertStringToFloat(opacity, of)) {
+							LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'opacityOverTime' value. Using: {}", opacity, of);
+						}
+						opacityOverTimeFloats.push_back(of);
 					}
-					opacityOverTimeFloats.push_back(of);
+					OpacitiesOverTime[opacityOverTimeStr] = TextureTools::GenerateGradientTexture(opacityOverTimeFloats);
 				}
-				renderer.opacityOverTime = TextureTools::GenerateGradientTexture(opacityOverTimeFloats);
+				renderer.opacityOverTime = OpacitiesOverTime[opacityOverTimeStr];
 			}
 
 

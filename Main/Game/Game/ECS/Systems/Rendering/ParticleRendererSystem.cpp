@@ -78,6 +78,8 @@ unsigned int ParticleRendererSystem::Render(Camera& viewCamera)
 	particleShader->setVector3F("gCameraRight", cameraRightWorld);
 	particleShader->setVector3F("gCameraUp", cameraUpWorld);
 
+	ParticleRenderer::BlendingMode lastBlendingMode = ParticleRenderer::BlendingMode::ADD;
+
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glBindVertexArray(VAO);
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
@@ -95,6 +97,21 @@ unsigned int ParticleRendererSystem::Render(Camera& viewCamera)
 			continue;
 		if (container._activeParticles == 0)
 			continue;
+
+		if (lastBlendingMode != renderer.blendingMode)
+		{
+			lastBlendingMode = renderer.blendingMode;
+			switch (lastBlendingMode)
+			{
+			case ParticleRenderer::BlendingMode::BLEND:
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+			case ParticleRenderer::BlendingMode::ADD:
+			default:
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				break;
+			}
+		}
 
 		CheckParticlesBuffer(container, renderer);
 		renderer.particlesBuffer->bind(ParticlesBinding::BUFFER);
