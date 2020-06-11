@@ -15,7 +15,8 @@
         <property name="name" value="EnemyController"/>
         <property name="moveSpeed" value="5.0"/>
 		<property name="maxHealth" value="10.0"/>
-    </component>
+		<property name="dmgAnimationDuration" value="0.5f"/>
+	</component>
 
 
     <children>
@@ -26,6 +27,7 @@
             </component>
             <component name="SkinnedMeshRenderer">
                 <property name="configureFromHolder" value="true" />
+				<property name="individualMaterial" value="true" />
             </component>
             <component name="SkinAnimator">
                 <property name="configureFromHolder" value="true" />
