@@ -61,6 +61,8 @@ public:
 	GhostController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
+		RegisterIntParameter("numberOfEnemyToHit", &numberOfEnemyToHit);
 	}
 
 	void Awake();

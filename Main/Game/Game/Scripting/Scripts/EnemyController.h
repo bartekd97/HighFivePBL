@@ -34,7 +34,7 @@ private: // variables
 	float attackDistance = 1.5f;
 
 	float health;
-	float healthMax = 100.0f;
+	float maxHealth = 10.0f;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -55,6 +55,7 @@ public:
 	EnemyController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("maxHealth", &maxHealth);
 	}
 
 	~EnemyController()
@@ -80,7 +81,7 @@ public:
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
 
-		health = healthMax;
+		health = maxHealth;
 
 		healthBarPanel = std::make_shared<Panel>();
 		healthBarPanel->associatedGameObject = GetGameObject();
@@ -180,7 +181,7 @@ public:
 
 		if (health <= 0)
 		{
-			HFEngine::ECS.DestroyGameObject(GetGameObject());
+			DestroyGameObjectSafely();
 		}
 	}
 
@@ -196,7 +197,7 @@ public:
 #endif
 		auto& transform = GetTransform();
 		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
-		healthValuePanel->SetSize({ health / healthMax, 1.0f });
+		healthValuePanel->SetSize({ health / maxHealth, 1.0f });
 	}
 
 

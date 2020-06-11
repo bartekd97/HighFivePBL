@@ -17,6 +17,14 @@ public:
 		this->gameObject = gameObject;
 	}
 
+	bool SetInt(std::string name, int value)
+	{
+		if (intParameters.find(name) == intParameters.end()) return false;
+		*intParameters[name] = value;
+		unsettedParams -= 1;
+		return  true;
+	}
+
 	bool SetFloat(std::string name, float value)
 	{
 		if (floatParameters.find(name) == floatParameters.end()) return false;
@@ -53,6 +61,12 @@ protected:
 		gameObject = NULL_GAMEOBJECT;
 	}
 
+	void RegisterIntParameter(std::string name, int* intPtr)
+	{
+		intParameters[name] = intPtr;
+		unsettedParams += 1;
+	}
+
 	void RegisterFloatParameter(std::string name, float* floatPtr)
 	{
 		floatParameters[name] = floatPtr;
@@ -85,6 +99,7 @@ protected:
 	
 private:
 	GameObject gameObject;
+	std::unordered_map<std::string, int*> intParameters;
 	std::unordered_map<std::string, float*> floatParameters;
 	std::unordered_map<std::string, glm::vec3*> vec3Parameters;
 	std::unordered_map<std::string, std::string*> stringParameters;

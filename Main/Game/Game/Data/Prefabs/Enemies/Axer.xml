@@ -14,6 +14,7 @@
     <component name="ScriptComponent">
         <property name="name" value="EnemyController"/>
         <property name="moveSpeed" value="5.0"/>
+		<property name="maxHealth" value="10.0"/>
     </component>
 
 

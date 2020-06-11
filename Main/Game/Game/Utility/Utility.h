@@ -30,6 +30,7 @@ namespace Utility {
 	bool TryConvertStringToVec3(std::string& string, glm::vec3& vec);
 	// 4 floats, coma separated
 	bool TryConvertStringToVec4(std::string& string, glm::vec4& vec);
+	bool TryConvertStringToInt(std::string& string, int& value);
 	bool TryConvertStringToFloat(std::string& string, float& value);
 
 	std::uint32_t HashString(char const* s, std::size_t count);

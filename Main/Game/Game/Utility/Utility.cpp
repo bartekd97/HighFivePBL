@@ -88,6 +88,13 @@ bool Utility::TryConvertStringToVec4(std::string& string, glm::vec4& vec)
 	return true;
 }
 
+bool Utility::TryConvertStringToInt(std::string& string, int& value)
+{
+	try { value = std::stoi(string.c_str(), NULL); }
+	catch (std::invalid_argument ex) { return false; }
+	return true;
+}
+
 bool Utility::TryConvertStringToFloat(std::string& string, float& value)
 {
 	try { value = std::stof(string.c_str(), NULL);}
