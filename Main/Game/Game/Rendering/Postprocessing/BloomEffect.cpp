@@ -16,7 +16,7 @@ void BloomEffect::Init()
 		FrameBuffer::DepthAttachement::DEFAULT
 	);
 	framebufferB = FrameBuffer::Create(
-		HFEngine::RENDER_WIDTH, HFEngine::RENDER_HEIGHT,
+		HFEngine::RENDER_WIDTH / 2, HFEngine::RENDER_HEIGHT / 2,
 		colorAttachement,
 		FrameBuffer::DepthAttachement::DEFAULT
 	);
@@ -60,27 +60,30 @@ bool BloomEffect::Process(
 	}
 
 	
-	int iterations = 10;
+	int iterations = 5;
 
 	bloom->use();
 	source->getColorAttachement(0)->bind(0);
 	framebufferA->bind();
 	PrimitiveRenderer::DrawScreenQuad();
 
+	// horizontal blur
+	horizontalBlur->use();
 	for (int i = 0; i < iterations; i++)
 	{
-		horizontalBlur->use();
 		framebufferA->getColorAttachement(0)->bind(0);
 		framebufferB->bind();
 		PrimitiveRenderer::DrawScreenQuad();
-
 		std::swap(framebufferA, framebufferB);
+	}
 
-		verticalBlur->use();
+	// vertical blur
+	verticalBlur->use();
+	for (int i = 0; i < iterations; i++)
+	{
 		framebufferA->getColorAttachement(0)->bind(0);
 		framebufferB->bind();
 		PrimitiveRenderer::DrawScreenQuad();
-
 		std::swap(framebufferA, framebufferB);
 	}
 
