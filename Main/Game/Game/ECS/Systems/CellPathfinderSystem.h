@@ -9,7 +9,7 @@
 class CellPathfinderSystem : public System, public ISystemUpdate
 {
 private:
-	TaskPool<1, ITaskPool::Priority::LOWEST> pathfindingWorker;
+	TaskPool<1, ITaskPool::Priority::NORMAL> pathfindingWorker;
 
 	void WorkPathfinding(std::shared_ptr<CellPathfindingTask> task);
 public:
