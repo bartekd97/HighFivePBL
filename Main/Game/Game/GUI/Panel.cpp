@@ -69,3 +69,13 @@ void Panel::Draw()
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
+
+void Panel::SetCircleFilling(float filling)
+{
+	circleFilling = filling;
+}
+
+float Panel::GetCircleFilling()
+{
+	return circleFilling;
+}
