@@ -5,4 +5,45 @@
     <component name="MeshRenderer">
         <property name="configureFromHolder" value="true" />
     </component>
+
+    <children>
+        <child name="MudTrigger" position="1.067,0,0.322" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.71"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+        <child name="MudTrigger" position="-0.882,0,0.352" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.9"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+        <child name="MudTrigger" position="0.245,0,-0.213" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.88"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+
+        <child name="MudTrigger" position="-0.063,0,0.203" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="3.0"/>
+                <property name="height" value="1.21"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+        <child name="MudTrigger" position="-0.612,0,-0.412" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="1.56"/>
+                <property name="height" value="0.91"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+    </children>
 </prefab>
