@@ -43,6 +43,7 @@ Panel::Panel()
 
 	textureColor.texture = GUIManager::defaultTexture;
 	textureColor.color = glm::vec4(1.0f);
+	circleFilling = 1.0f;
 }
 
 void Panel::Update(const glm::vec2& mousePosition)
@@ -63,9 +64,22 @@ void Panel::Draw()
 	mat = glm::scale(mat, glm::vec3(screenSize.x * 2.0f, screenSize.y * 2.0f, 1.0f));
 	GUIManager::guiShader->setVector4F("uColor", textureColor.color);
 	GUIManager::guiShader->setMat4("model", mat);
+	//GUIManager::guiShader->setFloat("circleFilling", circleFilling);
 
 	textureColor.texture->bind(0);
 
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+
+	//GUIManager::guiShader->setFloat("circleFilling", 1.0f);
+}
+
+void Panel::SetCircleFilling(float filling)
+{
+	circleFilling = filling;
+}
+
+float Panel::GetCircleFilling()
+{
+	return circleFilling;
 }
