@@ -5,12 +5,15 @@
 #include "../Script.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/CellPathfinder.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Rendering/PrimitiveRenderer.h"
+#include "GUI/GUIManager.h"
+#include "GUI/Panel.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
@@ -31,7 +34,7 @@ private: // variables
 	float attackDistance = 1.5f;
 
 	float health;
-	float healthMax = 100.0f;
+	float maxHealth = 10.0f;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -52,6 +55,7 @@ public:
 	EnemyController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("maxHealth", &maxHealth);
 	}
 
 	~EnemyController()
@@ -77,7 +81,7 @@ public:
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
 
-		health = 70.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (healthMax - 70.0f)));
+		health = maxHealth;
 
 		healthBarPanel = std::make_shared<Panel>();
 		healthBarPanel->associatedGameObject = GetGameObject();
@@ -171,7 +175,15 @@ public:
 		//LogInfo("EnemyController::OnNewPathToPlayer(): Path size: {}", targetPath.size());
 	}
 
+	void TakeDamage(float value)
+	{
+		health -= value;
 
+		if (health <= 0)
+		{
+			DestroyGameObjectSafely();
+		}
+	}
 
 	void LateUpdate(float dt)
 	{
@@ -185,7 +197,7 @@ public:
 #endif
 		auto& transform = GetTransform();
 		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
-		healthValuePanel->SetSize({ health / healthMax, 1.0f });
+		healthValuePanel->SetSize({ health / maxHealth, 1.0f });
 	}
 
 

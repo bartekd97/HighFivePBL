@@ -10,6 +10,7 @@
 #include "Utility/TimerAnimator.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
+#include "EnemyController.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -20,6 +21,7 @@ private: // parameters
 	float moveSpeed = 7.0f;
 	float attackPreparationTime = 0.4f;
 	float attackTime = 1.25f;
+	float damageToEnemies = 2.0f;
 
 	glm::vec3 attackAlbedoColor = { 2.5f, 0.4f, 1.5f };
 	glm::vec3 attackEmissiveColor = { 0.5f, 0.1f, 0.3f };
@@ -50,6 +52,7 @@ public:
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 		RegisterFloatParameter("attackPreparationTime", &attackPreparationTime);
 		RegisterFloatParameter("attackTime", &attackTime);
+		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
 
 		RegisterVec3Parameter("attackAlbedoColor", &attackAlbedoColor);
 		RegisterVec3Parameter("attackEmissiveColor", &attackEmissiveColor);
@@ -76,6 +79,8 @@ public:
 	void Start()
 	{
 		moveSpeedSmoothing = moveSpeed * 4.0f;
+		auto& collider = HFEngine::ECS.GetComponent<Collider>(GetGameObject());
+		collider.OnTriggerEnter.push_back(TriggerMethodPointer(MiniGhost::OnTriggerEnter));
 	}
 
 	void Update(float dt)
@@ -142,6 +147,18 @@ public:
 		timerAnimator.DelayAction(time + 0.1f, std::bind(&MiniGhost::DestroyGameObjectSafely, this));
 		fadingOut = true;
 		attacking = false;
+	}
+
+	void OnTriggerEnter(GameObject that, GameObject other)
+	{
+		if (!attacking) return;
+		if (!strcmp(HFEngine::ECS.GetNameGameObject(other), "enemy"))
+		{
+			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
+			auto enemyController = scriptContainer.GetScript<EnemyController>();
+			enemyController->TakeDamage(damageToEnemies);
+			FadeMeOut(0.5);
+		}
 	}
 
 
