@@ -2,7 +2,7 @@
     <component name="ScriptComponent">
         <property name="name" value="GhostController"/>
         <property name="moveSpeed" value="9.0"/>
-		<property name="damageToEnemies" value="5.0"/>
+		<property name="damageToEnemies" value="3.0"/>
 		<property name="numberOfEnemyToHit" value="1"/>
 	</component>
 	<component name="CircleCollider">
