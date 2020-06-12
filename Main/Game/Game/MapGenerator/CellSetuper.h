@@ -58,6 +58,8 @@ private:;
 	void UpdateColliders();
 	void ClearTempColliders();
 
+	void CreateFenceFires(std::shared_ptr<Prefab> firePrefab);
+
 	glm::vec2 DrawPointInZone(Zone& zone, const BoxCollider& boxCollider, glm::quat& rotation, int number);
 	glm::vec2 DrawPointInZone(Zone& zone, const CircleCollider& circleCollider, int number);
 };

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <unordered_set>
 #include "CellSetuper.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/Collider.h"
@@ -183,6 +184,21 @@ void CellSetuper::Setup()
 			
 		}
 
+	}
+
+	// create fence fires on boss cell
+	if (type == MapCell::Type::BOSS)
+	{
+		int bossNumber = int(glm::length2(HFEngine::ECS.GetComponent<Transform>(cell).GetPosition())) % 2;
+
+		if (bossNumber == 0) // necromancer
+		{
+			CreateFenceFires(setupConfig.cellFenceFireConfig.necromancerFire);
+		}
+		else if (bossNumber == 1) // ragnaros
+		{
+			CreateFenceFires(setupConfig.cellFenceFireConfig.ragnarosFire);
+		}
 	}
 
 	// clear temp colliders
@@ -415,6 +431,51 @@ void CellSetuper::ClearTempColliders()
 	for (auto c : tempColliders)
 		HFEngine::ECS.DestroyGameObject(c);
 	tempColliders.clear();
+}
+
+
+void CellSetuper::CreateFenceFires(std::shared_ptr<Prefab> firePrefab)
+{
+	float offset = setupConfig.cellFenceFireConfig.fireFenceOffset;
+
+	GameObject fenceFireContainer = HFEngine::ECS.CreateGameObject(cell, "FenceFire");
+	GameObject fenceContainer = HFEngine::ECS.GetByNameInChildren(cell, "Fence")[0];
+	auto highFences = HFEngine::ECS.GetByNameInChildren(fenceContainer, "HighFence");
+
+	std::unordered_set<GameObject> gateFences;
+	MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cell);
+	for (auto bridge : cellInfo.Bridges)
+	{
+		using GD = std::pair<GameObject, float>; // fence and it's distance to gate
+		std::vector<GD> thisGateFences;
+		glm::vec3 gatePosition = HFEngine::ECS.GetComponent<Transform>(bridge.Gate).GetPosition();
+		for (auto fenceObject : highFences)
+		{
+			glm::vec3 fencePosition = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetPosition();
+			float dist = glm::distance2(gatePosition, fencePosition);
+			thisGateFences.emplace_back(GD{fenceObject, dist});
+		}
+		std::sort(thisGateFences.begin(), thisGateFences.end(), [](GD& a, GD& b) {
+			return a.second < b.second;
+			});
+
+		gateFences.insert(thisGateFences[0].first);
+		gateFences.insert(thisGateFences[1].first);
+	}
+
+
+	for (auto fenceObject : highFences)
+	{
+		if (gateFences.contains(fenceObject))
+			continue;
+
+		glm::vec3 fencePosition = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetPosition();
+		glm::vec3 fenceFront = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetFront();
+		glm::vec3 fenceRotation = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetRotationEuler();
+
+		glm::vec3 firePosition = fencePosition - fenceFront * offset;
+		firePrefab->Instantiate(fenceFireContainer, firePosition, fenceRotation);
+	}
 }
 
 
