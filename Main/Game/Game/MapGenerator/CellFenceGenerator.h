@@ -36,6 +36,8 @@ private:
         int fragmentCount;
         float fragmentLength;
 
+        bool addInvisHoleFence = false;
+
         inline glm::vec2 endPosition() {
             return position + direction * fragmentLength * (float)fragmentCount;
         }

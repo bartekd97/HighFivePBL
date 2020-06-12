@@ -1,7 +1,7 @@
 <prefab defaultScale="2.0,2.0,2.0">
     <property name="length" value="0.568" />
     <property name="minForFill" value="0.0" />
-    <property name="maxForFill" value="1.75" />
+    <property name="maxForFill" value="1.95" />
 
     <component name="ModelHolder">
         <property name="model" value="Structures/Fences/SecondSet:Column"/>
