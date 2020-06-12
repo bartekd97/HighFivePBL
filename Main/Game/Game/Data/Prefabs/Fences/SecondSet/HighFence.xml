@@ -1,6 +1,6 @@
 <prefab defaultScale="2.0,2.0,2.0">
     <property name="length" value="4.072" />
-    <property name="minForFill" value="1.75" />
+    <property name="minForFill" value="1.25" />
     <property name="maxForFill" value="5.35" />
 
     <component name="ModelHolder">
