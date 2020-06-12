@@ -10,12 +10,12 @@
 class MapSetuper
 {
 private:
-	MapGeneratorConig config;
+	MapGeneratorConfig config;
 	std::vector<GameObject> cells;
 	std::map<GameObject, std::shared_ptr<CellSetuper>> cellSetupers;
 
 public:
-	MapSetuper(MapGeneratorConig& config, std::vector<GameObject>& cells)
+	MapSetuper(MapGeneratorConfig& config, std::vector<GameObject>& cells)
 		: config(config), cells(cells) {}
 
 	void Setup();

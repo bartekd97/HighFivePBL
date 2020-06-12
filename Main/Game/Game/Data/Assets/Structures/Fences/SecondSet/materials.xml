@@ -1,0 +1,8 @@
+<materials textureLibrary="this">
+    <material name="ssMaterial">
+        <property name="albedoMap" value="ssAlbedo"/>
+        <property name="normalMap" value="ssNormal"/>
+        <property name="metalnessMap" value="ssMetal"/>
+        <property name="roughnessMap" value="ssRough"/>
+    </material>
+</materials>
