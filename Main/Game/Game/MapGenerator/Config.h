@@ -74,6 +74,13 @@ struct CellFenceConfig
     int fragmentCount = 2;
     float innerLevelFenceLocation = 0.87f;
     bool forceTryFillGaps = false;
+
+    CellFenceEntity invisHoleFence;
+
+    CellFenceConfig()
+    {
+        invisHoleFence.SetPrefab("Fences/InvisHoleFence");
+    }
 };
 
 
