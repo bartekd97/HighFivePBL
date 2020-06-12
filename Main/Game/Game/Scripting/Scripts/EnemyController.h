@@ -15,6 +15,7 @@
 #include "GUI/GUIManager.h"
 #include "GUI/Panel.h"
 #include "Resourcing/Model.h"
+#include "Physics/Raycaster.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
@@ -27,6 +28,7 @@ private: // parameters
 	float moveSpeed = 5.0f;
 	float maxHealth = 10.0f;
 	float dmgAnimationDuration = 0.5f;
+	float attackDistance = 1.5f;
 
 private: // variables
 	GameObject visualObject;
@@ -34,7 +36,6 @@ private: // variables
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 2.0f * M_PI;
-	float attackDistance = 1.5f;
 
 	float health;
 
@@ -50,6 +51,8 @@ private: // variables
 	GameObject playerObject;
 	GameObject cellObject;
 
+	Raycaster raycaster;
+
 	std::shared_ptr<Panel> healthBarPanel;
 	std::shared_ptr<Panel> healthRedPanel;
 	std::shared_ptr<Panel> healthValuePanel;
@@ -63,6 +66,7 @@ public:
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 		RegisterFloatParameter("maxHealth", &maxHealth); 
 		RegisterFloatParameter("dmgAnimationDuration", &dmgAnimationDuration);
+		RegisterFloatParameter("attackDistance", &attackDistance);
 	}
 
 	~EnemyController()
@@ -112,6 +116,8 @@ public:
 		healthValuePanel->SetSize({ 1.0f, 1.0f });
 		healthValuePanel->textureColor.color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 		GUIManager::AddWidget(healthValuePanel, healthRedPanel);
+
+		raycaster.SetIgnoredGameObject(GetGameObject());
 	}
 
 
@@ -128,19 +134,34 @@ public:
 		auto& rigidBody = GetRigidBody();
 		auto& pathfinder = GetPathfinder();
 
-		// update test path
-		if (CanQueuePathThisFrame())
+		std::optional<glm::vec3> targetPoint;
+		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
+		glm::vec3 pos = transform.GetPosition();
+		glm::vec3 playerDir = glm::normalize(playerPos - pos);
+		raycaster.Raycast(pos, playerDir);
+
+		if (raycaster.GetOut().hittedObject == playerObject)
 		{
-			glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
-			if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
-				//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
-				&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance
-				&& !rigidBody.isFalling)
-				pathfinder.QueuePath(playerPos);
+			if (raycaster.GetOut().distance >= attackDistance)
+			{
+				targetPoint = playerPos - (playerDir * attackDistance);
+			}
 		}
+		else
+		{
+			// update test path
+			if (CanQueuePathThisFrame())
+			{
+				if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
+					//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
+					&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance
+					&& !rigidBody.isFalling)
+					pathfinder.QueuePath(playerPos);
+			}
 
-
-		auto targetPoint = GetTargetPoint();
+			targetPoint = GetTargetPoint();
+		}
+		
 		if (targetPoint.has_value())
 		{
 			// smooth rotate
