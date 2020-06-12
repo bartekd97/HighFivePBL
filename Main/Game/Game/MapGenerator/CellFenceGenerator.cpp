@@ -364,7 +364,7 @@ std::vector<std::shared_ptr<CellFenceGenerator::FenceObject>>
                 }
             }
             // couldnt find even then? reverse change and cancel finding :c
-            if (backward->fragmentCount == 3)
+            if (backward->fragmentCount == 3 || backward->fragmentCount == 0)
             {
                 /*
                 // leave it "random"

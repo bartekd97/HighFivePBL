@@ -10,7 +10,7 @@
 class MapGenerator
 {
 public:
-    MapGeneratorConig config;
+    MapGeneratorConfig config;
 
 private:
     Delaunay::Rectangle bounds;
