@@ -4,4 +4,10 @@
         <animation name="move"              clip="axerAnim/move.glb"/>
         <animation name="attack"            clip="axerAnim/attack.glb"/>
     </model>
+
+    <model name="Flyer" mesh="flyer.glb" material="FlyerMat" skinned="true">
+        <animation name="idle"              clip="flyerAnim/idle.glb"/>
+        <animation name="move"              clip="flyerAnim/idle.glb"/> <!-- TODO: to replace -->
+        <animation name="attack"            clip="flyerAnim/attack.glb"/>
+    </model>
 </models>

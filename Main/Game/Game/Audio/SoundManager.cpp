@@ -36,6 +36,7 @@ void SoundManager::ExitSoundManager()
 std::vector<std::string> SoundManager::GetAllWavFilesNamesWithinFolder(std::string folder)
 {
 	std::vector<std::string> names;
+	/*
 	//Convert string to wstring
 	std::wstring search_path = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(folder);
 	//std::string search_path = folder + "/*.wav";
@@ -55,7 +56,7 @@ std::vector<std::string> SoundManager::GetAllWavFilesNamesWithinFolder(std::stri
 		} while (::FindNextFile(hFind, &fd));
 		::FindClose(hFind);
 	}
-
+	*/
 	return names;
 }
 
