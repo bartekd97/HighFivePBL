@@ -4,7 +4,7 @@
 #include <string>
 
 class SoundObject {
-
+	/*
 	struct SoundInfo
 	{
 		int frequency;
@@ -12,16 +12,18 @@ class SoundObject {
 		int bitrate;
 		int bitsPerChannel;
 	};
-
+	*/
 private:
-	int preloadBuffersCount = 3;
-	int remainBuffers = 0;
+	//int preloadBuffersCount = 3;
+	//int remainBuffers = 0;
 
 public:
-	bool PreloadBuffer(int bufferID);
-	void LoadAllSounds();
-	void LoadAndPlaySound(int bufferID);
-	void Update();
-	void Stop();
-
+	//bool PreloadBuffer(int bufferID);
+	//void LoadAllSounds();
+	int SetSource(int bufferID, int sourceID, ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, bool loop);
+	int SetSource(std::string bufferFilename, int sourceID, ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, bool loop);
+	void PlaySource(int sourceID);
+	void StopSound(int sourceID);
+	void PauseSound(int sourceID);
+	int setListener();
 };
