@@ -7,7 +7,7 @@
     </component>
 
     <children>
-        <child name="AKey" position="-1.2,0.0,0.0" rotation="0,0,0" scale="1,0.5,1">
+        <child name="AKey" position="-1.2,0.032,0.0" rotation="0,0,0" scale="1,0.35,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:shortkey"/>
             </component>
@@ -27,7 +27,7 @@
         </child>
 
 
-        <child name="DKey" position="1.2,0.0,0.0" rotation="0,0,0" scale="1,0.5,1">
+        <child name="DKey" position="1.2,0.032,0.0" rotation="0,0,0" scale="1,0.35,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:shortkey"/>
             </component>
@@ -47,7 +47,7 @@
         </child>
 
 
-        <child name="WKey" position="0.0,0.0,-0.75" rotation="0,0,0" scale="1,0.5,1">
+        <child name="WKey" position="0.0,0.032,-0.75" rotation="0,0,0" scale="1,0.35,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:shortkey"/>
             </component>
@@ -67,7 +67,7 @@
         </child>
 
 
-        <child name="SKey" position="0.0,0.0,0.75" rotation="0,0,0" scale="1,0.5,1">
+        <child name="SKey" position="0.0,0.032,0.75" rotation="0,0,0" scale="1,0.35,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:shortkey"/>
             </component>
