@@ -184,7 +184,9 @@ struct CellSetupConfig
         smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR14"));
         smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR15"));
 
+
         enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Axer"));
+        enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Flyer"));
     }
 };
 

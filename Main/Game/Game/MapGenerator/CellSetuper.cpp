@@ -217,6 +217,10 @@ void CellSetuper::Setup()
 		for (auto& zone : zones) zonesSum += zone.points.size();
 
 		auto enemyPrefab = setupConfig.enemyPrefabs.at(zonesSum % setupConfig.enemyPrefabs.size());
+
+		// choose specific enemy for lite mode
+		if (_debugLiteMode) enemyPrefab = setupConfig.enemyPrefabs[1]; // 0 axer, 1 flyer
+
 		CircleCollider enemyRadiusCollider;
 		enemyPrefab->Properties().GetFloat("radius", enemyRadiusCollider.radius, 1.0f);
 
