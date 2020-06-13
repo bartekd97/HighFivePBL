@@ -1,0 +1,28 @@
+<prefab defaultScale="2.0,2.0,2.0">
+    <component name="ModelHolder">
+        <property name="model" value="Tutorial:longkey"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+
+    <children>
+        <child name="space" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:label_space"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+
+        <child name="torchmove" position="0.0,0.0,-1.5" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:torchmove"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+    </children>
+</prefab>

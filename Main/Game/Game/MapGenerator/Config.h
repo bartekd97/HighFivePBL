@@ -119,10 +119,25 @@ struct CellTerrainConfig
 
 
 
+struct CellTutorialConfig
+{
+    std::shared_ptr<Prefab> WASD;
+    std::shared_ptr<Prefab> SpaceKey;
+    std::shared_ptr<Prefab> LMBKey;
+
+    CellTutorialConfig()
+    {
+        WASD = PrefabManager::GetPrefab("Tutorial/WASD");
+        SpaceKey = PrefabManager::GetPrefab("Tutorial/SpaceKey");
+        LMBKey = PrefabManager::GetPrefab("Tutorial/LMBKey");
+    }
+};
+
 
 struct CellSetupConfig
 {
     CellFenceFireConfig cellFenceFireConfig;
+    CellTutorialConfig cellTutorialConfig;
 
     int gridSize = 60;
     int gridStep = 2;

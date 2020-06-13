@@ -26,10 +26,9 @@ void CellSetuper::Setup()
 	enemiesContainer = HFEngine::ECS.CreateGameObject("Enemies"); // keep it in global space
 	cellInfo.EnemyContainer = enemiesContainer;
 
-	// spawn monument only on normal cell
 	if (type == MapCell::Type::NORMAL)
 	{
-		// spawn main statue
+		// spawn main statue only on normal cell
 		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
 
 		MakeZones();
@@ -185,9 +184,17 @@ void CellSetuper::Setup()
 		}
 
 	}
+	// create tutorial assets on startup cell
+	else if (type == MapCell::Type::STARTUP)
+	{
+		GameObject tutorialContainer = HFEngine::ECS.CreateGameObject(cell, "TutorialAssets");
 
+		setupConfig.cellTutorialConfig.WASD->Instantiate(tutorialContainer, { -7.0f, 0.0f, 0.0f });
+		setupConfig.cellTutorialConfig.SpaceKey->Instantiate(tutorialContainer, { 0.0f, 0.0f, -4.0f });
+		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, { 7.0f, 0.0f, 1.0f });
+	}
 	// create fence fires on boss cell
-	if (type == MapCell::Type::BOSS)
+	else if (type == MapCell::Type::BOSS)
 	{
 		int bossNumber = int(glm::length2(HFEngine::ECS.GetComponent<Transform>(cell).GetPosition())) % 2;
 

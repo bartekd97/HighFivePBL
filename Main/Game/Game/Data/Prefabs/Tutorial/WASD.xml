@@ -1,0 +1,89 @@
+<prefab defaultScale="2.0,2.0,2.0">
+    <component name="ModelHolder">
+        <property name="model" value="Tutorial:label_move"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+
+    <children>
+        <child name="AKey" position="-1.2,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:shortkey"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+             <children>
+                <child name="A" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Tutorial:letter_A"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="DKey" position="1.2,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:shortkey"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+             <children>
+                <child name="D" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Tutorial:letter_D"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="WKey" position="0.0,0.0,-0.75" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:shortkey"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+             <children>
+                <child name="W" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Tutorial:letter_W"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                </child>
+            </children>
+        </child>
+
+
+        <child name="SKey" position="0.0,0.0,0.75" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:shortkey"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+             <children>
+                <child name="S" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Tutorial:letter_S"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                </child>
+            </children>
+        </child>
+    </children>
+</prefab>

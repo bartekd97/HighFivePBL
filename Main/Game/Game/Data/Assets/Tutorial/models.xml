@@ -1,0 +1,18 @@
+<models materialLibrary="this">
+    <model name="shortkey" mesh="shortkey.glb"    material="keyMaterial" />
+    <model name="longkey" mesh="longkey.glb"    material="keyMaterial" />
+
+    <model name="torchmove" mesh="torchmove.glb"    material="torchMaterial" />
+    <model name="ghostfollow" mesh="ghostfollow.glb"    material="ghostMaterial" />
+
+    <model name="mouse_shape" mesh="mouse/mouse.glb"    material="keyMaterial" />
+    <model name="mouse_LMB" mesh="mouse/LMB.glb"    material="textMaterial" />
+
+    <model name="label_move" mesh="labels/move.glb"    material="textMaterial" />
+    <model name="label_space" mesh="labels/space.glb"    material="textMaterial" />
+
+    <model name="letter_W" mesh="letters/W.glb"    material="textMaterial" />
+    <model name="letter_A" mesh="letters/A.glb"    material="textMaterial" />
+    <model name="letter_S" mesh="letters/S.glb"    material="textMaterial" />
+    <model name="letter_D" mesh="letters/D.glb"    material="textMaterial" />
+</models>

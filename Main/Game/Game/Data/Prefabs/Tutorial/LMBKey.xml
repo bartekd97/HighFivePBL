@@ -1,0 +1,28 @@
+<prefab defaultScale="2.5,2.5,2.5">
+    <component name="ModelHolder">
+        <property name="model" value="Tutorial:mouse_shape"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+
+    <children>
+        <child name="LMB" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:mouse_LMB"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+
+        <child name="ghostfollow" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:ghostfollow"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+    </children>
+</prefab>
