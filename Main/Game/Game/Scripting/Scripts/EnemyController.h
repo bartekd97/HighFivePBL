@@ -134,6 +134,15 @@ public:
 		auto& rigidBody = GetRigidBody();
 		auto& pathfinder = GetPathfinder();
 
+		if (rigidBody.isFalling)
+		{
+			if (transform.GetWorldPosition().y < -15.0f)
+			{
+				DestroyGameObjectSafely();
+			}
+			return;
+		}
+
 		std::optional<glm::vec3> targetPoint;
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 		glm::vec3 pos = transform.GetPosition();
@@ -154,8 +163,7 @@ public:
 			{
 				if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
 					//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
-					&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance
-					&& !rigidBody.isFalling)
+					&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
 					pathfinder.QueuePath(playerPos);
 			}
 
