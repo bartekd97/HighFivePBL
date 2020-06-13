@@ -16,6 +16,7 @@
 #include "GUI/Panel.h"
 #include "Resourcing/Model.h"
 #include "Physics/Raycaster.h"
+#include "PlayerController.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
@@ -38,6 +39,7 @@ private: // variables
 	float rotateSpeedSmoothing = 2.0f * M_PI;
 
 	float health;
+	bool isAttacking = false;
 
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
@@ -50,6 +52,7 @@ private: // variables
 
 	GameObject playerObject;
 	GameObject cellObject;
+	std::shared_ptr<PlayerController> playerController;
 
 	Raycaster raycaster;
 
@@ -92,6 +95,9 @@ public:
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
 
+		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(playerObject);
+		playerController = scriptContainer.GetScript<PlayerController>();
+
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		defaultColor = mesh.material->emissiveColor;
 
@@ -120,6 +126,35 @@ public:
 		raycaster.SetIgnoredGameObject(GetGameObject());
 	}
 
+	void Attack()
+	{
+		isAttacking = true;
+		auto& animator = GetAnimator();
+		animator.TransitToAnimation("attack", 0.0f, AnimationClip::PlaybackMode::SINGLE);
+		animator.SetAnimatorSpeed(animator.GetCurrentClipDuration() / 1000.0f / dmgAnimationDuration);
+	}
+
+	void EndAttack()
+	{
+		isAttacking = false;
+		auto& animator = GetAnimator();
+		animator.TransitToAnimation("move", 0.0f);
+		animator.SetAnimatorSpeed(1.0f);
+
+		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
+		glm::vec3 pos = GetTransform().GetPosition();
+		glm::vec3 playerDir = glm::normalize(playerPos - pos);
+		raycaster.Raycast(pos, playerDir);
+
+		if (raycaster.GetOut().hittedObject == playerObject)
+		{
+			if (raycaster.GetOut().distance <= attackDistance)
+			{
+				LogInfo("xD attack");
+			}
+		}
+		//playerController->
+	}
 
 	bool CanQueuePathThisFrame()
 	{
@@ -143,61 +178,76 @@ public:
 			return;
 		}
 
-		std::optional<glm::vec3> targetPoint;
-		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
-		glm::vec3 pos = transform.GetPosition();
-		glm::vec3 playerDir = glm::normalize(playerPos - pos);
-		raycaster.Raycast(pos, playerDir);
-
-		if (raycaster.GetOut().hittedObject == playerObject)
+		if (isAttacking)
 		{
-			if (raycaster.GetOut().distance >= attackDistance)
+			auto& animator = GetAnimator();
+			if (animator.GetCurrentClipLevel() >= 1.0f)
 			{
-				targetPoint = playerPos - (playerDir * attackDistance);
+				EndAttack();
 			}
 		}
 		else
 		{
-			// update test path
-			if (CanQueuePathThisFrame())
+			std::optional<glm::vec3> targetPoint;
+			glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
+			glm::vec3 pos = transform.GetPosition();
+			glm::vec3 playerDir = glm::normalize(playerPos - pos);
+			raycaster.Raycast(pos, playerDir);
+
+			if (raycaster.GetOut().hittedObject == playerObject)
 			{
-				if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
-					//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
-					&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
-					pathfinder.QueuePath(playerPos);
+				if (raycaster.GetOut().distance >= attackDistance)
+				{
+					targetPoint = playerPos - (playerDir * attackDistance);
+				}
+				else
+				{
+					Attack();
+				}
+			}
+			else
+			{
+				// update test path
+				if (CanQueuePathThisFrame())
+				{
+					if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
+						//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
+						&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
+						pathfinder.QueuePath(playerPos);
+				}
+
+				targetPoint = GetTargetPoint();
 			}
 
-			targetPoint = GetTargetPoint();
-		}
-		
-		if (targetPoint.has_value())
-		{
-			// smooth rotate
-			float diff = GetRotationdifferenceToPoint(targetPoint.value());
-			float change = dt * rotateSpeedSmoothing;
-			if (glm::abs(change) > glm::abs(diff))
-				change = diff;
-			else
-				change *= glm::sign(diff);
+			if (targetPoint.has_value())
+			{
+				// smooth rotate
+				float diff = GetRotationdifferenceToPoint(targetPoint.value());
+				float change = dt * rotateSpeedSmoothing;
+				if (glm::abs(change) > glm::abs(diff))
+					change = diff;
+				else
+					change *= glm::sign(diff);
 
-			if (glm::abs(change) > 0.01f)
-				transform.RotateSelf(glm::degrees(change), transform.GetUp());
-		}
+				if (glm::abs(change) > 0.01f)
+					transform.RotateSelf(glm::degrees(change), transform.GetUp());
+			}
 
-		// smoth move speed
-		float targetMoveSpeed = targetPoint.has_value() ? moveSpeed : 0.0f;
-		{
-			float diff = targetMoveSpeed - currentMoveSpeed;
-			float change = dt * moveSpeedSmoothing;
-			if (glm::abs(change) > glm::abs(diff))
-				currentMoveSpeed = targetMoveSpeed;
-			else
-				currentMoveSpeed += change * glm::sign(diff);
-		}
+			// smoth move speed
+			float targetMoveSpeed = targetPoint.has_value() ? moveSpeed : 0.0f;
+			{
+				float diff = targetMoveSpeed - currentMoveSpeed;
+				float change = dt * moveSpeedSmoothing;
+				if (glm::abs(change) > glm::abs(diff))
+					currentMoveSpeed = targetMoveSpeed;
+				else
+					currentMoveSpeed += change * glm::sign(diff);
+			}
 
-		auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
-		if (currentMoveSpeed > 0.01f)
-			rigidBody.Move(transform.GetPosition() + moveBy);
+			auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
+			if (currentMoveSpeed > 0.01f)
+				rigidBody.Move(transform.GetPosition() + moveBy);
+		}
 
 		timerAnimator.Process(dt);
 	}
