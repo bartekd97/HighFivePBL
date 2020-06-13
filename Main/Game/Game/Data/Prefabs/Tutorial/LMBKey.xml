@@ -16,7 +16,7 @@
             </component>
         </child>
 
-        <child name="ghostfollow" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+        <child name="ghostfollow" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1.5,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:ghostfollow"/>
             </component>

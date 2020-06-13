@@ -7,7 +7,7 @@
     </component>
 
     <children>
-        <child name="space" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,1,1">
+        <child name="space" position="0.0,0.0,0.0" rotation="0,0,0" scale="1,2,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:label_space"/>
             </component>
@@ -16,7 +16,7 @@
             </component>
         </child>
 
-        <child name="torchmove" position="0.0,0.0,-1.5" rotation="0,0,0" scale="1,1,1">
+        <child name="torchmove" position="0.0,0.0,-1.2" rotation="0,0,0" scale="1,1.5,1">
             <component name="ModelHolder">
                 <property name="model" value="Tutorial:torchmove"/>
             </component>

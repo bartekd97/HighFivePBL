@@ -1,10 +1,32 @@
-<materials>
+<materials textureLibrary="this">
+    <material name="roadDrawMat">
+        <property name="albedoMap" value="roadTex" />
+        <property name="albedoColor" value="0.7,0.6,0.3"/>
+        <property name="metalnessValue" value="0.0"/>
+        <property name="roughnessValue" value="0.9"/>
+
+        <property name="emissiveMap" value="roadTex" />
+        <property name="emissiveColor" value="0.1,0.1,0.1"/>
+    </material>
+
+    <material name="stoneKeyMat">
+        <property name="albedoMap" value="stoneTex" />
+        <property name="albedoColor" value="0.6,0.6,0.75"/>
+        <property name="metalnessValue" value="0.0"/>
+        <property name="roughnessValue" value="0.9"/>
+
+        <property name="emissiveMap" value="stoneTex" />
+        <property name="emissiveColor" value="0.03,0.03,0.03"/>
+    </material>
+
+    <!--
     <material name="keyMaterial">
         <property name="albedoColor" value="0.2,0.2,0.2"/>
         <property name="metalnessValue" value="0.0"/>
         <property name="roughnessValue" value="0.1"/>
         <property name="emissiveColor" value="0.0,0.0,0.0"/>
     </material>
+    -->
 
     <material name="textMaterial">
         <property name="albedoColor" value="0.5,0.5,0.2"/>
@@ -13,6 +35,7 @@
         <property name="emissiveColor" value="0.2,0.2,0.1"/>
     </material>
 
+    <!--
     <material name="torchMaterial">
         <property name="albedoColor" value="0.6,0.35,0.2"/>
         <property name="metalnessValue" value="0.0"/>
@@ -26,4 +49,5 @@
         <property name="roughnessValue" value="0.7"/>
         <property name="emissiveColor" value="0.1,0.23,0.25"/>
     </material>
+    -->
 </materials>
