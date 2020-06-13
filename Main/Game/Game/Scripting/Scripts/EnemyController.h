@@ -178,6 +178,8 @@ public:
 			return;
 		}
 
+		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
+
 		if (isAttacking)
 		{
 			auto& animator = GetAnimator();
@@ -185,11 +187,20 @@ public:
 			{
 				EndAttack();
 			}
+
+			float diff = GetRotationdifferenceToPoint(playerPos);
+			float change = dt * rotateSpeedSmoothing;
+			if (glm::abs(change) > glm::abs(diff))
+				change = diff;
+			else
+				change *= glm::sign(diff);
+
+			if (glm::abs(change) > 0.01f)
+				transform.RotateSelf(glm::degrees(change), transform.GetUp());
 		}
 		else
 		{
 			std::optional<glm::vec3> targetPoint;
-			glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 			glm::vec3 pos = transform.GetPosition();
 			glm::vec3 playerDir = glm::normalize(playerPos - pos);
 			raycaster.Raycast(pos, playerDir);
