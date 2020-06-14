@@ -161,12 +161,25 @@ public:
 		}
 	}
 
-	void EndAttack()
+	void EndAttack(bool random = false)
 	{
 		isAttacking = false;
 		auto& animator = GetAnimator();
-		animator.TransitToAnimation("move", 0.0f);
-		animator.SetAnimatorSpeed(1.0f);
+		if (random)
+		{
+			auto pos = GetTransform().GetWorldPosition();
+			float delay = pos.x * (GetGameObject() / 100.0f);
+			delay = (delay - floorf(delay));
+			timerAnimator.DelayAction(delay, [&]() {
+				animator.TransitToAnimation("move", 0.0f);
+				animator.SetAnimatorSpeed(1.0f);
+			});
+		}
+		else
+		{
+			animator.TransitToAnimation("move", 0.0f);
+			animator.SetAnimatorSpeed(1.0f);
+		}
 	}
 
 	bool CanQueuePathThisFrame()
@@ -193,7 +206,12 @@ public:
 			return;
 		}
 
-		if (playerController->IsDead()) return;
+		if (playerController->IsDead())
+		{
+			if (isAttacking) EndAttack(true);
+
+			return;
+		}
 
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 
