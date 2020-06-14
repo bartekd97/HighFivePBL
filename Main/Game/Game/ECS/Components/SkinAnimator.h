@@ -125,4 +125,8 @@ public:
 	{
 		animatorSpeed = speed;
 	}
+	float GetCurrentClipDuration()
+	{
+		return currentClip->duration;
+	}
 };

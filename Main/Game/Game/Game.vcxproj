@@ -308,6 +308,7 @@
     <ClInclude Include="Scripting\Scripts\PlayerController.h" />
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerDeathController.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />

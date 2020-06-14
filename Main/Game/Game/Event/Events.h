@@ -33,6 +33,7 @@ namespace Events::Gameplay
 	}
 	namespace Player
 	{
+		const EventId DEATH = "Events::Gameplay::Player::DEATH"_hash;
 		const EventId PUSHBACK_ENEMIES = "Events::Gameplay::Player::PUSHBACK_ENEMIES"_hash;
 	}
 	namespace Ghost

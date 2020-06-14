@@ -26,6 +26,9 @@ class PlayerController : public Script
 {
 private: // parameters
 	float moveSpeed = 10.0f;
+	float maxHealth = 100.0f;
+	float healthRecoverySpeed = 5.0f;
+	float idleToStartRecoveryTime = 3.0f;
 
 	float pushbackCooldown = 2.0f;
 
@@ -45,6 +48,9 @@ private: // variables
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 	float pushBackDistance = 5.0f;
 	float pushBackForce = 15.0f;
+	float health;
+	float healthMaxOpacity = 0.5f;
+	std::chrono::steady_clock::time_point lastDmgTime;
 
 	float attackAnimationLevel = 0.5f;
 
@@ -56,6 +62,7 @@ private: // variables
 	std::shared_ptr<GhostController> ghostController;
 	std::shared_ptr<Panel> ghostBarPanel;
 	std::shared_ptr<Panel> ghostValueBarPanel;
+	std::shared_ptr<Panel> healthPanel;
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
 
@@ -68,6 +75,9 @@ public:
 	PlayerController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("maxHealth", &maxHealth);
+		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
+		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
 		RegisterFloatParameter("pushbackCooldown", &pushbackCooldown);
 
 		RegisterFloatParameter("torchCooldownEmitRate", &torchCooldownEmitRate);
@@ -103,6 +113,7 @@ public:
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
 
+		health = maxHealth;
 
 		auto& ghostScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(ghostObject);
 		ghostController = ghostScriptContainer.GetScript<GhostController>();
@@ -124,6 +135,14 @@ public:
 		ghostValueBarPanel->textureColor.color = glm::vec4(0.0f, 0.78f, 0.76f, 0.75f);
 
 		GUIManager::AddWidget(ghostValueBarPanel, ghostBarPanel);
+
+		healthPanel = std::make_shared<Panel>();
+		healthPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		healthPanel->SetSize({ 1.0f, 1.0f });
+		healthPanel->SetClipping(true);
+		healthPanel->textureColor.texture = TextureManager::GetTexture("GUI/Player", "playerHealth");
+		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+		GUIManager::AddWidget(healthPanel);
 	}
 
 	void GhostMovementStart(Event& event) {
@@ -139,6 +158,27 @@ public:
 		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = true;
 	}
 
+	void TakeDamage(float dmg)
+	{
+		health -= dmg;
+		lastDmgTime = std::chrono::high_resolution_clock::now();
+
+		if (health <= 0.0f)
+		{
+			health = 0.0f;
+			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
+			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
+				healthPanel->textureColor.color,
+				glm::vec4(0.0f, 0.0f, 0.0f, 0.8f),
+				2.0f
+			);
+			timerAnimator.DelayAction(2.0f, [&]() {
+				HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = false;
+			});
+			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
+		}
+	}
+
 	void Update(float dt)
 	{
 		timerAnimator.Process(dt);
@@ -146,6 +186,8 @@ public:
 		auto& transform = GetTransform();
 		auto& animator = GetAnimator();
 		auto& rigidBody = GetRigidBody();
+
+		if (IsDead()) return;
 
 		bool isMoving = UpdateMovement(dt);
 
@@ -171,6 +213,13 @@ public:
 				isPushingBack = true;
 				onPushBackCooldown = true;
 			}
+
+			auto stopTime = std::chrono::high_resolution_clock::now();
+			auto diff = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - lastDmgTime).count();
+			if (diff >= idleToStartRecoveryTime && health < maxHealth)
+			{
+				health = std::min(health + healthRecoverySpeed * dt, maxHealth);
+			}
 		}
 		else
 		{
@@ -192,6 +241,11 @@ public:
 		{
 			rigidBody.isFalling = true;
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
+		}
+
+		if (InputManager::GetKeyDown(GLFW_KEY_U))
+		{
+			TakeDamage(maxHealth / 10.0f);
 		}
 
 		if (InputManager::GetKeyStatus(GLFW_KEY_R))
@@ -235,6 +289,12 @@ public:
 		}
 
 		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
+		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, (1.0f - health / maxHealth) * healthMaxOpacity);
+	}
+
+	bool IsDead()
+	{
+		return health <= 0;
 	}
 
 	bool UpdateMovement(float dt)
