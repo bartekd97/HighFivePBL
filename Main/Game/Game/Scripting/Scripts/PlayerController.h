@@ -42,6 +42,7 @@ private: // variables
 	float pushBackDistance = 5.0f;
 	float pushBackForce = 15.0f;
 	float health;
+	float healthMaxOpacity = 0.5f;
 
 	float attackAnimationLevel = 0.5f;
 
@@ -52,6 +53,7 @@ private: // variables
 	std::shared_ptr<GhostController> ghostController;
 	std::shared_ptr<Panel> ghostBarPanel;
 	std::shared_ptr<Panel> ghostValueBarPanel;
+	std::shared_ptr<Panel> healthPanel;
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
 
@@ -113,6 +115,14 @@ public:
 		ghostValueBarPanel->textureColor.color = glm::vec4(0.0f, 0.78f, 0.76f, 0.75f);
 
 		GUIManager::AddWidget(ghostValueBarPanel, ghostBarPanel);
+
+		healthPanel = std::make_shared<Panel>();
+		healthPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		healthPanel->SetSize({ 1.0f, 1.0f });
+		healthPanel->SetClipping(true);
+		healthPanel->textureColor.texture = TextureManager::GetTexture("GUI/Player", "playerHealth");
+		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+		GUIManager::AddWidget(healthPanel);
 	}
 
 	void GhostMovementStart(Event& event) {
@@ -132,8 +142,9 @@ public:
 	{
 		health -= dmg;
 
-		if (health <= 0)
+		if (health <= 0.0f)
 		{
+			health = 0.0f;
 			LogInfo("DED");
 		}
 	}
@@ -192,6 +203,11 @@ public:
 			transform.TranslateSelf(glm::vec3(0.0f, 15.0f, 0.0f));
 		}
 
+		if (InputManager::GetKeyDown(GLFW_KEY_U))
+		{
+			TakeDamage(maxHealth / 10.0f);
+		}
+
 		if (InputManager::GetKeyStatus(GLFW_KEY_R))
 		{
 			auto pos = transform.GetWorldPosition();
@@ -233,6 +249,7 @@ public:
 		}
 
 		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
+		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, (1.0f - health / maxHealth) * healthMaxOpacity);
 	}
 
 	bool UpdateMovement(float dt)
