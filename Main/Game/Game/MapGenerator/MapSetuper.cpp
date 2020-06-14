@@ -61,16 +61,28 @@ void MapSetuper::Setup()
 
 GameObject MapSetuper::GetStartupCell()
 {
+    using CR = std::pair<GameObject, float>; // cell and it's road length
+    std::vector<CR> crs;
     for (auto cell : cells)
     {
         MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(cell);
         if (mc.Bridges.size() == 1)
         {
-            return cell;
+            glm::vec3 bridgePos = HFEngine::ECS.GetComponent<Transform>(mc.Bridges[0].Bridge).GetPosition();
+            crs.push_back({ cell, glm::length2(bridgePos) });
         }
     }
-    assert(false && "No one-bridge startup cell");
-    return cells[0]; // fallback
+    if (crs.size() == 0)
+    {
+        assert(false && "No one-bridge startup cell");
+        return cells[0]; // fallback
+    }
+
+    std::sort(crs.begin(), crs.end(), [](CR a, CR b) {
+        return a.second > b.second;
+        });
+
+    return crs[0].first; // cell with longest road
 }
 
 void MapSetuper::GenerateCell(GameObject cell)

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <unordered_set>
+#include <glm/gtx/rotate_vector.hpp>
 #include "CellSetuper.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/Collider.h"
@@ -26,10 +27,9 @@ void CellSetuper::Setup()
 	enemiesContainer = HFEngine::ECS.CreateGameObject("Enemies"); // keep it in global space
 	cellInfo.EnemyContainer = enemiesContainer;
 
-	// spawn monument only on normal cell
 	if (type == MapCell::Type::NORMAL)
 	{
-		// spawn main statue
+		// spawn main statue only on normal cell
 		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
 
 		MakeZones();
@@ -185,9 +185,39 @@ void CellSetuper::Setup()
 		}
 
 	}
+	// create tutorial assets on startup cell (only in regular start mode)
+	else if (type == MapCell::Type::STARTUP && !_debugLiteMode)
+	{
+		GameObject gateObject = cellInfo.Bridges[0].Gate;
+		glm::vec3 gateWorldPosition = HFEngine::ECS.GetComponent<Transform>(gateObject).GetWorldPosition();
+		glm::vec3 gatePosition = HFEngine::ECS.GetComponent<Transform>(gateObject).GetPosition();
+		
+		glm::vec3 roadFront = glm::normalize(gatePosition);
+		glm::vec3 roadSide = glm::rotateY(roadFront, M_PI * 0.5f);
 
+		GameObject tutorialContainer = HFEngine::ECS.CreateGameObject(cell, "TutorialAssets");
+
+		setupConfig.cellTutorialConfig.WASD->Instantiate(tutorialContainer, roadSide * -6.0f);
+		setupConfig.cellTutorialConfig.SpaceKey->Instantiate(tutorialContainer, roadFront * -6.6f);
+		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, roadSide * 6.0f);
+
+		float roadRotation = glm::atan(roadFront.x, roadFront.z);
+		GameObject ghostPlayground = setupConfig.cellTutorialConfig.GhostPlayground->Instantiate(
+			tutorialContainer,
+			gatePosition - roadFront * 5.0f,
+			{0.0f, glm::degrees(roadRotation) + 180.0f, 0.0f}
+		);
+		HFEngine::ECS.AddComponent<CellChild>(ghostPlayground, { cell });
+
+		// spawn enemy toy in world space
+		GameObject enemyToy = setupConfig.cellTutorialConfig.EnemyToy->Instantiate(
+			gateWorldPosition - roadFront * 5.0f,
+			{ 0.0f, glm::degrees(roadRotation), 0.0f }
+			);
+		HFEngine::ECS.AddComponent<CellChild>(enemyToy, { cell });
+	}
 	// create fence fires on boss cell
-	if (type == MapCell::Type::BOSS)
+	else if (type == MapCell::Type::BOSS)
 	{
 		int bossNumber = int(glm::length2(HFEngine::ECS.GetComponent<Transform>(cell).GetPosition())) % 2;
 

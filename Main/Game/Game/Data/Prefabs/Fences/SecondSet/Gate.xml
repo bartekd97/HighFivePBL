@@ -1,6 +1,20 @@
 <prefab defaultScale="2.0,2.0,2.0">
     <property name="length" value="5.672" />
 
+    <component name="ScriptComponent">
+        <property name="name" value="GateOpener"/>
+
+        <property name="leftWingName" value="LeftWingAxle"/>
+        <property name="rightWingName" value="RightWingAxle"/>
+
+        <property name="leftRotationOpened" value="0.0,90.0,0.0"/>
+        <property name="leftRotationClosed" value="0.0,0.0,0.0"/>
+        <property name="rightRotationOpened" value="0.0,-90.0,0.0"/>
+        <property name="rightRotationClosed" value="0.0,0.0,0.0"/>
+
+        <property name="animTime" value="1.0"/>
+    </component>
+
    <children>
         <child name="LeftColumn" position="-1.275,0,0" rotation="0,0,0" scale="1,1,1">
             <component name="ModelHolder">

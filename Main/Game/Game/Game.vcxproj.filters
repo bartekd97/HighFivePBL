@@ -82,8 +82,9 @@
     <ClCompile Include="Rendering\Postprocessing\FXAAEffect.cpp" />
     <ClCompile Include="ECS\Systems\NextFrameDestroySystem.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
-	<ClCompile Include="Audio\SoundManager.cpp" />
-	<ClCompile Include="Audio\SoundObject.cpp" />
+    <ClCompile Include="Audio\SoundManager.cpp" />
+    <ClCompile Include="Audio\SoundObject.cpp" />
+    <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -231,8 +232,11 @@
     <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
     <ClInclude Include="Scripting\Types\GhostTypes.h" />
     <ClInclude Include="ECS\Systems\NextFrameDestroySystem.h" />
-	<ClInclude Include="Audio\SoundManager.h" />
-	<ClInclude Include="Audio\SoundObject.h" />
+    <ClInclude Include="Audio\SoundManager.h" />
+    <ClInclude Include="Audio\SoundObject.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialPlayground.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialEnemy.h" />
+    <ClInclude Include="Scripting\Scripts\GateOpener.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

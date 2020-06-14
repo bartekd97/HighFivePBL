@@ -54,8 +54,11 @@ namespace ScriptManager
 		REGISTER_SCRIPT(MiniGhost);
 		REGISTER_SCRIPT(EnemyController);
 		REGISTER_SCRIPT(MapCellOptimizer);
+		REGISTER_SCRIPT(GateOpener);
 		REGISTER_SCRIPT(TriggerTest);
 		REGISTER_SCRIPT(GUIStatistics);
+		REGISTER_SCRIPT(TutorialPlayground);
+		REGISTER_SCRIPT(TutorialEnemy);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}
