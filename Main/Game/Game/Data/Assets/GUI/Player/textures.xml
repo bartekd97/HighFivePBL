@@ -1,0 +1,3 @@
+<textures>
+    <texture name="playerHealth" file="health.png" format="srgba" />
+</textures>
