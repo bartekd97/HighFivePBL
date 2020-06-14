@@ -1,6 +1,7 @@
 #include <AL/alut.h>
 #include "SoundManager.h"
 #include <tinyxml2.h>
+#include <iostream>
 
 using namespace tinyxml2;
 
@@ -38,8 +39,6 @@ void SoundManager::ExitSoundManager()
 
 void SoundManager::GetAllWavFilesNamesWithinFolder()
 {
-	//std::vector<std::string> names;
-
 	if (Initialized)
 	{
 		LogWarning("SoundManager::Initialize(): Already initialized");
@@ -87,9 +86,6 @@ void SoundManager::GetAllWavFilesNamesWithinFolder()
 	Initialized = true;
 
 	LogInfo("SoundManager initialized.");
-
-
-	//return names;
 }
 
 int SoundManager::GenerateBuffersSources()
@@ -102,9 +98,10 @@ int SoundManager::GenerateBuffersSources()
 		SoundBuffer buffer;
 		buffer.id = soundInformation.at(i).id;
 		buffer.isFree = true;
-		buffer.filename = soundsFolderPath + soundInformation.at(i).name;
+		std::string path = soundsFolderPath + soundInformation.at(i).name;
+		buffer.filename = soundInformation.at(i).name;
 		alGenBuffers((ALuint)1, &buffer.buffer);
-		buffer.buffer = alutCreateBufferFromFile(buffer.filename.c_str());
+		buffer.buffer = alutCreateBufferFromFile(path.c_str());
 		this->buffers.push_back(buffer);
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -157,9 +154,10 @@ int SoundManager::GenerateBuffers()
 		SoundBuffer buffer;
 		buffer.id = soundInformation.at(i).id;
 		buffer.isFree = true;
-		buffer.filename = soundsFolderPath + soundInformation.at(i).name;
+		std::string path = soundsFolderPath + soundInformation.at(i).name;
+		buffer.filename = soundInformation.at(i).name;
 		alGenBuffers((ALuint)1, &buffer.buffer);
-		buffer.buffer = alutCreateBufferFromFile(buffer.filename.c_str());
+		buffer.buffer = alutCreateBufferFromFile(path.c_str());
 		this->buffers.push_back(buffer);
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -212,7 +210,6 @@ SoundManager::SoundSource SoundManager::GetSource(int sourceID)
 		if (sources.at(i).id == sourceID)
 		{
 			return sources.at(i);
-			break;
 		}
 	}
 }
@@ -224,7 +221,6 @@ SoundManager::SoundBuffer SoundManager::GetBuffer(int bufferID)
 		if (buffers.at(i).id == bufferID)
 		{
 			return buffers.at(i);
-			break;
 		}
 	}
 }
@@ -236,7 +232,6 @@ SoundManager::SoundBuffer SoundManager::GetBuffer(std::string bufferFilename)
 		if (buffers.at(i).filename == bufferFilename)
 		{
 			return buffers.at(i);
-			break;
 		}
 	}
 }
@@ -287,3 +282,15 @@ SoundManager::SoundSource SoundManager::GetFreeSource()
 	return sources.at(id);
 }
 
+ALuint SoundManager::GetActualBuffer(std::string filename, ALuint &buffer)
+{
+	for (int i = 0; i < buffers.size(); i++)
+	{
+		if (buffers.at(i).filename == filename)
+		{
+			buffer = buffers.at(i).buffer;
+			std::cout << buffer;
+			return buffer;
+		}
+	}
+}

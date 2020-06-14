@@ -88,7 +88,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Audio\AudioController.cpp" />
+    <ClCompile Include="Audio\AudioManager.cpp" />
 	<ClCompile Include="Audio\SoundManager.cpp" />
 	<ClCompile Include="Audio\SoundObject.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
@@ -173,7 +173,7 @@
     <ClCompile Include="_stb_impl.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Audio\AudioController.h" />
+    <ClInclude Include="Audio\AudioManager.h" />
 	<ClInclude Include="Audio\SoundManager.h" />
 	<ClInclude Include="Audio\SoundObject.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />

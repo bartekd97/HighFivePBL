@@ -1,4 +1,5 @@
 #include "SoundObject.h"
+#include <iostream>
 /*
 bool SoundObject::PreloadBuffer(int bufferID) {
 	std::vector decompressBuffer; 
@@ -77,7 +78,7 @@ int SoundObject::SetSource(int sourceID, int bufferID, ALfloat const* sourcePos,
 	return 0;
 }
 
-ALuint SoundObject::CreateSource(std::string bufferFilename, ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, bool loop)
+int SoundObject::CreateSource(ALuint &source, std::string bufferFilename, ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, bool loop)
 {
 	SoundManager sm;
 	//sm.GenerateBuffers();
@@ -86,13 +87,15 @@ ALuint SoundObject::CreateSource(std::string bufferFilename, ALfloat const* sour
 	ALenum error = sm.getError();
 
 	//get buffer
-	ALuint buffer = sm.GetBuffer(bufferFilename).buffer;
+	//ALuint buffer = sm.GetBuffer(bufferFilename).buffer;
+	ALuint buffer;
+	sm.GetActualBuffer(bufferFilename, buffer);
 
 	//create source
-	ALuint source;
+	//ALuint source;
 
 	// Generate the sources 
-	alGenSources(1, &source); // ?????
+	alGenSources(1, &source); 
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alGenSources : %d", error);
@@ -101,16 +104,23 @@ ALuint SoundObject::CreateSource(std::string bufferFilename, ALfloat const* sour
 
 	//atach buffers to sources
 	alSourcei(source, AL_BUFFER, buffer);
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alSourcei attach : %d", error);
+		return 0;
+	}
 
 	if (loop == true)
 	{
 		alSourcei(source, AL_LOOPING, AL_TRUE);
 	}
-	else alSourcei(source, AL_LOOPING, AL_FALSE);
-
+	else
+	{
+		alSourcei(source, AL_LOOPING, AL_FALSE);
+	}
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("alSourcei : %d", error);
+		printf("alSourcei loop : %d", error);
 		return 0;
 	}
 
@@ -123,7 +133,8 @@ ALuint SoundObject::CreateSource(std::string bufferFilename, ALfloat const* sour
 		return 0;
 	}
 
-	return source;
+	//return source;
+	return 0;
 }
 
 int SoundObject::SetSource(std::string bufferFilename, int sourceID, ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, bool loop)

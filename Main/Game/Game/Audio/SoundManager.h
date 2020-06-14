@@ -44,7 +44,7 @@ private:
 	//std::vector <SoundSource> sources;
 	//vector <ALuint> freeBuffers;
 	//vector <ALuint> freeSources;
-	std::string soundsFolderPath = "Data/Assets/Sounds";
+	std::string soundsFolderPath = "Data/Assets/Sounds/";
 	ALenum error;
 	const char* CONFIG_FILE = "Data/Assets/Sounds/config.xml";
 	bool Initialized = false;
@@ -74,4 +74,5 @@ public:
 	void SetSoundSourceIsFree(int sourceID, bool isFree);
 	SoundSource GetFreeSource();
 	int GenerateBuffers();
+	ALuint GetActualBuffer(std::string filename, ALuint &buffer);
 };

@@ -17,14 +17,12 @@
 #include "Event/Events.h"
 
 #include "GUI/Button.h"
-//#include "Audio/AudioController.h""
+#include "Audio/AudioManager.h"
 
 #include "Scene/SceneManager.h"
 #include "Scene/Scenes/Game.h"
 #include "Scene/Scenes/GameLite.h"
 #include "Scene/Scenes/MainMenu.h"
-
-#include "Audio/SoundObject.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -46,31 +44,11 @@ int main()
 	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
 	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
-	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
-
-	SoundManager* soundManager = new SoundManager();
-	soundManager->InitSoundManager();
-	//soundManager->GenerateBuffersSources();
-	soundManager->GenerateBuffers();
-	SoundObject* soundObject = new SoundObject();
-	ALfloat pos = ALfloat();
-	ALfloat vel = ALfloat();
-	ALfloat dir = ALfloat();
-	std::string s = "exciting_sound.wav";
-	//int backgroundID = soundManager->GetFreeSource().id;
-	ALuint source = soundObject->CreateSource(s, &pos, &vel, &dir, true);
-	//soundObject->SetSource(s, backgroundID, &pos, &vel, &dir, false);
-	soundObject->setListener();
-	soundObject->PlaySource(source);
-
-	/*
-	AudioController* ac = new AudioController();
-	ac->init_al();
-	ac->generateBuffers();
-	ac->loadSound(pathToFile);
-	//ac->setListener();
-	ac->playBackgroundMusic();
-	*/
+	AudioManager ac;
+	ac.Init_al();
+	ac.CreateDefaultSourceAndPlay("exciting_sound", false);
+	ac.CreateDefaultSourceAndPlay("glass_ping", true);
+	
 	// request initial scene
 	SceneManager::RequestLoadScene("MainMenu");
 
@@ -92,9 +70,8 @@ int main()
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
-	
-	soundManager->ExitSoundManager();
-	//ac->exit_al();
+
+	ac.Exit_al();
 
 	HFEngine::Terminate();
 
