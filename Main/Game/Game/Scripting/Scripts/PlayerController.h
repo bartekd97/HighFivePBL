@@ -27,6 +27,8 @@ class PlayerController : public Script
 private: // parameters
 	float moveSpeed = 10.0f;
 	float maxHealth = 100.0f;
+	float healthRecoverySpeed = 5.0f;
+	float idleToStartRecoveryTime = 3.0f;
 
 private: // variables
 	glm::vec3 startPosition;
@@ -43,6 +45,7 @@ private: // variables
 	float pushBackForce = 15.0f;
 	float health;
 	float healthMaxOpacity = 0.5f;
+	std::chrono::steady_clock::time_point lastDmgTime;
 
 	float attackAnimationLevel = 0.5f;
 
@@ -65,6 +68,8 @@ public:
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 		RegisterFloatParameter("maxHealth", &maxHealth);
+		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
+		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
 	}
 
 	~PlayerController()
@@ -141,6 +146,7 @@ public:
 	void TakeDamage(float dmg)
 	{
 		health -= dmg;
+		lastDmgTime = std::chrono::high_resolution_clock::now();
 
 		if (health <= 0.0f)
 		{
@@ -179,6 +185,13 @@ public:
 			{
 				StartAttack();
 				isAttacking = true;
+			}
+
+			auto stopTime = std::chrono::high_resolution_clock::now();
+			auto diff = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - lastDmgTime).count();
+			if (diff >= idleToStartRecoveryTime && health < maxHealth)
+			{
+				health = std::min(health + healthRecoverySpeed * dt, maxHealth);
 			}
 		}
 		else

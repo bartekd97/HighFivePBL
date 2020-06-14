@@ -12,7 +12,9 @@
     <component name="ScriptComponent">
         <property name="name" value="PlayerController"/>
         <property name="moveSpeed" value="12.5"/>
-		<property name="maxHealth" value="100.0f"/>
+		<property name="maxHealth" value="100.0"/>
+		<property name="healthRecoverySpeed" value="25.0"/>
+		<property name="idleToStartRecoveryTime" value="3.0"/>
     </component>
     <component name="ScriptComponent">
         <property name="name" value="PlayerCameraFollower"/>
