@@ -26,6 +26,10 @@ namespace Events::General
 
 namespace Events::Gameplay
 {
+	namespace Player
+	{
+		const EventId DEATH = "Events::Gameplay::Player::DEATH"_hash;
+	}
 	namespace Ghost
 	{
 		const EventId MOVEMENT_START = "Events::Gameplay::Ghost::MOVEMENT_START"_hash;

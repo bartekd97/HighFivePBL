@@ -166,7 +166,16 @@ public:
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
-			LogInfo("DED");
+			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
+			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
+				healthPanel->textureColor.color,
+				glm::vec4(0.0f, 0.0f, 0.0f, 0.8f),
+				2.0f
+			);
+			timerAnimator.DelayAction(2.0f, [&]() {
+				HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = false;
+			});
+			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
 		}
 	}
 
