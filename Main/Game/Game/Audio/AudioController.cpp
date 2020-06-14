@@ -156,14 +156,16 @@ void AudioController::playBackgroundMusic()
 /*//player
 int AudioController::setListener(ALfloat const* listenerPos, ALfloat const* listenerVel, ALfloat const* listenerOri)
 {
-	alListenerfv(AL_POSITION, listenerPos); //pos do przemyslenia
-	alListenerfv(AL_VELOCITY, listenerVel); //vel do przemyslenia
+	alListenerfv(AL_POSITION, listenerPos);		//pos do przemyslenia
+	alListenerfv(AL_VELOCITY, listenerVel);		//vel do przemyslenia
 	alListenerfv(AL_ORIENTATION, listenerOri);  //ori do przemyslenia
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alListenerfv : %d", error);
 		return 0;
-	}*/
+	}
+}*/
+
 int AudioController::setListener()
 {
 	ALfloat listenerOri[] = { 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };

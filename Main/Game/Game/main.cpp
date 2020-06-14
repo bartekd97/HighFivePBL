@@ -17,12 +17,14 @@
 #include "Event/Events.h"
 
 #include "GUI/Button.h"
-#include "Audio/AudioController.h""
+//#include "Audio/AudioController.h""
 
 #include "Scene/SceneManager.h"
 #include "Scene/Scenes/Game.h"
 #include "Scene/Scenes/GameLite.h"
 #include "Scene/Scenes/MainMenu.h"
+
+#include "Audio/SoundObject.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
@@ -46,13 +48,29 @@ int main()
 
 	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
 
+	SoundManager* soundManager = new SoundManager();
+	soundManager->InitSoundManager();
+	//soundManager->GenerateBuffersSources();
+	soundManager->GenerateBuffers();
+	SoundObject* soundObject = new SoundObject();
+	ALfloat pos = ALfloat();
+	ALfloat vel = ALfloat();
+	ALfloat dir = ALfloat();
+	std::string s = "exciting_sound.wav";
+	//int backgroundID = soundManager->GetFreeSource().id;
+	ALuint source = soundObject->CreateSource(s, &pos, &vel, &dir, true);
+	//soundObject->SetSource(s, backgroundID, &pos, &vel, &dir, false);
+	soundObject->setListener();
+	soundObject->PlaySource(source);
+
+	/*
 	AudioController* ac = new AudioController();
 	ac->init_al();
 	ac->generateBuffers();
 	ac->loadSound(pathToFile);
 	//ac->setListener();
 	ac->playBackgroundMusic();
-
+	*/
 	// request initial scene
 	SceneManager::RequestLoadScene("MainMenu");
 
@@ -75,7 +93,9 @@ int main()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
 	
-	ac->exit_al();
+	soundManager->ExitSoundManager();
+	//ac->exit_al();
+
 	HFEngine::Terminate();
 
 	return 0;
