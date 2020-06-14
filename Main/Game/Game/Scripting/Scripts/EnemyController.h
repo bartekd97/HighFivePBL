@@ -32,6 +32,7 @@ private: // parameters
 	float dmgAnimationDuration = 0.5f;
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
+	float attackDamage = 5.0f;
 
 private: // variables
 	GameObject visualObject;
@@ -76,6 +77,7 @@ public:
 		RegisterFloatParameter("dmgAnimationDuration", &dmgAnimationDuration);
 		RegisterFloatParameter("attackDistance", &attackDistance);
 		RegisterFloatParameter("triggerDistance", &triggerDistance);
+		RegisterFloatParameter("attackDamage", &attackDamage);
 	}
 
 	~EnemyController()
@@ -154,10 +156,9 @@ public:
 		{
 			if (raycaster.GetOut().distance <= attackDistance)
 			{
-				LogInfo("xD attack");
+				playerController->TakeDamage(attackDamage);
 			}
 		}
-		//playerController->
 	}
 
 	void EndAttack()

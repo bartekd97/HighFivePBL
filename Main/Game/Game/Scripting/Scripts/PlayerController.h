@@ -26,6 +26,7 @@ class PlayerController : public Script
 {
 private: // parameters
 	float moveSpeed = 10.0f;
+	float maxHealth = 100.0f;
 
 private: // variables
 	glm::vec3 startPosition;
@@ -40,6 +41,7 @@ private: // variables
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 	float pushBackDistance = 5.0f;
 	float pushBackForce = 15.0f;
+	float health;
 
 	float attackAnimationLevel = 0.5f;
 
@@ -60,6 +62,7 @@ public:
 	PlayerController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("maxHealth", &maxHealth);
 	}
 
 	~PlayerController()
@@ -88,6 +91,7 @@ public:
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		GetAnimator().SetAnimation("idle");
 
+		health = maxHealth;
 
 		auto& ghostScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(ghostObject);
 		ghostController = ghostScriptContainer.GetScript<GhostController>();
@@ -122,6 +126,16 @@ public:
 		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
 		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, torchLightDefaultIntensity, 0.3f);
 		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = true;
+	}
+
+	void TakeDamage(float dmg)
+	{
+		health -= dmg;
+
+		if (health <= 0)
+		{
+			LogInfo("DED");
+		}
 	}
 
 	void Update(float dt)
