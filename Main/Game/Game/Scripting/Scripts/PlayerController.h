@@ -385,6 +385,13 @@ public:
 		auto objects = HFEngine::ECS.GetGameObjectsByName("enemy");
 		glm::vec3 dir;
 		auto pos = GetTransform().GetWorldPosition();
+
+		Event ev(Events::Gameplay::Player::PUSHBACK_ENEMIES);
+		ev.SetParam(Events::Gameplay::Player::Position, pos);
+		ev.SetParam(Events::Gameplay::Player::PushBackDistance, pushBackDistance);
+		ev.SetParam(Events::Gameplay::Player::PushBackForce, pushBackForce);
+		EventManager::FireEvent(ev);
+
 		for (auto& object : objects)
 		{
 			auto objPos = HFEngine::ECS.GetComponent<Transform>(object).GetWorldPosition();

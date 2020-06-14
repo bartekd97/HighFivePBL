@@ -163,6 +163,7 @@
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
+    <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
@@ -300,6 +301,7 @@
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
+    <ClInclude Include="Scripting\Scripts\GateOpener.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
     <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
@@ -311,6 +313,8 @@
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
     <ClInclude Include="Scripting\Scripts\TestScript2.h" />
     <ClInclude Include="Scripting\Scripts\TriggerTest.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialEnemy.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialPlayground.h" />
     <ClInclude Include="Scripting\Types\GhostTypes.h" />
     <ClInclude Include="Utility\Pathfinding.h" />
     <ClInclude Include="Utility\TaskPool.h" />
