@@ -185,8 +185,8 @@ void CellSetuper::Setup()
 		}
 
 	}
-	// create tutorial assets on startup cell
-	else if (type == MapCell::Type::STARTUP)
+	// create tutorial assets on startup cell (only in regular start mode)
+	else if (type == MapCell::Type::STARTUP && !_debugLiteMode)
 	{
 		GameObject gateObject = cellInfo.Bridges[0].Gate;
 		glm::vec3 gateWorldPosition = HFEngine::ECS.GetComponent<Transform>(gateObject).GetWorldPosition();

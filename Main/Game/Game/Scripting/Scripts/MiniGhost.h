@@ -47,6 +47,11 @@ private: // variables
 
 public:
 
+	bool IsAttacking() const
+	{
+		return attacking;
+	}
+
 	MiniGhost()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);

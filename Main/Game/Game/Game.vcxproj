@@ -163,6 +163,7 @@
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
+    <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
     <ClCompile Include="Utility\TextureTools.cpp" />
