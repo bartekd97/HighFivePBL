@@ -40,6 +40,7 @@ private: // variables
 
 	float health;
 	bool isAttacking = false;
+	bool midAttack;
 
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
@@ -129,18 +130,15 @@ public:
 	void Attack()
 	{
 		isAttacking = true;
+		midAttack = false;
 		auto& animator = GetAnimator();
 		animator.TransitToAnimation("attack", 0.0f, AnimationClip::PlaybackMode::SINGLE);
 		animator.SetAnimatorSpeed(animator.GetCurrentClipDuration() / 1000.0f / dmgAnimationDuration);
 	}
 
-	void EndAttack()
+	void MidAttack()
 	{
-		isAttacking = false;
-		auto& animator = GetAnimator();
-		animator.TransitToAnimation("move", 0.0f);
-		animator.SetAnimatorSpeed(1.0f);
-
+		midAttack = true;
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 		glm::vec3 pos = GetTransform().GetPosition();
 		glm::vec3 playerDir = glm::normalize(playerPos - pos);
@@ -154,6 +152,14 @@ public:
 			}
 		}
 		//playerController->
+	}
+
+	void EndAttack()
+	{
+		isAttacking = false;
+		auto& animator = GetAnimator();
+		animator.TransitToAnimation("move", 0.0f);
+		animator.SetAnimatorSpeed(1.0f);
 	}
 
 	bool CanQueuePathThisFrame()
@@ -183,6 +189,10 @@ public:
 		if (isAttacking)
 		{
 			auto& animator = GetAnimator();
+			if (animator.GetCurrentClipLevel() >= 0.5f && !midAttack)
+			{
+				MidAttack();
+			}
 			if (animator.GetCurrentClipLevel() >= 1.0f)
 			{
 				EndAttack();
