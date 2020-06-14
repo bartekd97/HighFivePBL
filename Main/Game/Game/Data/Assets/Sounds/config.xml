@@ -1,0 +1,4 @@
+<sounds>
+    <sound name="exciting_sound" path="Data/Assets/Sounds/exciting_sound.wav"/>
+	<sound name="glass_ping" path="Data/Assets/Sounds/glass_ping.wav"/>
+</sounds>

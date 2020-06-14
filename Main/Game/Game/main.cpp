@@ -17,7 +17,7 @@
 #include "Event/Events.h"
 
 #include "GUI/Button.h"
-#include "Audio/AudioController.h""
+#include "Audio/AudioManager.h"
 
 #include "Scene/SceneManager.h"
 #include "Scene/Scenes/Game.h"
@@ -44,15 +44,11 @@ int main()
 	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
 	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
-	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
-
-	AudioController* ac = new AudioController();
-	ac->init_al();
-	ac->generateBuffers();
-	ac->loadSound(pathToFile);
-	//ac->setListener();
-	ac->playBackgroundMusic();
-
+	AudioManager ac;
+	ac.Init_al();
+	ac.CreateDefaultSourceAndPlay("exciting_sound", false);
+	ac.CreateDefaultSourceAndPlay("glass_ping", true);
+	
 	// request initial scene
 	SceneManager::RequestLoadScene("MainMenu");
 
@@ -74,8 +70,9 @@ int main()
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
-	
-	ac->exit_al();
+
+	ac.Exit_al();
+
 	HFEngine::Terminate();
 
 	return 0;
