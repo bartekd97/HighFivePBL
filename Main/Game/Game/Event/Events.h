@@ -30,6 +30,7 @@ namespace Events::Gameplay
 	{
 		const EventId MOVEMENT_START = "Events::Gameplay::Ghost::MOVEMENT_START"_hash;
 		const EventId MOVEMENT_STOP = "Events::Gameplay::Ghost::MOVEMENT_STOP"_hash;
+		const EventId LINE_CREATED = "Events::Gameplay::Ghost::LINE_CREATED"_hash;
 	}
 	namespace MiniGhost
 	{
@@ -57,9 +58,13 @@ namespace Events::General
 
 namespace Events::Gameplay
 {
+	namespace Ghost
+	{
+		const ParamId GhostLine = "Events::Gameplay::Ghost::GhostLine"_hash; // std::shared_ptr<GhostLine>
+	}
 	namespace MiniGhost
 	{
-		const ParamId Direction = "Events::Gameplay::MiniGhost::Direction"_hash;
+		const ParamId Direction = "Events::Gameplay::MiniGhost::Direction"_hash; // glm::vec3
 	}
 }
 

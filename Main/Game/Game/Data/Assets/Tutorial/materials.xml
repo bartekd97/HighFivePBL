@@ -19,15 +19,6 @@
         <property name="emissiveColor" value="0.07,0.07,0.07"/>
     </material>
 
-    <!--
-    <material name="keyMaterial">
-        <property name="albedoColor" value="0.2,0.2,0.2"/>
-        <property name="metalnessValue" value="0.0"/>
-        <property name="roughnessValue" value="0.1"/>
-        <property name="emissiveColor" value="0.0,0.0,0.0"/>
-    </material>
-    -->
-
     <material name="textMaterial">
         <property name="albedoColor" value="0.5,0.5,0.2"/>
         <property name="metalnessValue" value="0.0"/>
@@ -35,19 +26,12 @@
         <property name="emissiveColor" value="0.2,0.2,0.1"/>
     </material>
 
-    <!--
-    <material name="torchMaterial">
-        <property name="albedoColor" value="0.6,0.35,0.2"/>
-        <property name="metalnessValue" value="0.0"/>
-        <property name="roughnessValue" value="0.7"/>
-        <property name="emissiveColor" value="0.25,0.15,0.1"/>
-    </material>
+   
 
-    <material name="ghostMaterial">
-        <property name="albedoColor" value="0.2,0.55,0.6"/>
-        <property name="metalnessValue" value="0.0"/>
-        <property name="roughnessValue" value="0.7"/>
-        <property name="emissiveColor" value="0.1,0.23,0.25"/>
+    <material name="ghostTemplateLineMat" type="FORWARD">
+        <property name="albedoColor" value="0.4,1.5,2.5"/>
+        <property name="emissiveColor" value="0.1,0.3,0.5"/>
+        <property name="specularValue" value="4.0"/>
+        <property name="opacityValue" value="0.2"/>
     </material>
-    -->
 </materials>

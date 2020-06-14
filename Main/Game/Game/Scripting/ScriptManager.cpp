@@ -56,6 +56,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(TriggerTest);
 		REGISTER_SCRIPT(GUIStatistics);
+		REGISTER_SCRIPT(TutorialPlayground);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}

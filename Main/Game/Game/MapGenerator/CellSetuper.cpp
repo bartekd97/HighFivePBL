@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <unordered_set>
+#include <glm/gtx/rotate_vector.hpp>
 #include "CellSetuper.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/Collider.h"
@@ -187,11 +188,24 @@ void CellSetuper::Setup()
 	// create tutorial assets on startup cell
 	else if (type == MapCell::Type::STARTUP)
 	{
+		GameObject gateObject = cellInfo.Bridges[0].Gate;
+		glm::vec3 gatePosition = HFEngine::ECS.GetComponent<Transform>(gateObject).GetPosition();
+		
+		glm::vec3 roadFront = glm::normalize(gatePosition);
+		glm::vec3 roadSide = glm::rotateY(roadFront, M_PI * 0.5f);
+
 		GameObject tutorialContainer = HFEngine::ECS.CreateGameObject(cell, "TutorialAssets");
 
-		setupConfig.cellTutorialConfig.WASD->Instantiate(tutorialContainer, { -7.0f, 0.0f, 0.0f });
-		setupConfig.cellTutorialConfig.SpaceKey->Instantiate(tutorialContainer, { 0.0f, 0.0f, -4.0f });
-		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, { 7.0f, 0.0f, 1.0f });
+		setupConfig.cellTutorialConfig.WASD->Instantiate(tutorialContainer, roadSide * -6.0f);
+		setupConfig.cellTutorialConfig.SpaceKey->Instantiate(tutorialContainer, roadFront * -6.6f);
+		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, roadSide * 6.0f);
+
+		float roadRotation = glm::atan(roadFront.x, roadFront.z);
+		setupConfig.cellTutorialConfig.GhostPlayground->Instantiate(
+			tutorialContainer,
+			gatePosition - roadFront * 5.0f,
+			{0.0f, glm::degrees(roadRotation) + 180.0f, 0.0f}
+		);
 	}
 	// create fence fires on boss cell
 	else if (type == MapCell::Type::BOSS)

@@ -202,8 +202,8 @@ bool MapGenerator::ValidateMapLayout(std::vector<GameObject> cells)
         }
     }
 
-    // there must be at least one cell with only one bridge
-    if (cellsWithOneBridgeCount >= 1)
+    // there must be at least two cells with only one bridge (not one to be able to choose one with longer road)
+    if (cellsWithOneBridgeCount >= 2)
         return true;
     else
         return false;

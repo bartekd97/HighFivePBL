@@ -10,3 +10,4 @@
 #include "MapCellOptimizer.h"
 #include "TriggerTest.h"
 #include "GUIStatistics.h"
+#include "TutorialPlayground.h"

@@ -15,4 +15,7 @@
     <model name="letter_A" mesh="letters/A.glb"    material="textMaterial" />
     <model name="letter_S" mesh="letters/S.glb"    material="textMaterial" />
     <model name="letter_D" mesh="letters/D.glb"    material="textMaterial" />
+
+
+    <model name="GhostTemplateLine" mesh="box.glb"    material="ghostTemplateLineMat" />
 </models>
