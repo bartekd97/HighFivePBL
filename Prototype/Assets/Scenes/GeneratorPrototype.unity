@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 0
+  m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -19226,6 +19226,8 @@ MonoBehaviour:
   pointPrefab2: {fileID: 63573587319288568, guid: a2868598c4a2223448c736dec3a8a5ef,
     type: 3}
   pointPrefab3: {fileID: 4945155149449214535, guid: e719d34cfce764045b98b16e248eec78,
+    type: 3}
+  testEnemy: {fileID: 3506055736733996183, guid: 9b28b484845e4094997fd196713e0640,
     type: 3}
 --- !u!4 &1873961013
 Transform:

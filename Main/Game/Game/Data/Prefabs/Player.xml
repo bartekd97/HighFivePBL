@@ -2,7 +2,7 @@
     <component name="RigidBody">
         <property name="velocity" value="0.0,0.0,0.0"/>
         <property name="acceleration" value="0.0,0.0,0.0"/>
-        <property name="mass" value="10.0"/>
+        <property name="mass" value="5.0"/>
     </component>
     <component name="CircleCollider">
         <property name="radius" value="0.75"/>
@@ -12,6 +12,10 @@
     <component name="ScriptComponent">
         <property name="name" value="PlayerController"/>
         <property name="moveSpeed" value="12.5"/>
+        <property name="pushbackCooldown" value="2.0"/>
+
+        <property name="torchCooldownEmitRate" value="32.0"/>
+        <property name="torchLightCooldownLightColor" value="0.7,0.25,0.1"/>
     </component>
     <component name="ScriptComponent">
         <property name="name" value="PlayerCameraFollower"/>
@@ -68,6 +72,7 @@
                                         <property name="shape" value="CIRCLE"/>
                                         <property name="sourcShapeeSize" value="0.2,0.2"/>
                                         <property name="targetShapeSize" value="0.5,0.5"/>
+                                        <property name="shapeInnerLevel" value="0.0"/>
                                         <property name="size" value="0.5,0.85"/>
                                         <property name="lifetime" value="0.1,0.25"/>
                                         <property name="velocity" value="3.0,4.0"/>
@@ -100,36 +105,28 @@
         </child>
 
 
-        <child name="Ghost" position="0,0,0" rotation="0,0,0" scale="1,1,1">
-            <component name="ScriptComponent">
-                <property name="name" value="GhostController"/>
-                <property name="moveSpeed" value="6.25"/>
+        <child name="AttackSmoke" position="0,0.76,0" rotation="0,0,0" scale="1,1,1">
+            <component name="ParticleContainer">
+                <property name="maxParticles" value="256"/>
             </component>
-
-            <children>
-                <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
-                    <component name="ModelHolder">
-                        <property name="model" value="Characters/Player:Vampire"/>
-                    </component>
-                    <component name="SkinnedMeshRenderer">
-                        <property name="configureFromHolder" value="true" />
-                        <property name="material" value="Characters/Player:VampireGhostMat"/>
-                        <property name="castShadows" value="false" />
-                    </component>
-                    <component name="SkinAnimator">
-                        <property name="configureFromHolder" value="true" />
-                    </component>
-                </child>
-                <child name="GhistLight" position="0,2.5,0" rotation="0,0,0" scale="1,1,1">
-                    <component name="PointLightRenderer">
-                        <property name="color" value="0.0,1.0,0.5"/>
-                        <property name="radius" value="10.5"/>
-                        <property name="intensity" value="2.0"/>
-                        <property name="shadowIntensity" value="0.7"/>
-                    </component>
-                </child>
-            </children>
-
+            <component name="ParticleEmitter">
+                <property name="shape" value="CIRCLE"/>
+                <property name="sourcShapeeSize" value="0.2,0.2"/>
+                <property name="targetShapeSize" value="7.5,7.5"/>
+                <property name="shapeInnerLevel" value="0.75"/>
+                <property name="size" value="1.25,1.75"/>
+                <property name="lifetime" value="1.0,1.0"/>
+                <property name="velocity" value="5.0,6.0"/>
+                <property name="rate" value="2000.0"/>
+                <property name="emitting" value="false"/>
+            </component>
+            <component name="ParticleRenderer">
+                <property name="spriteSheet" value="Particles:Smokes"/>
+                <property name="spriteSheetCount" value="8"/>
+                <property name="colorOverTime" value="0.2,0.2,0.2;0.05,0.05,0.05"/>
+                <property name="opacityOverTime" value="0.0;0.2;0.5;0.2;0.0"/>
+                <property name="visibilityRadius" value="7.5"/>
+            </component>
         </child>
 
     </children>

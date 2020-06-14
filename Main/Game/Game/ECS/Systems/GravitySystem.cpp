@@ -2,28 +2,44 @@
 
 #include "GravitySystem.h"
 #include "HFEngine.h"
-#include "../../Physics/PhysicsCache.h"
+#include "../../Physics/Physics.h"
 
 extern GameObjectHierarchy gameObjectHierarchy;
 
 const float gravityAcceleration = 9.81f * 5.0f;
 const float minFallingDist = 0.01f;
 
+void GravitySystem::Init()
+{
+    minimalMovement = 0.01f;
+}
+
 void GravitySystem::Update(float dt)
 {
+    /*static bool check = true;
+    if (!check)
+    {
+        check = true;
+        return;
+    }
+    else
+    {
+        check = false;
+    }*/
     float level;
     if (cells.size() == 0) LoadCells();
 
     for (auto const& gameObject : gameObjects)
     {
-        auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
+        auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(gameObject);
+        if (transform.LastFrameUpdate() == transform.LastGravityUpdate() && !rigidBody.isFalling) continue;
 
-        rigidBody.acceleration.y = gravityAcceleration;
+        rigidBody.acceleration.y = -gravityAcceleration;
 
         rigidBody.velocity.y += dt * rigidBody.acceleration.y;
         auto pos = transform.GetWorldPosition();
-        auto posYSub = dt * (rigidBody.velocity.y + dt * rigidBody.acceleration.y / 2.0f);
+        auto posYDiff = dt * (rigidBody.velocity.y + dt * rigidBody.acceleration.y / 2.0f);
 
         int closestCell = GetClosestCellIndex(pos);
         /*if (closestCell == -1)
@@ -49,9 +65,13 @@ void GravitySystem::Update(float dt)
                     if (collider.shape == Collider::ColliderShapes::CIRCLE)
                     {
                         auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(gameObject);
-                        glm::vec3 normal = glm::normalize(pos - cells[closestCell].first);
-                        posTemp.x -= normal.x * circleCollider.radius;
-                        posTemp.y -= normal.z * circleCollider.radius;
+                        auto subPos = pos - cells[closestCell].first;
+                        if (VECLEN(subPos) > circleCollider.radius)
+                        {
+                            glm::vec3 normal = glm::normalize(subPos);
+                            posTemp.x -= normal.x * circleCollider.radius;
+                            posTemp.y -= normal.z * circleCollider.radius;
+                        }
                     }
                 }
                 shouldFall = GetCellYLevel(posTemp, cells[closestCell].second, level);
@@ -59,12 +79,20 @@ void GravitySystem::Update(float dt)
             
             if (!shouldFall)
             {
-                if ((pos.y - posYSub) <= level || (!rigidBody.isFalling && posYSub < minFallingDist))
+                if ((pos.y + posYDiff) <= level)// || (!rigidBody.isFalling && posYDiff < -minFallingDist))
                 {
                     rigidBody.isFalling = false;
                     rigidBody.velocity.y = 0;
-                    pos.y = level;
-                    transform.SetPosition(pos);
+
+                    rigidBody.velocity.x *= 0.75f;
+                    rigidBody.velocity.z *= 0.75f;
+
+                    if (std::abs(level - pos.y) > minimalMovement)
+                    {
+                        pos.y = level;
+                        transform.SetPosition(pos);
+                    }
+                    transform.MarkGravityUpdate();
                     continue;
                 }
             }
@@ -72,15 +100,15 @@ void GravitySystem::Update(float dt)
             {
                 rigidBody.isFalling = true;
             }
-            transform.TranslateSelf(glm::vec3(0.0f, -posYSub, 0.0f));
+            if (std::abs(posYDiff) > minimalMovement) transform.TranslateSelf(glm::vec3(0.0f, posYDiff, 0.0f));
+            transform.MarkGravityUpdate();
         }
-        
     }
 }
 
 bool GravitySystem::GetCellYLevel(glm::vec2& position, MapCell& cell, float& level)
 {
-    float coRatio = cell.PolygonSmooth.GetEdgeCenterRatio(position);
+    float coRatio = cell.PolygonSmooth.GetEdgeCenterRatio(position, 2);
     if (fabs(coRatio - 1.0f) < std::numeric_limits<float>::epsilon()) return true;
 
     float innerLevel = glm::clamp((1.0f - coRatio) / (1.0f - config.innerScale), 0.0f, 1.0f);
@@ -148,7 +176,7 @@ GameObject GravitySystem::GetBridge(GameObject gameObject, int closestCell)
 {
     for (auto bridge : cells[closestCell].second.Bridges)
     {
-        if (PhysicsCache::nodes[gameObject].HasTrigger(bridge.Bridge))
+        if (Physics::cacheNodes[gameObject].HasTrigger(bridge.Bridge))
         {
             return bridge.Bridge;
         }
@@ -161,7 +189,7 @@ float GravitySystem::GetBridgeLevel(glm::vec3& position, GameObject bridge)
 {
     int minIndex = -1, maxIndex = -1;
     auto& bridgeTransform = HFEngine::ECS.GetComponent<Transform>(bridge);
-    auto gravityCollider = HFEngine::ECS.GetComponentInChildren<GravityCollider>(bridge).value();
+    auto& gravityCollider = *HFEngine::ECS.GetComponentInChildren<GravityCollider>(bridge).value();
     if (gravityCollider.heights.size() == 0)
     {
         LogWarning("GravitySystem::GetBridgeLevel(): empty gravity collider {}", bridge);

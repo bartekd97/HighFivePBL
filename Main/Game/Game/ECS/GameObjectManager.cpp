@@ -28,6 +28,7 @@ void GameObjectManager::DestroyGameObject(GameObject gameObject)
 	assert(gameObject < MAX_GAMEOBJECTS && "GameObject out of range.");
 
 	signatures[gameObject].reset();
+	disabledSignatures[gameObject].reset();
 	availableGameObjects.push(gameObject);
 	--livingGameObjectCount;
 
@@ -60,7 +61,12 @@ Signature GameObjectManager::SetEnabled(GameObject gameObject, bool enabled)
 
 bool GameObjectManager::IsEnabled(GameObject gameObject)
 {
-	return disabledSignatures[gameObject].count() == 0;
+	return disabledSignatures[gameObject].none();
+}
+
+bool GameObjectManager::IsValid(GameObject gameObject)
+{
+	return signatures[gameObject].any() || disabledSignatures[gameObject].any();
 }
 
 const char* GameObjectManager::GetName(GameObject gameObject)
@@ -98,7 +104,7 @@ std::optional<GameObject> GameObjectManager::GetGameObjectByName(std::string nam
 {
 	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
 	{
-		if (signatures[i].count() > 0)
+		if (signatures[i].any() || disabledSignatures[i].any())
 		{
 			if (name.compare(names[i]) == 0)
 			{
@@ -110,13 +116,13 @@ std::optional<GameObject> GameObjectManager::GetGameObjectByName(std::string nam
 	return std::nullopt;
 }
 
-std::set<GameObject> GameObjectManager::GetGameObjectsByName(std::string name)
+tsl::robin_set<GameObject> GameObjectManager::GetGameObjectsByName(std::string name)
 {
-	std::set<GameObject> result;
+	tsl::robin_set<GameObject> result;
 
 	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
 	{
-		if (signatures[i].count() > 0)
+		if (signatures[i].any() || disabledSignatures[i].any())
 		{
 			if (name.compare(names[i]) == 0)
 			{

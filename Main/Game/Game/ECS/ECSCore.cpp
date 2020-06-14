@@ -1,3 +1,5 @@
+#include <stack>
+
 #include "ECSCore.h"
 #include "Components/Transform.h"
 
@@ -42,22 +44,38 @@ void ECSCore::DestroyGameObject(GameObject gameObject)
 void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
 {
 	auto parent = gameObjectHierarchy.GetParent(gameObject);
-	if (parent.has_value() && enabled && !gameObjectManager->IsEnabled(parent.value()))
+	if (parent.has_value() && enabled && !gameObjectManager->IsEnabled(parent.value())) // TODO: children too?
 	{
 		return;
 	}
-	auto signature = gameObjectManager->SetEnabled(gameObject, enabled);
-	systemManager->GameObjectSignatureChanged(gameObject, signature);
-	auto children = gameObjectHierarchy.GetChildren(gameObject);
-	for (auto it = children.begin(); it != children.end(); it++)
+
+	std::vector<GameObject> all;
+	all.push_back(gameObject);
+	int i = 0, max = 1;
+
+	while (i < max)
 	{
-		SetEnabledGameObject(*it, enabled);
+		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(all[i]);
+		for (auto child : children) all.push_back(child);
+		max += children.size();
+		i++;
+	}
+
+	for (auto& object : all)
+	{
+		auto signature = gameObjectManager->SetEnabled(object, enabled);
+		systemManager->GameObjectSignatureChanged(object, signature);
 	}
 }
 
 bool ECSCore::IsEnabledGameObject(GameObject gameObject)
 {
 	return gameObjectManager->IsEnabled(gameObject);
+}
+
+bool ECSCore::IsValidGameObject(GameObject gameObject)
+{
+	return gameObjectManager->IsValid(gameObject);
 }
 
 const char* ECSCore::GetNameGameObject(GameObject gameObject)
@@ -75,7 +93,7 @@ std::optional<GameObject> ECSCore::GetGameObjectByName(std::string name)
 	return gameObjectManager->GetGameObjectByName(name);
 }
 
-std::set<GameObject> ECSCore::GetGameObjectsByName(std::string name)
+tsl::robin_set<GameObject> ECSCore::GetGameObjectsByName(std::string name)
 {
 	return gameObjectManager->GetGameObjectsByName(name);
 }

@@ -96,15 +96,25 @@ void CellFenceGenerator::PrepareBrokenCurves()
         if (toIndex < fromIndex)
             toIndex += polygon.Points.size();
 
+        // anti-freaze tweak
+        if (gates.size() == 1)
+        {
+            if (toIndex == fromIndex || (toIndex - fromIndex) < 2)
+            {
+                // it seems working...
+                //assert(false && "CHECK IF THIS FIX IS CORRECT");
+                toIndex += polygon.Points.size();
+            }
+        }
+
         if (toIndex <= 2)
         {
             fromIndex += polygon.Points.size();
             toIndex += polygon.Points.size();
         }
 
-
         if (glm::dot(
-        glm::normalize(outline[fromIndex + 1] - outline[fromIndex]),
+            glm::normalize(outline[fromIndex + 1] - outline[fromIndex]),
             glm::normalize(startPoint - outline[fromIndex])
             ) > -0.2f)
             fromIndex++;
@@ -145,7 +155,8 @@ void CellFenceGenerator::PrepareBrokenCurves()
 
 void CellFenceGenerator::CreateSections()
 {
-    float lengthForNextSegment = config.fragmentEntity.length * config.fragmentCount + config.connectorEntity.length;
+    int fragCount = config.fragmentCount;
+    float lengthForNextSegment = config.fragmentEntity.length * fragCount + config.connectorEntity.length;
     float minHoleGap = lengthForNextSegment + config.connectorEntity.length;
 
     std::vector<glm::vec2>* targetPoints;
@@ -163,6 +174,15 @@ void CellFenceGenerator::CreateSections()
         float holeDistance;
         while ((holeDistance = curve->HoleDistance()) > minHoleGap || created < 2)
         {
+            // anti-freeze tweak
+            if (i > 100 && created < 2 && fragCount == config.fragmentCount)
+            {
+                assert(false && "THIS SHOULD NEVER HAPPEN");
+                fragCount--;
+                lengthForNextSegment = config.fragmentEntity.length * fragCount + config.connectorEntity.length;
+                minHoleGap = lengthForNextSegment + config.connectorEntity.length;
+            }
+
             if (i % 2 == 0)
             {
                 targetPoints = &curve->points;
@@ -189,7 +209,7 @@ void CellFenceGenerator::CreateSections()
                 auto segment = std::make_shared<Segment>();
                 segment->position = nextPosition;
                 segment->direction = glm::normalize(direction);
-                segment->fragmentCount = config.fragmentCount;
+                segment->fragmentCount = fragCount;
                 segment->fragmentLength = config.fragmentEntity.length;
                 targetSegments->push_back(segment);
                 created++;
@@ -227,6 +247,9 @@ std::vector<std::shared_ptr<CellFenceGenerator::FenceObject>>
     CellFenceEntity* fragment = &config.fragmentEntity;
     CellFenceEntity* connector = &config.connectorEntity;
     float conLen2 = connector->length * 2.0f;
+
+    int forwardCountOrig = forward->fragmentCount;
+    int backwardCountOrig = backward->fragmentCount;
 
     glm::vec2 forwardDirFrom = forward->direction;
     glm::vec2 forwardDirTo = glm::normalize(backward->position - forward->position);
@@ -310,21 +333,40 @@ std::vector<std::shared_ptr<CellFenceGenerator::FenceObject>>
         if (f < 0.00001f)
         {
             // couldn't find fill?
-            // remove one fragment from one segment and try again
-            if (backward->fragmentCount == 2)
+            if (backwardCountOrig == 2)
             {
-                backward->fragmentCount = 1;
-                f = 1.2f;
+                // remove one fragment from one segment and try again
+                if (backward->fragmentCount == 2)
+                {
+                    backward->fragmentCount = 1;
+                    f = 1.2f;
+                }
+                // couldnt find then? try with three fragments instead
+                else if (backward->fragmentCount == 1)
+                {
+                    backward->fragmentCount = 3;
+                    f = 1.2f;
+                }
             }
-            // couldnt find then? try with three fragments instead
-            else if (backward->fragmentCount == 1)
+            else  if (backwardCountOrig == 1)
             {
-                backward->fragmentCount = 3;
-                f = 1.2f;
+                // add one fragment from one segment and try again
+                if (backward->fragmentCount == 1)
+                {
+                    backward->fragmentCount = 2;
+                    f = 1.2f;
+                }
+                // couldnt find then? try with three fragments instead
+                else if (backward->fragmentCount == 2)
+                {
+                    backward->fragmentCount = 3;
+                    f = 1.2f;
+                }
             }
             // couldnt find even then? reverse change and cancel finding :c
-            else if (backward->fragmentCount == 3)
+            if (backward->fragmentCount == 3 || backward->fragmentCount == 0)
             {
+                /*
                 // leave it "random"
                 if (((int)(glm::length(backward->position))) % 2 == 0)
                 {
@@ -336,6 +378,11 @@ std::vector<std::shared_ptr<CellFenceGenerator::FenceObject>>
                     forward->fragmentCount = 3;
                     backward->fragmentCount = 2;
                 }
+                */
+                forward->direction = forwardDirTo;
+                backward->direction = backwardDirTo;
+                forward->fragmentCount = forwardCountOrig;
+                backward->fragmentCount = backwardCountOrig;
                 break;
             }
         }
@@ -351,8 +398,37 @@ void CellFenceGenerator::MakeHoles()
     {
         if (curve->filler.size() == 0)
         {
-            curve->forawrdSegments[curve->forawrdSegments.size() - 1]->fragmentCount = 0;
-            curve->backwardSegments[curve->backwardSegments.size() - 1]->fragmentCount = 0;
+            auto forwardSegment = curve->forawrdSegments[curve->forawrdSegments.size() - 1];
+            auto backwardSegment = curve->backwardSegments[curve->backwardSegments.size() - 1];
+
+            forwardSegment->direction = glm::rotate(
+                forwardSegment->direction,
+                M_PI * 0.4f * glm::sign(
+                    glm::orientedAngle(
+                        forwardSegment->direction,
+                        glm::normalize(forwardSegment->position)
+                        )
+                    )
+                );
+
+            backwardSegment->direction = glm::rotate(
+                backwardSegment->direction,
+                M_PI * 0.4f * glm::sign(
+                    glm::orientedAngle(
+                        backwardSegment->direction,
+                        glm::normalize(backwardSegment->position)
+                        )
+                    )
+                );
+
+            forwardSegment->fragmentCount = 1;
+            backwardSegment->fragmentCount = 1;
+
+            forwardSegment->addInvisHoleFence = true;
+            backwardSegment->addInvisHoleFence = true;
+
+            //curve->forawrdSegments[curve->forawrdSegments.size() - 1]->fragmentCount = 0;
+            //curve->backwardSegments[curve->backwardSegments.size() - 1]->fragmentCount = 0;
         }
     }
 }
@@ -394,6 +470,15 @@ void CellFenceGenerator::PrepareObjectsForSection(std::vector<std::shared_ptr<Se
                     &config.fragmentEntity
                 ));
             dist += config.fragmentEntity.length;
+        }
+        if (segments[i]->addInvisHoleFence)
+        {
+            float eDist = dist + config.invisHoleFence.length * 0.5f;
+            target.push_back(std::make_shared<FenceObject>(
+                segments[i]->position + segments[i]->direction * eDist,
+                reversed ? -segments[i]->direction : segments[i]->direction,
+                &config.invisHoleFence
+                ));
         }
     }
 }

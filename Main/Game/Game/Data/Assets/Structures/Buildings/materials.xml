@@ -1,0 +1,8 @@
+<materials textureLibrary="this">
+    <material name="chapelMaterial">
+        <property name="albedoMap" value="chapelAlbedo"/>
+        <property name="normalMap" value="chapelNormal"/>
+        <property name="metalnessMap" value="chapelMetal"/>
+        <property name="roughnessMap" value="chapelRough"/>
+    </material>
+</materials>

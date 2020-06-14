@@ -25,18 +25,30 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 		rec.reserve(nodes.size());
 		rec.emplace_back(IM(0, glm::mat4(1.0f)));
 
-		animator.animTime += dt;
+		animator.animTime += animator.animatorSpeed * dt;
 		float transitionFactor = 0.0f;
 		if (animator.transitioning)
 		{
-			animator.nextAnimTime += dt;
+			animator.nextAnimTime += animator.animatorSpeed * dt;
 			transitionFactor = animator.nextAnimTime / animator.transitionDuration;
 			if (transitionFactor >= 1.0f)
 			{
 				animator.currentClip = animator.nextClip;
 				animator.animTime = animator.nextAnimTime;
+				animator.currentClipMode = animator.nextClipMode;
 				animator.transitioning = false;
 			}
+		}
+
+		auto stateSignature = animator.CalculateStateSignature();
+		if (animator.lastSignature.operator==(stateSignature))
+		{
+			renderer.business.MakeFree();
+			continue;
+		}
+		else
+		{
+			animator.lastSignature = stateSignature;
 		}
 
 		IM i;
@@ -54,11 +66,11 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			{
 				globalTransform = animator.currentClip->EvaluateChannel
 				(
-					node->name, animator.animTime, node->nodeTransform
+					node->name, animator.animTime, node->nodeTransform, animator.currentClipMode
 					);
 				globalTransformNext = animator.nextClip->EvaluateChannel
 				(
-					node->name, animator.nextAnimTime, node->nodeTransform
+					node->name, animator.nextAnimTime, node->nodeTransform, animator.nextClipMode
 					);
 				// TODO: Make this interpolation in more proper way if bug occurs
 				globalTransform = i.second * (
@@ -70,7 +82,7 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			{
 				globalTransform = i.second * animator.currentClip->EvaluateChannel
 				(
-					node->name, animator.animTime, node->nodeTransform
+					node->name, animator.animTime, node->nodeTransform, animator.currentClipMode
 					);
 			}
 
@@ -80,6 +92,7 @@ void SkinAnimatorSystem::WorkQueue(float dt)
 			for (ci = 0; ci < node->childCount; ci++)
 				rec.emplace_back(IM(node->childIndices[ci], globalTransform));
 		}
+
 		renderer.needMatricesBufferUpdate = true;
 		renderer.business.MakeFree();
 	}
@@ -112,5 +125,6 @@ void SkinAnimatorSystem::Update(float dt)
 		workerQueue.push(gameObject);
 	}
 
-	skinAimatorWorker.FillWorkers([this, dt]() {this->WorkQueue(dt);});
+	skinAimatorWorker.FillWorkers(std::bind(&SkinAnimatorSystem::WorkQueue, this, dt));
+	//skinAimatorWorker.FillWorkers([this, dt]() {this->WorkQueue(dt);});
 }

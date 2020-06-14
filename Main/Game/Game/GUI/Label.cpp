@@ -11,7 +11,7 @@ Label::Label()
 
 void Label::Draw()
 {
-	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - GetSize().y, (float)fontSize / TextRenderer::GetCurrentFont()->GetSize(), color);
+	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - GetLocalSize().y, (float)fontSize / TextRenderer::GetCurrentFont()->GetSize(), color);
 }
 
 void Label::Update(const glm::vec2& mousePosition)

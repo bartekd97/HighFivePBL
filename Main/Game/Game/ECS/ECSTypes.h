@@ -9,6 +9,5 @@ const GameObject NULL_GAMEOBJECT = 0xFFFFFFFF;
 using ComponentType = std::uint8_t;
 const ComponentType MAX_COMPONENTS = 32;
 using Signature = std::bitset<MAX_COMPONENTS>;
-const unsigned int MAX_GAMEOBJECT_NAME_LENGTH = 16;
+const unsigned int MAX_GAMEOBJECT_NAME_LENGTH = 25;
 using FrameCounter = std::uint64_t;
-

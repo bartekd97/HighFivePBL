@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../ECS/ECSTypes.h"
+#include "Event/Events.h"
 
 class Script
 {
@@ -14,6 +15,14 @@ public:
 	inline void SetGameObject(GameObject gameObject)
 	{
 		this->gameObject = gameObject;
+	}
+
+	bool SetInt(std::string name, int value)
+	{
+		if (intParameters.find(name) == intParameters.end()) return false;
+		*intParameters[name] = value;
+		unsettedParams -= 1;
+		return  true;
 	}
 
 	bool SetFloat(std::string name, float value)
@@ -52,6 +61,12 @@ protected:
 		gameObject = NULL_GAMEOBJECT;
 	}
 
+	void RegisterIntParameter(std::string name, int* intPtr)
+	{
+		intParameters[name] = intPtr;
+		unsettedParams += 1;
+	}
+
 	void RegisterFloatParameter(std::string name, float* floatPtr)
 	{
 		floatParameters[name] = floatPtr;
@@ -74,9 +89,17 @@ protected:
 	{
 		return gameObject;
 	}
+
+	inline void DestroyGameObjectSafely()
+	{
+		Event ev(Events::GameObject::NEXT_FRAME_DESTROY_REQUESTED);
+		ev.SetParam<GameObject>(Events::GameObject::GameObject, this->gameObject);
+		EventManager::FireEvent(ev);
+	}
 	
 private:
 	GameObject gameObject;
+	std::unordered_map<std::string, int*> intParameters;
 	std::unordered_map<std::string, float*> floatParameters;
 	std::unordered_map<std::string, glm::vec3*> vec3Parameters;
 	std::unordered_map<std::string, std::string*> stringParameters;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 #include <vector>
 #include <glm/glm.hpp>
 
@@ -29,9 +30,15 @@ namespace Utility {
 	bool TryConvertStringToVec3(std::string& string, glm::vec3& vec);
 	// 4 floats, coma separated
 	bool TryConvertStringToVec4(std::string& string, glm::vec4& vec);
+	bool TryConvertStringToInt(std::string& string, int& value);
 	bool TryConvertStringToFloat(std::string& string, float& value);
 
 	std::uint32_t HashString(char const* s, std::size_t count);
+
+	// Math funkcions
+
+	float GetDistanceBetweenPointAndSegment(glm::vec2& point, glm::vec2& s1, glm::vec2& s2);
+	glm::vec2 GetSegmentsCommonPoint(const glm::vec2& a, const glm::vec2& b, const glm::vec2& c, const glm::vec2& d);
 }
 
 
@@ -51,6 +58,19 @@ namespace std {
 	}
 	inline string to_string(glm::vec4 val) {
 		return to_string(val.x) + "," + to_string(val.y) + "," + to_string(val.z) + "," + to_string(val.w);
+	}
+
+	template<typename T>
+	inline string to_string(vector<T> vec) {
+		stringstream ss;
+		ss << "{";
+		for (int i=0; i<vec.size(); i++)
+		{
+			if (i > 0) ss << ", ";
+			ss << to_string(vec[i]);
+		}
+		ss << "}";
+		return ss.str();
 	}
 }
 #pragma endregion

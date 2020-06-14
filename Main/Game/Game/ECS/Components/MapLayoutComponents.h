@@ -4,18 +4,27 @@
 #include "MapGenerator/ConvexPolygon.h"
 #include "ECS/ECSTypes.h"
 
+class PathfindingGrid;
 class MapCell
 {
 public:
+    enum class Type {
+        STARTUP,
+        NORMAL,
+        BOSS
+    };
     struct BridgeTo
     {
-        GameObject Bridge;
-        GameObject Cell;
-        GameObject Gate;
+        GameObject Bridge = NULL_GAMEOBJECT;
+        GameObject Cell = NULL_GAMEOBJECT;
+        GameObject Gate = NULL_GAMEOBJECT;
     };
 
+    Type CellType;
     std::vector<BridgeTo> Bridges;
+    GameObject EnemyContainer = NULL_GAMEOBJECT;
 
+    std::shared_ptr<PathfindingGrid> PathFindingGrid;
     //std::vector<GameObject> Enemies;
     //std::vector<GameObject> Monuments;
 
@@ -32,21 +41,30 @@ public:
     ConvexPolygon PolygonBaseInner;
     ConvexPolygon PolygonSmooth;
     ConvexPolygon PolygonSmoothInner;
+
+    // don't use this, its only for generation purpose
+    ConvexPolygon _BaseDelaunayPolygon;
 };
 
 
 struct CellGate
 {
-    GameObject Bridge;
-    GameObject Cell;
+    GameObject Bridge = NULL_GAMEOBJECT;
+    GameObject Cell = NULL_GAMEOBJECT;
 };
 
 
 struct CellBridge
 {
-    GameObject CellA;
-    GameObject GateA;
+    GameObject CellA = NULL_GAMEOBJECT;
+    GameObject GateA = NULL_GAMEOBJECT;
 
-    GameObject CellB;
-    GameObject GateB;
+    GameObject CellB = NULL_GAMEOBJECT;
+    GameObject GateB = NULL_GAMEOBJECT;
+};
+
+
+struct CellChild
+{
+    GameObject cell = NULL_GAMEOBJECT;
 };

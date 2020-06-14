@@ -21,11 +21,11 @@ public class BossSpawnerController : EnemyController
     private Vector3 positionStart;
     private Vector3 position1;
     private Vector3 position2;
-    private Vector3[] moveSpots = new Vector3[2];
+    private Vector3[] movePositions = new Vector3[2];
     private int startSpot;
     private float waitTime;
     public float startWaitTime;
-    private bool firstUpdate = false;
+    private bool updatedPositions = false;
 
     // Start is called before the first frame update
     void Start()
@@ -50,16 +50,6 @@ public class BossSpawnerController : EnemyController
     // Update is called once per frame
     void Update()
     {
-
-        if (firstUpdate == false)
-        {
-            position1.x -= movingDistance;
-            position2.x += movingDistance;
-            moveSpots[0] = position1;
-            moveSpots[1] = position2;
-            firstUpdate = true;
-        }
-
         if ((isPoisoned) && Time.time >= nextPoisonTime)
         {
             TakeDamage(0.5f);
@@ -95,8 +85,9 @@ public class BossSpawnerController : EnemyController
         {
             //ChasePlayer();
             LookAtPlayer();
-            MoveSideToSide();
+            MoveToGetBetterPosition();
             isMoving = true;
+            updatedPositions = true;
             /*
             if (pushedEnemiess == true && Vector3.Distance(transform.position, player.transform.position) <= (stoppingDistance * 3.0f))
             {
@@ -111,24 +102,26 @@ public class BossSpawnerController : EnemyController
             LookAtPlayer();
             //MoveSideToSide();
             isMoving = false;
+            updatedPositions = false;
         }
         else if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange && Vector3.Distance(transform.position, player.transform.position) < (retreatDistance + 1.0f)
                                                         && Vector3.Distance(transform.position, player.transform.position) > retreatDistance)
         {
             //MoveSideToSide();
             isMoving = false;
+            updatedPositions = false;
         }
         else if (Vector3.Distance(transform.position, player.transform.position) < retreatDistance)
         {
             RunAwayFromPlayer();
             isMoving = true;
+            updatedPositions = false;
         }
         else if (Vector3.Distance(transform.position, player.transform.position) < stoppingDistance)
         {
             //Stop();
             //MoveSideToSide();
             LookAtPlayer();
-            isMoving = false;
         }
 
         if (Vector3.Distance(transform.position, player.transform.position) <= playerInRange)
@@ -200,12 +193,9 @@ public class BossSpawnerController : EnemyController
         //transform.position = Vector3.Slerp(transform.position, transform.position + direction * speed, Time.deltaTime);
         rb.MovePosition(transform.position + direction * (-speed - slow - mudSlow) * Time.deltaTime);
     }
-
+    /*
     void MoveSideToSide()
     {
-        Debug.Log("0: " + moveSpots[0]);
-        Debug.Log("1: " + moveSpots[1]);
-
         //transform.LookAt(transform.forward);
         //transform.position = Vector2.MoveTowards(transform.position, moveSpots[startSpot], speed);
         Vector3 direction2 = (moveSpots[startSpot] - transform.position);
@@ -213,6 +203,60 @@ public class BossSpawnerController : EnemyController
 
         if (Vector2.Distance(transform.position, moveSpots[startSpot]) < 0.2f)
         {
+            if (waitTime <= 0.0f)
+            {
+                startSpot += 1;
+                waitTime = startWaitTime;
+
+                if (startSpot > 1)
+                {
+                    startSpot = 0;
+                }
+            }
+            else
+            {
+                waitTime -= Time.deltaTime;
+            }
+        }
+    }
+    */
+    void MoveToGetBetterPosition()
+    {
+        //startRotation = Quaternion.AngleAxis(-90, transform.forward);
+        //transform.rotation = Quaternion.Lerp(transform.rotation, startRotation, speed / 10 * Time.deltaTime);
+        //Vector3 direction = Vector3.right;
+        //rb.MovePosition(transform.position + Vector3.forward * speed * Time.deltaTime);
+
+        if (updatedPositions == false)
+        {
+            movePositions[0] = transform.position;
+            //movePositions[0].x += movingDistance;
+            //movePositions[0].z += movingDistance;
+            movePositions[1] = transform.position;
+            //movePositions[1].x -= movingDistance;
+            //movePositions[1].z -= movingDistance;
+
+            Vector3 vNormalized = (player.transform.position - transform.position).normalized;
+
+            Vector3 vPerpendicular = new Vector3(vNormalized.z, vNormalized.y, -vNormalized.x).normalized;
+            Vector3 vPerpendicular2 = new Vector3(-vNormalized.z, vNormalized.y, vNormalized.x).normalized;
+            Vector3 P4 = new Vector3(transform.position.x, transform.position.y, transform.position.z) + (vPerpendicular * movingDistance);
+            Vector3 P3 = new Vector3(transform.position.x, transform.position.y, transform.position.z) + (vPerpendicular2 * movingDistance);
+
+            movePositions[0] = P4;
+            movePositions[1] = P3;
+
+            Instantiate(pointPrefab, movePositions[0], transform.rotation);
+            Instantiate(pointPrefab, movePositions[1], transform.rotation);
+        }
+        //Debug.Log("pos1= " + position1 + ", pos2= " + position2);
+
+        Vector3 direction = (movePositions[startSpot] - transform.position).normalized;
+        rb.MovePosition(transform.position + direction * speed * Time.deltaTime);
+
+        if (Vector2.Distance(transform.position, movePositions[startSpot]) < 0.4f)
+        {
+            Debug.Log("no hej");
             if (waitTime <= 0.0f)
             {
                 startSpot += 1;

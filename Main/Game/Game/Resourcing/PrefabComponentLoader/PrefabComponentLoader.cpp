@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include "PrefabComponentLoader.h"
 #include "Resourcing/Prefab.h"
 #include "HFEngine.h"
@@ -10,6 +11,8 @@
 namespace {
 
 	class ModelHolderLoader : public IPrefabComponentLoader {
+	private:
+		std::shared_ptr<Model> _warmModel;
 	public:
 		std::string libraryName, modelName;
 
@@ -29,6 +32,11 @@ namespace {
 				LogWarning("ModelHolderLoader::Preprocess(): Missing 'model' value.");
 			}
 		}
+
+		void Warm() override {
+			_warmModel = ModelManager::GetModel(libraryName, modelName);
+		}
+
 		void Create(GameObject target) override {
 			ModelHolder holder;
 			holder.model = ModelManager::GetModel(libraryName, modelName);
@@ -42,6 +50,8 @@ namespace {
 	public:
 		bool configureFromHolder = false;
 		bool castShadows = true;
+		bool doubleSided = false;
+		bool individualMaterial = false;
 
 		bool useMeshPath = false;
 		std::pair<std::string, std::string> meshPath;
@@ -49,9 +59,13 @@ namespace {
 		bool useMaterialPath = false;
 		std::pair<std::string, std::string> materialPath;
 
+		std::shared_ptr<Material> _warmMaterial;
+
 		virtual void Preprocess(PropertyReader& properties) override {
 			properties.GetBool("configureFromHolder", configureFromHolder, false);
 			properties.GetBool("castShadows", castShadows, true);
+			properties.GetBool("doubleSided", doubleSided, false);
+			properties.GetBool("individualMaterial", individualMaterial, false);
 
 			static std::string tmpMeshPath;
 			if (properties.GetString("mesh", tmpMeshPath,"")) {
@@ -78,9 +92,15 @@ namespace {
 			}
 		}
 
+		void Warm() override {
+			if (useMaterialPath || individualMaterial)
+				_warmMaterial = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
+		}
+
 		virtual void Create(GameObject target) override {
 			MeshRenderer renderer;
 			renderer.castShadows = castShadows;
+			renderer.doubleSided = doubleSided;
 			if (configureFromHolder) {
 				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
 				renderer.mesh = holder.model->mesh;
@@ -93,6 +113,9 @@ namespace {
 			if (useMaterialPath) {
 				auto material = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
 				renderer.material = material;
+			}
+			if (individualMaterial) {
+				renderer.material = MaterialManager::CloneMaterial(renderer.material);
 			}
 			assert(
 				renderer.mesh != nullptr &&
@@ -113,6 +136,7 @@ namespace {
 		virtual void Create(GameObject target) override {
 			SkinnedMeshRenderer renderer;
 			renderer.castShadows = castShadows;
+			renderer.doubleSided = doubleSided;
 			if (configureFromHolder) {
 				auto& holder = HFEngine::ECS.GetComponent<ModelHolder>(target);
 				renderer.mesh = holder.model->mesh;
@@ -127,6 +151,9 @@ namespace {
 			if (useMaterialPath) {
 				auto material = MaterialManager::GetMaterial(materialPath.first, materialPath.second);
 				renderer.material = material;
+			}
+			if (individualMaterial) {
+				renderer.material = MaterialManager::CloneMaterial(renderer.material);
 			}
 			assert(
 				renderer.mesh != nullptr &&
@@ -248,6 +275,9 @@ namespace {
 			if (!properties.GetVec2("targetShapeSize", emitter.targetShapeSize, emitter.targetShapeSize)) {
 				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'targetShapeSize' value. Using default: {}", emitter.targetShapeSize);
 			}
+			if (!properties.GetFloat("shapeInnerLevel", emitter.shapeInnerLevel, emitter.shapeInnerLevel)) {
+				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'shapeInnerLevel' value. Using default: {}", emitter.shapeInnerLevel);
+			}
 			if (!properties.GetVec2("lifetime", emitter.lifetime, emitter.lifetime)) {
 				LogWarning("ParticleEmitterLoader::Preprocess(): Missing 'lifetime' value. Using default: {}", emitter.lifetime);
 			}
@@ -262,6 +292,7 @@ namespace {
 			}
 
 			properties.GetBool("emitting", emitter.emitting, emitter.emitting);
+
 		}
 
 		virtual void Create(GameObject target) override {
@@ -273,23 +304,42 @@ namespace {
 	public:
 		ParticleRenderer renderer;
 
+		inline static std::unordered_map<std::string, std::shared_ptr<Texture>> ColorsOverTime;
+		inline static std::unordered_map<std::string, std::shared_ptr<Texture>> OpacitiesOverTime;
+
 		virtual void Preprocess(PropertyReader& properties) override {
+			static std::string blendingModeStr;
+			if (properties.GetString("blendingMode", blendingModeStr, "ADD")) {
+				if (blendingModeStr == "ADD")
+					renderer.blendingMode = ParticleRenderer::BlendingMode::ADD;
+				else if (blendingModeStr == "BLEND")
+					renderer.blendingMode = ParticleRenderer::BlendingMode::BLEND;
+				else {
+					LogWarning("ParticleRendererLoader::Preprocess(): Invalid 'blendingMode' value. Using default: {}", "ADD");
+					renderer.blendingMode = ParticleRenderer::BlendingMode::ADD;
+				}
+			}
+
 			// color over time
 			std::string colorOverTimeStr = "1.0,1.0,1.0";
 			if (!properties.GetString("colorOverTime", colorOverTimeStr, colorOverTimeStr)) {
 				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'colorOverTime' value. Using default: {}", colorOverTimeStr);
 			}
 			else {
-				std::vector<glm::vec3> colorOverTimeVec3;
-				for (auto& color : Utility::StringSplit(colorOverTimeStr, ';'))
+				if (!ColorsOverTime.contains(colorOverTimeStr))
 				{
-					glm::vec3 cvec;
-					if (!Utility::TryConvertStringToVec3(color, cvec)) {
-						LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'colorOverTime' value. Using: {}", color, cvec);
+					std::vector<glm::vec3> colorOverTimeVec3;
+					for (auto& color : Utility::StringSplit(colorOverTimeStr, ';'))
+					{
+						glm::vec3 cvec;
+						if (!Utility::TryConvertStringToVec3(color, cvec)) {
+							LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'colorOverTime' value. Using: {}", color, cvec);
+						}
+						colorOverTimeVec3.push_back(cvec);
 					}
-					colorOverTimeVec3.push_back(cvec);
+					ColorsOverTime[colorOverTimeStr] = TextureTools::GenerateGradientTexture(colorOverTimeVec3);
 				}
-				renderer.colorOverTime = TextureTools::GenerateGradientTexture(colorOverTimeVec3);
+				renderer.colorOverTime = ColorsOverTime[colorOverTimeStr];
 			}
 
 			// opacity over time
@@ -298,16 +348,20 @@ namespace {
 				LogWarning("ParticleRendererLoader::Preprocess(): Missing 'opacityOverTime' value. Using default: {}", opacityOverTimeStr);
 			}
 			else {
-				std::vector<float> opacityOverTimeFloats;
-				for (auto& opacity : Utility::StringSplit(opacityOverTimeStr, ';'))
+				if (!OpacitiesOverTime.contains(opacityOverTimeStr))
 				{
-					float of;
-					if (!Utility::TryConvertStringToFloat(opacity, of)) {
-						LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'opacityOverTime' value. Using: {}", opacity, of);
+					std::vector<float> opacityOverTimeFloats;
+					for (auto& opacity : Utility::StringSplit(opacityOverTimeStr, ';'))
+					{
+						float of;
+						if (!Utility::TryConvertStringToFloat(opacity, of)) {
+							LogWarning("ParticleRendererLoader::Preprocess(): Cannot parse '{}' in 'opacityOverTime' value. Using: {}", opacity, of);
+						}
+						opacityOverTimeFloats.push_back(of);
 					}
-					opacityOverTimeFloats.push_back(of);
+					OpacitiesOverTime[opacityOverTimeStr] = TextureTools::GenerateGradientTexture(opacityOverTimeFloats);
 				}
-				renderer.opacityOverTime = TextureTools::GenerateGradientTexture(opacityOverTimeFloats);
+				renderer.opacityOverTime = OpacitiesOverTime[opacityOverTimeStr];
 			}
 
 
@@ -475,8 +529,7 @@ namespace {
 			collider.shape = Collider::ColliderShapes::BOX;
 			collider.frozen = frozen;
 			BoxCollider bc;
-			bc.width = width;
-			bc.height = height;
+			bc.SetWidthHeight(width, height);
 			HFEngine::ECS.AddComponent<Collider>(target, collider);
 			HFEngine::ECS.AddComponent<BoxCollider>(target, bc);
 		}
@@ -572,8 +625,12 @@ namespace {
 				{
 					bool set = false;
 
+					static int intTmp;
+					if (Utility::TryConvertStringToInt(property.second, intTmp))
+						set = script->SetInt(property.first, intTmp);
+
 					static float floatTmp;
-					if (Utility::TryConvertStringToFloat(property.second, floatTmp))
+					if (!set && Utility::TryConvertStringToFloat(property.second, floatTmp))
 						set = script->SetFloat(property.first, floatTmp);
 
 					static glm::vec3 vec3tmp;

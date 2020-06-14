@@ -62,8 +62,9 @@ void ParticleRendererSystem::Init()
 }
 
 
-void ParticleRendererSystem::Render(Camera& viewCamera)
+unsigned int ParticleRendererSystem::Render(Camera& viewCamera)
 {
+	unsigned int rendered = 0;
 	particleShader->use();
 
 	glm::mat4 viewMatrix = viewCamera.GetViewMatrix();
@@ -76,6 +77,8 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 	particleShader->setMat4("gProjection", projectionMatrix);
 	particleShader->setVector3F("gCameraRight", cameraRightWorld);
 	particleShader->setVector3F("gCameraUp", cameraUpWorld);
+
+	ParticleRenderer::BlendingMode lastBlendingMode = ParticleRenderer::BlendingMode::ADD;
 
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	glBindVertexArray(VAO);
@@ -92,6 +95,23 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 			continue;
 		if (!renderer.cullingData.visibleByViewCamera)
 			continue;
+		if (container._activeParticles == 0)
+			continue;
+
+		if (lastBlendingMode != renderer.blendingMode)
+		{
+			lastBlendingMode = renderer.blendingMode;
+			switch (lastBlendingMode)
+			{
+			case ParticleRenderer::BlendingMode::BLEND:
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				break;
+			case ParticleRenderer::BlendingMode::ADD:
+			default:
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				break;
+			}
+		}
 
 		CheckParticlesBuffer(container, renderer);
 		renderer.particlesBuffer->bind(ParticlesBinding::BUFFER);
@@ -101,7 +121,10 @@ void ParticleRendererSystem::Render(Camera& viewCamera)
 		particleShader->setInt("gSpriteSheetCount", renderer.spriteSheetCount);
 
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 4, container.particles.size());
+		rendered++;
 	}
 	glBindVertexArray(0);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	return rendered;
 }

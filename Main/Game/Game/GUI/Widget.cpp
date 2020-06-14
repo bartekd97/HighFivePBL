@@ -3,9 +3,14 @@
 
 #include "Widget.h"
 #include "../WindowManager.h"
+#include  "../HFEngine.h"
 
 void Widget::Update(const glm::vec2& mousePosition)
 {
+	if (associatedGameObject != NULL_GAMEOBJECT)
+	{
+		SetEnabled(HFEngine::ECS.IsEnabledGameObject(associatedGameObject));
+	}
 	if (clippingWidgets.size() > 0)
 	{
 		float maxLeft = -1, maxTop = -1, minRight = std::numeric_limits<float>::max(), minBottom = std::numeric_limits<float>::max();
@@ -14,8 +19,8 @@ void Widget::Update(const glm::vec2& mousePosition)
 		{
 			maxLeft = std::max(maxLeft, widget->GetAbsolutePosition().x);
 			maxTop = std::max(maxTop, widget->GetAbsolutePosition().y);
-			minRight = std::min(minRight, widget->GetAbsolutePosition().x + widget->GetSize().x);
-			minBottom = std::min(minBottom, widget->GetAbsolutePosition().y + widget->GetSize().y);
+			minRight = std::min(minRight, widget->GetAbsolutePosition().x + widget->GetLocalSize().x);
+			minBottom = std::min(minBottom, widget->GetAbsolutePosition().y + widget->GetLocalSize().y);
 		}
 
 		if (maxLeft <= minRight && maxTop <= minBottom)
@@ -71,6 +76,9 @@ void Widget::SetPivot(Anchor pivot)
 void Widget::SetSize(glm::vec2 size)
 {
 	this->size = size;
+	if (this->size.x < 0.0f) this->size.x = 0.0f;
+	if (this->size.y < 0.0f) this->size.y = 0.0f;
+	this->localSize = ToAbsolute(this->size);
 	CalculateAbsolutePosition();
 }
 
@@ -89,6 +97,11 @@ const glm::vec2& Widget::GetSize()
 	return size;
 }
 
+const glm::vec2& Widget::GetLocalSize()
+{
+	return localSize;
+}
+
 Anchor Widget::GetAnchor()
 {
 	return anchor;
@@ -97,6 +110,11 @@ Anchor Widget::GetAnchor()
 Anchor Widget::GetPivot()
 {
 	return pivot;
+}
+
+void Widget::SetCoordinatesType(CoordinatesType type)
+{
+	coordinatesType = type;
 }
 
 void Widget::AddChild(std::shared_ptr<Widget> child)
@@ -118,19 +136,21 @@ Widget::Widget()
 	worldPosition = glm::vec3(0.0f);
 	position = glm::vec3(0.0f);
 	absolutePosition = glm::vec3(0.0f);
+	localPosition = glm::vec3(0.0f);
 	size = glm::vec2(0.0f);
-	useWorldSpace = false;
+	localSize = glm::vec2(0.0f);
 	isClipping = false;
 	enabled = true;
 	level = 0;
+	coordinatesType = CoordinatesType::PIXEL;
 }
 
 bool Widget::IsMouseOver(const glm::vec2& mousePosition)
 {
 	if (mousePosition.x < absolutePosition.x) return false;
-	if (mousePosition.x > (absolutePosition.x + size.x)) return false;
+	if (mousePosition.x > (absolutePosition.x + localSize.x)) return false;
 	if (mousePosition.y < absolutePosition.y) return false;
-	if (mousePosition.y > (absolutePosition.y + size.y)) return false;
+	if (mousePosition.y > (absolutePosition.y + localSize.y)) return false;
 	if (isClipped)
 	{
 		if (mousePosition.x < clippingArea.x
@@ -147,17 +167,46 @@ void Widget::UpdateChildrenWorldPosition()
 	{
 		child->worldPosition = absolutePosition;
 		child->CalculateAbsolutePosition();
+		child->UpdateChildrenWorldPosition();
 	}
+}
+
+glm::vec3 Widget::ToAbsolute(glm::vec3 vec, bool size)
+{
+	glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
+	if (parent != nullptr)
+	{
+		parentSize = parent->localSize;
+	}
+	if (coordinatesType == CoordinatesType::RELATIVE)
+	{
+		vec.x *= parentSize.x;
+		vec.y *= parentSize.y;
+	}
+	else if (coordinatesType == CoordinatesType::WORLD && !size)
+	{
+		vec = glm::vec3(HFEngine::MainCamera.WorldToScreenPosition(vec), 0.0f);
+	}
+
+	return vec;
+}
+
+glm::vec2 Widget::ToAbsolute(glm::vec2 vec)
+{
+	glm::vec3 vec3(vec.x, vec.y, 0.0f);
+	vec3 = ToAbsolute(vec3, true);
+	return glm::vec2(vec3.x, vec3.y);
 }
 
 void Widget::CalculateAbsolutePosition()
 {
-	// TODO: maybe percentage position?
 	glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
-	absolutePosition = worldPosition + position;
+	localPosition = ToAbsolute(position);
+	localSize = ToAbsolute(size);
+	absolutePosition = worldPosition + localPosition;
 	if (parent != nullptr)
 	{
-		parentSize = parent->size;
+		parentSize = parent->localSize;
 	}
 
 	if (anchor == Anchor::CENTER)
@@ -179,18 +228,18 @@ void Widget::CalculateAbsolutePosition()
 
 	if (pivot == Anchor::CENTER)
 	{
-		absolutePosition.x -= size.x / 2.0f;
-		absolutePosition.y -= size.y / 2.0f;
+		absolutePosition.x -= localSize.x / 2.0f;
+		absolutePosition.y -= localSize.y / 2.0f;
 	}
 	else
 	{
 		if (pivot == Anchor::TOPRIGHT || pivot == Anchor::BOTTOMRIGHT)
 		{
-			absolutePosition.x -= size.x;
+			absolutePosition.x -= localSize.x;
 		}
 		if (pivot == Anchor::BOTTOMLEFT || pivot == Anchor::BOTTOMRIGHT)
 		{
-			absolutePosition.y -= size.y;
+			absolutePosition.y -= localSize.y;
 		}
 	}
 }
@@ -270,4 +319,20 @@ void Widget::SetEnabled(bool enabled)
 bool Widget::GetEnabled()
 {
 	return enabled;
+}
+
+void Widget::Recalculate()
+{
+	CalculateAbsolutePosition();
+	UpdateChildrenWorldPosition();
+}
+
+void Widget::SetZIndex(int zIndex)
+{
+	this->zIndex = zIndex;
+}
+
+int Widget::GetZIndex()
+{
+	return zIndex;
 }

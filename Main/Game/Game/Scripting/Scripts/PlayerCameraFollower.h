@@ -29,7 +29,8 @@ public:
 	void Start()
 	{
 		mortalObject = GetGameObject();
-		ghostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Ghost")[0];
+		// TODO: load it from some external, global structure
+		ghostObject = HFEngine::ECS.GetGameObjectByName("PlayerGhost").value();
 
 		currentCameraTarget = GetCameraTargetPosition();
 	}
@@ -44,6 +45,14 @@ public:
 
 		glm::vec3 cameraPosition = currentCameraTarget + cameraOffset;
 		HFEngine::MainCamera.SetView(cameraPosition, currentCameraTarget);
+
+		// TODO: Remove it, its for testing only
+		float scale = HFEngine::MainCamera.GetScale();
+		if (InputManager::GetKeyStatus(GLFW_KEY_UP))
+			scale *= 0.98f;
+		else if (InputManager::GetKeyStatus(GLFW_KEY_DOWN))
+			scale *= 1.02f;
+		HFEngine::MainCamera.SetScale(scale);
 	}
 
 	glm::vec3 GetCameraTargetPosition()

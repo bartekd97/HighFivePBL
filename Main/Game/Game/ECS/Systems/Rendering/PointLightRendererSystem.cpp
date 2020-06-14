@@ -74,12 +74,14 @@ void PointLightRendererSystem::Init()
     pointLightShader->use();
     pointLightShader->setInt("gPosition", (int)RenderPipeline::GBufferBindingPoint::POSITION);
     pointLightShader->setInt("gNormal", (int)RenderPipeline::GBufferBindingPoint::NORMAL);
-    pointLightShader->setInt("gAlbedo", (int)RenderPipeline::GBufferBindingPoint::ALBEDO);
+    pointLightShader->setInt("gAlbedoFade", (int)RenderPipeline::GBufferBindingPoint::ALBEDO_FADE);
     pointLightShader->setInt("gMetalnessRoughnessShadow", (int)RenderPipeline::GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 }
 
-void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize)
+unsigned int PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize)
 {
+    unsigned int rendered = 0;
+
     pointLightShader->use();
     pointLightShader->setVector2F("viewportSize", viewportSize);
     viewCamera.Use(pointLightShader);
@@ -91,6 +93,7 @@ void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize
     glBlendFunc(GL_ONE, GL_ONE); // make it additive
 
     sphereMesh->bind();
+    auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
     auto it = gameObjects.begin();
     while (it != gameObjects.end())
     {
@@ -98,16 +101,26 @@ void PointLightRendererSystem::Render(Camera& viewCamera, glm::vec2 viewportSize
         auto& transform = HFEngine::ECS.GetComponent<Transform>(gameObject);
         auto& renderer = HFEngine::ECS.GetComponent<PointLightRenderer>(gameObject);
 
+        if (renderer.cullingData.lastUpdate != currentFrame)
+            continue;
+        if (!renderer.cullingData.visibleByViewCamera)
+            continue;
+        if (renderer.light.intensity < 0.001f || renderer.light.radius < 0.001f)
+            continue;
+
         renderer.light.position = transform.GetWorldPosition();
-        renderer.light.Apply(pointLightShader);
+        renderer.light.Apply(pointLightShader, viewCamera);
 
         glm::mat4 model = glm::translate(glm::mat4(1.0f), renderer.light.position)
             * glm::scale(glm::mat4(1.0f), glm::vec3(renderer.light.radius));
         pointLightShader->setMat4("gModel", model);
         sphereMesh->draw();
+        rendered++;
     }
 
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     glDepthMask(GL_TRUE);
+
+    return rendered;
 }

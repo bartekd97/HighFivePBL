@@ -8,7 +8,7 @@ Camera::Camera()
 	target = glm::vec3(0, 0, 0);
 	up = glm::vec3(0, 1, 0);
 
-	scale = 0.2f;
+	scale = 10.0f;
 	fov = 45.0f;
 	width = 1280;
 	height = 720;
@@ -169,14 +169,29 @@ glm::vec3 Camera::ScreenToWorldPosition(glm::vec2 position, float depth)
 
 	position /= glm::vec2(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
 	position -= glm::vec2(0.5f, 0.5f);
-	position *= glm::vec2(2.0f, -2.0f);;
+	position *= glm::vec2(2.0f, -2.0f);
 	float z = ((depth / (farPlane - nearPlane)) * 2.0f) - 1.0f;
 	glm::vec4 world = invView * (invProjection * glm::vec4(position, z, 1.0f));
 
 	return glm::vec3(world);
 }
 
+glm::vec2 Camera::WorldToScreenPosition(glm::vec3 position)
+{
+	if (dirty)
+	{
+		Update();
+	}
 
+	glm::vec4 clipSpacePos = projection * (view * glm::vec4(position, 1.0f));
+	glm::vec3 ndcSpacePos = glm::vec3(clipSpacePos) / clipSpacePos.w;
+	glm::vec2 windowSpacePos = glm::vec2(ndcSpacePos);
+	windowSpacePos /= glm::vec2(2.0f, -2.0f);
+	windowSpacePos += glm::vec2(0.5f, 0.5f);
+	windowSpacePos *= glm::vec2(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
+
+	return windowSpacePos;
+}
 
 
 void Camera::Use(std::shared_ptr<Shader> shader)

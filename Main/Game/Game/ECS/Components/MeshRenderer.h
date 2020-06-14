@@ -9,6 +9,7 @@ struct MeshRenderer
 	std::shared_ptr<Material> material;
 
 	bool castShadows = true;
+	bool doubleSided = false;
 
 	CulledRenderer cullingData;
 };

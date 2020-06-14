@@ -8,15 +8,7 @@
 #include <math.h>
 
 #include "ECS/Components.h"
-
-#include "Resourcing/Texture.h"
-#include "Resourcing/Material.h"
-#include "Resourcing/Model.h"
-#include "Resourcing/Shader.h"
-#include "Resourcing/Prefab.h"
-#include "Rendering/PrimitiveRenderer.h"
 #include "Utility/Logger.h"
-#include "Utility/TextureTools.h"
 
 #include "HFEngine.h"
 #include "WindowManager.h"
@@ -24,17 +16,18 @@
 #include "Event/EventManager.h"
 #include "Event/Events.h"
 
-#include "MapGenerator/MapGenerator.h"
-
-#include "Resourcing/MeshFileLoader.h"
-
 #include "GUI/Button.h"
+#include "Audio/AudioController.h""
+
+#include "Scene/SceneManager.h"
+#include "Scene/Scenes/Game.h"
+#include "Scene/Scenes/GameLite.h"
+#include "Scene/Scenes/MainMenu.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
 void ReportGameObjects(float dt);
-void doCameraMovement(GameObject cameraObject, float dt);
 
 int main()
 {
@@ -46,48 +39,22 @@ int main()
 
 	GLFWwindow* window = WindowManager::GetWindow();
 
-	MapGenerator generator;
-	generator.Generate();
+	// register scenes
+	SceneManager::RegisterScene("Game", std::make_shared<GameScene>());
+	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
+	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
-	auto prefab = PrefabManager::GetPrefab("Player");
-	auto movableTestObject = prefab->Instantiate({ 100.0f, 0.0f, 100.0f });
-	HFEngine::ECS.SetNameGameObject(movableTestObject, "Player");
+	char pathToFile[] = "Data/Assets/Sounds/exciting_sound.wav";
 
-	// particle test
-	//auto particles = HFEngine::ECS.CreateGameObject(movableTestObject);
-	//HFEngine::ECS.GetComponent<Transform>(particles).SetPosition({ 5.0f, 0.1f, 0.0f });
-	/*
-	ParticleContainer container;
-	container.SetMaxParticles(256);
-	ParticleEmitter emitter;
-	emitter.shape = ParticleEmitter::EmitterShape::CIRCLE;
-	emitter.sourcShapeeSize = { 0.5f, 0.5f };
-	emitter.targetShapeSize = { 0.5f, 0.5f };
-	emitter.size = { 1.9f, 1.9f };
-	emitter.lifetime = { 2.25f, 3.0f };
-	emitter.velocity = { 0.5f, 0.75f };
-	emitter.rate = 16.0f;
-	emitter.emitting = true;
-	ParticleRenderer renderer;
-	renderer.colorOverTime = TextureTools::GenerateGradientTexture(
-		{
-			{ 1.0f, 1.0f, 0.0f },
-			{ 1.0f, 1.0f, 0.0f },
-			{ 1.0f, 0.0f, 0.0f }
-		}
-	);
-	renderer.opacityOverTime = TextureTools::GenerateGradientTexture({1.0f, 1.0f, 0.0f});
-	renderer.spriteSheet = TextureManager::GetTexture("Particles", "Flames");
-	renderer.spriteSheetCount = 4;
-	HFEngine::ECS.AddComponent<ParticleContainer>(movableTestObject, container);
-	HFEngine::ECS.AddComponent<ParticleEmitter>(movableTestObject, emitter);
-	HFEngine::ECS.AddComponent<ParticleRenderer>(movableTestObject, renderer);
-	*/
+	AudioController* ac = new AudioController();
+	ac->init_al();
+	ac->generateBuffers();
+	ac->loadSound(pathToFile);
+	//ac->setListener();
+	ac->playBackgroundMusic();
 
-	auto testGuiObject = HFEngine::ECS.CreateGameObject("TestGUI");
-	HFEngine::ECS.AddComponent<ScriptContainer>(testGuiObject, {});
-	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
-	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
+	// request initial scene
+	SceneManager::RequestLoadScene("MainMenu");
 
 	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
@@ -95,7 +62,6 @@ int main()
 		auto startTime = std::chrono::high_resolution_clock::now();
 
 		InputManager::PollEvents();
-		//doCameraMovement(cameraObject, dt);
 
 		HFEngine::ProcessGameFrame(dt);
 
@@ -108,7 +74,8 @@ int main()
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
-
+	
+	ac->exit_al();
 	HFEngine::Terminate();
 
 	return 0;
@@ -127,39 +94,4 @@ void ReportGameObjects(float dt)
 		accumulator = 0.0f;
 		frames = 0;
 	}
-}
-
-void doCameraMovement(GameObject cameraObject, float dt)
-{
-	const float moveSpeed = 25.0f;
-	const float rotateSpeed = 90.0f;
-	Transform& trans = HFEngine::ECS.GetComponent<Transform>(cameraObject);
-
-	if (InputManager::GetKeyStatus(GLFW_KEY_W))
-		trans.TranslateSelf(moveSpeed * dt, trans.GetFront());
-	if (InputManager::GetKeyStatus(GLFW_KEY_S))
-		trans.TranslateSelf(moveSpeed * dt, -trans.GetFront());
-	if (InputManager::GetKeyStatus(GLFW_KEY_A))
-		trans.TranslateSelf(moveSpeed * dt, -trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_D))
-		trans.TranslateSelf(moveSpeed * dt, trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_SPACE))
-		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, 1, 0));
-	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT_SHIFT))
-		trans.TranslateSelf(moveSpeed * dt, glm::vec3(0, -1, 0));
-
-	if (InputManager::GetKeyStatus(GLFW_KEY_UP))
-		trans.RotateSelf(rotateSpeed * dt, trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_DOWN))
-		trans.RotateSelf(rotateSpeed * dt, -trans.GetRight());
-	if (InputManager::GetKeyStatus(GLFW_KEY_LEFT))
-		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, 1, 0));
-	if (InputManager::GetKeyStatus(GLFW_KEY_RIGHT))
-		trans.RotateSelf(rotateSpeed * dt, glm::vec3(0, -1, 0));
-	/*
-	if (input.getKeyStatus(GLFW_KEY_PAGE_UP))
-		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, 1));
-	if (input.getKeyStatus(GLFW_KEY_PAGE_DOWN))
-		trans.rotateSelf(rotateSpeed * dt, glm::vec3(0, 0, -1));
-		*/
 }

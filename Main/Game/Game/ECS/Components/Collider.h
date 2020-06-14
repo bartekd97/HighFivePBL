@@ -25,6 +25,6 @@ struct Collider
 	ColliderShapes shape;
 	bool frozen = false;
 
-	std::function<void(GameObject, GameObject)> OnTriggerEnter;
-	std::function<void(GameObject, GameObject)> OnTriggerExit;
+	std::vector<std::function<void(GameObject, GameObject)>> OnTriggerEnter;
+	std::vector<std::function<void(GameObject, GameObject)>> OnTriggerExit;
 };

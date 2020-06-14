@@ -15,7 +15,7 @@ namespace Painter {
 
 		const std::vector<FrameBuffer::ColorAttachement> components = {
 			// internalFormat, dataFormat, dataType
-			{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+			{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedoFade
 			{GL_RED, GL_RED, GL_UNSIGNED_BYTE},		// metalness
 			{GL_RED, GL_RED, GL_UNSIGNED_BYTE}		// roughness
 		};

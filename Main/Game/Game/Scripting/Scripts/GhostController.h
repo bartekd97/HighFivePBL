@@ -2,118 +2,106 @@
 
 #include <glm/gtx/vector_angle.hpp>
 #include "../Script.h"
-#include "HFEngine.h"
+/*#include "HFEngine.h"
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/SkinAnimator.h"
+#include "ECS/Components/SkinnedMeshRenderer.h"
+#include "ECS/Components/PointLightRenderer.h"
 #include "InputManager.h"
 #include "Event/Events.h"
-#include "Event/EventManager.h"
+#include "Event/EventManager.h"*/
+#include "Utility/TimerAnimator.h"
+#include "Resourcing/Prefab.h"
+#include "../Types/GhostTypes.h"
 
-#define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
-#define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
+
 
 class GhostController : public Script
 {
 private: // parameters
 	float moveSpeed = 10.0f;
+	float damageToEnemies = 5.0f;
+
+	std::shared_ptr<Prefab> miniGhostPrefab;
 
 private: // variables
+	bool hasGhostMovement = false;
+
+	GameObject playerObject;
 	GameObject visualObject;
+	GameObject ghostLightObject;
 
 	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
+	TimerAnimator timerAnimator;
+	float ghostLightDefaultIntensity;
+	float ghostMaterialDefaultOpacity;
+
+	int numberOfEnemyToHit = 1;
+	int numberOfEnemyHit = 0;
+
 public:
+	float maxGhostDistance = 20.0f;
+	float ghostDistanceRecoverySpeed = 5.0f;
+	float leftGhostDistance;
+
+	float miniGhostSpawnDistance = 1.5f;
+	int maxActiveLines = 4;
+
+	std::vector<std::shared_ptr<GhostLine>> activeLines;
+
+	std::vector<glm::vec2> recordedPositions;
+	float distanceReached;
+	glm::vec3 lastDistanceRecordPos;
+	std::vector<GameObject> spawnedMiniGhostsCurrent;
+
+
 	GhostController()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
+		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
+		RegisterIntParameter("numberOfEnemyToHit", &numberOfEnemyToHit);
+		RegisterFloatParameter("maxGhostDistance", &maxGhostDistance);
+		RegisterFloatParameter("ghostDistanceRecoverySpeed", &ghostDistanceRecoverySpeed);
 	}
 
-	void Awake()
-	{
-		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
-		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
-	}
-	void Start()
-	{
-		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
-		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
-		moveSpeedSmoothing = moveSpeed * 4.0f;
-		GetAnimator().SetAnimation("ghostrunning");
-	}
+	void Awake();
+	void Start();
 
-	void MovementStart(Event& event)
-	{
-		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), true);
-		auto& transform = GetTransform();
-		transform.SetPosition({ 0.0f,0.0f,0.0f });
-		transform.RotateSelf(
-			glm::degrees(GetRotationdifferenceToMousePosition()),
-			transform.GetUp()
-			);
-		currentMoveSpeed = 0.0f;
-	}
-	void MovementStop(Event& event)
-	{
-		HFEngine::ECS.SetEnabledGameObject(GetGameObject(), false);
-	}
+	void OnTriggerEnter(GameObject that, GameObject other);
+
+	inline float GetLeftGhostLevel() { return leftGhostDistance / maxGhostDistance; }
+
+	void MovementStart(Event& event);
+	void MovementStop(Event& event);
 
 
-	void Update(float dt)
-	{
-		auto& transform = GetTransform();
+	void Update(float dt);
 
-		// smooth rotate
-		{
-			float diff = GetRotationdifferenceToMousePosition();
-			float change = dt * rotateSpeedSmoothing;
-			if (glm::abs(change) > glm::abs(diff))
-				change = diff;
-			else
-				change *= glm::sign(diff);
+	float GetRotationdifferenceToMousePosition();
 
-			if (glm::abs(change) > 0.01f)
-				transform.RotateSelf(glm::degrees(change), transform.GetUp());
-		}
+	// GHOST MARKING FUNCTIONS
+	void StartMarking();
+	void UpdateMarking();
+	void EndMarking();
 
-		// smoth move speed
-		float targetMoveSpeed = moveSpeed;
-		{
-			float diff = targetMoveSpeed - currentMoveSpeed;
-			float change = dt * moveSpeedSmoothing;
-			if (glm::abs(change) > glm::abs(diff))
-				currentMoveSpeed = targetMoveSpeed;
-			else
-				currentMoveSpeed += change * glm::sign(diff);
-		}
+	void CheckNewLineCrossings(std::shared_ptr<GhostLine> newLine);
 
-		if (currentMoveSpeed > 0.01f)
-			transform.TranslateSelf(currentMoveSpeed * dt, transform.GetFront());
-	}
+	void CheckClosedLines();
 
-	float GetRotationdifferenceToMousePosition()
-	{
-		auto& transform = GetTransform();
+	void FadeOutLine(std::shared_ptr<GhostLine> ghostLine);
 
-		glm::vec2 cursorPos = InputManager::GetMousePosition();
-		glm::vec3 world = HFEngine::MainCamera.ScreenToWorldPosition(cursorPos, 0.0f);
-		glm::vec3 worldDirection = HFEngine::MainCamera.ScreenToWorldPosition(cursorPos, 1.0f);
-		worldDirection = world - worldDirection;
-		worldDirection /= worldDirection.y;
-		glm::vec3 worldZero = world - (worldDirection * world.y);
 
-		glm::vec3 direction = glm::normalize(worldZero - transform.GetWorldPosition());
-		glm::vec3 front3 = transform.GetWorldFront();
-		float diff = glm::orientedAngle(
-			glm::normalize(glm::vec2(direction.x, direction.z)),
-			glm::normalize(glm::vec2(front3.x, front3.z))
-			);
+	void RemoveGhostLineFromData(std::shared_ptr<GhostLine> ghostLine);
 
-		return diff;
-	}
+	void AttackWithClosedFigure(
+		std::unordered_set<std::shared_ptr<GhostLine>>& lines,
+		std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings);
+
+	void CalculateCrossings(
+		std::shared_ptr<GhostLine>& l1,
+		std::shared_ptr<GhostLine>& l2,
+		std::vector<std::shared_ptr<GhostCrossing>>& crossings);
 };
-
-
-#undef GetTransform()
-#undef GetAnimator()

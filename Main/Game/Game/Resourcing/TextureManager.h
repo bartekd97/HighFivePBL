@@ -12,6 +12,7 @@ struct TextureConfig {
 	GLint filteringMag = GL_LINEAR;
 	GLint format = GL_RGB;
 	bool generateMipmaps = true;
+	bool repeat = false;
 };
 
 

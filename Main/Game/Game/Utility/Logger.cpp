@@ -7,18 +7,22 @@
 #include <filesystem>
 #include "Logger.h"
 
-#ifdef _DEBUG
+#ifdef HF_LOGGER
 
 // variables
 namespace Logger {
 
 	const std::string LOGS_DIRECTORY = "logs";
 
-	const std::string COMMON_FILE = "logs/all.log";
+	const std::string COMMON_FILENAME = "logs/all.log";
+	const std::string INFO_FILENAME = "logs/info.log";
+	const std::string WARNING_FILENAME = "logs/warning.log";
+	const std::string ERROR_FILENAME = "logs/error.log";
 
-	const std::string INFO_FILE = "logs/info.log";
-	const std::string WARNING_FILE = "logs/warning.log";
-	const std::string ERROR_FILE = "logs/error.log";
+	std::ofstream COMMON_FILE;
+	std::ofstream INFO_FILE;
+	std::ofstream WARNING_FILE;
+	std::ofstream ERROR_FILE;
 
 	bool Initialized = false;
 }
@@ -45,17 +49,9 @@ namespace Logger {
 		return "[" + std::string(buffer) + "]";
 	}
 
-	void LogFile(std::string filename, std::string message)
+	void LogFile(std::ofstream& filewriter, std::string message)
 	{
-		std::ofstream writer;
-		writer.open(filename, std::ios_base::app | std::ios_base::out);
-		if (!writer.is_open())
-		{
-			std::cout << "Cannot write log to " << filename << std::endl;
-			return;
-		}
-		writer << message << std::endl;
-		writer.close();
+		filewriter << message << std::endl;
 	}
 }
 
@@ -68,11 +64,13 @@ void Logger::Initialize()
 		return;
 	}
 
+
 	std::filesystem::create_directory(LOGS_DIRECTORY);
-	std::ofstream(COMMON_FILE, std::ios_base::trunc);
-	std::ofstream(INFO_FILE, std::ios_base::trunc);
-	std::ofstream(WARNING_FILE, std::ios_base::trunc);
-	std::ofstream(ERROR_FILE, std::ios_base::trunc);
+	COMMON_FILE.open(COMMON_FILENAME, std::ios_base::trunc);
+	INFO_FILE.open(INFO_FILENAME, std::ios_base::trunc);
+	WARNING_FILE.open(WARNING_FILENAME, std::ios_base::trunc);
+	ERROR_FILE.open(ERROR_FILENAME, std::ios_base::trunc);
+
 
 	Initialized = true;
 }

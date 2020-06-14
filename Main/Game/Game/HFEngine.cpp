@@ -21,6 +21,8 @@
 #include "WindowManager.h"
 #include "InputManager.h"
 #include "GUI/GUIManager.h"
+#include "Scene/SceneManager.h"
+#include "Physics/Physics.h"
 
 namespace HFEngine
 {
@@ -77,13 +79,15 @@ namespace HFEngine
 		ScriptManager::Initialize();
 		EventManager::Initialize();
 		GUIManager::Initialize();
+		SceneManager::Initialize();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
-		MainCamera.SetSize((float)RENDER_WIDTH / 100.0f, (float)RENDER_HEIGHT / 100.0f);
+		MainCamera.SetSize((float)RENDER_WIDTH / (float)RENDER_HEIGHT, 1.0f);
+		//MainCamera.SetSize((float)RENDER_WIDTH / 100.0f, (float)RENDER_HEIGHT / 100.0f);
 		//MainCamera.SetScale(0.015625f); // 1/64
 		//MainCamera.SetScale(0.03125f); // 1/32
 		//MainCamera.SetScale(0.0625f); // 1/16
-		MainCamera.SetScale(1.75f);
+		//MainCamera.SetScale(1.75f);
 
 		ECS.Init();
 
@@ -108,10 +112,14 @@ namespace HFEngine
 		// script components
 		ECS.RegisterComponent<LifeTime>();
 		ECS.RegisterComponent<ScriptContainer>();
+		ECS.RegisterComponent<CellPathfinder>();
 		// map layout components
 		ECS.RegisterComponent<MapCell>();
 		ECS.RegisterComponent<CellGate>();
 		ECS.RegisterComponent<CellBridge>();
+		ECS.RegisterComponent<CellChild>();
+
+		auto nextFrameDestroySystem = ECS.RegisterSystem<NextFrameDestroySystem>(true);
 
 		auto mapCellCollectorSystem = ECS.RegisterSystem<MapCellCollectorSystem>();
 		{
@@ -160,6 +168,7 @@ namespace HFEngine
 			Signature signature;
 			signature.set(ECS.GetComponentType<Transform>());
 			signature.set(ECS.GetComponentType<RigidBody>());
+			signature.set(ECS.GetComponentType<Collider>());
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
 		physicsSystem->SetCollector(colliderCollectorSystem);
@@ -171,11 +180,26 @@ namespace HFEngine
 			ECS.SetSystemSignature<GravitySystem>(signature);
 		}
 		gravitySystem->SetCollector(mapCellCollectorSystem);
+		auto rigidBodyCollectorSystem = ECS.RegisterSystem<RigidBodyCollectorSystem>(); // TODO: mo¿e u¿yæ PhysicsSystem po prostu?
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			ECS.SetSystemSignature<RigidBodyCollectorSystem>(signature);
+		}
+		Physics::SetRigidBodyCollector(rigidBodyCollectorSystem);
 		auto lifeTimeSystem = ECS.RegisterSystem<LifeTimeSystem>();
 		{
 			Signature signature;
 			signature.set(ECS.GetComponentType<LifeTime>());
 			ECS.SetSystemSignature<LifeTimeSystem>(signature);
+		}
+		auto cellPathfinderSystem = ECS.RegisterSystem<CellPathfinderSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<CellChild>());
+			signature.set(ECS.GetComponentType<CellPathfinder>());
+			ECS.SetSystemSignature<CellPathfinderSystem>(signature);
 		}
 
 
@@ -200,13 +224,24 @@ namespace HFEngine
 			LogError("HFEngine not initialized");
 			return;
 		}
-		glfwTerminate();
-		GUIManager::Terminate();
+
+		if (WindowManager::IsClosing())
+		{
+			glfwTerminate();
+			GUIManager::Terminate();
+		}
+		else
+		{
+			WindowManager::Close();
+		}
 	}
 
 /*
 	=================== FRAME START ====================
 
+	      | <-- Send General::FRAME_START event
+		  |
+		  \/
 	--------------
 	| Update GUI |
 	--------------
@@ -255,6 +290,8 @@ namespace HFEngine
 	void ProcessGameFrame(float dt)
 	{
 		CURRENT_FRAME_NUMBER++;
+
+		EventManager::FireEvent(Events::General::FRAME_START);
 
 		GUIManager::Update();
 

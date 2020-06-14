@@ -94,8 +94,13 @@ void main()
     albedo = mix(albedo, cliff, cliffFactor);
 
     gAlbedo = albedo;
-    gMetalness = mix(0.1f, 0.3f, cliffFactor);
-    gRoughness = mix(0.65f, 0.45f, roadFactor);
+
+
+
+    gMetalness = mix(0.2f, 0.4f, cliffFactor) * (1.0 - roadFactor);
+
+    //gMetalness = mix(0.2f, 0.3f, cliffFactor);
+    gRoughness = mix(0.75f, 0.55f, roadFactor);
 }
 
 

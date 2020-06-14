@@ -1,0 +1,6 @@
+<textures>
+    <texture name="chapelAlbedo" file="kaplica_DefaultMaterial_BaseColor.png" format="srgb" />
+    <texture name="chapelNormal" file="kaplica_DefaultMaterial_Normal.png" />
+    <texture name="chapelMetal" file="kaplica_DefaultMaterial_Metallic.png" format="r" />
+    <texture name="chapelRough" file="kaplica_DefaultMaterial_Roughness.png" format="r" />
+</textures>

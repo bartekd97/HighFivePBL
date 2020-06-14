@@ -24,13 +24,15 @@ public:
 
 	bool IsEnabledGameObject(GameObject gameObject);
 
+	bool IsValidGameObject(GameObject gameObject);
+
 	const char* GetNameGameObject(GameObject gameObject);
 
 	void SetNameGameObject(GameObject gameObject, std::string name);
 
 	std::optional<GameObject> GetGameObjectByName(std::string name);
 
-	std::set<GameObject> GetGameObjectsByName(std::string name);
+	tsl::robin_set<GameObject> GetGameObjectsByName(std::string name);
 
 	std::vector<GameObject> GetByNameInChildren(GameObject parent, std::string name);
 
@@ -83,7 +85,7 @@ public:
 	}
 
 	template<typename T>
-	std::optional<T> GetComponentInChildren(GameObject gameObject)
+	std::optional<T*> GetComponentInChildren(GameObject gameObject)
 	{
 		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(gameObject);
 		if (children.size() == 0) return std::nullopt;
@@ -92,7 +94,7 @@ public:
 		{
 			if (SearchComponent<T>(child))
 			{
-				return GetComponent<T>(child);
+				return &GetComponent<T>(child);
 			}
 
 		}
@@ -106,6 +108,29 @@ public:
 
 		}
 		return std::nullopt;
+	}
+	template<typename T>
+	tsl::robin_set<GameObject> GetGameObjectsWithComponentInChildren(GameObject gameObject, bool includeParent = false)
+	{
+		tsl::robin_set<GameObject> objects;
+		if (includeParent)
+			if (SearchComponent<T>(gameObject))
+				objects.insert(gameObject);
+		
+		std::vector<GameObject> children = gameObjectHierarchy.GetChildren(gameObject);
+		GameObject child;
+		while (!children.empty())
+		{
+			child = children.back();
+			children.pop_back();
+
+			if (SearchComponent<T>(child))
+				objects.insert(child);
+
+			children.insert(children.end(), gameObjectHierarchy.GetChildren(child).begin(), gameObjectHierarchy.GetChildren(child).end());
+		}
+
+		return objects;
 	}
 
 	template<typename T>

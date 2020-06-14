@@ -13,6 +13,10 @@
 #include "InputManager.h"
 
 #include "Postprocessing/RiverFogEffect.h"
+#include "Postprocessing/SSAOEffect.h"
+#include "Postprocessing/OrthoSSREffect.h"
+#include "Postprocessing/BloomEffect.h"
+#include "Postprocessing/FXAAEffect.h"
 
 
 namespace {
@@ -21,7 +25,8 @@ namespace {
 		glm::vec3 mainCameraPosition = viewCamera.GetPosition();
 		glm::vec3 mainCameraDirection = viewCamera.GetViewDiorection();
 
-		float stepsToZero = -(mainCameraPosition.y / mainCameraDirection.y);
+		float stepsToZero = (mainCameraPosition.y / glm::abs(mainCameraDirection.y));
+		stepsToZero = glm::clamp(stepsToZero, -HFEngine::WorldLight.shadowmapMaxDistanceSteps, HFEngine::WorldLight.shadowmapMaxDistanceSteps);
 		glm::vec3 zeroPos = mainCameraPosition + (mainCameraDirection * stepsToZero);
 
 		glm::vec3 lightDirection = glm::normalize(HFEngine::WorldLight.direction);
@@ -32,20 +37,18 @@ namespace {
 		glm::vec2 camSize = viewCamera.GetSize();
 		float camSizeMax = glm::max(camSize.x, camSize.y);
 		lightCamera.SetSize(camSizeMax, camSizeMax);
-		lightCamera.SetScale(viewCamera.GetScale() * 1.25f);
+		lightCamera.SetScale(viewCamera.GetScale() * HFEngine::WorldLight.shadowmapScale);
 		lightCamera.SetView(lightPosition, lightPosition + lightDirection);
 	}
 }
-
-
 
 void RenderPipeline::InitGBuffer()
 {
 	const std::vector<FrameBuffer::ColorAttachement> gbufferComponents = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB16F, GL_RGB, GL_FLOAT},		// position
-		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal
-		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+		{GL_RGB32F, GL_RGB, GL_FLOAT},		// position in view-space
+		{GL_RGB16F, GL_RGB, GL_FLOAT},		// normal in view-space
+		{GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE},	// albedoFade fade
 		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// metalness roughness shadow
 		{GL_RGB16F, GL_RGB, GL_FLOAT}	// emissive
 	};
@@ -59,7 +62,7 @@ void RenderPipeline::InitGBuffer()
 	auto gbufferTextures = GBuffer.frameBuffer->getColorAttachements();
 	GBuffer.position = gbufferTextures[0];
 	GBuffer.normal = gbufferTextures[1];
-	GBuffer.albedo = gbufferTextures[2];
+	GBuffer.albedoFade = gbufferTextures[2];
 	GBuffer.metalnessRoughnessShadow = gbufferTextures[3];
 	GBuffer.emissive = gbufferTextures[4];
 	GBuffer.depth = GBuffer.frameBuffer->getDepthAttachement();
@@ -106,7 +109,7 @@ void RenderPipeline::InitRenderSystems()
 		HFEngine::ECS.SetSystemSignature<ParticleRendererSystem>(signature);
 	}
 
-#ifdef _DEBUG
+#ifdef HF_DEBUG_RENDER
 	RenderSystems.boxColliderRenderer = HFEngine::ECS.RegisterSystem<BoxColliderRenderSystem>();
 	{
 		Signature signature;
@@ -119,7 +122,7 @@ void RenderPipeline::InitRenderSystems()
 		signature.set(HFEngine::ECS.GetComponentType<CircleCollider>());
 		HFEngine::ECS.SetSystemSignature<CircleColliderRenderSystem>(signature);
 	}
-#endif //  _DEBUG
+#endif //  HF_DEBUG_RENDER
 }
 
 void RenderPipeline::InitPostprocessingEffects()
@@ -127,7 +130,7 @@ void RenderPipeline::InitPostprocessingEffects()
 	// init swap buffers
 	const std::vector<FrameBuffer::ColorAttachement> colorAttachement = {
 		// internalFormat, dataFormat, dataType
-		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+		{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedoFade
 	};
 
 	PostprocessingSwapBuffers[0] = FrameBuffer::Create(
@@ -142,8 +145,12 @@ void RenderPipeline::InitPostprocessingEffects()
 		);
 
 	// init effects
+	postprocessingEffects.push_back(std::make_shared<SSAOEffect>());
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
-	
+	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
+	postprocessingEffects.push_back(std::make_shared<BloomEffect>());
+	postprocessingEffects.push_back(std::make_shared<FXAAEffect>());
+
 	for (auto fx : postprocessingEffects)
 		fx->Init();
 }
@@ -165,7 +172,7 @@ void RenderPipeline::Init()
 	combineGBufferShader->use();
 	combineGBufferShader->setInt("gPosition", (int)GBufferBindingPoint::POSITION);
 	combineGBufferShader->setInt("gNormal", (int)GBufferBindingPoint::NORMAL);
-	combineGBufferShader->setInt("gAlbedo", (int)GBufferBindingPoint::ALBEDO);
+	combineGBufferShader->setInt("gAlbedoFade", (int)GBufferBindingPoint::ALBEDO_FADE);
 	combineGBufferShader->setInt("gMetalnessRoughnessShadow", (int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	combineGBufferShader->setInt("gEmissive", (int)GBufferBindingPoint::EMISSIVE);
 
@@ -176,11 +183,15 @@ void RenderPipeline::Init()
 
 void RenderPipeline::Render()
 {
+	LastFrameStats = FrameStatsStruct();
+
 	// clear texture bound cache
 	Texture::NoBindAll(true);
 
 	// prepare cameras
 	static Camera lightCamera;
+	//Camera& viewCamera = lightCamera; // to visualise shadowmap camera
+	//CalculateLightCamera( HFEngine::MainCamera, lightCamera); // to visualise shadowmap camera
 	Camera& viewCamera = HFEngine::MainCamera;
 	CalculateLightCamera(viewCamera, lightCamera);
 
@@ -206,16 +217,17 @@ void RenderPipeline::Render()
 	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
 	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
 
-	// schedule particle culling
+	// schedule particle & point lights culling
 	RenderSystems.particleRenderer->ScheduleCulling(viewFrustum, lightFrustum);
+	RenderSystems.pointLightRenderer->ScheduleCulling(viewFrustum, lightFrustum);
 
 	// draw to gbuffer
 	GBuffer.frameBuffer->bind();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
-	RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
+	LastFrameStats.renderedObjects += RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
+	LastFrameStats.renderedObjects += RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	//RenderSystems.cubeRenderer->Render();
 
 	// synchronize light rendering with finished gbuffer, make  write to emissive safely
@@ -229,13 +241,16 @@ void RenderPipeline::Render()
 	// bind gbuffer textures
 	GBuffer.position->bind((int)GBufferBindingPoint::POSITION);
 	GBuffer.normal->bind((int)GBufferBindingPoint::NORMAL);
-	GBuffer.albedo->bind((int)GBufferBindingPoint::ALBEDO);
+	GBuffer.albedoFade->bind((int)GBufferBindingPoint::ALBEDO_FADE);
 	GBuffer.metalnessRoughnessShadow->bind((int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	GBuffer.emissive->bind((int)GBufferBindingPoint::EMISSIVE);
 
+	// wait for point lights culling
+	RenderSystems.pointLightRenderer->FinishCulling();
+
 	// draw point lights
 	glm::vec2 viewportSize = { GBuffer.frameBuffer->width, GBuffer.frameBuffer->height };
-	RenderSystems.pointLightRenderer->Render(viewCamera, viewportSize);
+	LastFrameStats.renderedPointLights += RenderSystems.pointLightRenderer->Render(viewCamera, viewportSize);
 
 	// combine gbuffer
 	//FrameBuffer::BindDefaultScreen();
@@ -244,13 +259,26 @@ void RenderPipeline::Render()
 	PostprocessingSwapBuffers[0]->bind();
 
 	combineGBufferShader->use();
-	HFEngine::MainCamera.Use(combineGBufferShader); // for gCameraPosition
-	HFEngine::WorldLight.Apply(combineGBufferShader); // for gDirectionalLight struct
+	HFEngine::WorldLight.Apply(combineGBufferShader, viewCamera); // for gDirectionalLight struct
 	glDisable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	PrimitiveRenderer::DrawScreenQuad();
+
+	glDepthMask(GL_FALSE);
+	glDisable(GL_BLEND);
+	for (auto fx : postprocessingEffects)
+	{
+		bool swap = fx->PreForwardProcess(
+			PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1], GBuffer
+		);
+		if (swap)
+			std::swap(PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1]);
+	}
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_TRUE);
 
 	// wait for particle culling
 	RenderSystems.particleRenderer->FinishCulling();
@@ -258,9 +286,9 @@ void RenderPipeline::Render()
 	// draw forward
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE); // disable zbuffer writing
-	RenderSystems.particleRenderer->Render(viewCamera);
-	RenderSystems.meshRenderer->RenderForward(viewCamera, HFEngine::WorldLight);
-	RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
+	LastFrameStats.renderedParticleEmitters += RenderSystems.particleRenderer->Render(viewCamera);
+	LastFrameStats.renderedObjects += RenderSystems.meshRenderer->RenderForward(viewCamera, HFEngine::WorldLight);
+	LastFrameStats.renderedObjects += RenderSystems.skinnedMeshRender->RenderForward(viewCamera, HFEngine::WorldLight);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_DEPTH_TEST);
 
@@ -270,7 +298,7 @@ void RenderPipeline::Render()
 	glDepthMask(GL_FALSE);
 	for (auto fx : postprocessingEffects)
 	{
-		bool swap = postprocessingEffects[0]->Process(
+		bool swap = fx->Process(
 			PostprocessingSwapBuffers[0], PostprocessingSwapBuffers[1], GBuffer
 			);
 		if (swap)
@@ -280,19 +308,26 @@ void RenderPipeline::Render()
 
 	// show rendered
 	FrameBuffer::BlitColor(PostprocessingSwapBuffers[0], nullptr, 0);
+	FrameBuffer::BindDefaultScreen();
 
 	// debug rendering
-#ifdef _DEBUG
-	static bool colliderRendering = false;
+#ifdef HF_DEBUG_RENDER
+	static bool debugRendering = false;
 	if (InputManager::GetKeyDown(GLFW_KEY_F1)) {
-		colliderRendering = !colliderRendering;
-		LogInfo("[DEBUG] Collider Rendering set to: {}", colliderRendering);
+		debugRendering = !debugRendering;
+		LogInfo("[DEBUG] Debug Rendering set to: {}", debugRendering);
 	}
 
-	if (colliderRendering)
+	if (debugRendering)
 	{
 		RenderSystems.boxColliderRenderer->Render();
 		RenderSystems.circleColliderRenderer->Render();
+		PrimitiveRenderer::DrawLines();
+		PrimitiveRenderer::DrawStickyPoints();
 	}
-#endif //  _DEBUG
+	else
+	{
+		PrimitiveRenderer::RejectLines();
+	}
+#endif //  HF_DEBUG_RENDER
 }

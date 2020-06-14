@@ -9,6 +9,12 @@
 class UniformBuffer;
 struct ParticleRenderer
 {
+	enum class BlendingMode {
+		ADD,
+		BLEND
+	};
+	BlendingMode blendingMode = BlendingMode::ADD;
+
 	std::shared_ptr<UniformBuffer> particlesBuffer;
 	FrameCounter lastUpdate = 0;
 

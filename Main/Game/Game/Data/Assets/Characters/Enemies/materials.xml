@@ -1,0 +1,15 @@
+<materials textureLibrary="this">
+    <material name="AxerMat">
+        <property name="albedoMap" value="axerAlbedo"/>
+        <property name="normalMap" value="axerNorm"/>
+        <property name="metalnessMap" value="axerMetal"/>
+        <property name="roughnessMap" value="axerRough"/>
+    </material>
+
+    <material name="FlyerMat">
+        <property name="albedoMap" value="flyerAlbedo"/>
+        <property name="normalMap" value="flyerNorm"/>
+        <property name="metalnessMap" value="flyerMetal"/>
+        <property name="roughnessMap" value="flyerRough"/>
+    </material>
+</materials>

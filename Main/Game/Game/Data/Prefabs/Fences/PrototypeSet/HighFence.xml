@@ -11,7 +11,7 @@
     </component>
 
     <component name="BoxCollider">
-        <property name="width" value="3.0"/>
+        <property name="width" value="3.5"/>
         <property name="height" value="0.5"/>
         <property name="frozen" value="true"/>
         <property name="type" value="STATIC"/>

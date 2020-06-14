@@ -1,5 +1,5 @@
 #include "ColliderCollectorSystem.h"
-#include "../../Physics/PhysicsCache.h"
+#include "../../Physics/Physics.h"
 
 void ColliderCollectorSystem::Init()
 {
@@ -9,5 +9,5 @@ void ColliderCollectorSystem::Init()
 void ColliderCollectorSystem::OnGameObjectDestroyed(Event& e)
 {
 	GameObject gameObject = e.GetParam<GameObject>(Events::GameObject::GameObject);
-	PhysicsCache::RemoveNode(gameObject);
+	Physics::RemoveNode(gameObject);
 }

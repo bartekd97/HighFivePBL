@@ -23,11 +23,14 @@ void MeshRendererSystem::Init()
 	MaterialBindingPoint::AssignToShader(forwardShader);
 }
 
-void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
+unsigned int MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 {
+	unsigned int rendered = 0;
+
 	toShadowmapShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	bool lastDoubleSided = false;
 
 	lightCamera.Use(toShadowmapShader);
 	auto currentFrame = HFEngine::CURRENT_FRAME_NUMBER;
@@ -39,20 +42,31 @@ void MeshRendererSystem::RenderToShadowmap(Camera& lightCamera)
 		if (!renderer.cullingData.visibleByLightCamera || !renderer.castShadows)
 			continue;
 
+		if (renderer.doubleSided != lastDoubleSided) {
+			lastDoubleSided = renderer.doubleSided;
+			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+		}
+
 		toShadowmapShader->setMat4("gModel", renderer.cullingData.worldTransform);
 
 		renderer.mesh->bind();
 		renderer.mesh->draw();
+		rendered++;
 	}
 	Mesh::NoBind();
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }
 
-void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
+unsigned int MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera, std::shared_ptr<Texture> shadowmap)
 {
+	unsigned int rendered = 0;
+
 	toGBufferShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	bool lastDoubleSided = false;
 
 	viewCamera.Use(toGBufferShader);
 	glm::mat4 lightViewProjection = lightCamera.GetProjectionMatrix() * lightCamera.GetViewMatrix();
@@ -73,35 +87,50 @@ void MeshRendererSystem::RenderToGBuffer(Camera& viewCamera, Camera& lightCamera
 			delayedForward.emplace_back(&renderer);
 			continue;
 		}
+
+		if (renderer.doubleSided != lastDoubleSided) {
+			lastDoubleSided = renderer.doubleSided;
+			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+		}
 		
 		toGBufferShader->setMat4("gModel", renderer.cullingData.worldTransform);
 		renderer.material->apply(toGBufferShader);
 		renderer.mesh->bind();
 		renderer.mesh->draw();
+		rendered++;
 	}
 	Mesh::NoBind();
 	Material::NoApply(toGBufferShader);
 
 	glDisable(GL_CULL_FACE);
+	return rendered;
 }
 
-void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
+unsigned int MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dirLight)
 {
-	if (delayedForward.empty()) return;
+	unsigned int rendered = 0;
+	if (delayedForward.empty()) return rendered;
 
 	forwardShader->use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+	bool lastDoubleSided = false;
 
 	viewCamera.Use(forwardShader);
-	dirLight.Apply(forwardShader);
+	dirLight.Apply(forwardShader, viewCamera);
 	do {
 		MeshRenderer* renderer = delayedForward.back();
+
+		if (renderer->doubleSided != lastDoubleSided) {
+			lastDoubleSided = renderer->doubleSided;
+			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+		}
 
 		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
 		renderer->material->apply(forwardShader);
 		renderer->mesh->bind();
 		renderer->mesh->draw();
+		rendered++;
 
 		delayedForward.pop_back();
 	} while (!delayedForward.empty());
@@ -109,4 +138,6 @@ void MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLight& dir
 	Material::NoApply(forwardShader);
 
 	glDisable(GL_CULL_FACE);
+
+	return rendered;
 }

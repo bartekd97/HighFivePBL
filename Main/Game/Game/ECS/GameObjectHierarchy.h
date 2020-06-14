@@ -12,6 +12,13 @@ public:
 	void RemoveGameObject(GameObject gameObject);
 	std::vector<GameObject>& GetChildren(GameObject parent);
 	std::vector<GameObject> GetByNameInChildren(GameObject parent, std::string name);
+
+	/*template<typename T>
+	tsl::robin_set<GameObject>& GetChildrenWithComponent(GameObject parent, bool countParent = false)
+	{
+
+	}*/
+
 	std::optional<GameObject> GetParent(GameObject child);
 	std::vector<GameObject>& GetRoot();
 	bool IsPresent(GameObject gameObject);

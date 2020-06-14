@@ -1,7 +1,7 @@
 #version 330 core 
 layout (location = 0) out vec3 gPosition;
 layout (location = 1) out vec3 gNormal;
-layout (location = 2) out vec3 gAlbedo;
+layout (location = 2) out vec4 gAlbedoFade;
 layout (location = 3) out vec3 gMetalnessRoughnessShadow;
 layout (location = 4) out vec3 gEmissive;
 
@@ -21,11 +21,16 @@ uniform vec3 emissiveColor;
 
 in VS_OUT {
     vec3 FragPos;
+    vec3 FragPosWorld;
     //vec3 FragPosView;
     vec4 LightSpacePos;
     vec2 TexCoords;
     mat3 TBN;
 } fs_in;
+
+// distance fade
+uniform float fadeBelowY = -3.0f;
+uniform float fadeRangeY = 7.0f;
 
 
 float calculateShadowFactor()
@@ -60,10 +65,13 @@ void main()
     float roughness = texture(roughnessMap, fs_in.TexCoords).r * roughnessValue;
     float shadow = calculateShadowFactor();
 
+    float fadeY = -(fs_in.FragPosWorld.y - fadeBelowY);
+    fadeY = clamp(1.0f - (fadeY/fadeRangeY), 0.0, 1.0f);
+
     gPosition = fs_in.FragPos;
     //gPositionView = fs_in.FragPosView;
     gNormal = normal;
-    gAlbedo = texture(albedoMap, fs_in.TexCoords).rgb * albedoColor;
+    gAlbedoFade = vec4(texture(albedoMap, fs_in.TexCoords).rgb * albedoColor, fadeY);
     gMetalnessRoughnessShadow = vec3(metalness, roughness, shadow);
     gEmissive = texture(emissiveMap, fs_in.TexCoords).rgb * emissiveColor;
     //gAlbedo.r = gl_FragCoord.z;

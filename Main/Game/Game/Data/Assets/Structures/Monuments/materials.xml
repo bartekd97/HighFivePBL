@@ -1,0 +1,35 @@
+<materials textureLibrary="this">
+    <!-- standard -->
+    <material name="standardMaterial1">
+        <property name="albedoMap" value="standard1Albedo"/>
+        <property name="normalMap" value="standard1Normal"/>
+        <property name="metalnessMap" value="standard1Metal"/>
+        <property name="roughnessMap" value="standard1Rough"/>
+    </material>
+    <material name="standardMaterial2">
+        <property name="albedoMap" value="standard2Albedo"/>
+        <property name="normalMap" value="standard2Normal"/>
+        <property name="metalnessMap" value="standard2Metal"/>
+        <property name="roughnessMap" value="standard2Rough"/>
+    </material>
+    <material name="standardMaterial3">
+        <property name="albedoMap" value="standard3Albedo"/>
+        <property name="normalMap" value="standard3Normal"/>
+        <property name="metalnessMap" value="standard3Metal"/>
+        <property name="roughnessMap" value="standard3Rough"/>
+    </material>
+    <material name="standardMaterial4">
+        <property name="albedoMap" value="standard4Albedo"/>
+        <property name="normalMap" value="standard4Normal"/>
+        <property name="metalnessMap" value="standard4Metal"/>
+        <property name="roughnessMap" value="standard4Rough"/>
+    </material>
+
+    <!-- celtic -->
+    <material name="celticMaterial">
+        <property name="albedoMap" value="celticAlbedo"/>
+        <property name="normalMap" value="celticNormal"/>
+        <property name="metalnessMap" value="celticMetal"/>
+        <property name="roughnessMap" value="celticRough"/>
+    </material>
+</materials>

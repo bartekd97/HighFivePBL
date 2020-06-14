@@ -1,0 +1,36 @@
+<prefab defaultScale="1.5,1.5,1.5">
+    <property name="width" value="4.0"/>
+    <property name="height" value="3.5"/>
+    
+    <component name="ModelHolder">
+        <property name="model" value="Obstacles/Muds:Mud2"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+    </component>
+
+    
+    <children>
+        <child name="MudTrigger" position="0.332,0,0.182" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="1.0"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+        <child name="MudTrigger" position="-0.254,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.8"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+        <child name="MudTrigger" position="-0.7,0,0.34" rotation="0,0,0" scale="1,1,1">
+            <component name="CircleCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="radius" value="0.42"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+    </children>
+</prefab>

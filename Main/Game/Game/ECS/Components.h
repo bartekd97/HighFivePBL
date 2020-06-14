@@ -11,6 +11,7 @@
 #include "Components/ParticleEmitter.h"
 #include "Components/ParticleRenderer.h"
 #include "Components/MapLayoutComponents.h"
+#include "Components/CellPathfinder.h"
 #include "Components/ScriptContainer.h"
 #include "Components/CircleCollider.h"
 #include "Components/Collider.h"
