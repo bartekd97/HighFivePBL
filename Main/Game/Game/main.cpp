@@ -46,8 +46,7 @@ int main()
 
 	AudioManager ac;
 	ac.Init_al();
-	ac.CreateDefaultSourceAndPlay("exciting_sound", false);
-	ac.CreateDefaultSourceAndPlay("glass_ping", true);
+	ac.CreateDefaultSourceAndPlay("exciting_sound", true);
 	
 	// request initial scene
 	SceneManager::RequestLoadScene("MainMenu");
