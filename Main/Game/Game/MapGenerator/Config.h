@@ -61,23 +61,43 @@ struct CellFenceEntity
         return InFillRange(gap - ((float)((segments - 1)) * length));
     }
 };
+
+
 struct CellFenceConfig
 {
+    // configured in MapGeneratorConfig
+
     CellFenceEntity gateEntity;
     CellFenceEntity fragmentEntity;
     CellFenceEntity connectorEntity;
     float gateDistance = 9.0f;
     int fragmentCount = 2;
     float innerLevelFenceLocation = 0.87f;
+    bool forceTryFillGaps = false;
 
-    CellFenceConfig() 
+    CellFenceEntity invisHoleFence;
+
+    CellFenceConfig()
     {
-        // TODO: make it with cleaner way, with possibility to use different configs for different cells
-        gateEntity.SetPrefab("Fences/PrototypeSet/Gate");
-        fragmentEntity.SetPrefab("Fences/PrototypeSet/HighFence");
-        connectorEntity.SetPrefab("Fences/PrototypeSet/ConnectColumn");
+        invisHoleFence.SetPrefab("Fences/InvisHoleFence");
     }
 };
+
+
+struct CellFenceFireConfig
+{
+    std::shared_ptr<Prefab> ragnarosFire;
+    std::shared_ptr<Prefab> necromancerFire;
+
+    float fireFenceOffset = 1.5f;
+
+    CellFenceFireConfig()
+    {
+        ragnarosFire = PrefabManager::GetPrefab("Fences/Fire/Ragnaros");
+        necromancerFire = PrefabManager::GetPrefab("Fences/Fire/Necromancer");
+    }
+};
+
 
 struct CellTerrainConfig
 {
@@ -102,6 +122,8 @@ struct CellTerrainConfig
 
 struct CellSetupConfig
 {
+    CellFenceFireConfig cellFenceFireConfig;
+
     int gridSize = 60;
     int gridStep = 2;
     glm::vec2 gridInnerLevel = { 0.20f, 0.75f }; // min, max
@@ -130,6 +152,16 @@ struct CellSetupConfig
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud3"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud4"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud5"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire1"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire2"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire3"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire4"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire5"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas1"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas2"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas3"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas4"));
+        obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas5"));
 
         smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik1"));
         smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/pomnik2"));
@@ -152,18 +184,23 @@ struct CellSetupConfig
         smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR14"));
         smallPrefabs.push_back(PrefabManager::GetPrefab("Structures/STR15"));
 
+
         enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Axer"));
+        enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Flyer"));
     }
 };
 
 
 
 
-struct MapGeneratorConig
+struct MapGeneratorConfig
 {
     DiagramLayout layout;
     CellMeshConfig cellMeshConfig;
-    CellFenceConfig cellFenceConfig;
+
+    CellFenceConfig cellRegularFenceConfig;
+    CellFenceConfig cellBossFenceConfig;
+
     CellTerrainConfig cellTerrainConfig;
 
     CellSetupConfig cellStructuresConfig;
@@ -171,9 +208,21 @@ struct MapGeneratorConig
     std::shared_ptr<Prefab> bridgePrefab;
     float minEdgeLengthForBridge = 24.0f;
 
-    MapGeneratorConig()
+    MapGeneratorConfig()
     {
         // TODO: make it with cleaner way, with possibility to use different configs for different cells
         bridgePrefab = PrefabManager::GetPrefab("Bridges/Bridge1");
+
+        // setup regular fence
+        cellRegularFenceConfig.gateEntity.SetPrefab("Fences/PrototypeSet/Gate");
+        cellRegularFenceConfig.fragmentEntity.SetPrefab("Fences/PrototypeSet/HighFence");
+        cellRegularFenceConfig.connectorEntity.SetPrefab("Fences/PrototypeSet/ConnectColumn");
+
+        // setup boss fence
+        cellBossFenceConfig.fragmentCount = 1;
+        cellBossFenceConfig.forceTryFillGaps = true;
+        cellBossFenceConfig.gateEntity.SetPrefab("Fences/SecondSet/Gate");
+        cellBossFenceConfig.fragmentEntity.SetPrefab("Fences/SecondSet/HighFence");
+        cellBossFenceConfig.connectorEntity.SetPrefab("Fences/SecondSet/ConnectColumn");
     }
 };

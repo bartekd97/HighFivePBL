@@ -364,7 +364,7 @@ std::vector<std::shared_ptr<CellFenceGenerator::FenceObject>>
                 }
             }
             // couldnt find even then? reverse change and cancel finding :c
-            if (backward->fragmentCount == 3)
+            if (backward->fragmentCount == 3 || backward->fragmentCount == 0)
             {
                 /*
                 // leave it "random"
@@ -379,6 +379,8 @@ std::vector<std::shared_ptr<CellFenceGenerator::FenceObject>>
                     backward->fragmentCount = 2;
                 }
                 */
+                forward->direction = forwardDirTo;
+                backward->direction = backwardDirTo;
                 forward->fragmentCount = forwardCountOrig;
                 backward->fragmentCount = backwardCountOrig;
                 break;
@@ -396,8 +398,37 @@ void CellFenceGenerator::MakeHoles()
     {
         if (curve->filler.size() == 0)
         {
-            curve->forawrdSegments[curve->forawrdSegments.size() - 1]->fragmentCount = 0;
-            curve->backwardSegments[curve->backwardSegments.size() - 1]->fragmentCount = 0;
+            auto forwardSegment = curve->forawrdSegments[curve->forawrdSegments.size() - 1];
+            auto backwardSegment = curve->backwardSegments[curve->backwardSegments.size() - 1];
+
+            forwardSegment->direction = glm::rotate(
+                forwardSegment->direction,
+                M_PI * 0.4f * glm::sign(
+                    glm::orientedAngle(
+                        forwardSegment->direction,
+                        glm::normalize(forwardSegment->position)
+                        )
+                    )
+                );
+
+            backwardSegment->direction = glm::rotate(
+                backwardSegment->direction,
+                M_PI * 0.4f * glm::sign(
+                    glm::orientedAngle(
+                        backwardSegment->direction,
+                        glm::normalize(backwardSegment->position)
+                        )
+                    )
+                );
+
+            forwardSegment->fragmentCount = 1;
+            backwardSegment->fragmentCount = 1;
+
+            forwardSegment->addInvisHoleFence = true;
+            backwardSegment->addInvisHoleFence = true;
+
+            //curve->forawrdSegments[curve->forawrdSegments.size() - 1]->fragmentCount = 0;
+            //curve->backwardSegments[curve->backwardSegments.size() - 1]->fragmentCount = 0;
         }
     }
 }
@@ -439,6 +470,15 @@ void CellFenceGenerator::PrepareObjectsForSection(std::vector<std::shared_ptr<Se
                     &config.fragmentEntity
                 ));
             dist += config.fragmentEntity.length;
+        }
+        if (segments[i]->addInvisHoleFence)
+        {
+            float eDist = dist + config.invisHoleFence.length * 0.5f;
+            target.push_back(std::make_shared<FenceObject>(
+                segments[i]->position + segments[i]->direction * eDist,
+                reversed ? -segments[i]->direction : segments[i]->direction,
+                &config.invisHoleFence
+                ));
         }
     }
 }

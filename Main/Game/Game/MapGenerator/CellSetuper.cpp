@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <unordered_set>
 #include "CellSetuper.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/Collider.h"
@@ -142,26 +143,39 @@ void CellSetuper::Setup()
 				else
 				{
 					// skip obstacles in lite mode
-					if (_debugLiteMode) continue;
+					//if (_debugLiteMode) continue;
 					// it can be later improved to spawn only specific obstacle in lite mode
 
-					auto obstaclePrefab = setupConfig.obstaclePrefabs.at(
-						zone.points.size() * objectsToGenerate % setupConfig.obstaclePrefabs.size()
-					);
-
-					float obstacleRotation = zone.center.x * zone.center.y;
-					boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
-					obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
-					obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
-					box.SetWidthHeight(width, height);
-					if (zone.points.size() > 0)
+					int spawnTries = 10;
+					while (spawnTries > 0)
 					{
-						glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
-						if (glm::length2(position) > 0.001f)
+						std::shared_ptr<Prefab> obstaclePrefab;
+						obstaclePrefab = setupConfig.obstaclePrefabs.at(
+						(zone.points.size() * (i + 1) + spawnTries) % setupConfig.obstaclePrefabs.size()
+							);
+
+						//if (_debugLiteMode) obstaclePrefab = setupConfig.obstaclePrefabs[1];
+
+						float obstacleRotation = zone.center.x * zone.center.y;
+						boxRot = glm::quat(glm::vec3(0.0f, glm::radians(obstacleRotation), 0.0f));
+						obstaclePrefab->Properties().GetFloat("width", width, 1.0f);
+						obstaclePrefab->Properties().GetFloat("height", height, 1.0f);
+						box.SetWidthHeight(width, height);
+						if (zone.points.size() > 0)
 						{
-							LogInfo("CellSetuper::Setup() Zone {} got spawned obstacle at: {}, {}", zone.ind, position.x, position.y);
-							SpawnObstacle(obstaclePrefab, position, obstacleRotation);
+							glm::vec2 position = DrawPointInZone(zone, box, boxRot, i);
+							if (glm::length2(position) > 0.001f)
+							{
+								LogInfo("CellSetuper::Setup() Zone {} got spawned obstacle at: {}, {}", zone.ind, position.x, position.y);
+								SpawnObstacle(obstaclePrefab, position, obstacleRotation);
+								spawnTries = 0;
+							}
 						}
+						else
+						{
+							spawnTries = 0;
+						}
+						spawnTries -= 1;
 					}
 					
 				}
@@ -170,6 +184,21 @@ void CellSetuper::Setup()
 			
 		}
 
+	}
+
+	// create fence fires on boss cell
+	if (type == MapCell::Type::BOSS)
+	{
+		int bossNumber = int(glm::length2(HFEngine::ECS.GetComponent<Transform>(cell).GetPosition())) % 2;
+
+		if (bossNumber == 0) // necromancer
+		{
+			CreateFenceFires(setupConfig.cellFenceFireConfig.necromancerFire);
+		}
+		else if (bossNumber == 1) // ragnaros
+		{
+			CreateFenceFires(setupConfig.cellFenceFireConfig.ragnarosFire);
+		}
 	}
 
 	// clear temp colliders
@@ -188,6 +217,10 @@ void CellSetuper::Setup()
 		for (auto& zone : zones) zonesSum += zone.points.size();
 
 		auto enemyPrefab = setupConfig.enemyPrefabs.at(zonesSum % setupConfig.enemyPrefabs.size());
+
+		// choose specific enemy for lite mode
+		if (_debugLiteMode) enemyPrefab = setupConfig.enemyPrefabs[1]; // 0 axer, 1 flyer
+
 		CircleCollider enemyRadiusCollider;
 		enemyPrefab->Properties().GetFloat("radius", enemyRadiusCollider.radius, 1.0f);
 
@@ -195,6 +228,9 @@ void CellSetuper::Setup()
 		for (auto& zone : zones) pZones.push_back(&zone);
 
 		int enemiesCount = (int)glm::round(setupConfig.enemiesCountFactor * float(zonesSum) * 0.01f);
+
+		//if (_debugLiteMode) enemiesCount = 0;
+
 		while (enemiesCount > 0 && pZones.size() > 0)
 		{
 			for (auto pZone : pZones)
@@ -399,6 +435,51 @@ void CellSetuper::ClearTempColliders()
 	for (auto c : tempColliders)
 		HFEngine::ECS.DestroyGameObject(c);
 	tempColliders.clear();
+}
+
+
+void CellSetuper::CreateFenceFires(std::shared_ptr<Prefab> firePrefab)
+{
+	float offset = setupConfig.cellFenceFireConfig.fireFenceOffset;
+
+	GameObject fenceFireContainer = HFEngine::ECS.CreateGameObject(cell, "FenceFire");
+	GameObject fenceContainer = HFEngine::ECS.GetByNameInChildren(cell, "Fence")[0];
+	auto highFences = HFEngine::ECS.GetByNameInChildren(fenceContainer, "HighFence");
+
+	std::unordered_set<GameObject> gateFences;
+	MapCell& cellInfo = HFEngine::ECS.GetComponent<MapCell>(cell);
+	for (auto bridge : cellInfo.Bridges)
+	{
+		using GD = std::pair<GameObject, float>; // fence and it's distance to gate
+		std::vector<GD> thisGateFences;
+		glm::vec3 gatePosition = HFEngine::ECS.GetComponent<Transform>(bridge.Gate).GetPosition();
+		for (auto fenceObject : highFences)
+		{
+			glm::vec3 fencePosition = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetPosition();
+			float dist = glm::distance2(gatePosition, fencePosition);
+			thisGateFences.emplace_back(GD{fenceObject, dist});
+		}
+		std::sort(thisGateFences.begin(), thisGateFences.end(), [](GD& a, GD& b) {
+			return a.second < b.second;
+			});
+
+		gateFences.insert(thisGateFences[0].first);
+		gateFences.insert(thisGateFences[1].first);
+	}
+
+
+	for (auto fenceObject : highFences)
+	{
+		if (gateFences.contains(fenceObject))
+			continue;
+
+		glm::vec3 fencePosition = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetPosition();
+		glm::vec3 fenceFront = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetFront();
+		glm::vec3 fenceRotation = HFEngine::ECS.GetComponent<Transform>(fenceObject).GetRotationEuler();
+
+		glm::vec3 firePosition = fencePosition - fenceFront * offset;
+		firePrefab->Instantiate(fenceFireContainer, firePosition, fenceRotation);
+	}
 }
 
 

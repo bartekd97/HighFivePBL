@@ -1,0 +1,6 @@
+<textures>
+    <texture name="ssAlbedo" file="secondSet_DefaultMaterial_BaseColor.png" format="srgb" />
+    <texture name="ssNormal" file="secondSet_DefaultMaterial_Normal.png" />
+    <texture name="ssMetal" file="secondSet_DefaultMaterial_Metallic.png" format="r" />
+    <texture name="ssRough" file="secondSet_DefaultMaterial_Roughness.png" format="r" />
+</textures>

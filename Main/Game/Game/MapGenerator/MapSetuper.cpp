@@ -75,8 +75,13 @@ GameObject MapSetuper::GetStartupCell()
 
 void MapSetuper::GenerateCell(GameObject cell)
 {
+    auto cellType = HFEngine::ECS.GetComponent<MapCell>(cell).CellType;
     ConvexPolygon& cellPolygon = HFEngine::ECS.GetComponent<MapCell>(cell)._BaseDelaunayPolygon;
-    CellGenerator generator(config.cellMeshConfig, config.cellFenceConfig, config.cellTerrainConfig);
+    CellGenerator generator(
+        config.cellMeshConfig,
+        cellType == MapCell::Type::BOSS ? config.cellBossFenceConfig : config.cellRegularFenceConfig,
+        config.cellTerrainConfig
+    );
     generator.Generate(cellPolygon, cell);
 }
 

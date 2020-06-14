@@ -30,6 +30,11 @@ private: // parameters
 	float healthRecoverySpeed = 5.0f;
 	float idleToStartRecoveryTime = 3.0f;
 
+	float pushbackCooldown = 2.0f;
+
+	float torchCooldownEmitRate = 32.0f;
+	glm::vec3 torchLightCooldownLightColor = { 0.7f, 0.25f, 0.1f };
+
 private: // variables
 	glm::vec3 startPosition;
 	GameObject visualObject;
@@ -50,7 +55,8 @@ private: // variables
 	float attackAnimationLevel = 0.5f;
 
 	bool hasGhostMovement = false;
-	bool isAttacking = false;
+	bool isPushingBack = false;
+	bool onPushBackCooldown = false;
 	Raycaster raycaster;
 
 	std::shared_ptr<GhostController> ghostController;
@@ -62,6 +68,8 @@ private: // variables
 
 	TimerAnimator timerAnimator;
 	float torchLightDefaultIntensity;
+	float torchDefaultEmitRate;
+	glm::vec3 torchLightDefaultLightColor;
 
 public:
 	PlayerController()
@@ -70,6 +78,10 @@ public:
 		RegisterFloatParameter("maxHealth", &maxHealth);
 		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
 		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
+		RegisterFloatParameter("pushbackCooldown", &pushbackCooldown);
+
+		RegisterFloatParameter("torchCooldownEmitRate", &torchCooldownEmitRate);
+		RegisterVec3Parameter("torchLightCooldownLightColor", &torchLightCooldownLightColor);
 	}
 
 	~PlayerController()
@@ -93,6 +105,9 @@ public:
 		torchFlameParticleObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "TorchFlame")[0];
 
 		torchLightDefaultIntensity = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject).light.intensity;
+		torchDefaultEmitRate = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).rate;
+		torchLightDefaultLightColor = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject).light.color;
+
 
 		startPosition = GetTransform().GetWorldPosition();
 		moveSpeedSmoothing = moveSpeed * 4.0f;
@@ -169,24 +184,25 @@ public:
 
 		if (isMoving)
 			animator.TransitToAnimation("running", 0.2f);
-		else if (isAttacking)
+		else if (isPushingBack)
 			animator.TransitToAnimation("attack", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 		else if (hasGhostMovement)
 			animator.TransitToAnimation("standToCrouch", 0.15f, AnimationClip::PlaybackMode::SINGLE);
 		else
 			animator.TransitToAnimation("idle", 0.2f);
 
-		if (!isAttacking)
+		if (!isPushingBack)
 		{
 			if (!hasGhostMovement && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 
-			else if (InputManager::GetKeyDown(GLFW_KEY_SPACE))
+			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE))
 			{
-				StartAttack();
-				isAttacking = true;
+				StartPushBack();
+				isPushingBack = true;
+				onPushBackCooldown = true;
 			}
 
 			auto stopTime = std::chrono::high_resolution_clock::now();
@@ -200,7 +216,7 @@ public:
 		{
 			if (animator.GetCurrentClipLevel() >= attackAnimationLevel)
 			{
-				isAttacking = false;
+				isPushingBack = false;
 			}
 		}
 
@@ -278,7 +294,7 @@ public:
 		auto& rigidBody = GetRigidBody();
 
 		glm::vec3 direction(0.0f);
-		if (!hasGhostMovement && !isAttacking)
+		if (!hasGhostMovement && !isPushingBack)
 		{
 			if (InputManager::GetKeyStatus(GLFW_KEY_A)) direction.x = -1.0f;
 			else if (InputManager::GetKeyStatus(GLFW_KEY_D)) direction.x = 1.0f;
@@ -326,16 +342,32 @@ public:
 	}
 
 
-	void StartAttack()
+	void StartPushBack()
 	{
+		auto& emitterSmoke = HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject);
+		auto& emitterTorch = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject);
+		auto& lightTorch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+
+		// anim & pushback stuff
 		timerAnimator.DelayAction(0.2f, [&]() {
-			HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject).emitting = true;
+			emitterSmoke.emitting = true;
 			});
 		timerAnimator.DelayAction(0.35f, [&]() {
 			PushbackTest();
 			});
 		timerAnimator.DelayAction(0.5f, [&]() {
-			HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject).emitting = false;
+			emitterSmoke.emitting = false;
+			});
+
+		// cooldown stuff
+		timerAnimator.AnimateVariable(&emitterTorch.rate, torchDefaultEmitRate, torchCooldownEmitRate, 0.7f);
+		timerAnimator.AnimateVariable(&lightTorch.light.color, torchLightDefaultLightColor, torchLightCooldownLightColor, 0.7f);
+		timerAnimator.DelayAction(0.7f + pushbackCooldown, [&]() {
+			timerAnimator.AnimateVariable(&emitterTorch.rate, torchCooldownEmitRate, torchDefaultEmitRate, 0.3f);
+			timerAnimator.AnimateVariable(&lightTorch.light.color, torchLightCooldownLightColor, torchLightDefaultLightColor, 0.3f);
+			});
+		timerAnimator.DelayAction(1.0f + pushbackCooldown, [&]() {
+			onPushBackCooldown = false;
 			});
 	}
 
