@@ -8,6 +8,7 @@
 #include "../../InputManager.h"
 #include "../../ECS/Systems/MapCellCollectorSystem.h"
 #include "../../MapGenerator/Config.h"
+#include "Event/Events.h"
 
 class MapCellOptimizer : public Script
 {
@@ -40,6 +41,10 @@ public:
 		{
 			currentCell = newCurrentCell;
 			EnableDisableCells();
+
+			Event ev(Events::Gameplay::Player::CELL_ENTERED);
+			ev.SetParam(Events::GameObject::GameObject, currentCell);
+			EventManager::FireEvent(ev);
 		}
 	}
 

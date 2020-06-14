@@ -15,6 +15,8 @@
 		<property name="maxHealth" value="100.0"/>
 		<property name="healthRecoverySpeed" value="25.0"/>
 		<property name="idleToStartRecoveryTime" value="3.0"/>
+
+        <property name="ghostCooldown" value="0.35"/>
         <property name="pushbackCooldown" value="2.0"/>
 
         <property name="torchCooldownEmitRate" value="32.0"/>

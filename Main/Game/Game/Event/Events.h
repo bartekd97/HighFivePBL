@@ -35,6 +35,7 @@ namespace Events::Gameplay
 	{
 		const EventId DEATH = "Events::Gameplay::Player::DEATH"_hash;
 		const EventId PUSHBACK_ENEMIES = "Events::Gameplay::Player::PUSHBACK_ENEMIES"_hash;
+		const EventId CELL_ENTERED = "Events::Gameplay::Player::CELL_ENTERED"_hash;
 	}
 	namespace Ghost
 	{

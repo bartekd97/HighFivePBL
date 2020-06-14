@@ -30,6 +30,7 @@ private: // parameters
 	float healthRecoverySpeed = 5.0f;
 	float idleToStartRecoveryTime = 3.0f;
 
+	float ghostCooldown = 0.35f;
 	float pushbackCooldown = 2.0f;
 
 	float torchCooldownEmitRate = 32.0f;
@@ -55,6 +56,7 @@ private: // variables
 	float attackAnimationLevel = 0.5f;
 
 	bool hasGhostMovement = false;
+	bool ghostOnCooldown = false;
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
 	Raycaster raycaster;
@@ -156,6 +158,9 @@ public:
 		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
 		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, torchLightDefaultIntensity, 0.3f);
 		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = true;
+
+		ghostOnCooldown = true;
+		timerAnimator.DelayAction(ghostCooldown, [&]() {ghostOnCooldown = false;});
 	}
 
 	void TakeDamage(float dmg)
@@ -202,7 +207,7 @@ public:
 
 		if (!isPushingBack)
 		{
-			if (!hasGhostMovement && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+			if (!hasGhostMovement && !ghostOnCooldown && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);

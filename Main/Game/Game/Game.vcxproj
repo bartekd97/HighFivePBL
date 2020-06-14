@@ -300,6 +300,7 @@
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
+    <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Scripting\Scripts\GateOpener.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
