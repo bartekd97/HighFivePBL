@@ -234,6 +234,7 @@
     <ClInclude Include="Audio\SoundManager.h" />
     <ClInclude Include="Audio\SoundObject.h" />
     <ClInclude Include="Scripting\Scripts\TutorialPlayground.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialEnemy.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

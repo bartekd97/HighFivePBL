@@ -26,11 +26,15 @@ namespace Events::General
 
 namespace Events::Gameplay
 {
+	namespace Player
+	{
+		const EventId PUSHBACK_ENEMIES = "Events::Gameplay::Player::PUSHBACK_ENEMIES"_hash;
+	}
 	namespace Ghost
 	{
 		const EventId MOVEMENT_START = "Events::Gameplay::Ghost::MOVEMENT_START"_hash;
 		const EventId MOVEMENT_STOP = "Events::Gameplay::Ghost::MOVEMENT_STOP"_hash;
-		const EventId LINE_CREATED = "Events::Gameplay::Ghost::LINE_CREATED"_hash;
+		const EventId LINE_CREATED = "Events::Gameplay::Ghost::LINE_CREATED"_hash; // cancellable
 	}
 	namespace MiniGhost
 	{
@@ -58,6 +62,12 @@ namespace Events::General
 
 namespace Events::Gameplay
 {
+	namespace Player
+	{
+		const ParamId Position = "Events::Gameplay::Player::Position"_hash; // glm::vec3
+		const ParamId PushBackDistance = "Events::Gameplay::Player::PushBackDistance"_hash; // float
+		const ParamId PushBackForce = "Events::Gameplay::Player::PushBackForce"_hash; // float
+	}
 	namespace Ghost
 	{
 		const ParamId GhostLine = "Events::Gameplay::Ghost::GhostLine"_hash; // std::shared_ptr<GhostLine>

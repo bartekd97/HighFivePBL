@@ -30,12 +30,15 @@ private:
 	float dtsum = 0.0f;
 
 public:
-	void Awake()
+	TutorialPlayground()
 	{
 		RegisterIntParameter("minGhostCountPerLine", &minGhostCountPerLine);
 		RegisterFloatParameter("maxGhostDistance", &maxGhostDistance);
 		RegisterFloatParameter("maxEndpointDistance", &maxEndpointDistance);
+	}
 
+	void Awake()
+	{
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::LINE_CREATED, TutorialPlayground::OnGhostLineCreated));
 	}
 

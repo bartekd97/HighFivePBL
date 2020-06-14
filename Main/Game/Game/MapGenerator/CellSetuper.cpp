@@ -189,6 +189,7 @@ void CellSetuper::Setup()
 	else if (type == MapCell::Type::STARTUP)
 	{
 		GameObject gateObject = cellInfo.Bridges[0].Gate;
+		glm::vec3 gateWorldPosition = HFEngine::ECS.GetComponent<Transform>(gateObject).GetWorldPosition();
 		glm::vec3 gatePosition = HFEngine::ECS.GetComponent<Transform>(gateObject).GetPosition();
 		
 		glm::vec3 roadFront = glm::normalize(gatePosition);
@@ -206,6 +207,12 @@ void CellSetuper::Setup()
 			gatePosition - roadFront * 5.0f,
 			{0.0f, glm::degrees(roadRotation) + 180.0f, 0.0f}
 		);
+		// spawn enemy toy in world space
+		GameObject enemyToy = setupConfig.cellTutorialConfig.EnemyToy->Instantiate(
+			gateWorldPosition - roadFront * 5.0f,
+			{ 0.0f, glm::degrees(roadRotation), 0.0f }
+			);
+		HFEngine::ECS.AddComponent<CellChild>(enemyToy, { cell });
 	}
 	// create fence fires on boss cell
 	else if (type == MapCell::Type::BOSS)

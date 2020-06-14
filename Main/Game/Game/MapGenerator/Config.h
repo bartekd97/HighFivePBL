@@ -125,6 +125,7 @@ struct CellTutorialConfig
     std::shared_ptr<Prefab> SpaceKey;
     std::shared_ptr<Prefab> LMBKey;
     std::shared_ptr<Prefab> GhostPlayground;
+    std::shared_ptr<Prefab> EnemyToy;
 
     CellTutorialConfig()
     {
@@ -132,6 +133,7 @@ struct CellTutorialConfig
         SpaceKey = PrefabManager::GetPrefab("Tutorial/SpaceKey");
         LMBKey = PrefabManager::GetPrefab("Tutorial/LMBKey");
         GhostPlayground = PrefabManager::GetPrefab("Tutorial/GhostPlayground");
+        EnemyToy = PrefabManager::GetPrefab("Tutorial/EnemyToy");
     }
 };
 

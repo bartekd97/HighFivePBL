@@ -11,3 +11,4 @@
 #include "TriggerTest.h"
 #include "GUIStatistics.h"
 #include "TutorialPlayground.h"
+#include "TutorialEnemy.h"
