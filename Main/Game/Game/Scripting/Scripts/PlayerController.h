@@ -163,6 +163,8 @@ public:
 		auto& animator = GetAnimator();
 		auto& rigidBody = GetRigidBody();
 
+		if (IsDead()) return;
+
 		bool isMoving = UpdateMovement(dt);
 
 		if (isMoving)
@@ -263,6 +265,11 @@ public:
 
 		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
 		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, (1.0f - health / maxHealth) * healthMaxOpacity);
+	}
+
+	bool IsDead()
+	{
+		return health <= 0;
 	}
 
 	bool UpdateMovement(float dt)

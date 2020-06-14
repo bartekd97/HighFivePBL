@@ -178,6 +178,8 @@ public:
 	//float pathdt = 0.0f;
 	void Update(float dt)
 	{
+		timerAnimator.Process(dt);
+
 		auto& transform = GetTransform();
 		auto& rigidBody = GetRigidBody();
 		auto& pathfinder = GetPathfinder();
@@ -190,6 +192,8 @@ public:
 			}
 			return;
 		}
+
+		if (playerController->IsDead()) return;
 
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 
@@ -287,8 +291,6 @@ public:
 			if (currentMoveSpeed > 0.01f)
 				rigidBody.Move(transform.GetPosition() + moveBy);
 		}
-
-		timerAnimator.Process(dt);
 	}
 
 
