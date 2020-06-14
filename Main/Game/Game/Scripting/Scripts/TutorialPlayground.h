@@ -10,6 +10,7 @@
 #include "Event/Events.h"
 #include "HFEngine.h"
 #include "Utility/Utility.h"
+#include "Utility/TimerAnimator.h"
 
 class TutorialPlayground : public Script
 {
@@ -30,6 +31,8 @@ private:
 	int activeLineTemplate = 0;
 	bool playgroundActive = false;
 
+	TimerAnimator timerAnimator;
+
 	float dtsum = 0.0f;
 
 public:
@@ -43,6 +46,7 @@ public:
 	void Awake()
 	{
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::LINE_CREATED, TutorialPlayground::OnGhostLineCreated));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Tutorial::ENEMYTOY_KILLED, TutorialPlayground::OnTutorialEnemyToyKilled));
 	}
 
 	void Start()
@@ -63,6 +67,8 @@ public:
 
 	void Update(float dt)
 	{
+		timerAnimator.Process(dt);
+
 		if (!playgroundActive) return;
 
 		dtsum += dt;
@@ -159,6 +165,31 @@ public:
 		auto& lineRenderer = HFEngine::ECS.GetComponent<MeshRenderer>(lineTemplateObject[activeLineTemplate]);
 		lineRenderer.material->opacityValue = 0.0f;
 		activeLineTemplate++;
+
+		if (activeLineTemplate == 3)
+		{
+			auto& helperGhostRenderer = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(helperGhostObject);
+			helperGhostRenderer.material->opacityValue = 0.0f;
+			playgroundActive = false;
+		}
+	}
+
+	void OnTutorialEnemyToyKilled(Event& ev)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			auto& lineRenderer = HFEngine::ECS.GetComponent<MeshRenderer>(lineTemplateObject[i]);
+			lineRenderer.material->opacityValue = 0.0f;
+		}
+		auto& helperGhostRenderer = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(helperGhostObject);
+		helperGhostRenderer.material->opacityValue = 0.0f;
+
+		playgroundActive = false;
+
+		timerAnimator.DelayAction(0.5f, [&]() {
+			EventManager::FireEventTo(cellGateObject, Events::Gameplay::Gate::OPEN_ME);
+			DestroyGameObjectSafely();
+			});
 	}
 
 	void LateUpdate(float dt)

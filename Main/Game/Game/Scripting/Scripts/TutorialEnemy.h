@@ -228,6 +228,7 @@ public:
 		
 			if (health <= 0)
 			{
+				EventManager::FireEvent(Events::Gameplay::Tutorial::ENEMYTOY_KILLED);
 				DestroyGameObjectSafely();
 			}
 		}
