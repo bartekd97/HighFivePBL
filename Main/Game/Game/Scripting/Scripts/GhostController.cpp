@@ -232,12 +232,23 @@ void GhostController::EndMarking()
 		activeLines.emplace_back(gline);
 
 		CheckNewLineCrossings(gline);
-		CheckClosedLines();
 
-		if (activeLines.size() > maxActiveLines)
+		Event ev(Events::Gameplay::Ghost::LINE_CREATED);
+		ev.SetParam(Events::Gameplay::Ghost::GhostLine, gline);
+		EventManager::FireEvent(ev);
+
+		if (ev.WasCanceled())
 		{
-			//while (activeLines.Count > 0)
-			FadeOutLine(activeLines[0]);
+			FadeOutLine(gline);
+		}
+		else
+		{
+			CheckClosedLines();
+			if (activeLines.size() > maxActiveLines)
+			{
+				//while (activeLines.Count > 0)
+				FadeOutLine(activeLines[0]);
+			}
 		}
 	}
 
