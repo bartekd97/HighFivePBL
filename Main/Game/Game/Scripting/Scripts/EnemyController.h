@@ -17,6 +17,7 @@
 #include "Resourcing/Model.h"
 #include "Physics/Raycaster.h"
 #include "PlayerController.h"
+#include "MapCellOptimizer.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
@@ -30,6 +31,7 @@ private: // parameters
 	float maxHealth = 10.0f;
 	float dmgAnimationDuration = 0.5f;
 	float attackDistance = 1.5f;
+	float triggerDistance = 10.0f;
 
 private: // variables
 	GameObject visualObject;
@@ -41,6 +43,7 @@ private: // variables
 	float health;
 	bool isAttacking = false;
 	bool midAttack;
+	bool triggered = false;
 
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
@@ -54,6 +57,7 @@ private: // variables
 	GameObject playerObject;
 	GameObject cellObject;
 	std::shared_ptr<PlayerController> playerController;
+	std::shared_ptr<MapCellOptimizer> playerCellOptimizer;
 
 	Raycaster raycaster;
 
@@ -71,6 +75,7 @@ public:
 		RegisterFloatParameter("maxHealth", &maxHealth); 
 		RegisterFloatParameter("dmgAnimationDuration", &dmgAnimationDuration);
 		RegisterFloatParameter("attackDistance", &attackDistance);
+		RegisterFloatParameter("triggerDistance", &triggerDistance);
 	}
 
 	~EnemyController()
@@ -98,6 +103,7 @@ public:
 
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(playerObject);
 		playerController = scriptContainer.GetScript<PlayerController>();
+		playerCellOptimizer = scriptContainer.GetScript<MapCellOptimizer>();
 
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		defaultColor = mesh.material->emissiveColor;
@@ -186,6 +192,19 @@ public:
 
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 
+		if (!triggered)
+		{
+			if (playerCellOptimizer->GetCurrentCell() == cellObject)
+			{
+				if (glm::distance2(playerPos, transform.GetPosition()) <= triggerDistance)
+				{
+					triggered = true;
+				}
+			}
+
+			return;
+		}
+
 		if (isAttacking)
 		{
 			auto& animator = GetAnimator();
@@ -231,9 +250,7 @@ public:
 				// update test path
 				if (CanQueuePathThisFrame())
 				{
-					if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
-						//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
-						&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
+					if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
 						pathfinder.QueuePath(playerPos);
 				}
 
