@@ -202,11 +202,13 @@ void CellSetuper::Setup()
 		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, roadSide * 6.0f);
 
 		float roadRotation = glm::atan(roadFront.x, roadFront.z);
-		setupConfig.cellTutorialConfig.GhostPlayground->Instantiate(
+		GameObject ghostPlayground = setupConfig.cellTutorialConfig.GhostPlayground->Instantiate(
 			tutorialContainer,
 			gatePosition - roadFront * 5.0f,
 			{0.0f, glm::degrees(roadRotation) + 180.0f, 0.0f}
 		);
+		HFEngine::ECS.AddComponent<CellChild>(ghostPlayground, { cell });
+
 		// spawn enemy toy in world space
 		GameObject enemyToy = setupConfig.cellTutorialConfig.EnemyToy->Instantiate(
 			gateWorldPosition - roadFront * 5.0f,

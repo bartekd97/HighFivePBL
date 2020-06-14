@@ -6,6 +6,7 @@
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/SkinnedMeshRenderer.h"
 #include "ECS/Components/MeshRenderer.h"
+#include "ECS/Components/MapLayoutComponents.h"
 #include "Event/Events.h"
 #include "HFEngine.h"
 #include "Utility/Utility.h"
@@ -23,6 +24,8 @@ private:
 	GameObject lineTemplateObject[3];
 	GameObject helperGhostObject;
 
+	GameObject cellObject;
+	GameObject cellGateObject;
 
 	int activeLineTemplate = 0;
 	bool playgroundActive = false;
@@ -50,6 +53,10 @@ public:
 
 		helperGhostObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "HelperGhost")[0];
 		HFEngine::ECS.GetComponent<SkinAnimator>(helperGhostObject).SetAnimation("ghostrunning");
+
+		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
+		cellGateObject = HFEngine::ECS.GetComponent<MapCell>(cellObject).Bridges[0].Gate;
+		EventManager::FireEventTo(cellGateObject, Events::Gameplay::Gate::CLOSE_ME);
 
 		playgroundActive = true;
 	}

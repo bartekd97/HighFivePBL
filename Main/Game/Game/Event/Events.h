@@ -26,6 +26,11 @@ namespace Events::General
 
 namespace Events::Gameplay
 {
+	namespace Gate
+	{
+		const EventId OPEN_ME = "Events::Gameplay::Gate::OPEN_ME"_hash;
+		const EventId CLOSE_ME = "Events::Gameplay::Gate::CLOSE_ME"_hash;
+	}
 	namespace Player
 	{
 		const EventId PUSHBACK_ENEMIES = "Events::Gameplay::Player::PUSHBACK_ENEMIES"_hash;

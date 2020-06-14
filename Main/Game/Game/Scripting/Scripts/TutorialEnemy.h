@@ -6,7 +6,6 @@
 #include "ECS/Components/Transform.h"
 #include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
-#include "ECS/Components/MapLayoutComponents.h"
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "Rendering/PrimitiveRenderer.h"
