@@ -59,6 +59,15 @@ public:
 	glm::vec3 lastDistanceRecordPos;
 	std::vector<GameObject> spawnedMiniGhostsCurrent;
 
+private:
+	std::pair<FrameCounter, float> _upgradedMoveSpeed = { 0,0 };
+	std::pair<FrameCounter, float> _upgradedDistanceRecoverySpeed = { 0,0 };
+	std::pair<FrameCounter, float> _upgradedMaxGhostDistance = { 0,0 };
+public:
+	float GetUpgradedMoveSpeed(bool force = false);
+	float GetUpgradedDistanseRecoverySpeed(bool force = false);
+	float GetUpgradedMaxGhostDistance(bool force = false);
+
 
 	GhostController()
 	{
@@ -74,7 +83,7 @@ public:
 
 	void OnTriggerEnter(GameObject that, GameObject other);
 
-	inline float GetLeftGhostLevel() { return leftGhostDistance / maxGhostDistance; }
+	inline float GetLeftGhostLevel() { return leftGhostDistance / GetUpgradedMaxGhostDistance(); }
 
 	void MovementStart(Event& event);
 	void MovementStop(Event& event);

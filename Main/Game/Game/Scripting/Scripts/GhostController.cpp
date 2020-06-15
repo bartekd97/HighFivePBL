@@ -16,6 +16,35 @@
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 
+#define CheckUpgradeFloat(pairName, originalValue, eventName, force) if (HFEngine::CURRENT_FRAME_NUMBER - pairName.first > 4 || force) \
+	{ \
+	Event ev(eventName); \
+	ev.SetParam(Events::StatModification::FloatValue, originalValue); \
+	EventManager::FireEvent(ev); \
+	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
+	pairName.second = ev.GetParam<float>(Events::StatModification::FloatValue); \
+	} 
+
+
+float GhostController::GetUpgradedMoveSpeed(bool force)
+{
+	CheckUpgradeFloat(_upgradedMoveSpeed, moveSpeed, Events::StatModification::GHOST_MOVE_SPEED, force);
+	return _upgradedMoveSpeed.second;
+}
+
+float GhostController::GetUpgradedDistanseRecoverySpeed(bool force)
+{
+	CheckUpgradeFloat(_upgradedDistanceRecoverySpeed, ghostDistanceRecoverySpeed, Events::StatModification::GHOST_RECOVERY_SPEED, force);
+	return _upgradedDistanceRecoverySpeed.second;
+}
+
+float GhostController::GetUpgradedMaxGhostDistance(bool force)
+{
+	CheckUpgradeFloat(_upgradedMaxGhostDistance, maxGhostDistance, Events::StatModification::GHOST_MAX_DISTANCE, force);
+	return _upgradedMaxGhostDistance.second;
+}
+
+
 void GhostController::Awake()
 {
 	miniGhostPrefab = PrefabManager::GetPrefab("MiniGhost");
@@ -123,7 +152,7 @@ void GhostController::Update(float dt)
 	}
 
 	// smoth move speed
-	float targetMoveSpeed = moveSpeed;
+	float targetMoveSpeed = GetUpgradedMoveSpeed();
 	{
 		float diff = targetMoveSpeed - currentMoveSpeed;
 		float change = dt * moveSpeedSmoothing;

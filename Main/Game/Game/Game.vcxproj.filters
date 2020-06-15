@@ -241,6 +241,9 @@
     <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
     <ClInclude Include="Scripting\Scripts\StatueUser.h" />
     <ClInclude Include="Scripting\Scripts\PlayerUpgrader.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostDistance.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostRecovery.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostSpeed.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

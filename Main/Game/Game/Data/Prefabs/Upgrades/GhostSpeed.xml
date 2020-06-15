@@ -1,3 +1,8 @@
 <prefab defaultScale="1.0,1.0,1.0">
     <property name="description" value="Increase ghost movement speed" />
+
+    <component name="ScriptComponent">
+        <property name="name" value="Upgrade::GhostSpeed"/>
+        <property name="increaseBy" value="3.5"/>
+    </component>
 </prefab>

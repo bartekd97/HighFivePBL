@@ -239,8 +239,8 @@ public:
 		if (!hasGhostMovement)
 		{
 			ghostController->leftGhostDistance = std::min(
-				ghostController->maxGhostDistance,
-				ghostController->leftGhostDistance + dt * ghostController->ghostDistanceRecoverySpeed
+				ghostController->GetUpgradedMaxGhostDistance(),
+				ghostController->leftGhostDistance + dt * ghostController->GetUpgradedDistanseRecoverySpeed()
 			);
 		}
 

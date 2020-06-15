@@ -3,5 +3,6 @@
 
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::GhostRecovery"/>
+        <property name="increaseBy" value="2.5"/>
     </component>
 </prefab>

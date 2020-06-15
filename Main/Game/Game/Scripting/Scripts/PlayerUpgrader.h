@@ -32,6 +32,7 @@ private: // variables
 	int currentHoveredButton = -1;
 	glm::vec2 upgradeButtonSize = { 0.14f, 0.37f };
 	std::shared_ptr<Label> descriptionLabel;
+	bool canClickUpgradeButton = false;
 
 	std::vector<std::shared_ptr<Prefab>> upgradePrefabs;
 
@@ -121,6 +122,8 @@ public:
 
 	void ButtonClicked(int index)
 	{
+		if (!canClickUpgradeButton) return;
+
 		// create upgrade
 		upgradeButtons[index].upgradePrefab->Instantiate(upgradeContainer);
 
@@ -136,6 +139,8 @@ public:
 		}
 		timerAnimator.AnimateVariable(&upgradePanel->textureColor.color.a, upgradePanel->textureColor.color.a, 0.0f, 0.5f);
 		timerAnimator.DelayAction(1.5f, [&]() {upgradePanel->SetEnabled(false);});
+
+		canClickUpgradeButton = false;
 	}
 
 
@@ -187,6 +192,10 @@ public:
 			});
 
 		descriptionLabel->SetText("");
+
+		timerAnimator.DelayAction(1.5f, [&]() {
+			canClickUpgradeButton = true;
+			});
 	}
 
 

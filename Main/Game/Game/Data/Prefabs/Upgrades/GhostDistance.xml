@@ -3,5 +3,6 @@
 
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::GhostDistance"/>
+        <property name="increaseBy" value="7.0"/>
     </component>
 </prefab>
