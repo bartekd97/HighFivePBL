@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-class AudioManager
+namespace AudioManager
 {
+	/*
 	struct SoundInfo {
 		std::string name;
 		std::string path;
@@ -16,9 +17,9 @@ class AudioManager
 		std::string soundName;
 	};
 
-public:
 	std::vector <SoundInfo> soundInformation;
 	std::vector <SoundBuffer> buffers;
+	*/
 	void Init_al();
 	void Exit_al();
 	void GetAllWavFilesNamesWithinFolder();
@@ -41,10 +42,9 @@ public:
 	void RewindSource(ALuint& source);
 	void SetSourceVolume(ALuint& source, float volume);
 
-private:
-	ALenum error;
-	bool Initialized = false;
-	const char* CONFIG_FILE = "Data/Assets/Sounds/config.xml";
+	//ALenum error;
+	//bool Initialized = false;
+	//const char* CONFIG_FILE = "Data/Assets/Sounds/config.xml";
 };
 
 

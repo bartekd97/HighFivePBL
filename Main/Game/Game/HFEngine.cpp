@@ -23,6 +23,7 @@
 #include "GUI/GUIManager.h"
 #include "Scene/SceneManager.h"
 #include "Physics/Physics.h"
+#include "Audio/AudioManager.h"
 
 namespace HFEngine
 {
@@ -80,6 +81,8 @@ namespace HFEngine
 		EventManager::Initialize();
 		GUIManager::Initialize();
 		SceneManager::Initialize();
+
+		AudioManager::Init_al();
 
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize((float)RENDER_WIDTH / (float)RENDER_HEIGHT, 1.0f);
@@ -212,6 +215,7 @@ namespace HFEngine
 
 		Renderer.Init();
 
+
 		initialized = true;
 
 		return true;
@@ -229,6 +233,7 @@ namespace HFEngine
 		{
 			glfwTerminate();
 			GUIManager::Terminate();
+			AudioManager::Exit_al();
 		}
 		else
 		{
