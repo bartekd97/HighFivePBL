@@ -353,10 +353,10 @@ ALuint AudioManager::GetBuffer(std::string soundName)
 	return -1;
 }
 
-void AudioManager::CreateDefaultSourceAndPlay(std::string soundName, bool loop)
+void AudioManager::CreateDefaultSourceAndPlay(ALuint &source, std::string soundName, bool loop, float volume)
 {
 	//create source
-	ALuint source;
+	//ALuint source;
 
 	//get pregenerated buffer
 	ALuint buffer = GetBuffer(soundName);
@@ -364,6 +364,34 @@ void AudioManager::CreateDefaultSourceAndPlay(std::string soundName, bool loop)
 	//attach source to buffer and set default values
 	SetSource(source, buffer, loop);
 
+	//set volume
+	SetSourceVolume(source, volume);
+
 	//play source
 	PlaySoundFromSource(source);
+}
+
+void AudioManager::StopSource(ALuint &source)
+{
+	alSourceStop(source);
+}
+
+void AudioManager::PauseSource(ALuint& source)
+{
+	alSourcePause(source);
+}
+
+void AudioManager::ContinuePlayingSource(ALuint& source)
+{
+	PlaySoundFromSource(source);
+}
+
+void AudioManager::RewindSource(ALuint& source)
+{
+	alSourceRewind(source);
+}
+
+void AudioManager::SetSourceVolume(ALuint& source, float volume)
+{
+	alSourcef(source, AL_GAIN, volume);
 }
