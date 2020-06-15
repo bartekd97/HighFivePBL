@@ -44,11 +44,11 @@ int main()
 	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
 	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
-	AudioManager ac;
-	ac.Init_al();
+	//AudioManager ac;
+	//ac.Init_al();
 
 	ALuint source;
-	ac.CreateDefaultSourceAndPlay(source, "exciting_sound", true);
+	AudioManager::CreateDefaultSourceAndPlay(source, "exciting_sound", true);
 	//ALuint source2;
 	//ac.CreateDefaultSourceAndPlay(source2, "glass_ping", true, 0.01f);
 
@@ -74,7 +74,7 @@ int main()
 		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
 
-	ac.Exit_al();
+	//ac.Exit_al();
 
 	HFEngine::Terminate();
 

@@ -17,6 +17,7 @@
 #include "../../GUI/Panel.h"
 #include "Utility/TimerAnimator.h"
 #include "Resourcing/Prefab.h"
+#include "Audio/AudioManager.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -171,6 +172,10 @@ public:
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
+
+			ALuint source;
+			AudioManager::CreateDefaultSourceAndPlay(source, "death", false);
+
 			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
 				healthPanel->textureColor.color,
