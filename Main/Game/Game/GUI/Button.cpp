@@ -3,11 +3,14 @@
 #include "../WindowManager.h"
 #include "../Utility/Logger.h"
 #include "Text/TextRenderer.h"
+#include "Audio/AudioManager.h"
 
 #include "GUIManager.h"
 
 GLuint Button::vao;
 GLuint Button::vboVertices;
+ALuint source;
+
 
 Button::Button()
 {
@@ -57,6 +60,7 @@ Button::Button()
 
 void Button::Update(const glm::vec2& mousePosition)
 {
+
 	bool isOver = IsMouseOver(mousePosition);
 	bool isClicked = InputManager::GetMouseButtonState(GLFW_MOUSE_BUTTON_LEFT);
 
@@ -75,10 +79,14 @@ void Button::Update(const glm::vec2& mousePosition)
 			}
 			if (state != STATE::PRESSED && OnStateChanged) OnStateChanged(STATE::PRESSED);
 			state = STATE::PRESSED;
+			AudioManager::CreateDefaultSourceAndPlay(source, "bum4", false);
 		}
 		else
 		{
-			if (state != STATE::HOVER && OnStateChanged) OnStateChanged(STATE::HOVER);
+			if (state != STATE::HOVER && OnStateChanged) {
+				OnStateChanged(STATE::HOVER);
+				AudioManager::CreateDefaultSourceAndPlay(source, "glass_ping", false, 0.1f);
+			}
 			state = STATE::HOVER;
 		}
 	}
