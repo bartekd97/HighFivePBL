@@ -36,7 +36,6 @@ public:
 	int SetSource(ALuint& source, ALuint& buffer, ALboolean loop);
 	void CreateDefaultSourceAndPlay(ALuint &source, std::string soundName, bool loop, float volume = 1.0f);
 	void StopSource(ALuint& source);
-	void StopSource(ALuint& source);
 	void PauseSource(ALuint& source);
 	void ContinuePlayingSource(ALuint& source);
 	void RewindSource(ALuint& source);
