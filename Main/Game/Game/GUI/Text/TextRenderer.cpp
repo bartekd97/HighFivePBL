@@ -81,7 +81,7 @@ namespace TextRenderer
 		return currentFont;
 	}
 
-	void RenderText(std::string text, float x, float y, float scale, glm::vec3 color)
+	void RenderText(std::string text, float x, float y, float scale, glm::vec4 color)
 	{
 		if (currentFont == nullptr)
 		{
@@ -90,7 +90,7 @@ namespace TextRenderer
 		}
 
 		textShader->use();
-		textShader->setVector3F("textColor", color);
+		textShader->setVector4F("textColor", color);
 		glActiveTexture(GL_TEXTURE0);
 
 		glBindVertexArray(VAO);
@@ -99,7 +99,7 @@ namespace TextRenderer
 		std::string::const_iterator c;
 		for (c = text.begin(); c != text.end(); c++)
 		{
-			Character ch = currentFont->GetCharacter(*c);
+			const Character& ch = currentFont->GetCharacter(*c);
 
 			float xpos = x + ch.Bearing.x * scale;
 			float ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
@@ -130,6 +130,8 @@ namespace TextRenderer
 		}
 		glBindVertexArray(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		Texture::NoBind(0, true);
 	}
 
 	void UpdateProjection()

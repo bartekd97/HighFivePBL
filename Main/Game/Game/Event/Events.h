@@ -53,6 +53,10 @@ namespace Events::Gameplay
 		const EventId FADE_ME_OUT = "Events::Gameplay::MiniGhost::FADE_ME_OUT"_hash;
 		const EventId ATTACK = "Events::Gameplay::MiniGhost::ATTACK"_hash;
 	}
+	namespace Upgrades
+	{
+		const EventId REQUEST_UPGRADE = "Events::Gameplay::Upgrades::REQUEST_UPGRADE"_hash;
+	}
 	namespace Tutorial
 	{
 		const EventId ENEMYTOY_KILLED = "Events::Gameplay::Tutorial::ENEMYTOY_KILLED"_hash;

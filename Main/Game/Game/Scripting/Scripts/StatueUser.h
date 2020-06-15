@@ -91,6 +91,7 @@ public:
 			}
 
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_CANCEL);
+			EventManager::FireEvent(Events::Gameplay::Upgrades::REQUEST_UPGRADE);
 		}
 	}
 

@@ -5,6 +5,7 @@
 #include "PlayerController.h"
 #include "PlayerCameraFollower.h"
 #include "GhostController.h"
+#include "PlayerUpgrader.h"
 #include "MiniGhost.h"
 #include "EnemyController.h"
 #include "MapCellOptimizer.h"
@@ -15,3 +16,7 @@
 #include "GUIStatistics.h"
 #include "TutorialPlayground.h"
 #include "TutorialEnemy.h"
+
+#include "Upgrades/GhostDistance.h"
+#include "Upgrades/GhostRecovery.h"
+#include "Upgrades/GhostSpeed.h"

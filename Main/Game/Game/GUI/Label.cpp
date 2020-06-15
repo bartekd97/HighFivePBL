@@ -6,7 +6,7 @@ Label::Label()
 {
 	this->text = "";
 	SetFontSize(48); //TODO: ??
-	color = glm::vec3(0.0f);
+	color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void Label::Draw()
@@ -56,5 +56,17 @@ void Label::CalculateSize()
 			tmpSize.y = tmp;
 		}
 	}
+
+	if (GetCoordinatesType() == Widget::CoordinatesType::RELATIVE)
+	{
+		glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);
+		if (parent != nullptr)
+		{
+			parentSize = parent->GetLocalSize();
+		}
+
+		tmpSize /= parentSize;
+	}
+
 	SetSize(tmpSize);
 }

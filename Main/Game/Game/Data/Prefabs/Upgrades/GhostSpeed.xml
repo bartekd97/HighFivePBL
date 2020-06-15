@@ -1,0 +1,3 @@
+<prefab defaultScale="1.0,1.0,1.0">
+    <property name="description" value="Increase ghost movement speed" />
+</prefab>
