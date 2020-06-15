@@ -22,6 +22,7 @@ void GhostController::Awake()
 	miniGhostPrefab->MakeWarm();
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
+	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
 }
 
 void GhostController::Start()
@@ -90,6 +91,12 @@ void GhostController::MovementStop(Event& event)
 		});
 
 	EndMarking();
+}
+
+void GhostController::MovementCancel(Event& event)
+{
+	forceCancelNextLine = true;
+	EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 }
 
 void GhostController::Update(float dt)
@@ -237,7 +244,7 @@ void GhostController::EndMarking()
 		ev.SetParam(Events::Gameplay::Ghost::GhostLine, gline);
 		EventManager::FireEvent(ev);
 
-		if (ev.WasCanceled())
+		if (ev.WasCanceled() || forceCancelNextLine)
 		{
 			FadeOutLine(gline);
 		}
@@ -250,6 +257,7 @@ void GhostController::EndMarking()
 				FadeOutLine(activeLines[0]);
 			}
 		}
+		forceCancelNextLine = false;
 	}
 
 	recordedPositions.clear();

@@ -31,6 +31,10 @@ namespace Events::Gameplay
 		const EventId OPEN_ME = "Events::Gameplay::Gate::OPEN_ME"_hash;
 		const EventId CLOSE_ME = "Events::Gameplay::Gate::CLOSE_ME"_hash;
 	}
+	namespace Statue
+	{
+		const EventId MAKE_ME_USABLE = "Events::Gameplay::Statue::MAKE_ME_USABLE"_hash;
+	}
 	namespace Player
 	{
 		const EventId DEATH = "Events::Gameplay::Player::DEATH"_hash;
@@ -41,6 +45,7 @@ namespace Events::Gameplay
 	{
 		const EventId MOVEMENT_START = "Events::Gameplay::Ghost::MOVEMENT_START"_hash;
 		const EventId MOVEMENT_STOP = "Events::Gameplay::Ghost::MOVEMENT_STOP"_hash;
+		const EventId MOVEMENT_CANCEL = "Events::Gameplay::Ghost::MOVEMENT_CANCEL"_hash; // consequently triggers MOVEMENT_STOP in GhostController
 		const EventId LINE_CREATED = "Events::Gameplay::Ghost::LINE_CREATED"_hash; // cancellable
 	}
 	namespace MiniGhost

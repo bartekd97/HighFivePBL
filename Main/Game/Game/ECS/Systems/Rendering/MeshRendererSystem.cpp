@@ -121,16 +121,19 @@ unsigned int MeshRendererSystem::RenderForward(Camera& viewCamera, DirectionalLi
 	do {
 		MeshRenderer* renderer = delayedForward.back();
 
-		if (renderer->doubleSided != lastDoubleSided) {
-			lastDoubleSided = renderer->doubleSided;
-			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
-		}
+		if (renderer->material->opacityValue > 0.0001f)
+		{
+			if (renderer->doubleSided != lastDoubleSided) {
+				lastDoubleSided = renderer->doubleSided;
+				lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+			}
 
-		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
-		renderer->material->apply(forwardShader);
-		renderer->mesh->bind();
-		renderer->mesh->draw();
-		rendered++;
+			forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
+			renderer->material->apply(forwardShader);
+			renderer->mesh->bind();
+			renderer->mesh->draw();
+			rendered++;
+		}
 
 		delayedForward.pop_back();
 	} while (!delayedForward.empty());

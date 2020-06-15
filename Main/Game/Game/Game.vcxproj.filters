@@ -239,6 +239,7 @@
     <ClInclude Include="Scripting\Scripts\TutorialEnemy.h" />
     <ClInclude Include="Scripting\Scripts\GateOpener.h" />
     <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
+    <ClInclude Include="Scripting\Scripts\StatueUser.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

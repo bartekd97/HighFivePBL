@@ -154,19 +154,22 @@ unsigned int SkinnedMeshRendererSystem::RenderForward(Camera& viewCamera, Direct
 	do {
 		SkinnedMeshRenderer* renderer = delayedForward.back();
 
-		if (renderer->doubleSided != lastDoubleSided) {
-			lastDoubleSided = renderer->doubleSided;
-			lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+		if (renderer->material->opacityValue > 0.0001f)
+		{
+			if (renderer->doubleSided != lastDoubleSided) {
+				lastDoubleSided = renderer->doubleSided;
+				lastDoubleSided ? glDisable(GL_CULL_FACE) : glEnable(GL_CULL_FACE);
+			}
+
+			forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
+			CheckBoneMatricesBuffer(*renderer);
+			renderer->boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
+
+			renderer->material->apply(forwardShader);
+			renderer->mesh->bind();
+			renderer->mesh->draw();
+			rendered++;
 		}
-
-		forwardShader->setMat4("gModel", renderer->cullingData.worldTransform);
-		CheckBoneMatricesBuffer(*renderer);
-		renderer->boneMatricesBuffer->bind(BONE_MATRICES_BUFFER_BINING_POINT);
-
-		renderer->material->apply(forwardShader);
-		renderer->mesh->bind();
-		renderer->mesh->draw();
-		rendered++;
 
 		delayedForward.pop_back();
 	} while (!delayedForward.empty());

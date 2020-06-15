@@ -42,6 +42,8 @@ private: // variables
 	int numberOfEnemyToHit = 1;
 	int numberOfEnemyHit = 0;
 
+	bool forceCancelNextLine = false;
+
 public:
 	float maxGhostDistance = 20.0f;
 	float ghostDistanceRecoverySpeed = 5.0f;
@@ -76,6 +78,7 @@ public:
 
 	void MovementStart(Event& event);
 	void MovementStop(Event& event);
+	void MovementCancel(Event& event);
 
 
 	void Update(float dt);

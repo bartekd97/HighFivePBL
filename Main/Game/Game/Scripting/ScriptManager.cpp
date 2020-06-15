@@ -56,6 +56,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(CellSupervisor);
 		REGISTER_SCRIPT(GateOpener);
+		REGISTER_SCRIPT(StatueUser);
 		REGISTER_SCRIPT(TriggerTest);
 		REGISTER_SCRIPT(GUIStatistics);
 		REGISTER_SCRIPT(TutorialPlayground);

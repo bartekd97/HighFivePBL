@@ -80,6 +80,8 @@ public:
 		RegisterFloatParameter("maxHealth", &maxHealth);
 		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
 		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
+
+		RegisterFloatParameter("ghostCooldown", &ghostCooldown);
 		RegisterFloatParameter("pushbackCooldown", &pushbackCooldown);
 
 		RegisterFloatParameter("torchCooldownEmitRate", &torchCooldownEmitRate);

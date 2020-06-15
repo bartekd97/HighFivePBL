@@ -15,8 +15,8 @@ public:
 	};
 
 private: // parameters
-	std::string leftWingName;
-	std::string rightWingName;
+	std::string leftWingName = "LeftWingAxle";
+	std::string rightWingName = "RightWingAxle";
 	glm::vec3 leftRotationOpened = { 0.0f, 90.0f, 0.0f };
 	glm::vec3 leftRotationClosed = { 0.0f, 0.0f, 0.0f };
 	glm::vec3 rightRotationOpened = { 0.0f, -90.0f, 0.0f };

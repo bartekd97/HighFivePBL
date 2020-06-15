@@ -23,6 +23,7 @@ public:
     Type CellType;
     std::vector<BridgeTo> Bridges;
     GameObject EnemyContainer = NULL_GAMEOBJECT;
+    GameObject Statue = NULL_GAMEOBJECT;
 
     std::shared_ptr<PathfindingGrid> PathFindingGrid;
     //std::vector<GameObject> Enemies;

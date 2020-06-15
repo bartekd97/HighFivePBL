@@ -10,6 +10,7 @@
 #include "MapCellOptimizer.h"
 #include "CellSupervisor.h"
 #include "GateOpener.h"
+#include "StatueUser.h"
 #include "TriggerTest.h"
 #include "GUIStatistics.h"
 #include "TutorialPlayground.h"
