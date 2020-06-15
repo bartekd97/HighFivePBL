@@ -168,7 +168,8 @@ public:
 	{
 		health -= dmg;
 		lastDmgTime = std::chrono::high_resolution_clock::now();
-
+		ALuint source1;
+		AudioManager::CreateDefaultSourceAndPlay(source1, "damage4", false);
 		if (health <= 0.0f)
 		{
 			health = 0.0f;

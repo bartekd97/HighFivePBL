@@ -48,7 +48,7 @@ int main()
 	//ac.Init_al();
 
 	ALuint source;
-	AudioManager::CreateDefaultSourceAndPlay(source, "exciting_sound", true);
+	AudioManager::CreateDefaultSourceAndPlay(source, "menu", true);
 	//ALuint source2;
 	//ac.CreateDefaultSourceAndPlay(source2, "glass_ping", true, 0.01f);
 
