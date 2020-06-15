@@ -46,7 +46,7 @@ int main()
 
 	AudioManager ac;
 	ac.Init_al();
-	ac.CreateDefaultSourceAndPlay("exciting_sound", true);
+	ac.CreateDefaultSourceAndPlay("bum4", true);
 	
 	// request initial scene
 	SceneManager::RequestLoadScene("MainMenu");
