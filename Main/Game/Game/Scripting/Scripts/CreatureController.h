@@ -28,9 +28,19 @@ public:
 
 	virtual void TakeDamage(float dmg) = 0;
 
-	void SetSlow(float slow)
+	inline void SetSlow(float slow)
 	{
 		this->slow = slow;
+	}
+
+	inline float GetSlow()
+	{
+		return slow;
+	}
+
+	inline bool GetIsFlying()
+	{
+		return isFlying;
 	}
 
 	void Move(const glm::vec3& direction, float dt)

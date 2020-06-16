@@ -248,6 +248,8 @@
     <ClInclude Include="Scripting\Scripts\Upgrades\PushbackDistance.h" />
     <ClInclude Include="Scripting\Scripts\Upgrades\PushbackForce.h" />
     <ClInclude Include="Scripting\Scripts\CreatureController.h" />
+    <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
+    <ClInclude Include="Scripting\Scripts\MudController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

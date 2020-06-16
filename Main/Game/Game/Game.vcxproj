@@ -306,6 +306,8 @@
     <ClInclude Include="Scripting\Scripts\GateOpener.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
     <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
+    <ClInclude Include="Scripting\Scripts\MudController.h" />
+    <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
     <ClInclude Include="Scripting\Scripts\PlayerCameraFollower.h" />
     <ClInclude Include="Scripting\Scripts\PlayerController.h" />
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />

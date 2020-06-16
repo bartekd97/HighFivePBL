@@ -8,6 +8,9 @@
     <component name="MeshRenderer">
         <property name="configureFromHolder" value="true" />
     </component>
+    <component name="ScriptComponent">
+      <property name="name" value="MudController"/>
+    </component>
 
     <children>
         <child name="MudTrigger" position="1.067,0,0.322" rotation="0,0,0" scale="1,1,1">
