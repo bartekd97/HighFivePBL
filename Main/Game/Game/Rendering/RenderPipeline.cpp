@@ -176,6 +176,8 @@ void RenderPipeline::Init()
 	combineGBufferShader->setInt("gMetalnessRoughnessShadow", (int)GBufferBindingPoint::METALNESS_ROUGHNESS_SHADOW);
 	combineGBufferShader->setInt("gEmissive", (int)GBufferBindingPoint::EMISSIVE);
 
+	PrimitiveRenderer::Init();
+
 	initialized = true;
 	LogInfo("RenderPipeline initialized.");
 }

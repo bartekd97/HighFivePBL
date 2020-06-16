@@ -12,6 +12,18 @@
 std::vector<glm::vec3> linePoints;
 std::vector<glm::vec3> stickyPoints;
 
+void OnGameObjectsClear(Event& ev)
+{
+	linePoints.clear();
+	stickyPoints.clear();
+}
+
+void PrimitiveRenderer::Init()
+{
+	LogInfo("PrimitiveRenderer initialized.");
+	EventManager::AddListener(FUNCTION_LISTENER(Events::General::GAMEOBJECTS_CLEAR, OnGameObjectsClear));
+}
+
 void PrimitiveRenderer::DrawScreenQuad()
 {
 	static GLuint quadVAO = 0;
