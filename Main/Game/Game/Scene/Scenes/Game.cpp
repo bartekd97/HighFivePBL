@@ -2,6 +2,7 @@
 #include "HFEngine.h"
 #include "ECS/Components/ScriptContainer.h"
 #include "MapGenerator/MapGenerator.h"
+#include "Audio/AudioManager.h"
 
 
 void GameScene::OnLoad()
@@ -35,6 +36,8 @@ void GameScene::OnLoad()
 	HFEngine::WorldLight.shadowmapScale = 1.25f;
 
 	HFEngine::MainCamera.SetScale(15.0f); // orig was 12.6f
+	AudioManager::StopBackground();
+	AudioManager::PlayBackground("gameplayKorpecki", 0.1f);
 }
 
 void GameScene::OnUnload()

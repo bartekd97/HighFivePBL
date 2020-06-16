@@ -260,6 +260,8 @@ public:
 			}
 			lostGameButton->SetEnabled(true);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
+			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "ghostly_game_over", false, 2.0f);
+
 		}
 	}
 

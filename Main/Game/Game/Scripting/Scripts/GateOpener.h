@@ -73,7 +73,7 @@ public:
 		});
 
 		currentState = State::OPENED;
-		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.1f);
+		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.05f);
 
 	}
 
@@ -88,7 +88,7 @@ public:
 			leftTransform.SetRotation(glm::mix(leftRotationOpened, leftRotationClosed, prog));
 			rightTransform.SetRotation(glm::mix(rightRotationOpened, rightRotationClosed, prog));
 			});
-		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.1f);
+		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.05f);
 
 		currentState = State::CLOSED;
 	}

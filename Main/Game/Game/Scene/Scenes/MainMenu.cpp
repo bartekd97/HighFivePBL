@@ -7,6 +7,7 @@
 #include "GUI/Widgets.h"
 #include "Resourcing/Texture.h"
 #include "Scene/SceneManager.h"
+#include "Audio/AudioManager.h"
 
 namespace MainMenuUI
 {
@@ -14,11 +15,13 @@ namespace MainMenuUI
 
 	std::map<int, std::shared_ptr<Button>> buttons;
 	std::map<int, std::shared_ptr<Panel>> buttonHovers;
+	//ALuint sourceMenu;
 
 	void ButtonClicked(std::string name);
 
 	void Show()
 	{
+		//AudioManager::CreateDefaultSourceAndPlay(sourceMenu, "menuKorpecki", true, 0.2f);
 		if (viniete != nullptr)
 		{
 			// menu already created - just show it
@@ -103,6 +106,8 @@ namespace MainMenuUI
 		{
 			HFEngine::Terminate();
 		}
+		//AudioManager::StopSource(sourceMenu);
+
 	}
 }
 
@@ -112,7 +117,8 @@ void MainMenuScene::OnLoad()
 	//
 	// SPAWN THINGS
 	//
-
+	AudioManager::StopBackground();
+	AudioManager::PlayBackground("menuKorpecki", 0.2f);
 	auto mainMenuPrefab = PrefabManager::GetPrefab("MainMenu");
 	auto mainMenuObject = mainMenuPrefab->Instantiate();
 	auto playerDummyObject = HFEngine::ECS.GetByNameInChildren(mainMenuObject, "PlayerDummy")[0];
