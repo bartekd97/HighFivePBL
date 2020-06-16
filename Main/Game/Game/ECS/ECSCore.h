@@ -48,6 +48,8 @@ public:
 		return gameObjectManager->GetLivingGameObjectCount();
 	}
 
+	void ClearGameObjects();
+
 	template<typename T>
 	void RegisterComponent()
 	{

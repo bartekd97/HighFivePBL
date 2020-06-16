@@ -12,6 +12,8 @@ namespace HFEngine
 
 	void ProcessGameFrame(float dt);
 
+	void ClearGameObjects();
+
 	extern ECSCore ECS;
 	extern RenderPipeline Renderer;
 	extern Camera MainCamera;

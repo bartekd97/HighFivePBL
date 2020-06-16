@@ -18,6 +18,7 @@ namespace Events::Test
 
 namespace Events::General
 {
+	const EventId GAMEOBJECTS_CLEAR = "Events::General::GAMEOBJECTS_CLEAR"_hash;
 	const EventId FRAME_START = "Events::General::FRAME_START"_hash;
 	const EventId UPDATE = "Events::General::UPDATE"_hash;
 	const EventId POST_UPDATE = "Events::General::POST_UPDATE"_hash;
@@ -26,6 +27,10 @@ namespace Events::General
 
 namespace Events::Gameplay
 {
+	namespace Map
+	{
+		const EventId GENERATED = "Events::Gameplay::Map::GENERATED"_hash;
+	}
 	namespace Gate
 	{
 		const EventId OPEN_ME = "Events::Gameplay::Gate::OPEN_ME"_hash;

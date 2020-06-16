@@ -68,6 +68,14 @@ void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
 	}
 }
 
+void ECSCore::ClearGameObjects()
+{
+	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
+	{
+		if (gameObjectManager->IsValid(i)) DestroyGameObject(i);
+	}
+}
+
 bool ECSCore::IsEnabledGameObject(GameObject gameObject)
 {
 	return gameObjectManager->IsEnabled(gameObject);

@@ -47,7 +47,7 @@ Button::Button()
 		initialized = true;
 	}
 
-	// TODO: ogar to gówno razem z enumami zjebanymi
+	// TODO: ogar to gÃ³wno razem z enumami zjebanymi
 	for (int i = (int)STATE::NORMAL; i <= (int)STATE::HOVER; i++)
 	{
 		TextureColor tc;
@@ -85,7 +85,7 @@ void Button::Update(const glm::vec2& mousePosition)
 		{
 			if (state != STATE::HOVER && OnStateChanged) {
 				OnStateChanged(STATE::HOVER);
-				AudioManager::CreateDefaultSourceAndPlay(source, "glass_ping", false, 0.02f);
+				AudioManager::CreateDefaultSourceAndPlay(source, "click_button", false, 0.1f);
 			}
 			state = STATE::HOVER;
 		}
