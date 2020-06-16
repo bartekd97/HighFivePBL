@@ -53,6 +53,11 @@ public:
 		}
 	}
 
+	GameObject GetCurrentCell()
+	{
+		return currentCell;
+	}
+
 private:
 	void CalculateCurrentCell() // TODO: temporary, only start function
 	{

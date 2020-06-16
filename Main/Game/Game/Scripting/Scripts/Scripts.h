@@ -8,5 +8,8 @@
 #include "MiniGhost.h"
 #include "EnemyController.h"
 #include "MapCellOptimizer.h"
+#include "GateOpener.h"
 #include "TriggerTest.h"
 #include "GUIStatistics.h"
+#include "TutorialPlayground.h"
+#include "TutorialEnemy.h"

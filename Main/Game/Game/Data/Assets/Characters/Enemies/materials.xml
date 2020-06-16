@@ -5,4 +5,18 @@
         <property name="metalnessMap" value="axerMetal"/>
         <property name="roughnessMap" value="axerRough"/>
     </material>
+    <material name="AxerToyMat">
+        <property name="albedoMap" value="axerToyAlbedo"/>
+        <property name="normalMap" value="axerNorm"/>
+        <property name="metalnessMap" value="axerMetal"/>
+        <property name="roughnessMap" value="axerRough"/>
+        <property name="emissiveColor" value="0.02,0.02,0.0"/>
+    </material>
+
+    <material name="FlyerMat">
+        <property name="albedoMap" value="flyerAlbedo"/>
+        <property name="normalMap" value="flyerNorm"/>
+        <property name="metalnessMap" value="flyerMetal"/>
+        <property name="roughnessMap" value="flyerRough"/>
+    </material>
 </materials>
