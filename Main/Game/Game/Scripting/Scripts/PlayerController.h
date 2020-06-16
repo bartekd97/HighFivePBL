@@ -15,6 +15,7 @@
 #include "GhostController.h"
 #include "../../GUI/GUIManager.h"
 #include "../../GUI/Panel.h"
+#include "../../GUI/Button.h"
 #include "Utility/TimerAnimator.h"
 #include "Resourcing/Prefab.h"
 #include "Audio/AudioManager.h"
@@ -67,6 +68,7 @@ private: // variables
 	std::shared_ptr<Panel> ghostValueBarPanel;
 	std::shared_ptr<Panel> healthPanel;
 	std::shared_ptr<Panel> lostGamePanel;
+	std::shared_ptr<Button> lostGameButton;
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
 
@@ -154,11 +156,27 @@ public:
 		lostGamePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		lostGamePanel->SetSize({ 0.333f, 0.444f });
 		lostGamePanel->SetPivot(Anchor::CENTER);
-		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.2f, 0.0f), Anchor::CENTER);
+		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.15f, 0.0f), Anchor::CENTER);
 		lostGamePanel->textureColor.texture = TextureManager::GetTexture("GUI", "lostGame");
 		lostGamePanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 		GUIManager::AddWidget(lostGamePanel, nullptr, 3);
 		lostGamePanel->SetEnabled(false);
+
+		lostGameButton = std::make_shared<Button>();
+		lostGameButton->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.05f, 0.0f), Anchor::CENTER);
+		lostGameButton->SetSize({ 0.1953f, 0.125f });//250 120
+		lostGameButton->SetPivot(Anchor::CENTER);
+		//lostGameButton->OnClickListener = GUI_METHOD_POINTER(GUIStatistics::OnHideShowButtonClick);
+
+		for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
+		{
+			lostGameButton->textureColors[(Button::STATE)i].texture = TextureManager::GetTexture("GUI", "lostGameButton");
+			lostGameButton->textureColors[(Button::STATE)i].color = glm::vec4(glm::vec3(1.0f), 0.6f + (i * 0.2f));
+		}
+
+		GUIManager::AddWidget(lostGameButton, nullptr, 3);
+		lostGameButton->SetEnabled(false);
 	}
 
 	void GhostMovementStart(Event& event) {
@@ -205,6 +223,15 @@ public:
 				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
 				3.0f
 			);
+			for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
+			{
+				timerAnimator.AnimateVariable(&lostGameButton->textureColors[(Button::STATE)i].color,
+					glm::vec4(glm::vec3(1.0f), 0.0f),
+					lostGameButton->textureColors[(Button::STATE)i].color,
+					3.0f
+				);
+			}
+			lostGameButton->SetEnabled(true);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
 		}
 	}
