@@ -35,6 +35,7 @@ public:
 private:
 	std::vector<Zone> zones;
 	std::vector<GameObject> tempColliders;
+	std::vector<GameObject> tempObstacleColliders;
 	std::vector<float> rotations;
 	int largestZoneSize;
 
@@ -57,6 +58,7 @@ private:;
 	void PrepareColliders();
 	void UpdateColliders();
 	void ClearTempColliders();
+	void ClearTempObstacleColliders();
 
 	void CreateFenceFires(std::shared_ptr<Prefab> firePrefab);
 
