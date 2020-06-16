@@ -97,6 +97,7 @@
     <ClCompile Include="ECS\GameObjectManager.cpp" />
     <ClCompile Include="ECS\Systems\BoneAttacherSystem.cpp" />
     <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
+    <ClCompile Include="ECS\Systems\GarbageCollectorSystem.cpp" />
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\NextFrameDestroySystem.cpp" />
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
@@ -214,6 +215,7 @@
     <ClInclude Include="ECS\Systems.h" />
     <ClInclude Include="ECS\Systems\BoneAttacherSystem.h" />
     <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
+    <ClInclude Include="ECS\Systems\GarbageCollectorSystem.h" />
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
     <ClInclude Include="ECS\Systems\NextFrameDestroySystem.h" />
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
