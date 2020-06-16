@@ -77,6 +77,7 @@ public:
 	{
 		GUIManager::RemoveWidget(upgradePanel);
 		GUIManager::RemoveWidget(upgradesBarPanel);
+		GUIManager::RemoveWidget(upgradeAnimIconPanel);
 	}
 
 	void Awake()
