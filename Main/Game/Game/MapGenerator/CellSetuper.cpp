@@ -313,6 +313,8 @@ void CellSetuper::SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localP
 	HFEngine::ECS.AddComponent<Collider>(tmpCollider, col);
 	HFEngine::ECS.AddComponent<BoxCollider>(tmpCollider, boxCol);
 	tempObstacleColliders.push_back(tmpCollider);
+
+	Physics::ProcessGameObjects(tsl::robin_set<GameObject>({ tmpCollider }));
 }
 
 void CellSetuper::SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation)
