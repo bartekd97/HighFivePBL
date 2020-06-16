@@ -2,6 +2,7 @@
 #include "HFEngine.h"
 #include "ECS/Components/ScriptContainer.h"
 #include "MapGenerator/MapGenerator.h"
+#include "Audio/AudioManager.h"
 
 
 void GameLiteScene::OnLoad()
@@ -9,7 +10,8 @@ void GameLiteScene::OnLoad()
 	//
 	// SPAWN THINGS
 	//
-
+	AudioManager::StopBackground();
+	AudioManager::PlayBackground("gameplayKorpecki", 0.1f);
 	MapGenerator generator;
 	generator._debugLiteMode = true;
 	generator.Generate();

@@ -36,6 +36,8 @@ namespace AudioManager
 	ALuint GetBuffer(std::string soundName);
 	int SetSource(ALuint& source, ALuint& buffer, ALboolean loop);
 	void CreateDefaultSourceAndPlay(ALuint &source, std::string soundName, bool loop, float volume = 1.0f);
+	void PlayBackground(std::string soundName, float volume);
+	void StopBackground();
 	void StopSource(ALuint& source);
 	void PauseSource(ALuint& source);
 	void ContinuePlayingSource(ALuint& source);
