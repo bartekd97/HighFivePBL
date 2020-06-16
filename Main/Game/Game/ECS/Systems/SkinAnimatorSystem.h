@@ -5,7 +5,7 @@
 
 // requires SkinnedMeshRenderer
 // requires SkinAnimator
-class SkinAnimatorSystem : public System, public ISystemUpdate
+class SkinAnimatorSystem : public System, public ISystemUpdate, public ISystemPostRender
 {
 private:
 	TaskPool<2, ITaskPool::Priority::ABOVE_NORMAL> skinAimatorWorker;
@@ -15,4 +15,5 @@ private:
 
 public:
 	void Update(float dt) override;
+	void PostRender() override;
 };

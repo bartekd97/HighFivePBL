@@ -320,6 +320,7 @@ namespace HFEngine
 		HFEngine::ECS.PostUpdateSystems(dt);
 
 		HFEngine::Renderer.Render();
+		HFEngine::ECS.PostRenderSystems();
 		GUIManager::Draw();
 	}
 }

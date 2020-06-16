@@ -285,7 +285,7 @@ public:
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 
-			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE))
+			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE) &&  !hasGhostMovement)
 			{
 				StartPushBack();
 				isPushingBack = true;
