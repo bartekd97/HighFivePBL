@@ -29,6 +29,7 @@ private: // parameters
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
 	float attackDamage = 5.0f;
+	float stunTimeAfterPush = 0.7f;
 
 private: // variables
 	GameObject visualObject;
@@ -42,6 +43,8 @@ private: // variables
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
 	TimerAnimator timerAnimator;
+	bool lastFrameIsFalling = false;
+	std::chrono::steady_clock::time_point falledTime;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -70,6 +73,7 @@ public:
 		RegisterFloatParameter("attackDistance", &attackDistance);
 		RegisterFloatParameter("triggerDistance", &triggerDistance);
 		RegisterFloatParameter("attackDamage", &attackDamage);
+		RegisterFloatParameter("stunTimeAfterPush", &stunTimeAfterPush);
 	}
 
 	~EnemyController()
@@ -196,13 +200,28 @@ public:
 			{
 				DestroyGameObjectSafely();
 			}
+			if (!lastFrameIsFalling)
+			{
+				EndAttack(true);
+				lastFrameIsFalling = true;
+			}
 			return;
 		}
+		else if (lastFrameIsFalling)
+		{
+			falledTime = std::chrono::steady_clock::now();
+		}
+		lastFrameIsFalling = rigidBody.isFalling;
 
 		if (playerController->IsDead())
 		{
 			if (isAttacking) EndAttack(true);
 
+			return;
+		}
+
+		if (std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::steady_clock::now() - falledTime).count() < stunTimeAfterPush)
+		{
 			return;
 		}
 

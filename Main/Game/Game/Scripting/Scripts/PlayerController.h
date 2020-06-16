@@ -458,7 +458,7 @@ public:
 			emitterSmoke.emitting = true;
 			});
 		timerAnimator.DelayAction(0.35f, [&]() {
-			PushbackTest();
+			Pushback();
 			});
 		timerAnimator.DelayAction(0.5f, [&]() {
 			emitterSmoke.emitting = false;
@@ -476,7 +476,7 @@ public:
 			});
 	}
 
-	void PushbackTest()
+	void Pushback()
 	{
 		auto objects = HFEngine::ECS.GetGameObjectsByName("enemy");
 		glm::vec3 dir;
