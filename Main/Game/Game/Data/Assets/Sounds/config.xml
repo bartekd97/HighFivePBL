@@ -1,0 +1,24 @@
+<sounds>
+    <sound name="exciting_sound" path="Data/Assets/Sounds/exciting_sound.wav"/>
+	<sound name="glass_ping" path="Data/Assets/Sounds/glass_ping.wav"/>
+    <sound name="ambient" path="Data/Assets/Sounds/ambient.wav"/>
+    <sound name="menu" path="Data/Assets/Sounds/menu.wav"/>
+    <sound name="menu2" path="Data/Assets/Sounds/menu2.wav"/>
+    <sound name="bum" path="Data/Assets/Sounds/bum.wav"/>
+    <sound name="bum2" path="Data/Assets/Sounds/bum2.wav"/>
+    <sound name="bum3" path="Data/Assets/Sounds/bum3.wav"/>
+    <sound name="bum4" path="Data/Assets/Sounds/bum4.wav"/>
+    <sound name="bum5" path="Data/Assets/Sounds/bum5.wav"/>
+    <sound name="click" path="Data/Assets/Sounds/click.wav"/>
+    <sound name="damage1" path="Data/Assets/Sounds/damage1.wav"/>
+    <sound name="damage2" path="Data/Assets/Sounds/damage2.wav"/>
+    <sound name="damage3" path="Data/Assets/Sounds/damage3.wav"/>
+    <sound name="damage4" path="Data/Assets/Sounds/damage4.wav"/>
+    <sound name="death" path="Data/Assets/Sounds/death.wav"/>
+    <sound name="monsterdeath" path="Data/Assets/Sounds/monsterdeath.wav"/>
+    <sound name="hit1" path="Data/Assets/Sounds/hit1.wav"/>
+    <sound name="hit2" path="Data/Assets/Sounds/hit2.wav"/>
+    <sound name="hit3" path="Data/Assets/Sounds/hit3.wav"/>
+    <sound name="hit4" path="Data/Assets/Sounds/hit4.wav"/>
+
+</sounds>

@@ -1,5 +1,9 @@
 #include <AL/alut.h>
 #include "SoundManager.h"
+#include <tinyxml2.h>
+#include <iostream>
+
+using namespace tinyxml2;
 
 void SoundManager::InitSoundManager()
 {
@@ -14,7 +18,7 @@ void SoundManager::InitSoundManager()
 	alutInitWithoutContext(NULL, NULL);
 	error = alGetError(); //clear error code
 
-	GenerateBuffersSources();
+	//GenerateBuffersSources();
 }
 
 void SoundManager::ExitSoundManager()
@@ -33,106 +37,151 @@ void SoundManager::ExitSoundManager()
 	alcCloseDevice(dev);
 }
 
-std::vector<std::string> SoundManager::GetAllWavFilesNamesWithinFolder(std::string folder)
+void SoundManager::GetAllWavFilesNamesWithinFolder()
 {
-	std::vector<std::string> names;
-	/*
-	//Convert string to wstring
-	std::wstring search_path = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(folder);
-	//std::string search_path = folder + "/*.wav";
-	WIN32_FIND_DATA fd;
-	HANDLE hFind = ::FindFirstFile(search_path.c_str(), &fd);
-	if (hFind != INVALID_HANDLE_VALUE) {
-		do {
-			// read all (real) files in current folder
-			// , delete '!' read other 2 default folder . and ..
-			if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
-				//convert from wide char to narrow char array
-				char ch[260];
-				char DefChar = ' ';
-				WideCharToMultiByte(CP_ACP, 0, fd.cFileName, -1, ch, 260, &DefChar, NULL);
-				names.push_back(ch);
-			}
-		} while (::FindNextFile(hFind, &fd));
-		::FindClose(hFind);
+	if (Initialized)
+	{
+		LogWarning("SoundManager::Initialize(): Already initialized");
+		return;
 	}
-	*/
-	return names;
+
+	tinyxml2::XMLDocument doc;
+	auto loaded = doc.LoadFile(CONFIG_FILE);
+	if (loaded != XML_SUCCESS)
+	{
+		LogError("SoundManager::Initialize(): Cannot load xml config file. Code: {}", loaded);
+		return;
+	}
+
+	auto root = doc.FirstChildElement();
+	if (root == nullptr)
+	{
+		LogError("SoundManager::Initialize(): Cannot find root element in XML config file.");
+		return;
+	}
+
+	int i = 0;
+	for (XMLElement* node = root->FirstChildElement("sound");
+		node != nullptr;
+		node = node->NextSiblingElement("sound"), i++)
+	{
+		const XMLAttribute* attrID = node->FindAttribute("id");
+		const XMLAttribute* attrName = node->FindAttribute("name");
+
+		if (attrID == nullptr || attrName == nullptr)
+		{
+			LogWarning("SoundManager::Initialize(): Invalid shader node at #{}", i);
+			continue;
+		}
+
+		int soundID = std::stoi(attrID->Value());
+		std::string soundName = attrName->Value();
+
+		SoundInfo soundInfo;
+		soundInfo.id = soundID;
+		soundInfo.name = soundName;
+		this->soundInformation.push_back(soundInfo);
+	}
+
+	Initialized = true;
+
+	LogInfo("SoundManager initialized.");
 }
 
 int SoundManager::GenerateBuffersSources()
 {
-	std::vector<std::string> soundNames = GetAllWavFilesNamesWithinFolder(soundsFolderPath);
+	GetAllWavFilesNamesWithinFolder();
 
 	//pregenerate buffers
-	for (int i = 0; i < numBuffers; i++)
+	for (int i = 0; i < soundInformation.size(); i++)
 	{
 		SoundBuffer buffer;
-		//alGenBuffer((ALuint)1, &buffer.id);
+		buffer.id = soundInformation.at(i).id;
+		buffer.isFree = true;
+		std::string path = soundsFolderPath + soundInformation.at(i).name;
+		buffer.filename = soundInformation.at(i).name;
+		alGenBuffers((ALuint)1, &buffer.buffer);
+		buffer.buffer = alutCreateBufferFromFile(path.c_str());
 		this->buffers.push_back(buffer);
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
-		printf("alGenBuffers : %d", error);
+		printf("alGenBuffers or alutCreateBufferFromFile: %d", error);
 		return 0;
 	}
-
-	//fill buffers with additional data
-	for (int i = 0; i < soundNames.size(); i++)
+	/*
+	for (int i = 0; i < soundInformation.size(); i++)
 	{
-		this->buffers.at(i).id = i;
-		this->buffers.at(i).isFree = false;
-		this->buffers.at(i).filename = soundsFolderPath + soundNames.at(i);
-		alGenBuffers((ALuint)1, &buffers.at(i).buffer);
-		//buffers.at(i).buffer = alutCreateBufferFromFile(soundNames.at(i));
-	}
-	if ((error = alGetError()) != AL_NO_ERROR)
-	{
-		printf("alGenBuffers : %d", error);
-		return 0;
-	}
-
-	for (int i = 0; i < soundNames.size(); i++)
-	{
-		this->buffers.at(i).buffer = alutCreateBufferFromFile(soundNames.at(i).c_str());
+		this->buffers.at(i).buffer = alutCreateBufferFromFile(this->buffers.at(i).filename.c_str());
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alutCreateBufferFromFile : %d", error);
-		for (int i = 0; i < soundNames.size(); i++)
+		for (int i = 0; i < soundInformation.size(); i++)
 		{
-			alDeleteBuffers(numBuffers, &buffers.at(i).buffer);
+			alDeleteBuffers(soundInformation.size(), &buffers.at(i).buffer);
 		}
 		
 		return 0;
 	}
-
+	*/
 	for (int i = 0; i < numSources; i++)
 	{
 		SoundSource source;
 		//alGenSources((ALuint)1, &source.id);
+		source.id = i;
+		source.isFree = true;
+		alGenSources((ALuint)1, &source.source);
 		this->sources.push_back(source);
-	}
-	//if ((error = alGetError()) != AL_NO_ERROR)
-	//{
-	//	printf("alGenSources : %d", error);
-	//	return 0;
-	//}
-
-	for (int i = 0; i < sources.size(); i++)
-	{
-		this->sources.at(i).id = i;
-		this->sources.at(i).isFree = true;
-		alGenSources((ALuint)1, &sources.at(i).source);
 	}
 	if ((error = alGetError()) != AL_NO_ERROR)
 	{
 		printf("alGenSources : %d", error);
 		return 0;
 	}
+
 }
 
 //inicjalizacja threadow????
+
+int SoundManager::GenerateBuffers()
+{
+	GetAllWavFilesNamesWithinFolder();
+
+	//pregenerate buffers
+	for (int i = 0; i < soundInformation.size(); i++)
+	{
+		SoundBuffer buffer;
+		buffer.id = soundInformation.at(i).id;
+		buffer.isFree = true;
+		std::string path = soundsFolderPath + soundInformation.at(i).name;
+		buffer.filename = soundInformation.at(i).name;
+		alGenBuffers((ALuint)1, &buffer.buffer);
+		buffer.buffer = alutCreateBufferFromFile(path.c_str());
+		this->buffers.push_back(buffer);
+	}
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alGenBuffers or alutCreateBufferFromFile: %d", error);
+		return 0;
+	}
+	/*
+	for (int i = 0; i < soundInformation.size(); i++)
+	{
+		this->buffers.at(i).buffer = alutCreateBufferFromFile(this->buffers.at(i).filename.c_str());
+	}
+	if ((error = alGetError()) != AL_NO_ERROR)
+	{
+		printf("alutCreateBufferFromFile : %d", error);
+		for (int i = 0; i < soundInformation.size(); i++)
+		{
+			alDeleteBuffers(soundInformation.size(), &buffers.at(i).buffer);
+		}
+
+		return 0;
+	}
+	*/
+}
 
 std::vector <SoundManager::SoundBuffer> SoundManager::GetBuffers()
 {
@@ -144,16 +193,11 @@ std::vector<SoundManager::SoundSource> SoundManager::GetSources()
 	return this->sources;
 }
 /*
-void SoundManager::GetFreeSource()
-{
-
-}
-*/
 int SoundManager::GetNumBuffers()
 {
 	return this->numBuffers;
 }
-
+*/
 int SoundManager::GetNumSources()
 {
 	return this->numSources;
@@ -166,7 +210,6 @@ SoundManager::SoundSource SoundManager::GetSource(int sourceID)
 		if (sources.at(i).id == sourceID)
 		{
 			return sources.at(i);
-			break;
 		}
 	}
 }
@@ -178,7 +221,6 @@ SoundManager::SoundBuffer SoundManager::GetBuffer(int bufferID)
 		if (buffers.at(i).id == bufferID)
 		{
 			return buffers.at(i);
-			break;
 		}
 	}
 }
@@ -190,7 +232,6 @@ SoundManager::SoundBuffer SoundManager::GetBuffer(std::string bufferFilename)
 		if (buffers.at(i).filename == bufferFilename)
 		{
 			return buffers.at(i);
-			break;
 		}
 	}
 }
@@ -241,3 +282,15 @@ SoundManager::SoundSource SoundManager::GetFreeSource()
 	return sources.at(id);
 }
 
+ALuint SoundManager::GetActualBuffer(std::string filename, ALuint &buffer)
+{
+	for (int i = 0; i < buffers.size(); i++)
+	{
+		if (buffers.at(i).filename == filename)
+		{
+			buffer = buffers.at(i).buffer;
+			std::cout << buffer;
+			return buffer;
+		}
+	}
+}
