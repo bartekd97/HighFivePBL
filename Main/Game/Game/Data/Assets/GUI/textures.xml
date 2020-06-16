@@ -2,4 +2,5 @@
 	  <texture name="blank" file="blank.jpg" format="srgb" />
     <texture name="expand" file="expand.jpg" format="srgb" />
     <texture name="collapse" file="collapse.jpg" format="srgb" />
+    <texture name="lostGame" file="lost_game.png" format="srgba" />
 </textures>

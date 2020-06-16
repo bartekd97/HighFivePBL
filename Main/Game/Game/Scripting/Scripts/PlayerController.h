@@ -66,6 +66,7 @@ private: // variables
 	std::shared_ptr<Panel> ghostBarPanel;
 	std::shared_ptr<Panel> ghostValueBarPanel;
 	std::shared_ptr<Panel> healthPanel;
+	std::shared_ptr<Panel> lostGamePanel;
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
 
@@ -148,6 +149,16 @@ public:
 		healthPanel->textureColor.texture = TextureManager::GetTexture("GUI/Player", "playerHealth");
 		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 		GUIManager::AddWidget(healthPanel);
+
+		lostGamePanel = std::make_shared<Panel>();
+		lostGamePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		lostGamePanel->SetSize({ 0.333f, 0.444f });
+		lostGamePanel->SetPivot(Anchor::CENTER);
+		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.2f, 0.0f), Anchor::CENTER);
+		lostGamePanel->textureColor.texture = TextureManager::GetTexture("GUI", "lostGame");
+		lostGamePanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+		GUIManager::AddWidget(lostGamePanel, nullptr, 3);
+		lostGamePanel->SetEnabled(false);
 	}
 
 	void GhostMovementStart(Event& event) {
@@ -188,6 +199,12 @@ public:
 			timerAnimator.DelayAction(2.0f, [&]() {
 				HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = false;
 			});
+			lostGamePanel->SetEnabled(true);
+			timerAnimator.AnimateVariable(&lostGamePanel->textureColor.color,
+				lostGamePanel->textureColor.color,
+				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+				3.0f
+			);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
 		}
 	}
