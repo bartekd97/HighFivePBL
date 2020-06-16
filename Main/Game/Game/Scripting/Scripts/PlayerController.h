@@ -19,6 +19,7 @@
 #include "Utility/TimerAnimator.h"
 #include "Resourcing/Prefab.h"
 #include "Audio/AudioManager.h"
+#include "../../Scene/SceneManager.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -95,6 +96,9 @@ public:
 	~PlayerController()
 	{
 		GUIManager::RemoveWidget(ghostBarPanel);
+		GUIManager::RemoveWidget(healthPanel);
+		GUIManager::RemoveWidget(lostGamePanel);
+		GUIManager::RemoveWidget(lostGameButton);
 	}
 
 	void Awake()
@@ -167,7 +171,7 @@ public:
 		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.05f, 0.0f), Anchor::CENTER);
 		lostGameButton->SetSize({ 0.1953f, 0.125f });//250 120
 		lostGameButton->SetPivot(Anchor::CENTER);
-		//lostGameButton->OnClickListener = GUI_METHOD_POINTER(GUIStatistics::OnHideShowButtonClick);
+		lostGameButton->OnClickListener = GUI_METHOD_POINTER(PlayerController::BackToMainMenu);
 
 		for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
 		{
@@ -193,6 +197,12 @@ public:
 
 		ghostOnCooldown = true;
 		timerAnimator.DelayAction(ghostCooldown, [&]() {ghostOnCooldown = false;});
+	}
+
+	void BackToMainMenu()
+	{
+		SceneManager::RequestLoadScene("MainMenu");
+		// TODO:  przy spadaniu health na 0 i takeDamage() ¿eby lsot by³o
 	}
 
 	void TakeDamage(float dmg)

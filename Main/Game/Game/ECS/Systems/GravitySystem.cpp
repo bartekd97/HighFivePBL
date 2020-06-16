@@ -12,6 +12,12 @@ const float minFallingDist = 0.01f;
 void GravitySystem::Init()
 {
     minimalMovement = 0.01f;
+    EventManager::AddListener(METHOD_LISTENER(Events::Gameplay::Map::GENERATED, GravitySystem::OnMapGenerated));
+}
+
+void GravitySystem::OnMapGenerated(Event& ev)
+{
+    LoadCells();
 }
 
 void GravitySystem::Update(float dt)
@@ -27,7 +33,6 @@ void GravitySystem::Update(float dt)
         check = false;
     }*/
     float level;
-    if (cells.size() == 0) LoadCells();
 
     for (auto const& gameObject : gameObjects)
     {

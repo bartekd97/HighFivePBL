@@ -73,6 +73,12 @@ private: // variables
 	}
 
 public:
+	~PlayerUpgrader()
+	{
+		GUIManager::RemoveWidget(upgradePanel);
+		GUIManager::RemoveWidget(upgradesBarPanel);
+	}
+
 	void Awake()
 	{
 		upgradeContainer = HFEngine::ECS.CreateGameObject(GetGameObject(), "Upgrades");
