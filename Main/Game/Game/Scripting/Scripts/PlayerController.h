@@ -59,6 +59,7 @@ private: // variables
 	Raycaster raycaster;
 	ALuint sourcePlayerDamage;
 	ALuint sourcePlayerMovement;
+	ALuint sourcePlayerPushback;
 	bool isReadyToStartMovement = true;
 
 
@@ -449,6 +450,8 @@ public:
 		auto& emitterSmoke = HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject);
 		auto& emitterTorch = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject);
 		auto& lightTorch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+ 
+		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerPushback, "pushback", false);
 
 		// anim & pushback stuff
 		timerAnimator.DelayAction(0.2f, [&]() {
