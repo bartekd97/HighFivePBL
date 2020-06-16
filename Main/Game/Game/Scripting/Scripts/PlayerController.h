@@ -17,6 +17,7 @@
 #include "../../GUI/Panel.h"
 #include "Utility/TimerAnimator.h"
 #include "Resourcing/Prefab.h"
+#include "Audio/AudioManager.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -30,6 +31,7 @@ private: // parameters
 	float healthRecoverySpeed = 5.0f;
 	float idleToStartRecoveryTime = 3.0f;
 
+	float ghostCooldown = 0.35f;
 	float pushbackCooldown = 2.0f;
 
 	float torchCooldownEmitRate = 32.0f;
@@ -55,6 +57,7 @@ private: // variables
 	float attackAnimationLevel = 0.5f;
 
 	bool hasGhostMovement = false;
+	bool ghostOnCooldown = false;
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
 	Raycaster raycaster;
@@ -78,6 +81,8 @@ public:
 		RegisterFloatParameter("maxHealth", &maxHealth);
 		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
 		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
+
+		RegisterFloatParameter("ghostCooldown", &ghostCooldown);
 		RegisterFloatParameter("pushbackCooldown", &pushbackCooldown);
 
 		RegisterFloatParameter("torchCooldownEmitRate", &torchCooldownEmitRate);
@@ -156,16 +161,24 @@ public:
 		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
 		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, torchLightDefaultIntensity, 0.3f);
 		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = true;
+
+		ghostOnCooldown = true;
+		timerAnimator.DelayAction(ghostCooldown, [&]() {ghostOnCooldown = false;});
 	}
 
 	void TakeDamage(float dmg)
 	{
 		health -= dmg;
 		lastDmgTime = std::chrono::high_resolution_clock::now();
-
+		ALuint source1;
+		AudioManager::CreateDefaultSourceAndPlay(source1, "damage4", false);
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
+
+			ALuint source;
+			AudioManager::CreateDefaultSourceAndPlay(source, "death", false);
+
 			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
 				healthPanel->textureColor.color,
@@ -202,7 +215,7 @@ public:
 
 		if (!isPushingBack)
 		{
-			if (!hasGhostMovement && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+			if (!hasGhostMovement && !ghostOnCooldown && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
@@ -232,8 +245,8 @@ public:
 		if (!hasGhostMovement)
 		{
 			ghostController->leftGhostDistance = std::min(
-				ghostController->maxGhostDistance,
-				ghostController->leftGhostDistance + dt * ghostController->ghostDistanceRecoverySpeed
+				ghostController->GetUpgradedMaxGhostDistance(),
+				ghostController->leftGhostDistance + dt * ghostController->GetUpgradedDistanseRecoverySpeed()
 			);
 		}
 
@@ -386,20 +399,29 @@ public:
 		glm::vec3 dir;
 		auto pos = GetTransform().GetWorldPosition();
 
+		Event evDistance(Events::StatModification::PUSHBACK_DISTANCE);
+		Event evForce(Events::StatModification::PUSHBACK_FORCE);
+		evDistance.SetParam(Events::StatModification::FloatValue, pushBackDistance);
+		evForce.SetParam(Events::StatModification::FloatValue, pushBackForce);
+		EventManager::FireEvent(evDistance);
+		EventManager::FireEvent(evForce);
+		float upgradedPushBackDistance = evDistance.GetParam<float>(Events::StatModification::FloatValue);
+		float upgradedPushBackForce = evForce.GetParam<float>(Events::StatModification::FloatValue);
+
 		Event ev(Events::Gameplay::Player::PUSHBACK_ENEMIES);
 		ev.SetParam(Events::Gameplay::Player::Position, pos);
-		ev.SetParam(Events::Gameplay::Player::PushBackDistance, pushBackDistance);
-		ev.SetParam(Events::Gameplay::Player::PushBackForce, pushBackForce);
+		ev.SetParam(Events::Gameplay::Player::PushBackDistance, upgradedPushBackDistance);
+		ev.SetParam(Events::Gameplay::Player::PushBackForce, upgradedPushBackForce);
 		EventManager::FireEvent(ev);
 
 		for (auto& object : objects)
 		{
 			auto objPos = HFEngine::ECS.GetComponent<Transform>(object).GetWorldPosition();
 			dir = objPos - pos;
-			if (VECLEN(dir) < pushBackDistance)
+			if (VECLEN(dir) < upgradedPushBackDistance)
 			{
 				auto& objectRb = HFEngine::ECS.GetComponent<RigidBody>(object);
-				objectRb.AddForce(glm::normalize(glm::normalize(dir / 2.0f) + glm::vec3(0.0f, 0.75f, 0.0f)) * pushBackForce);
+				objectRb.AddForce(glm::normalize(glm::normalize(dir / 2.0f) + glm::vec3(0.0f, 0.75f, 0.0f)) * upgradedPushBackForce);
 				objectRb.isFalling = true;
 			}
 		}

@@ -42,13 +42,15 @@ private: // variables
 	int numberOfEnemyToHit = 1;
 	int numberOfEnemyHit = 0;
 
+	bool forceCancelNextLine = false;
+
 public:
 	float maxGhostDistance = 20.0f;
 	float ghostDistanceRecoverySpeed = 5.0f;
 	float leftGhostDistance;
 
 	float miniGhostSpawnDistance = 1.5f;
-	int maxActiveLines = 4;
+	int maxActiveLines = 2;
 
 	std::vector<std::shared_ptr<GhostLine>> activeLines;
 
@@ -56,6 +58,17 @@ public:
 	float distanceReached;
 	glm::vec3 lastDistanceRecordPos;
 	std::vector<GameObject> spawnedMiniGhostsCurrent;
+
+private:
+	std::pair<FrameCounter, float> _upgradedMoveSpeed = { 0,0 };
+	std::pair<FrameCounter, float> _upgradedDistanceRecoverySpeed = { 0,0 };
+	std::pair<FrameCounter, float> _upgradedMaxGhostDistance = { 0,0 };
+	std::pair<FrameCounter, int> _upgradedMaxActiveLines = { 0,0 };
+public:
+	float GetUpgradedMoveSpeed(bool force = false);
+	float GetUpgradedDistanseRecoverySpeed(bool force = false);
+	float GetUpgradedMaxGhostDistance(bool force = false);
+	int GetUpgradedMaxActiveLines(bool force = false);
 
 
 	GhostController()
@@ -72,10 +85,11 @@ public:
 
 	void OnTriggerEnter(GameObject that, GameObject other);
 
-	inline float GetLeftGhostLevel() { return leftGhostDistance / maxGhostDistance; }
+	inline float GetLeftGhostLevel() { return leftGhostDistance / GetUpgradedMaxGhostDistance(); }
 
 	void MovementStart(Event& event);
 	void MovementStop(Event& event);
+	void MovementCancel(Event& event);
 
 
 	void Update(float dt);

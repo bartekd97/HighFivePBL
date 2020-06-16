@@ -9,6 +9,7 @@
 #include "ext/LloydRelaxation.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/ScriptContainer.h"
 
 namespace {
 	std::vector<Delaunay::Point*> GeneratePoints(DiagramLayout layout)
@@ -138,6 +139,11 @@ GameObject MapGenerator::CreateCell(Delaunay::Site* cell, GameObject parent)
     mCell.CellSiteIndex = cell->index();
     mCell._BaseDelaunayPolygon = CreateLocalPolygon(cell, bounds);
     HFEngine::ECS.AddComponent<MapCell>(cellObject, mCell);
+    
+    HFEngine::ECS.AddComponent<ScriptContainer>(cellObject, {});
+    auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(cellObject);
+    scriptContainer.AddScript(cellObject, "CellSupervisor");
+
     return cellObject;
 }
 
@@ -211,7 +217,7 @@ bool MapGenerator::ValidateMapLayout(std::vector<GameObject> cells)
     }
 
     // there must be at least one cell with only one bridge and with long enough road
-    if (cellsWithOneBridgeCount >= 1 && longestRoadInOneBridgeCell >= 15.0f)
+    if (cellsWithOneBridgeCount >= 1 && longestRoadInOneBridgeCell >= 25.0f)
         return true;
     else
         return false;

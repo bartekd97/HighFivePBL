@@ -1,0 +1,9 @@
+<prefab defaultScale="1.0,1.0,1.0">
+    <property name="description" value="Increase ghost recovery speed" />
+    <property name="icon" value="Icon_2" />
+
+    <component name="ScriptComponent">
+        <property name="name" value="Upgrade::GhostRecovery"/>
+        <property name="increaseBy" value="2.5"/>
+    </component>
+</prefab>

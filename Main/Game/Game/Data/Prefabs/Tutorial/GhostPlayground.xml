@@ -3,9 +3,9 @@
     <component name="ScriptComponent">
         <property name="name" value="TutorialPlayground"/>
 
-        <property name="minGhostCountPerLine" value="5"/>
-        <property name="maxGhostDistance" value="0.75"/>
-        <property name="maxEndpointDistance" value="1.5"/>
+        <property name="minGhostCountPerLine" value="4"/>
+        <property name="maxGhostDistance" value="1.0"/>
+        <property name="maxEndpointDistance" value="2.25"/>
     </component>
 
     <children>

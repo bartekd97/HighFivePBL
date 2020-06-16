@@ -26,4 +26,6 @@ public:
 	void StopSound(int sourceID);
 	void PauseSound(int sourceID);
 	int setListener();
+	int CreateSource(ALuint& source, std::string bufferFilename, ALfloat const* sourcePos, ALfloat const* sourceVel, ALfloat const* sourceDir, bool loop);
+	void PlaySource(ALuint source);
 };

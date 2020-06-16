@@ -69,7 +69,7 @@
     <ClCompile Include="Utility\TextureTools.cpp" />
     <ClCompile Include="MapGenerator\MapSetuper.cpp" />
     <ClCompile Include="Utility\TimerAnimator.cpp" />
-    <ClCompile Include="Audio\AudioController.cpp" />
+    <ClCompile Include="Audio\AudioManager.cpp" />
     <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -217,7 +217,7 @@
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Utility\TimerAnimator.h" />
     <ClInclude Include="Utility\Pathfinding.h" />
-    <ClInclude Include="Audio\AudioController.h" />
+    <ClInclude Include="Audio\AudioManager.h" />
     <ClInclude Include="ECS\Components\CellPathfinder.h" />
     <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
     <ClInclude Include="Scene\SceneManager.h" />
@@ -238,6 +238,15 @@
     <ClInclude Include="Scripting\Scripts\TutorialPlayground.h" />
     <ClInclude Include="Scripting\Scripts\TutorialEnemy.h" />
     <ClInclude Include="Scripting\Scripts\GateOpener.h" />
+    <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
+    <ClInclude Include="Scripting\Scripts\StatueUser.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerUpgrader.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostDistance.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostRecovery.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostSpeed.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostActiveLines.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\PushbackDistance.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\PushbackForce.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

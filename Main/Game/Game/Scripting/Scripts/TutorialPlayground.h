@@ -17,8 +17,8 @@ class TutorialPlayground : public Script
 	// params
 public:
 	int minGhostCountPerLine = 4;
-	float maxGhostDistance = 0.75f;
-	float maxEndpointDistance = 1.5f;
+	float maxGhostDistance = 1.0f;
+	float maxEndpointDistance = 2.25f;
 
 	// variables
 private:

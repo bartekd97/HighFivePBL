@@ -117,6 +117,11 @@ void Widget::SetCoordinatesType(CoordinatesType type)
 	coordinatesType = type;
 }
 
+Widget::CoordinatesType Widget::GetCoordinatesType()
+{
+	return coordinatesType;
+}
+
 void Widget::AddChild(std::shared_ptr<Widget> child)
 {
 	child->SetLevel(GetLevel() + 1);

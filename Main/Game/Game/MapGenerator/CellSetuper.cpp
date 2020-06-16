@@ -30,7 +30,7 @@ void CellSetuper::Setup()
 	if (type == MapCell::Type::NORMAL)
 	{
 		// spawn main statue only on normal cell
-		setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
+		cellInfo.Statue = setupConfig.mainStatuePrefab->Instantiate(cell, { 0,0,0 }, { 0,25,0 });
 
 		MakeZones();
 
