@@ -14,6 +14,8 @@ void PhysicsSystem::Init()
 
 void PhysicsSystem::Update(float dt)
 {
+    if (dt > Physics::maxDelta) return;
+
     Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects, true);
     bool localCollided;
     int steps;
