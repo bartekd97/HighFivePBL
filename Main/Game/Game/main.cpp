@@ -47,12 +47,12 @@ int main()
 	//AudioManager ac;
 	//ac.Init_al();
 
-	ALuint source;
-	AudioManager::CreateDefaultSourceAndPlay(source, "menu", true);
+	
 	//ALuint source2;
 	//ac.CreateDefaultSourceAndPlay(source2, "glass_ping", true, 0.01f);
 
 	// request initial scene
+	AudioManager::PlayBackground("menuKorpecki", 1.0f);
 	SceneManager::RequestLoadScene("MainMenu");
 
 	float dt = 0.0f;

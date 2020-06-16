@@ -148,7 +148,7 @@ public:
 		{
 			if (raycaster.GetOut().distance <= attackDistance)
 			{
-				AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "hit3", false);
+				AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "hit3", false, 0.2f);
 				playerController->TakeDamage(attackDamage);
 			}
 		}
@@ -329,11 +329,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
-		AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "hit4", false);
+		AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "hit4", false, 1.0f);
 
 		if (health <= 0)
 		{
-			AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "monsterdeath", false);
+			AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "monsterdeath", false, 0.5f);
 			DestroyGameObjectSafely();
 		}
 	}

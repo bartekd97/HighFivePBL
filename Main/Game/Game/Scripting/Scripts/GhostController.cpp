@@ -33,6 +33,8 @@
 	pairName.second = ev.GetParam<int>(Events::StatModification::IntValue); \
 	} 
 
+ALuint sourceGhostController;
+
 
 float GhostController::GetUpgradedMoveSpeed(bool force)
 {
@@ -66,6 +68,10 @@ void GhostController::Awake()
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
+	AudioManager::CreateDefaultSourceAndPlay(sourceGhostController, "ghost", false);
+	AudioManager::StopSource(sourceGhostController);
+
+
 }
 
 void GhostController::Start()
@@ -214,6 +220,7 @@ void GhostController::StartMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
+	AudioManager::PlaySoundFromSource(sourceGhostController);
 
 	distanceReached = 0.0f;
 	lastDistanceRecordPos = transformPosition;
@@ -267,7 +274,7 @@ void GhostController::EndMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
-
+	AudioManager::StopSource(sourceGhostController);
 	recordedPositions.emplace_back(glm::vec2{
 		transformPosition.x,
 		transformPosition.z
