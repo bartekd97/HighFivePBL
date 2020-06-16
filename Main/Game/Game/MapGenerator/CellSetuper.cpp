@@ -309,7 +309,7 @@ void CellSetuper::SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localP
 
 	boxCol.SetWidthHeight(width, height);
 
-	GameObject tmpCollider = HFEngine::ECS.CreateGameObject(obstacleContainer);
+	GameObject tmpCollider = HFEngine::ECS.CreateGameObject(obstacle);
 	HFEngine::ECS.AddComponent<Collider>(tmpCollider, col);
 	HFEngine::ECS.AddComponent<BoxCollider>(tmpCollider, boxCol);
 	tempObstacleColliders.push_back(tmpCollider);
