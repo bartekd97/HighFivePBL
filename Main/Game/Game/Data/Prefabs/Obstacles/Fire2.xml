@@ -9,6 +9,9 @@
         <property name="configureFromHolder" value="true" />
         <property name="material" value="Obstacles/Muds:mudFireMaterial"/>
     </component>
+  <component name="ScriptComponent">
+    <property name="name" value="FireController"/>
+  </component>
 
     <!--
         TODO:

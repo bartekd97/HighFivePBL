@@ -2,10 +2,8 @@
 
 #include <deque>
 #include <glm/gtx/vector_angle.hpp>
-#include "../Script.h"
+#include "CreatureController.h"
 #include "HFEngine.h"
-#include "ECS/Components/Transform.h"
-#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/CellPathfinder.h"
@@ -24,11 +22,9 @@
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 #define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
-class EnemyController : public Script
+class EnemyController : public CreatureController
 {
 private: // parameters
-	float moveSpeed = 5.0f;
-	float maxHealth = 10.0f;
 	float dmgAnimationDuration = 0.5f;
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
@@ -37,11 +33,8 @@ private: // parameters
 private: // variables
 	GameObject visualObject;
 
-	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 2.0f * M_PI;
-
-	float health;
 	bool isAttacking = false;
 	bool midAttack;
 	bool triggered = false;
@@ -73,8 +66,6 @@ public:
 
 	EnemyController()
 	{
-		RegisterFloatParameter("moveSpeed", &moveSpeed);
-		RegisterFloatParameter("maxHealth", &maxHealth); 
 		RegisterFloatParameter("dmgAnimationDuration", &dmgAnimationDuration);
 		RegisterFloatParameter("attackDistance", &attackDistance);
 		RegisterFloatParameter("triggerDistance", &triggerDistance);
@@ -307,9 +298,8 @@ public:
 					currentMoveSpeed += change * glm::sign(diff);
 			}
 
-			auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
 			if (currentMoveSpeed > 0.01f)
-				rigidBody.Move(transform.GetPosition() + moveBy);
+				Move(transform.GetFront(), dt);
 		}
 	}
 
