@@ -20,5 +20,8 @@
     <sound name="hit1" path="Data/Assets/Sounds/hit1.wav"/>
     <sound name="hit3" path="Data/Assets/Sounds/hit3.wav"/>
     <sound name="hit4" path="Data/Assets/Sounds/hit4.wav"/>
-
+	<sound name="squeaky_metal_gate" path="Data/Assets/Sounds/squeaky_metal_gate.wav"/>
+	<sound name="footsteps_in_grass" path="Data/Assets/Sounds/footsteps_in_grass.wav"/>
+	<sound name="choking" path="Data/Assets/Sounds/choking.wav"/>
+	<sound name="mud" path="Data/Assets/Sounds/mud.wav"/>
 </sounds>
