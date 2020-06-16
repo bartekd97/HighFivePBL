@@ -65,6 +65,7 @@ private: // variables
 	std::shared_ptr<GhostController> ghostController;
 	std::shared_ptr<Panel> ghostBarPanel;
 	std::shared_ptr<Panel> ghostValueBarPanel;
+	std::shared_ptr<Panel> ghostCircleBarPanel;
 	std::shared_ptr<Panel> healthPanel;
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
@@ -92,6 +93,8 @@ public:
 	~PlayerController()
 	{
 		GUIManager::RemoveWidget(ghostBarPanel);
+		GUIManager::RemoveWidget(ghostCircleBarPanel);
+		GUIManager::RemoveWidget(healthPanel);
 	}
 
 	void Awake()
@@ -124,7 +127,7 @@ public:
 		ghostController = ghostScriptContainer.GetScript<GhostController>();
 
 		ghostBarPanel = std::make_shared<Panel>();
-		ghostBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		//ghostBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		//ghostBarPanel->SetPositionAnchor(glm::vec3(((1.0f - ghostBarWidth) / 2.0f) * WindowManager::SCREEN_WIDTH, -100.0f, 0.0f), Anchor::BOTTOMLEFT);
 		//ghostBarPanel->SetSize(glm::vec2(ghostBarWidth * WindowManager::SCREEN_WIDTH, 50.0f));
 		ghostBarPanel->SetPositionAnchor({ (1.0f - ghostBarWidth) / 2.0f, -0.1388f, 0.0f }, Anchor::BOTTOMLEFT);
@@ -140,6 +143,16 @@ public:
 		ghostValueBarPanel->textureColor.color = glm::vec4(0.0f, 0.78f, 0.76f, 0.75f);
 
 		GUIManager::AddWidget(ghostValueBarPanel, ghostBarPanel);
+
+
+		ghostCircleBarPanel = std::make_shared<Panel>();
+		ghostCircleBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		ghostCircleBarPanel->SetPivot(Anchor::CENTER);
+		ghostCircleBarPanel->SetPositionAnchor({ 0.0f, 0.0f, 0.0f }, Anchor::CENTER);
+		ghostCircleBarPanel->SetSize(glm::vec2{ 0.5625f, 1.0f } * 0.3f); // 16:9
+		ghostCircleBarPanel->textureColor.texture = TextureManager::GetTexture("GUI/Player", "playerGhostBar");
+		ghostCircleBarPanel->textureColor.color = glm::vec4(0.0f, 0.7f, 0.7f, 0.0f);
+		GUIManager::AddWidget(ghostCircleBarPanel);
 
 		healthPanel = std::make_shared<Panel>();
 		healthPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
@@ -300,6 +313,9 @@ public:
 			transform.SetPosition(startPosition);
 		}
 
+		float ghostLevel = ghostController->GetLeftGhostLevel();
+		ghostCircleBarPanel->SetCircleFilling(ghostLevel);
+		ghostCircleBarPanel->textureColor.color.a = ghostLevel > 0.99f ? 0.25f : 0.75f;
 		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
 		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, (1.0f - health / maxHealth) * healthMaxOpacity);
 	}
