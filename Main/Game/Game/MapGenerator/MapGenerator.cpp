@@ -112,6 +112,7 @@ void MapGenerator::Generate()
     mapSetuper->Setup();
 
     _generated = true;
+    EventManager::FireEvent(Events::Gameplay::Map::GENERATED);
 }
 
 GameObject MapGenerator::GetStartupCell()

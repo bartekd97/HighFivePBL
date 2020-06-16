@@ -15,9 +15,11 @@
 #include "GhostController.h"
 #include "../../GUI/GUIManager.h"
 #include "../../GUI/Panel.h"
+#include "../../GUI/Button.h"
 #include "Utility/TimerAnimator.h"
 #include "Resourcing/Prefab.h"
 #include "Audio/AudioManager.h"
+#include "../../Scene/SceneManager.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -61,12 +63,18 @@ private: // variables
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
 	Raycaster raycaster;
+	ALuint sourcePlayerDamage;
+	ALuint sourcePlayerMovement;
+	bool isReadyToStartMovement = true;
+
 
 	std::shared_ptr<GhostController> ghostController;
 	std::shared_ptr<Panel> ghostBarPanel;
 	std::shared_ptr<Panel> ghostValueBarPanel;
 	std::shared_ptr<Panel> ghostCircleBarPanel;
 	std::shared_ptr<Panel> healthPanel;
+	std::shared_ptr<Panel> lostGamePanel;
+	std::shared_ptr<Button> lostGameButton;
 	float ghostBarWidth = 0.6;
 	float ghostValueBarOffset = 3.0f;
 
@@ -93,6 +101,8 @@ public:
 	~PlayerController()
 	{
 		GUIManager::RemoveWidget(ghostBarPanel);
+		GUIManager::RemoveWidget(lostGamePanel);
+		GUIManager::RemoveWidget(lostGameButton);
 		GUIManager::RemoveWidget(ghostCircleBarPanel);
 		GUIManager::RemoveWidget(healthPanel);
 	}
@@ -103,6 +113,9 @@ public:
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
+		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerMovement, "footsteps_in_grass", true, 0.1f);
+		AudioManager::StopSource(sourcePlayerMovement);
+
 	}
 
 	void Start()
@@ -161,6 +174,32 @@ public:
 		healthPanel->textureColor.texture = TextureManager::GetTexture("GUI/Player", "playerHealth");
 		healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 		GUIManager::AddWidget(healthPanel);
+
+		lostGamePanel = std::make_shared<Panel>();
+		lostGamePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		lostGamePanel->SetSize({ 0.333f, 0.444f });
+		lostGamePanel->SetPivot(Anchor::CENTER);
+		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.15f, 0.0f), Anchor::CENTER);
+		lostGamePanel->textureColor.texture = TextureManager::GetTexture("GUI", "lostGame");
+		lostGamePanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
+		GUIManager::AddWidget(lostGamePanel, nullptr, 3);
+		lostGamePanel->SetEnabled(false);
+
+		lostGameButton = std::make_shared<Button>();
+		lostGameButton->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.05f, 0.0f), Anchor::CENTER);
+		lostGameButton->SetSize({ 0.1953f, 0.125f });//250 120
+		lostGameButton->SetPivot(Anchor::CENTER);
+		lostGameButton->OnClickListener = GUI_METHOD_POINTER(PlayerController::BackToMainMenu);
+
+		for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
+		{
+			lostGameButton->textureColors[(Button::STATE)i].texture = TextureManager::GetTexture("GUI", "lostGameButton");
+			lostGameButton->textureColors[(Button::STATE)i].color = glm::vec4(glm::vec3(1.0f), 0.6f + (i * 0.2f));
+		}
+
+		GUIManager::AddWidget(lostGameButton, nullptr, 3);
+		lostGameButton->SetEnabled(false);
 	}
 
 	void GhostMovementStart(Event& event) {
@@ -179,17 +218,22 @@ public:
 		timerAnimator.DelayAction(ghostCooldown, [&]() {ghostOnCooldown = false;});
 	}
 
+	void BackToMainMenu()
+	{
+		SceneManager::RequestLoadScene("MainMenu");
+		// TODO:  przy spadaniu health na 0 i takeDamage() ¿eby lsot by³o
+	}
+
 	void TakeDamage(float dmg)
 	{
 		health -= dmg;
 		lastDmgTime = std::chrono::high_resolution_clock::now();
-
+		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "damage4", false, 0.5f);
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
 
-			ALuint source;
-			AudioManager::CreateDefaultSourceAndPlay(source, "death", false);
+			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "death", false, 0.5f);
 
 			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
@@ -200,6 +244,21 @@ public:
 			timerAnimator.DelayAction(2.0f, [&]() {
 				HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = false;
 			});
+			lostGamePanel->SetEnabled(true);
+			timerAnimator.AnimateVariable(&lostGamePanel->textureColor.color,
+				lostGamePanel->textureColor.color,
+				glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+				3.0f
+			);
+			for (int i = (int)Button::STATE::NORMAL; i <= (int)Button::STATE::PRESSED; i++)
+			{
+				timerAnimator.AnimateVariable(&lostGameButton->textureColors[(Button::STATE)i].color,
+					glm::vec4(glm::vec3(1.0f), 0.0f),
+					lostGameButton->textureColors[(Button::STATE)i].color,
+					3.0f
+				);
+			}
+			lostGameButton->SetEnabled(true);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
 		}
 	}
@@ -329,7 +388,6 @@ public:
 	{
 		auto& transform = GetTransform();
 		auto& rigidBody = GetRigidBody();
-
 		glm::vec3 direction(0.0f);
 		if (!hasGhostMovement && !isPushingBack)
 		{
@@ -339,6 +397,20 @@ public:
 			if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
 			else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 		}
+
+		if((InputManager::GetMouseButtonDown(GLFW_KEY_W) || InputManager::GetMouseButtonDown(GLFW_KEY_S) || 
+			InputManager::GetMouseButtonDown(GLFW_KEY_A) || InputManager::GetMouseButtonDown(GLFW_KEY_D)) && isReadyToStartMovement == true)
+		{
+			AudioManager::PlaySoundFromSource(sourcePlayerMovement);
+			isReadyToStartMovement = false;
+		}
+		else if ((!InputManager::GetKeyStatus(GLFW_KEY_W) && !InputManager::GetKeyStatus(GLFW_KEY_S) &&
+			!InputManager::GetKeyStatus(GLFW_KEY_A) && !InputManager::GetKeyStatus(GLFW_KEY_D)) && isReadyToStartMovement == false)
+		{
+			AudioManager::StopSource(sourcePlayerMovement);
+			isReadyToStartMovement = true;
+		}
+
 
 		bool isMoving = glm::length2(direction) > 0.5f;
 

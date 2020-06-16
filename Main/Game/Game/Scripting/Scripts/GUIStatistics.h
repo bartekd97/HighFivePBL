@@ -12,6 +12,11 @@
 class GUIStatistics : public Script
 {
 public:
+	~GUIStatistics()
+	{
+		GUIManager::RemoveWidget(panel);
+	}
+
 	void Awake()
 	{
 		hidden = false;

@@ -221,6 +221,13 @@ namespace HFEngine
 		return true;
 	}
 
+	void ClearGameObjects()
+	{
+		ECS.ClearGameObjects();
+		Physics::ClearGameObjects();
+		EventManager::FireEvent(Events::General::GAMEOBJECTS_CLEAR);
+	}
+
 	void Terminate()
 	{
 		if (!initialized)
