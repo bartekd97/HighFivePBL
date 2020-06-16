@@ -369,7 +369,7 @@ public:
 
 		if (transform.GetWorldPosition().y < -15.0f)
 		{
-			transform.SetPosition(startPosition);
+			TakeDamage(maxHealth);
 		}
 
 		float ghostLevel = ghostController->GetLeftGhostLevel();
