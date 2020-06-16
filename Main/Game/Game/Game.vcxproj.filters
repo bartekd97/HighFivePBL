@@ -251,6 +251,7 @@
     <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
     <ClInclude Include="Scripting\Scripts\MudController.h" />
     <ClInclude Include="Scripting\Scripts\FireController.h" />
+    <ClInclude Include="Scripting\Scripts\GasController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

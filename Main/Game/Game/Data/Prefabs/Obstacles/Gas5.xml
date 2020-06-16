@@ -1,6 +1,9 @@
 <prefab defaultScale="1.5,1.5,1.5">
     <property name="width" value="6.0"/>
     <property name="height" value="4.0"/>
+  <component name="ScriptComponent">
+    <property name="name" value="GasController"/>
+  </component>
     
     <!--
         TODO:

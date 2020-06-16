@@ -64,6 +64,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(TutorialEnemy);
 		REGISTER_SCRIPT(MudController);
 		REGISTER_SCRIPT(FireController);
+		REGISTER_SCRIPT(GasController);
 
 		REGISTER_SCRIPT(Upgrade::GhostDistance);
 		REGISTER_SCRIPT(Upgrade::GhostRecovery);

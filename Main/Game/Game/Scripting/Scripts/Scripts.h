@@ -18,6 +18,7 @@
 #include "TutorialEnemy.h"
 #include "MudController.h"
 #include "FireController.h"
+#include "GasController.h"
 
 #include "Upgrades/GhostDistance.h"
 #include "Upgrades/GhostRecovery.h"
