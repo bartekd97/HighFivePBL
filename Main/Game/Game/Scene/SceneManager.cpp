@@ -11,6 +11,7 @@
 
 
 // variables
+
 namespace SceneManager
 {
 	std::unordered_map<std::string, std::shared_ptr<IScene>> scenes;
@@ -27,6 +28,8 @@ namespace SceneManager
 {
 	void FrameStart(Event& event)
 	{
+		//AudioManager::StopSource(sourceMenu);
+
 		if (requestedScene == nullptr) return;
 
 		// step 1 - enable loading screen
@@ -38,7 +41,7 @@ namespace SceneManager
 
 		// step 2 - switch scene
 		if (requestedScene != currentScene)
-		{
+		{			
 			if (currentScene)
 				currentScene->OnUnload();
 
@@ -48,6 +51,7 @@ namespace SceneManager
 
 			currentScene = requestedScene;
 			currentScene->OnLoad();
+
 			return;
 		}
 
@@ -92,7 +96,7 @@ void SceneManager::RegisterScene(std::string name, std::shared_ptr<IScene> scene
 }
 
 void SceneManager::RequestLoadScene(std::string name)
-{
+{	
 	assert(scenes.contains(name) && "Scene doesn't exists");
 
 	if (currentScene == scenes[name])
