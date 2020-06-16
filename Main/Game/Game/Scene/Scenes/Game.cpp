@@ -39,4 +39,5 @@ void GameScene::OnLoad()
 
 void GameScene::OnUnload()
 {
+	HFEngine::ClearGameObjects();
 }

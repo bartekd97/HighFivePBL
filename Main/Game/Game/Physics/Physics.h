@@ -22,6 +22,7 @@ namespace Physics
 	void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector);
 
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers = false);
+	void ClearGameObjects();
 	void RemoveNode(GameObject gameObject);
 
 	bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);

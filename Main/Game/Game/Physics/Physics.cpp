@@ -15,6 +15,15 @@ namespace Physics
         Physics::rigidBodyCollector = rigidBodyCollector;
     }
 
+    void ClearGameObjects()
+    {
+        maxGameObject = -1;
+        for (int i = 0; i <= maxGameObject; i++)
+        {
+            cacheNodes[i].state = CacheNode::STATE::REMOVED;
+        }
+    }
+
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers)
 	{
         if (disableOthers)
