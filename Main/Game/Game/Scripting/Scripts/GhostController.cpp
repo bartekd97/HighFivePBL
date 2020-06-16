@@ -16,12 +16,56 @@
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 
+#define CheckUpgradeFloat(pairName, originalValue, eventName, force) if (HFEngine::CURRENT_FRAME_NUMBER - pairName.first > 4 || force) \
+	{ \
+	Event ev(eventName); \
+	ev.SetParam(Events::StatModification::FloatValue, originalValue); \
+	EventManager::FireEvent(ev); \
+	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
+	pairName.second = ev.GetParam<float>(Events::StatModification::FloatValue); \
+	} 
+#define CheckUpgradeInt(pairName, originalValue, eventName, force) if (HFEngine::CURRENT_FRAME_NUMBER - pairName.first > 4 || force) \
+	{ \
+	Event ev(eventName); \
+	ev.SetParam(Events::StatModification::IntValue, originalValue); \
+	EventManager::FireEvent(ev); \
+	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
+	pairName.second = ev.GetParam<int>(Events::StatModification::IntValue); \
+	} 
+
+
+float GhostController::GetUpgradedMoveSpeed(bool force)
+{
+	CheckUpgradeFloat(_upgradedMoveSpeed, moveSpeed, Events::StatModification::GHOST_MOVE_SPEED, force);
+	return _upgradedMoveSpeed.second;
+}
+
+float GhostController::GetUpgradedDistanseRecoverySpeed(bool force)
+{
+	CheckUpgradeFloat(_upgradedDistanceRecoverySpeed, ghostDistanceRecoverySpeed, Events::StatModification::GHOST_RECOVERY_SPEED, force);
+	return _upgradedDistanceRecoverySpeed.second;
+}
+
+float GhostController::GetUpgradedMaxGhostDistance(bool force)
+{
+	CheckUpgradeFloat(_upgradedMaxGhostDistance, maxGhostDistance, Events::StatModification::GHOST_MAX_DISTANCE, force);
+	return _upgradedMaxGhostDistance.second;
+}
+
+int GhostController::GetUpgradedMaxActiveLines(bool force)
+{
+	CheckUpgradeInt(_upgradedMaxActiveLines, maxActiveLines, Events::StatModification::GHOST_MAX_ACTIVE_LINES, force);
+	return _upgradedMaxActiveLines.second;
+}
+
+
 void GhostController::Awake()
 {
 	miniGhostPrefab = PrefabManager::GetPrefab("MiniGhost");
 	miniGhostPrefab->MakeWarm();
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
+	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
 }
 
 void GhostController::Start()
@@ -92,6 +136,12 @@ void GhostController::MovementStop(Event& event)
 	EndMarking();
 }
 
+void GhostController::MovementCancel(Event& event)
+{
+	forceCancelNextLine = true;
+	EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+}
+
 void GhostController::Update(float dt)
 {
 	timerAnimator.Process(dt);
@@ -116,7 +166,7 @@ void GhostController::Update(float dt)
 	}
 
 	// smoth move speed
-	float targetMoveSpeed = moveSpeed;
+	float targetMoveSpeed = GetUpgradedMoveSpeed();
 	{
 		float diff = targetMoveSpeed - currentMoveSpeed;
 		float change = dt * moveSpeedSmoothing;
@@ -237,19 +287,20 @@ void GhostController::EndMarking()
 		ev.SetParam(Events::Gameplay::Ghost::GhostLine, gline);
 		EventManager::FireEvent(ev);
 
-		if (ev.WasCanceled())
+		if (ev.WasCanceled() || forceCancelNextLine)
 		{
 			FadeOutLine(gline);
 		}
 		else
 		{
 			CheckClosedLines();
-			if (activeLines.size() > maxActiveLines)
+			if (activeLines.size() > GetUpgradedMaxActiveLines())
 			{
 				//while (activeLines.Count > 0)
 				FadeOutLine(activeLines[0]);
 			}
 		}
+		forceCancelNextLine = false;
 	}
 
 	recordedPositions.clear();

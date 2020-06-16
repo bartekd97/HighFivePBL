@@ -51,15 +51,24 @@ namespace ScriptManager
 		REGISTER_SCRIPT(PlayerController);
 		REGISTER_SCRIPT(PlayerCameraFollower);
 		REGISTER_SCRIPT(GhostController);
+		REGISTER_SCRIPT(PlayerUpgrader);
 		REGISTER_SCRIPT(MiniGhost);
 		REGISTER_SCRIPT(EnemyController);
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(CellSupervisor);
 		REGISTER_SCRIPT(GateOpener);
+		REGISTER_SCRIPT(StatueUser);
 		REGISTER_SCRIPT(TriggerTest);
 		REGISTER_SCRIPT(GUIStatistics);
 		REGISTER_SCRIPT(TutorialPlayground);
 		REGISTER_SCRIPT(TutorialEnemy);
+
+		REGISTER_SCRIPT(Upgrade::GhostDistance);
+		REGISTER_SCRIPT(Upgrade::GhostRecovery);
+		REGISTER_SCRIPT(Upgrade::GhostSpeed);
+		REGISTER_SCRIPT(Upgrade::GhostActiveLines);
+		REGISTER_SCRIPT(Upgrade::PushbackDistance);
+		REGISTER_SCRIPT(Upgrade::PushbackForce);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}

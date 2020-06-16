@@ -30,6 +30,9 @@
     <component name="ScriptComponent">
         <property name="name" value="MapCellOptimizer"/>
     </component>
+    <component name="ScriptComponent">
+        <property name="name" value="PlayerUpgrader"/>
+    </component>
 
     <children>
         <!-- loaded characters have inversed front axis, so we make workaround by rotating by 180*-->

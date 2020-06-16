@@ -13,6 +13,6 @@ namespace TextRenderer
 	void LoadFont(std::string name, std::string path);
 	void SetFont(std::string fontName);
 	std::shared_ptr<Font> GetCurrentFont();
-	void RenderText(std::string text, float x, float y, float scale, glm::vec3 color);
+	void RenderText(std::string text, float x, float y, float scale, glm::vec4 color);
 	void UpdateProjection();
 }

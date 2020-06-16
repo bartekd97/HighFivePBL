@@ -58,6 +58,13 @@ public:
 			EventManager::FireEventTo(bridge.Gate, Events::Gameplay::Gate::OPEN_ME);
 	}
 
+	void MakeStatueUsable()
+	{
+		MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(GetGameObject());
+		if (mc.Statue != NULL_GAMEOBJECT)
+			EventManager::FireEventTo(mc.Statue, Events::Gameplay::Statue::MAKE_ME_USABLE);
+	}
+
 	void LateUpdate(float dt)
 	{
 		if (!isThisCurrentCell) return;
@@ -71,6 +78,7 @@ public:
 			if (enemies.size() == 0 || InputManager::GetKeyDown(GLFW_KEY_F8)) // TODO: remvoe this debug
 			{
 				scanForNoEnemies = false;
+				MakeStatueUsable();
 				timerAnimator.DelayAction(0.5f, std::bind(&CellSupervisor::OpenGatesHere, this));
 			}
 		}
