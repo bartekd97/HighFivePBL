@@ -21,13 +21,16 @@
     <sound name="hit1" path="Data/Assets/Sounds/hit1.wav"/>
     <sound name="hit3" path="Data/Assets/Sounds/hit3.wav"/>
     <sound name="hit4" path="Data/Assets/Sounds/hit4.wav"/>
-	  <sound name="squeaky_metal_gate" path="Data/Assets/Sounds/squeaky_metal_gate.wav"/>
-	  <sound name="footsteps_in_grass" path="Data/Assets/Sounds/footsteps_in_grass.wav"/>
-	  <sound name="choking" path="Data/Assets/Sounds/choking.wav"/>
-	  <sound name="mud" path="Data/Assets/Sounds/mud.wav"/>
+	<sound name="squeaky_metal_gate" path="Data/Assets/Sounds/squeaky_metal_gate.wav"/>
+	<sound name="footsteps_in_grass" path="Data/Assets/Sounds/footsteps_in_grass.wav"/>
+	<sound name="choking" path="Data/Assets/Sounds/choking.wav"/>
+	<sound name="mud" path="Data/Assets/Sounds/mud.wav"/>
     <sound name="ghost" path="Data/Assets/Sounds/ghost.wav"/>
-	  <sound name="ghostly_game_over" path="Data/Assets/Sounds/ghostly_game_over.wav"/>
-	  <sound name="fire_screaming" path="Data/Assets/Sounds/fire_screaming.wav"/>
-	  <sound name="necro_boss" path="Data/Assets/Sounds/necro_boss.wav"/>
-	  <sound name="click_button" path="Data/Assets/Sounds/click_button.wav"/>
+	<sound name="ghostly_game_over" path="Data/Assets/Sounds/ghostly_game_over.wav"/>
+	<sound name="fire_screaming" path="Data/Assets/Sounds/fire_screaming.wav"/>
+	<sound name="necro_boss" path="Data/Assets/Sounds/necro_boss.wav"/>
+	<sound name="click_button" path="Data/Assets/Sounds/click_button.wav"/>
+	<sound name="pushback" path="Data/Assets/Sounds/pushback.wav"/>
+	<sound name="necro_spawning_enemies" path="Data/Assets/Sounds/necro_spawning_enemies.wav"/>
+	<sound name="flyer_dmg" path="Data/Assets/Sounds/flyer_dmg.wav"/>
 </sounds>
