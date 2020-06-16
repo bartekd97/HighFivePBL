@@ -28,6 +28,7 @@ private:
 	GameObject rightWingObject;
 
 	State currentState = State::OPENED;
+	ALuint sourceGate;
 
 	TimerAnimator timerAnimator;
 
@@ -72,6 +73,8 @@ public:
 		});
 
 		currentState = State::OPENED;
+		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.1f);
+
 	}
 
 	void OnCloseMe(Event& ev)
@@ -85,6 +88,7 @@ public:
 			leftTransform.SetRotation(glm::mix(leftRotationOpened, leftRotationClosed, prog));
 			rightTransform.SetRotation(glm::mix(rightRotationOpened, rightRotationClosed, prog));
 			});
+		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.1f);
 
 		currentState = State::CLOSED;
 	}

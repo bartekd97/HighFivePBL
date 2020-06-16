@@ -4,6 +4,7 @@
     <sound name="ambient" path="Data/Assets/Sounds/ambient.wav"/>
     <sound name="menu" path="Data/Assets/Sounds/menu.wav"/>
     <sound name="menu2" path="Data/Assets/Sounds/menu2.wav"/>
+    <sound name="menuKorpecki" path="Data/Assets/Sounds/menuKorpecki.wav"/>
     <sound name="bum" path="Data/Assets/Sounds/bum.wav"/>
     <sound name="bum2" path="Data/Assets/Sounds/bum2.wav"/>
     <sound name="bum3" path="Data/Assets/Sounds/bum3.wav"/>
@@ -24,4 +25,6 @@
 	<sound name="footsteps_in_grass" path="Data/Assets/Sounds/footsteps_in_grass.wav"/>
 	<sound name="choking" path="Data/Assets/Sounds/choking.wav"/>
 	<sound name="mud" path="Data/Assets/Sounds/mud.wav"/>
+    <sound name="ghost" path="Data/Assets/Sounds/ghost.wav"/>
+
 </sounds>
