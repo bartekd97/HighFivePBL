@@ -85,7 +85,7 @@ void Button::Update(const glm::vec2& mousePosition)
 		{
 			if (state != STATE::HOVER && OnStateChanged) {
 				OnStateChanged(STATE::HOVER);
-				AudioManager::CreateDefaultSourceAndPlay(source, "glass_ping", false, 0.1f);
+				AudioManager::CreateDefaultSourceAndPlay(source, "click_button", false, 0.1f);
 			}
 			state = STATE::HOVER;
 		}
