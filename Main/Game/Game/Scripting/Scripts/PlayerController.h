@@ -63,6 +63,10 @@ private: // variables
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
 	Raycaster raycaster;
+	ALuint sourcePlayerDamage;
+	ALuint sourcePlayerMovement;
+	bool isReadyToStartMovement = true;
+
 
 	std::shared_ptr<GhostController> ghostController;
 	std::shared_ptr<Panel> ghostBarPanel;
@@ -109,6 +113,9 @@ public:
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
+		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerMovement, "footsteps_in_grass", true, 0.1f);
+		AudioManager::StopSource(sourcePlayerMovement);
+
 	}
 
 	void Start()
@@ -221,14 +228,12 @@ public:
 	{
 		health -= dmg;
 		lastDmgTime = std::chrono::high_resolution_clock::now();
-		ALuint source1;
-		AudioManager::CreateDefaultSourceAndPlay(source1, "damage4", false);
+		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "damage4", false, 0.5f);
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
 
-			ALuint source;
-			AudioManager::CreateDefaultSourceAndPlay(source, "death", false);
+			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "death", false, 0.5f);
 
 			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
@@ -383,7 +388,6 @@ public:
 	{
 		auto& transform = GetTransform();
 		auto& rigidBody = GetRigidBody();
-
 		glm::vec3 direction(0.0f);
 		if (!hasGhostMovement && !isPushingBack)
 		{
@@ -393,6 +397,20 @@ public:
 			if (InputManager::GetKeyStatus(GLFW_KEY_W)) direction.z = -1.0f;
 			else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 		}
+
+		if((InputManager::GetMouseButtonDown(GLFW_KEY_W) || InputManager::GetMouseButtonDown(GLFW_KEY_S) || 
+			InputManager::GetMouseButtonDown(GLFW_KEY_A) || InputManager::GetMouseButtonDown(GLFW_KEY_D)) && isReadyToStartMovement == true)
+		{
+			AudioManager::PlaySoundFromSource(sourcePlayerMovement);
+			isReadyToStartMovement = false;
+		}
+		else if ((!InputManager::GetKeyStatus(GLFW_KEY_W) && !InputManager::GetKeyStatus(GLFW_KEY_S) &&
+			!InputManager::GetKeyStatus(GLFW_KEY_A) && !InputManager::GetKeyStatus(GLFW_KEY_D)) && isReadyToStartMovement == false)
+		{
+			AudioManager::StopSource(sourcePlayerMovement);
+			isReadyToStartMovement = true;
+		}
+
 
 		bool isMoving = glm::length2(direction) > 0.5f;
 
