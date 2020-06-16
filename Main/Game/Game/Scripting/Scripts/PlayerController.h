@@ -1,10 +1,8 @@
 #pragma once
 
 #include <glm/gtx/vector_angle.hpp>
-#include "../Script.h"
+#include "CreatureController.h"
 #include "HFEngine.h"
-#include "ECS/Components/Transform.h"
-#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/PointLightRenderer.h"
 #include "InputManager.h"
@@ -25,11 +23,9 @@
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 #define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
-class PlayerController : public Script
+class PlayerController : public CreatureController
 {
 private: // parameters
-	float moveSpeed = 10.0f;
-	float maxHealth = 100.0f;
 	float healthRecoverySpeed = 5.0f;
 	float idleToStartRecoveryTime = 3.0f;
 
@@ -47,12 +43,10 @@ private: // variables
 	GameObject torchFlameLightObject;
 	GameObject torchFlameParticleObject;
 
-	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 	float pushBackDistance = 5.0f;
 	float pushBackForce = 15.0f;
-	float health;
 	float healthMaxOpacity = 0.5f;
 	std::chrono::steady_clock::time_point lastDmgTime;
 
@@ -82,8 +76,6 @@ private: // variables
 public:
 	PlayerController()
 	{
-		RegisterFloatParameter("moveSpeed", &moveSpeed);
-		RegisterFloatParameter("maxHealth", &maxHealth);
 		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
 		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
 
@@ -214,7 +206,6 @@ public:
 	void BackToMainMenu()
 	{
 		SceneManager::RequestLoadScene("MainMenu");
-		// TODO:  przy spadaniu health na 0 i takeDamage() ¿eby lsot by³o
 	}
 
 	void TakeDamage(float dmg)
@@ -427,7 +418,7 @@ public:
 		}
 
 		if (currentMoveSpeed > 0.01f)
-			rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
+			Move(transform.GetFront(), dt);
 
 		return isMoving;
 	}
