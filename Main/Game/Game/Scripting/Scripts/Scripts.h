@@ -17,6 +17,7 @@
 #include "TutorialPlayground.h"
 #include "TutorialEnemy.h"
 #include "MudController.h"
+#include "FireController.h"
 
 #include "Upgrades/GhostDistance.h"
 #include "Upgrades/GhostRecovery.h"

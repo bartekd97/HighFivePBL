@@ -303,6 +303,7 @@
     <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
     <ClInclude Include="Scripting\Scripts\CreatureController.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
+    <ClInclude Include="Scripting\Scripts\FireController.h" />
     <ClInclude Include="Scripting\Scripts\GateOpener.h" />
     <ClInclude Include="Scripting\Scripts\GhostController.h" />
     <ClInclude Include="Scripting\Scripts\MiniGhost.h" />

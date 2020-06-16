@@ -164,7 +164,7 @@ public:
 		lostGamePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		lostGamePanel->SetSize({ 0.333f, 0.444f });
 		lostGamePanel->SetPivot(Anchor::CENTER);
-		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.15f, 0.0f), Anchor::CENTER);
+		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.25f, 0.0f), Anchor::CENTER);
 		lostGamePanel->textureColor.texture = TextureManager::GetTexture("GUI", "lostGame");
 		lostGamePanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 		GUIManager::AddWidget(lostGamePanel, nullptr, 3);
@@ -172,7 +172,7 @@ public:
 
 		lostGameButton = std::make_shared<Button>();
 		lostGameButton->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
-		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.05f, 0.0f), Anchor::CENTER);
+		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.25f, 0.0f), Anchor::CENTER);
 		lostGameButton->SetSize({ 0.1953f, 0.125f });//250 120
 		lostGameButton->SetPivot(Anchor::CENTER);
 		lostGameButton->OnClickListener = GUI_METHOD_POINTER(PlayerController::BackToMainMenu);

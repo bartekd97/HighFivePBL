@@ -9,6 +9,10 @@ private: // PARAMETERS
 private: // VARIABLES
 
 public:
+	MudController()
+	{
+		RegisterFloatParameter("slowForce", &slowForce);
+	}
 
 	void OnObstacleEnter(GameObject object) override
 	{

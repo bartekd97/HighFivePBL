@@ -15,6 +15,7 @@ class ObstacleController : public Script
 private:
 	bool IsCreature(GameObject gameObject)
 	{
+		if (!HFEngine::ECS.IsValidGameObject(gameObject)) return false;
 		auto name = HFEngine::ECS.GetNameGameObject(gameObject);
 		if (strcmp(name, playerName) == 0) return true;
 		if (strcmp(name, enemyName) == 0) return true;
@@ -34,6 +35,22 @@ public:
 			auto& collider = HFEngine::ECS.GetComponent<Collider>(object);
 			collider.OnTriggerEnter.push_back(TriggerMethodPointer(ObstacleController::OnTriggerEnter));
 			collider.OnTriggerExit.push_back(TriggerMethodPointer(ObstacleController::OnTriggerExit));
+		}
+	}
+
+	void Update(float dt)
+	{
+		for (auto it = activeGameObjects.begin(); it != activeGameObjects.end(); )
+		{
+			if (!HFEngine::ECS.IsValidGameObject(it->first))
+			{
+				controllers.erase(it->first);
+				it = activeGameObjects.erase(it);
+			}
+			else
+			{
+				it++;
+			}
 		}
 	}
 

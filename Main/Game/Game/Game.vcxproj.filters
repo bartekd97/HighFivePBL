@@ -250,6 +250,7 @@
     <ClInclude Include="Scripting\Scripts\CreatureController.h" />
     <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
     <ClInclude Include="Scripting\Scripts\MudController.h" />
+    <ClInclude Include="Scripting\Scripts\FireController.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
