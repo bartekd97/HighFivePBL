@@ -244,6 +244,9 @@
     <ClInclude Include="Scripting\Scripts\Upgrades\GhostDistance.h" />
     <ClInclude Include="Scripting\Scripts\Upgrades\GhostRecovery.h" />
     <ClInclude Include="Scripting\Scripts\Upgrades\GhostSpeed.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostActiveLines.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\PushbackDistance.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\PushbackForce.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

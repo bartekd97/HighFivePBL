@@ -50,7 +50,7 @@ public:
 	float leftGhostDistance;
 
 	float miniGhostSpawnDistance = 1.5f;
-	int maxActiveLines = 4;
+	int maxActiveLines = 2;
 
 	std::vector<std::shared_ptr<GhostLine>> activeLines;
 
@@ -63,10 +63,12 @@ private:
 	std::pair<FrameCounter, float> _upgradedMoveSpeed = { 0,0 };
 	std::pair<FrameCounter, float> _upgradedDistanceRecoverySpeed = { 0,0 };
 	std::pair<FrameCounter, float> _upgradedMaxGhostDistance = { 0,0 };
+	std::pair<FrameCounter, int> _upgradedMaxActiveLines = { 0,0 };
 public:
 	float GetUpgradedMoveSpeed(bool force = false);
 	float GetUpgradedDistanseRecoverySpeed(bool force = false);
 	float GetUpgradedMaxGhostDistance(bool force = false);
+	int GetUpgradedMaxActiveLines(bool force = false);
 
 
 	GhostController()

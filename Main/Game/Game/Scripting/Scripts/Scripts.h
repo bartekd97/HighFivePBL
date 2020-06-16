@@ -20,3 +20,6 @@
 #include "Upgrades/GhostDistance.h"
 #include "Upgrades/GhostRecovery.h"
 #include "Upgrades/GhostSpeed.h"
+#include "Upgrades/GhostActiveLines.h"
+#include "Upgrades/PushbackDistance.h"
+#include "Upgrades/PushbackForce.h"

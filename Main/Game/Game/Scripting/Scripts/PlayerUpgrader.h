@@ -144,6 +144,8 @@ public:
 			PrefabManager::GetPrefab("Upgrades/GhostDistance"),
 			PrefabManager::GetPrefab("Upgrades/GhostRecovery"),
 			PrefabManager::GetPrefab("Upgrades/GhostSpeed"),
+			PrefabManager::GetPrefab("Upgrades/GhostActiveLines"),
+			PrefabManager::GetPrefab("Upgrades/PushbackImprovement"),
 		};
 		
 		// cache upgrade icons

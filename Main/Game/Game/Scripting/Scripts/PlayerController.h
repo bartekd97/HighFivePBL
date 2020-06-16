@@ -393,20 +393,29 @@ public:
 		glm::vec3 dir;
 		auto pos = GetTransform().GetWorldPosition();
 
+		Event evDistance(Events::StatModification::PUSHBACK_DISTANCE);
+		Event evForce(Events::StatModification::PUSHBACK_FORCE);
+		evDistance.SetParam(Events::StatModification::FloatValue, pushBackDistance);
+		evForce.SetParam(Events::StatModification::FloatValue, pushBackForce);
+		EventManager::FireEvent(evDistance);
+		EventManager::FireEvent(evForce);
+		float upgradedPushBackDistance = evDistance.GetParam<float>(Events::StatModification::FloatValue);
+		float upgradedPushBackForce = evForce.GetParam<float>(Events::StatModification::FloatValue);
+
 		Event ev(Events::Gameplay::Player::PUSHBACK_ENEMIES);
 		ev.SetParam(Events::Gameplay::Player::Position, pos);
-		ev.SetParam(Events::Gameplay::Player::PushBackDistance, pushBackDistance);
-		ev.SetParam(Events::Gameplay::Player::PushBackForce, pushBackForce);
+		ev.SetParam(Events::Gameplay::Player::PushBackDistance, upgradedPushBackDistance);
+		ev.SetParam(Events::Gameplay::Player::PushBackForce, upgradedPushBackForce);
 		EventManager::FireEvent(ev);
 
 		for (auto& object : objects)
 		{
 			auto objPos = HFEngine::ECS.GetComponent<Transform>(object).GetWorldPosition();
 			dir = objPos - pos;
-			if (VECLEN(dir) < pushBackDistance)
+			if (VECLEN(dir) < upgradedPushBackDistance)
 			{
 				auto& objectRb = HFEngine::ECS.GetComponent<RigidBody>(object);
-				objectRb.AddForce(glm::normalize(glm::normalize(dir / 2.0f) + glm::vec3(0.0f, 0.75f, 0.0f)) * pushBackForce);
+				objectRb.AddForce(glm::normalize(glm::normalize(dir / 2.0f) + glm::vec3(0.0f, 0.75f, 0.0f)) * upgradedPushBackForce);
 				objectRb.isFalling = true;
 			}
 		}

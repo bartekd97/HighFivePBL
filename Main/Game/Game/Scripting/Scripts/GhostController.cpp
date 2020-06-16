@@ -24,6 +24,14 @@
 	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
 	pairName.second = ev.GetParam<float>(Events::StatModification::FloatValue); \
 	} 
+#define CheckUpgradeInt(pairName, originalValue, eventName, force) if (HFEngine::CURRENT_FRAME_NUMBER - pairName.first > 4 || force) \
+	{ \
+	Event ev(eventName); \
+	ev.SetParam(Events::StatModification::IntValue, originalValue); \
+	EventManager::FireEvent(ev); \
+	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
+	pairName.second = ev.GetParam<int>(Events::StatModification::IntValue); \
+	} 
 
 
 float GhostController::GetUpgradedMoveSpeed(bool force)
@@ -42,6 +50,12 @@ float GhostController::GetUpgradedMaxGhostDistance(bool force)
 {
 	CheckUpgradeFloat(_upgradedMaxGhostDistance, maxGhostDistance, Events::StatModification::GHOST_MAX_DISTANCE, force);
 	return _upgradedMaxGhostDistance.second;
+}
+
+int GhostController::GetUpgradedMaxActiveLines(bool force)
+{
+	CheckUpgradeInt(_upgradedMaxActiveLines, maxActiveLines, Events::StatModification::GHOST_MAX_ACTIVE_LINES, force);
+	return _upgradedMaxActiveLines.second;
 }
 
 
@@ -280,7 +294,7 @@ void GhostController::EndMarking()
 		else
 		{
 			CheckClosedLines();
-			if (activeLines.size() > maxActiveLines)
+			if (activeLines.size() > GetUpgradedMaxActiveLines())
 			{
 				//while (activeLines.Count > 0)
 				FadeOutLine(activeLines[0]);

@@ -78,6 +78,10 @@ namespace Events::StatModification
 	const EventId GHOST_MOVE_SPEED = "Events::StatModification::GHOST_MOVE_SPEED"_hash; // float value
 	const EventId GHOST_RECOVERY_SPEED = "Events::StatModification::GHOST_RECOVERY_SPEED"_hash; // float value
 	const EventId GHOST_MAX_DISTANCE = "Events::StatModification::GHOST_MAX_DISTANCE"_hash; // float value
+	const EventId GHOST_MAX_ACTIVE_LINES = "Events::StatModification::GHOST_MAX_ACTIVE_LINES"_hash; // int value
+
+	const EventId PUSHBACK_DISTANCE = "Events::StatModification::PUSHBACK_DISTANCE"_hash; // float value
+	const EventId PUSHBACK_FORCE = "Events::StatModification::PUSHBACK_FORCE"_hash; // float value
 }
 
 
@@ -118,4 +122,5 @@ namespace Events::GameObject
 namespace Events::StatModification
 {
 	const ParamId FloatValue = "Events::StatModification::FloatValue"_hash;
+	const ParamId IntValue = "Events::StatModification::IntValue"_hash;
 }

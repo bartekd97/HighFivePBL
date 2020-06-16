@@ -66,6 +66,9 @@ namespace ScriptManager
 		REGISTER_SCRIPT(Upgrade::GhostDistance);
 		REGISTER_SCRIPT(Upgrade::GhostRecovery);
 		REGISTER_SCRIPT(Upgrade::GhostSpeed);
+		REGISTER_SCRIPT(Upgrade::GhostActiveLines);
+		REGISTER_SCRIPT(Upgrade::PushbackDistance);
+		REGISTER_SCRIPT(Upgrade::PushbackForce);
 
 		EventManager::AddListener(Events::GameObject::DESTROYED, OnGameObjectDestroyed);
 	}
