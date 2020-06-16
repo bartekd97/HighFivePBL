@@ -23,3 +23,9 @@ class ISystemPostUpdate
 public:
 	virtual void PostUpdate(float dt) = 0;
 };
+
+class ISystemPostRender
+{
+public:
+	virtual void PostRender() = 0;
+};

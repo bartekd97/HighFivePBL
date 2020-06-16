@@ -130,3 +130,10 @@ void ECSCore::PostUpdateSystems(float dt)
 		(*it)->PostUpdate(dt);
 	}
 }
+void ECSCore::PostRenderSystems()
+{
+	for (auto it = systemManager->postRenderQueue.begin(); it != systemManager->postRenderQueue.end(); ++it)
+	{
+		(*it)->PostRender();
+	}
+}
