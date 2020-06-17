@@ -257,6 +257,7 @@
     <ClInclude Include="Scripting\Scripts\FireController.h" />
     <ClInclude Include="Scripting\Scripts\GasController.h" />
     <ClInclude Include="ECS\Systems\GarbageCollectorSystem.h" />
+    <ClInclude Include="Scripting\Scripts\RotateAround.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

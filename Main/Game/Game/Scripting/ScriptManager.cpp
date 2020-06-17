@@ -48,6 +48,7 @@ namespace ScriptManager
 	{
 		REGISTER_SCRIPT(TestScript);
 		REGISTER_SCRIPT(TestScript2);
+		REGISTER_SCRIPT(RotateAround);
 		REGISTER_SCRIPT(PlayerController);
 		REGISTER_SCRIPT(PlayerCameraFollower);
 		REGISTER_SCRIPT(GhostController);
