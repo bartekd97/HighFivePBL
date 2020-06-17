@@ -5,7 +5,7 @@
 class MudController : public ObstacleController
 {
 private: // PARAMETERS
-	float slowForce = 5.0f;
+	float slowForce = 3.0f;
 private: // VARIABLES
 
 public:
