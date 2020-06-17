@@ -43,6 +43,16 @@ public:
 		return isFlying;
 	}
 
+	inline float GetHealth()
+	{
+		return health;
+	}
+
+	inline float GetMaxHealth()
+	{
+		return maxHealth;
+	}
+
 	void Move(const glm::vec3& direction, float dt)
 	{
 		auto& transform = GetTransform();
