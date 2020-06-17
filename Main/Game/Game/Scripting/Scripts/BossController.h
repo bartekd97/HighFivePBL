@@ -81,6 +81,16 @@ public:
 		HFEngine::ECS.SetNameGameObject(GetGameObject(), "boss");
 	}
 
+	inline float GetHealth()
+	{
+		return health;
+	}
+
+	inline float GetMaxHealth()
+	{
+		return maxHealth;
+	}
+
 	GameObject GetPlayerObject() { return playerObject; }
 	Raycaster& GetRaycaster() { return raycaster; }
 	bool IsTriggered() { return triggered; }
