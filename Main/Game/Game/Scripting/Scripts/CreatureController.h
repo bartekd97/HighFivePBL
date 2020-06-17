@@ -43,21 +43,21 @@ public:
 		return isFlying;
 	}
 
+	inline float GetHealth()
+	{
+		return health;
+	}
+
+	inline float GetMaxHealth()
+	{
+		return maxHealth;
+	}
+
 	void Move(const glm::vec3& direction, float dt)
 	{
 		auto& transform = GetTransform();
 		auto& rigidBody = GetRigidBody();
 		rigidBody.Move(transform.GetPosition() + (direction * (currentMoveSpeed - slow) * dt));
-	}
-
-	float GetHealth()
-	{
-		return health;
-	}
-
-	float GetMaxHealth()
-	{
-		return maxHealth;
 	}
 };
 

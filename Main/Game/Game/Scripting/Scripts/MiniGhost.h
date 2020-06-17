@@ -22,7 +22,7 @@ private: // parameters
 	float moveSpeed = 7.0f;
 	float attackPreparationTime = 0.4f;
 	float attackTime = 1.25f;
-	float damageToEnemies = 2.0f;
+	float damageToEnemies = 20.0f;
 
 	glm::vec3 attackAlbedoColor = { 2.5f, 0.4f, 1.5f };
 	glm::vec3 attackEmissiveColor = { 0.5f, 0.1f, 0.3f };

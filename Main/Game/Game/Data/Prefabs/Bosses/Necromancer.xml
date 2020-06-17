@@ -12,7 +12,7 @@
     <component name="ScriptComponent">
         <property name="name" value="BossController"/>
         <property name="moveSpeed" value="10.0"/>
-		<property name="maxHealth" value="100.0"/>
+		<property name="maxHealth" value="150.0"/>
         <property name="awaitingAnimation" value="praying"/>
     </component>
     <component name="ScriptComponent">

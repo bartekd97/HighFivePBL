@@ -27,6 +27,17 @@ namespace Bosses {
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::INITLIAZE_SCRIPT, Necromancer::OnBossScriptInitialize));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::TRIGGERED, Necromancer::OnBossTriggered));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::DEAD, Necromancer::OnBossDead));
+
+		//float hpPercentage
+		//int instantWavesNumber
+		//float randomWaveInterval
+		//int maxWaves
+		//int enemiesInWave
+		stages.push_back({ 1.0f, 0, 0.0f, 0, 0 });
+		stages.push_back({ 1.0f, 2, 17.5f, 3, 2 });
+		stages.push_back({ 0.75f, 2, 14.0f, 4, 3 });
+		stages.push_back({ 0.5f, 3, 13.5f, 5, 3 });
+		stages.push_back({ 0.25f, 4, 13.0f, 4, 4 });
 	}
 
 	void Necromancer::Start()
@@ -52,12 +63,11 @@ namespace Bosses {
 	void Necromancer::OnBossTriggered(Event& ev)
 	{
 		if (GetGameObject() != ev.GetParam<GameObject>(Events::GameObject::GameObject)) return;
+		currentStage += 1;
 
 		AudioManager::CreateDefaultSourceAndPlay(sourceNecromancerInit, "necro_boss", false, 1.0f);
 		AudioManager::StopBackground();
 		AudioManager::PlayBackground("bossKorpecki", 0.2f);
-
-		ScheduleWavesSpawning();
 	}
 
 	void Necromancer::OnBossDead(Event& ev)
@@ -91,6 +101,19 @@ namespace Bosses {
 
 		if (bossController->IsDead()) return;
 
+		auto nextStage = currentStage + 1;
+		if (nextStage < stages.size())
+		{
+			if ((bossController->GetHealth() / bossController->GetMaxHealth()) <= stages[nextStage].hpPercentage)
+			{
+				currentStage = nextStage;
+				spawnedEnemies.clear(); //number of waves is based on current stage number of enemies in wave
+			}
+		}
+
+		ClearSpawnedEnemies();
+		TrySpawnWave();
+
 		glm::vec3 currentPos = GetBossTransform().GetPosition();
 		Raycaster& raycaster = bossController->GetRaycaster();
 
@@ -119,29 +142,70 @@ namespace Bosses {
 				{
 					SpawnEnemy(enemyPrefab, currentPos + direction * (waveDistance + waveEnemyDistance * i), roty);
 				}
+				if (stages[currentStage].instantWavesNumber > 0) stages[currentStage].instantWavesNumber -= 1;
 				shouldSpawnWave = false;
+				isCasting = false;
+				lastSpawnTime = std::chrono::steady_clock::now();
 			}
 		}
 	}
 
-	void Necromancer::ScheduleWavesSpawning()
+	void Necromancer::ClearSpawnedEnemies()
 	{
-		if (bossController->IsDead()) return;
-
-		for (int i = 0; i < amountOfWaves; i++)
+		for (auto it = spawnedEnemies.begin(); it != spawnedEnemies.end(); )
 		{
-			timerAnimator.DelayAction(timeBetweenWaves * i, std::bind(&Necromancer::CastWaveSpawn, this));
+			if (!HFEngine::ECS.IsValidGameObject(*it))
+			{
+				it = spawnedEnemies.erase(it);
+			}
+			else
+			{
+				it++;
+			}
 		}
+	}
+
+	void Necromancer::TrySpawnWave()
+	{
+		if ((GetCurrentWaveNumber() + 1) > stages[currentStage].maxWaves) return;
+		if (!shouldSpawnWave && !isCasting)
+		{
+			if (stages[currentStage].instantWavesNumber > 0)
+			{
+				isCasting = true;
+			}
+			else 
+			{
+				auto now = std::chrono::steady_clock::now();
+				if (std::chrono::duration<float, std::chrono::seconds::period>(now - lastSpawnTime).count() >= stages[currentStage].randomWaveInterval)
+				{
+					isCasting = true;
+				}
+			}
+			if (isCasting)
+			{
+				CastWaveSpawn();
+			}
+		}
+	}
+
+	int Necromancer::GetCurrentWaveNumber()
+	{
+		if (stages[currentStage].enemiesInWave == 0) return 0;
+		return spawnedEnemies.size() / stages[currentStage].enemiesInWave;
 	}
 
 	void Necromancer::CastWaveSpawn()
 	{
 		if (bossController->IsDead()) return;
 
-		bossController->RequestAnimationAction("cast", 0.15f, 0.5f, 0.9f,
+		if (!bossController->RequestAnimationAction("cast", 0.15f, 0.6f, 0.9f,
 			[&]() {
 				shouldSpawnWave = true;
-			});
+			}))
+		{
+			isCasting = false;
+		}
 	}
 
 	void Necromancer::SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec3 position, float rotation)
