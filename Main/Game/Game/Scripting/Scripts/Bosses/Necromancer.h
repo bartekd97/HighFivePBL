@@ -27,6 +27,8 @@ namespace Bosses {
 		bool shouldSpawnWave = false;
 		std::vector<GameObject> spawnedEnemies;
 
+		std::shared_ptr<Prefab> smokeSplashEffect;
+
 		TimerAnimator timerAnimator;
 		ALuint sourceNecromancerInit;
 		ALuint sourceNecromancerDamage;
