@@ -25,17 +25,17 @@ namespace Bosses {
 
 		float waveDistance = 6.0f;
 		float waveEnemyDistance = 1.5f;
-		float timeBetweenWaves = 7.5f;
-		int enemiesInWave = 3;
-		int amountOfWaves = 3;
 
+		float dmgAnimationDuration = 0.5f;
+		glm::vec3 defaultColor;
+		glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
 	private:
 		std::shared_ptr<BossController> bossController;
 
 		std::vector<std::shared_ptr<Prefab>> enemyPrefabs;
 		bool shouldSpawnWave = false;
 		bool isCasting = false;
-		std::vector<GameObject> spawnedEnemies;
+		std::vector<std::vector<GameObject>> spawnedEnemies;
 		std::vector<Stage> stages;
 		int currentStage = 0;
 		std::chrono::steady_clock::time_point lastSpawnTime;
@@ -52,6 +52,7 @@ namespace Bosses {
 
 		int GetCurrentWaveNumber();
 		void ClearSpawnedEnemies();
+		void RestoreDefaultEmissive();
 
 	public:
 		void Awake();
