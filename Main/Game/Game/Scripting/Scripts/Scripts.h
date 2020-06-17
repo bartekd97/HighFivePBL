@@ -21,6 +21,7 @@
 #include "MudController.h"
 #include "FireController.h"
 #include "GasController.h"
+#include "Credits.h"
 
 #include "Bosses/Necromancer.h"
 

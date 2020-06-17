@@ -67,6 +67,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(MudController);
 		REGISTER_SCRIPT(FireController);
 		REGISTER_SCRIPT(GasController);
+		REGISTER_SCRIPT(Credits);
 
 		REGISTER_SCRIPT(Bosses::Necromancer);
 

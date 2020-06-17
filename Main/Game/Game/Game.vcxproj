@@ -307,6 +307,7 @@
     <ClInclude Include="Scripting\Scripts\Bosses\Necromancer.h" />
     <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
     <ClInclude Include="Scripting\Scripts\CreatureController.h" />
+    <ClInclude Include="Scripting\Scripts\Credits.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Scripting\Scripts\FireController.h" />
     <ClInclude Include="Scripting\Scripts\GasController.h" />
@@ -320,7 +321,6 @@
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\PlayerDeathController.h" />
-    <ClInclude Include="Scripting\Scripts\RotateAround.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\StatueUser.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
