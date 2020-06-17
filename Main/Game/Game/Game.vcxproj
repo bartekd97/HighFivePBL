@@ -89,8 +89,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Audio\AudioManager.cpp" />
-	  <ClCompile Include="Audio\SoundManager.cpp" />
-	  <ClCompile Include="Audio\SoundObject.cpp" />
+    <ClCompile Include="Audio\SoundManager.cpp" />
+    <ClCompile Include="Audio\SoundObject.cpp" />
     <ClCompile Include="ECS\Components\Transform.cpp" />
     <ClCompile Include="ECS\ECSCore.cpp" />
     <ClCompile Include="ECS\GameObjectHierarchy.cpp" />
@@ -162,6 +162,7 @@
     <ClCompile Include="Scene\Scenes\GameLite.cpp" />
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
+    <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
     <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
@@ -175,8 +176,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Audio\AudioManager.h" />
-	  <ClInclude Include="Audio\SoundManager.h" />
-	  <ClInclude Include="Audio\SoundObject.h" />
+    <ClInclude Include="Audio\SoundManager.h" />
+    <ClInclude Include="Audio\SoundObject.h" />
     <ClInclude Include="Data\Prefabs\TriggerTest.xml" />
     <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
     <ClInclude Include="Data\Shaders\Vertex\Text.glsl" />
@@ -300,6 +301,8 @@
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
+    <ClInclude Include="Scripting\Scripts\BossController.h" />
+    <ClInclude Include="Scripting\Scripts\Bosses\Necromancer.h" />
     <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Scripting\Scripts\GateOpener.h" />

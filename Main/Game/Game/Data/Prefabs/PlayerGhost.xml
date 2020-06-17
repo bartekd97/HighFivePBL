@@ -20,6 +20,7 @@
             <component name="SkinnedMeshRenderer">
                 <property name="configureFromHolder" value="true" />
                 <property name="material" value="Characters/Player:VampireGhostMat"/>
+                <property name="individualMaterial" value="true" />
                 <property name="castShadows" value="false" />
             </component>
             <component name="SkinAnimator">

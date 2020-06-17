@@ -99,6 +99,12 @@ void MapSetuper::GenerateCell(GameObject cell)
 
 GameObject MapSetuper::CalculateBossCell(GameObject startupCell)
 {
+    if (_debugLiteMode)
+    {
+        MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(startupCell);
+        return mc.Bridges[0].Cell;
+    }
+
     using CD = std::pair<GameObject, float>; // cell and it's distance do startup cell
     std::vector<CD> cds;
     glm::vec3 startupPos = HFEngine::ECS.GetComponent<Transform>(startupCell).GetWorldPosition();
