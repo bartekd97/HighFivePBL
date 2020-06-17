@@ -49,6 +49,16 @@ public:
 		auto& rigidBody = GetRigidBody();
 		rigidBody.Move(transform.GetPosition() + (direction * (currentMoveSpeed - slow) * dt));
 	}
+
+	float GetHealth()
+	{
+		return health;
+	}
+
+	float GetMaxHealth()
+	{
+		return maxHealth;
+	}
 };
 
 #undef GetTransform()

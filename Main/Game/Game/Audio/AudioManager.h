@@ -43,6 +43,7 @@ namespace AudioManager
 	void ContinuePlayingSource(ALuint& source);
 	void RewindSource(ALuint& source);
 	void SetSourceVolume(ALuint& source, float volume);
+	ALint GetSourceState(ALuint &source);
 
 	//ALenum error;
 	//bool Initialized = false;

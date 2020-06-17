@@ -18,6 +18,7 @@ private: // PARAMETERS
 private: // VARIABLES
 	std::unordered_map<GameObject, FireEffect> refreshList;
 	std::shared_ptr<Prefab> firedEffectPrefab;
+	ALuint source;
 public:
 	FireController()
 	{
@@ -74,6 +75,23 @@ public:
 			effect.object = firedEffectPrefab->Instantiate(object);
 			effect.spawnTime = std::chrono::steady_clock::now();
 			refreshList[object] = effect;
+
+			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
+			if (controllers[object] == scriptContainer.GetScript<PlayerController>())
+			{
+				AudioManager::CreateDefaultSourceAndPlay(source, "fire", false, 0.2f);
+
+				if (scriptContainer.GetScript<PlayerController>()->GetHealth() < scriptContainer.GetScript<PlayerController>()->GetMaxHealth() *0.2f)
+				{
+					AudioManager::CreateDefaultSourceAndPlay(source, "fire_screaming", false);
+				}
+			}
 		}
 	}
+
+	void OnObstacleExit(GameObject object) override
+	{
+		AudioManager::StopSource(source);
+	}
+
 };

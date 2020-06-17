@@ -220,7 +220,10 @@ public:
 	{
 		health -= dmg;
 		lastDmgTime = std::chrono::high_resolution_clock::now();
-		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "damage4", false, 0.5f);
+		if (health > 0.0f)
+		{
+			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "damage4", false, 0.5f);
+		}
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
