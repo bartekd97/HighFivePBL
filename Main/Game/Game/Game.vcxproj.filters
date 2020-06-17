@@ -86,6 +86,7 @@
     <ClCompile Include="Audio\SoundObject.cpp" />
     <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
+    <ClCompile Include="ECS\Systems\GarbageCollectorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -250,6 +251,12 @@
     <ClInclude Include="Scripting\Scripts\Upgrades\PushbackForce.h" />
     <ClInclude Include="Scripting\Scripts\BossController.h" />
     <ClInclude Include="Scripting\Scripts\Bosses\Necromancer.h" />
+    <ClInclude Include="Scripting\Scripts\CreatureController.h" />
+    <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
+    <ClInclude Include="Scripting\Scripts\MudController.h" />
+    <ClInclude Include="Scripting\Scripts\FireController.h" />
+    <ClInclude Include="Scripting\Scripts\GasController.h" />
+    <ClInclude Include="ECS\Systems\GarbageCollectorSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

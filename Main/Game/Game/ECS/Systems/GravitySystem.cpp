@@ -32,7 +32,9 @@ void GravitySystem::Update(float dt)
     {
         check = false;
     }*/
-    float level;
+    static float level;
+
+    if (dt > Physics::maxDelta) return;
 
     for (auto const& gameObject : gameObjects)
     {

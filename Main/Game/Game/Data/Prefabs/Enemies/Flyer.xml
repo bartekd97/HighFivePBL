@@ -19,6 +19,7 @@
 		<property name="attackDistance" value="1.8f"/>
 		<property name="triggerDistance" value="600.0f"/>
 		<property name="attackDamage" value="6.0f"/>
+      <property name="isFlying" value="1.0"/>
 	  </component>
 
 

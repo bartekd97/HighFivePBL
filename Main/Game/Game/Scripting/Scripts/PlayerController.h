@@ -1,10 +1,8 @@
 #pragma once
 
 #include <glm/gtx/vector_angle.hpp>
-#include "../Script.h"
+#include "CreatureController.h"
 #include "HFEngine.h"
-#include "ECS/Components/Transform.h"
-#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/PointLightRenderer.h"
 #include "InputManager.h"
@@ -25,11 +23,9 @@
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 #define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
-class PlayerController : public Script
+class PlayerController : public CreatureController
 {
 private: // parameters
-	float moveSpeed = 10.0f;
-	float maxHealth = 100.0f;
 	float healthRecoverySpeed = 5.0f;
 	float idleToStartRecoveryTime = 3.0f;
 
@@ -47,12 +43,10 @@ private: // variables
 	GameObject torchFlameLightObject;
 	GameObject torchFlameParticleObject;
 
-	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 	float pushBackDistance = 5.0f;
 	float pushBackForce = 15.0f;
-	float health;
 	float healthMaxOpacity = 0.5f;
 	std::chrono::steady_clock::time_point lastDmgTime;
 
@@ -65,6 +59,7 @@ private: // variables
 	Raycaster raycaster;
 	ALuint sourcePlayerDamage;
 	ALuint sourcePlayerMovement;
+	ALuint sourcePlayerPushback;
 	bool isReadyToStartMovement = true;
 
 
@@ -86,8 +81,6 @@ private: // variables
 public:
 	PlayerController()
 	{
-		RegisterFloatParameter("moveSpeed", &moveSpeed);
-		RegisterFloatParameter("maxHealth", &maxHealth);
 		RegisterFloatParameter("healthRecoverySpeed", &healthRecoverySpeed);
 		RegisterFloatParameter("idleToStartRecoveryTime", &idleToStartRecoveryTime);
 
@@ -179,7 +172,7 @@ public:
 		lostGamePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		lostGamePanel->SetSize({ 0.333f, 0.444f });
 		lostGamePanel->SetPivot(Anchor::CENTER);
-		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.15f, 0.0f), Anchor::CENTER);
+		lostGamePanel->SetPositionAnchor(glm::vec3(0.0f, -0.25f, 0.0f), Anchor::CENTER);
 		lostGamePanel->textureColor.texture = TextureManager::GetTexture("GUI", "lostGame");
 		lostGamePanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 		GUIManager::AddWidget(lostGamePanel, nullptr, 3);
@@ -187,7 +180,7 @@ public:
 
 		lostGameButton = std::make_shared<Button>();
 		lostGameButton->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
-		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.05f, 0.0f), Anchor::CENTER);
+		lostGameButton->SetPositionAnchor(glm::vec3(0.0f, 0.25f, 0.0f), Anchor::CENTER);
 		lostGameButton->SetSize({ 0.1953f, 0.125f });//250 120
 		lostGameButton->SetPivot(Anchor::CENTER);
 		lostGameButton->OnClickListener = GUI_METHOD_POINTER(PlayerController::BackToMainMenu);
@@ -221,7 +214,6 @@ public:
 	void BackToMainMenu()
 	{
 		SceneManager::RequestLoadScene("MainMenu");
-		// TODO:  przy spadaniu health na 0 i takeDamage() ¿eby lsot by³o
 	}
 
 	void TakeDamage(float dmg)
@@ -260,6 +252,8 @@ public:
 			}
 			lostGameButton->SetEnabled(true);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
+			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "ghostly_game_over", false, 2.0f);
+
 		}
 	}
 
@@ -291,7 +285,7 @@ public:
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 
-			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE))
+			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE) &&  !hasGhostMovement)
 			{
 				StartPushBack();
 				isPushingBack = true;
@@ -369,7 +363,7 @@ public:
 
 		if (transform.GetWorldPosition().y < -15.0f)
 		{
-			transform.SetPosition(startPosition);
+			TakeDamage(maxHealth);
 		}
 
 		float ghostLevel = ghostController->GetLeftGhostLevel();
@@ -445,7 +439,7 @@ public:
 		}
 
 		if (currentMoveSpeed > 0.01f)
-			rigidBody.Move(transform.GetPosition() + (transform.GetFront() * currentMoveSpeed * dt));
+			Move(transform.GetFront(), dt);
 
 		return isMoving;
 	}
@@ -456,13 +450,15 @@ public:
 		auto& emitterSmoke = HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject);
 		auto& emitterTorch = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject);
 		auto& lightTorch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+ 
+		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerPushback, "pushback", false);
 
 		// anim & pushback stuff
 		timerAnimator.DelayAction(0.2f, [&]() {
 			emitterSmoke.emitting = true;
 			});
 		timerAnimator.DelayAction(0.35f, [&]() {
-			PushbackTest();
+			Pushback();
 			});
 		timerAnimator.DelayAction(0.5f, [&]() {
 			emitterSmoke.emitting = false;
@@ -480,7 +476,7 @@ public:
 			});
 	}
 
-	void PushbackTest()
+	void Pushback()
 	{
 		auto objects = HFEngine::ECS.GetGameObjectsByName("enemy");
 		glm::vec3 dir;

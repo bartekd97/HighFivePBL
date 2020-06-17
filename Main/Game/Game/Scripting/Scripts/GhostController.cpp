@@ -285,7 +285,6 @@ void GhostController::EndMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
-	printf("test");
 	AudioManager::StopSource(sourceGhostController);
 	recordedPositions.emplace_back(glm::vec2{
 		transformPosition.x,

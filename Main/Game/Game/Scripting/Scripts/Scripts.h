@@ -17,6 +17,9 @@
 #include "GUIStatistics.h"
 #include "TutorialPlayground.h"
 #include "TutorialEnemy.h"
+#include "MudController.h"
+#include "FireController.h"
+#include "GasController.h"
 
 #include "Bosses/Necromancer.h"
 
