@@ -13,8 +13,8 @@
 
     <component name="ScriptComponent">
         <property name="name" value="EnemyController"/>
-        <property name="moveSpeed" value="5.0"/>
-		<property name="maxHealth" value="10.0"/>
+        <property name="moveSpeed" value="4.0"/>
+		<property name="maxHealth" value="30.0"/>
 		<property name="dmgAnimationDuration" value="0.7f"/>
         <property name="attackDistance" value="1.5f"/>
 		<property name="triggerDistance" value="500.0f"/>

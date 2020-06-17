@@ -166,7 +166,7 @@ struct CellSetupConfig
     {
         // TODO: make it with cleaner way, with possibility to use different configs for different cells
         mainStatuePrefab = PrefabManager::GetPrefab("Statues/Goth");
-        /*
+        
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud1"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud2"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Mud3"));
@@ -178,7 +178,7 @@ struct CellSetupConfig
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire3"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire4"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Fire5"));
-        */
+        
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas1"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas2"));
         obstaclePrefabs.push_back(PrefabManager::GetPrefab("Obstacles/Gas3"));
