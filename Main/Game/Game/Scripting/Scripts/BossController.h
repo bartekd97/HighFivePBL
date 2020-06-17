@@ -214,6 +214,11 @@ public:
 		}
 	}
 
+	GameObject GetVisualObject()
+	{
+		return visualObject;
+	}
+
 	float GetTargetMoveSpeed()
 	{
 		if (currentAnimAction.has_value()) return 0.0f;
@@ -286,7 +291,7 @@ public:
 		health -= value;
 		//auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		//timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
-		//timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
+		//timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&BossController::RestoreDefaultEmissive, this));
 
 		if (health <= 0)
 		{

@@ -38,6 +38,7 @@ namespace Bosses {
 		stages.push_back({ 0.75f, 2, 14.0f, 4, 3 });
 		stages.push_back({ 0.5f, 3, 13.5f, 5, 3 });
 		stages.push_back({ 0.25f, 4, 13.0f, 4, 4 });
+		spawnedEnemies.resize(stages.size());
 	}
 
 	void Necromancer::Start()
@@ -51,6 +52,15 @@ namespace Bosses {
 
 		for (auto& ep : enemyPrefabs)
 			ep->MakeWarm();
+
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
+		defaultColor = mesh.material->emissiveColor;
+	}
+
+	void Necromancer::RestoreDefaultEmissive()
+	{
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
+		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, defaultColor, dmgAnimationDuration / 2.0f);
 	}
 
 	void Necromancer::OnBossScriptInitialize(Event& ev)
@@ -91,6 +101,9 @@ namespace Bosses {
 	{
 		AudioManager::CreateDefaultSourceAndPlay(sourceNecromancerDamage, "damage1", false, 1.0f);
 		bossController->TakeDamage(value);
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
+		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
+		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&Necromancer::RestoreDefaultEmissive, this));
 	}
 
 	void Necromancer::Update(float dt)
@@ -129,7 +142,7 @@ namespace Bosses {
 			bool clearPath = true;
 			if (raycaster.Raycast(currentPos, direction))
 			{
-				float pathLength = waveDistance + waveEnemyDistance * enemiesInWave;
+				float pathLength = waveDistance + waveEnemyDistance * stages[currentStage].enemiesInWave;
 				if (raycaster.GetOut().distance < waveDistance)
 					clearPath = false;
 			}
@@ -138,7 +151,7 @@ namespace Bosses {
 			{
 				auto enemyPrefab = enemyPrefabs[HFEngine::CURRENT_FRAME_NUMBER % enemyPrefabs.size()];
 				float roty = GetBossTransform().GetRotationEuler().y;
-				for (int i = 0; i < enemiesInWave; i++)
+				for (int i = 0; i < stages[currentStage].enemiesInWave; i++)
 				{
 					SpawnEnemy(enemyPrefab, currentPos + direction * (waveDistance + waveEnemyDistance * i), roty);
 				}
@@ -152,15 +165,18 @@ namespace Bosses {
 
 	void Necromancer::ClearSpawnedEnemies()
 	{
-		for (auto it = spawnedEnemies.begin(); it != spawnedEnemies.end(); )
+		for (auto& spawnedEnemiesVector : spawnedEnemies)
 		{
-			if (!HFEngine::ECS.IsValidGameObject(*it))
+			for (auto it = spawnedEnemiesVector.begin(); it != spawnedEnemiesVector.end(); )
 			{
-				it = spawnedEnemies.erase(it);
-			}
-			else
-			{
-				it++;
+				if (!HFEngine::ECS.IsValidGameObject(*it))
+				{
+					it = spawnedEnemiesVector.erase(it);
+				}
+				else
+				{
+					it++;
+				}
 			}
 		}
 	}
@@ -191,8 +207,13 @@ namespace Bosses {
 
 	int Necromancer::GetCurrentWaveNumber()
 	{
-		if (stages[currentStage].enemiesInWave == 0) return 0;
-		return spawnedEnemies.size() / stages[currentStage].enemiesInWave;
+		int waves = 0;
+		for (int stage = 0; stage < stages.size(); stage++)
+		{
+			if (stages[stage].enemiesInWave == 0) continue;
+			waves += spawnedEnemies[stage].size() / stages[stage].enemiesInWave;
+		}
+		return waves;
 	}
 
 	void Necromancer::CastWaveSpawn()
@@ -216,7 +237,7 @@ namespace Bosses {
 			CellChild& cellChild = HFEngine::ECS.GetComponent<CellChild>(GetGameObject());
 			GameObject enemy = prefab->Instantiate(position, { 0.0f, rotation , 0.0f });
 			HFEngine::ECS.AddComponent<CellChild>(enemy, { cellChild.cell });
-			spawnedEnemies.push_back(enemy);
+			spawnedEnemies[currentStage].push_back(enemy);
 
 			(*HFEngine::ECS.GetComponentInChildren<ParticleEmitter>(smokeSplash))->emitting = false;
 			});
