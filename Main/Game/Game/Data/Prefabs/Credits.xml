@@ -1,0 +1,9 @@
+<prefab defaultScale="1.5,1.5,1.5">
+  <component name="ScriptComponent">
+    <property name="name" value="Credits"/>
+  </component>
+
+  <children>
+
+  </children>
+</prefab>

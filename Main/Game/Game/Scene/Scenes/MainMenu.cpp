@@ -12,6 +12,8 @@
 namespace MainMenuUI
 {
 	std::shared_ptr<Panel> viniete = nullptr; // main menu parent
+	GameObject creditsGameObject = NULL_GAMEOBJECT;
+	std::shared_ptr<Prefab> creditsPrefab;
 
 	std::map<int, std::shared_ptr<Button>> buttons;
 	std::map<int, std::shared_ptr<Panel>> buttonHovers;
@@ -31,6 +33,7 @@ namespace MainMenuUI
 		// otherwise create one
 
 		auto library = TextureManager::GetLibrary("MainMenu");
+		creditsPrefab = PrefabManager::GetPrefab("Credits");
 
 		viniete = std::make_shared<Panel>();
 		viniete->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
@@ -100,7 +103,11 @@ namespace MainMenuUI
 		}
 		else if (btnNaame == "btnCredits")
 		{
-			//
+			if (creditsGameObject == NULL_GAMEOBJECT) creditsGameObject = creditsPrefab->Instantiate();
+			else
+			{
+				if (!HFEngine::ECS.IsValidGameObject(creditsGameObject)) creditsGameObject = creditsPrefab->Instantiate();
+			}
 		}
 		else if (btnNaame == "btnQuit")
 		{
