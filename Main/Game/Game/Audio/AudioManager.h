@@ -31,6 +31,7 @@ namespace AudioManager
 	int LoadSound(std::string soundName, ALuint& buffer);
 	int GenerateBufferAndLoadSound(ALuint& buffer, std::string name);
 	int AttachSourceBuffer(ALuint& buffer, ALuint& source);
+	int ClearSource(ALuint& source);
 	int SetSource(ALuint& source, float sourcePosX, float sourcePosY, float sourcePosZ, ALboolean loop);
 	void PregenerateBuffers();
 	ALuint GetBuffer(std::string soundName);

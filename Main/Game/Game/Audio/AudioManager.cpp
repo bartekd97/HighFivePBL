@@ -249,6 +249,18 @@ namespace AudioManager
 		return 0;
 	}
 
+	int ClearSource(ALuint& source)
+	{
+		alSourcei(source, AL_BUFFER, NULL);
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			printf("ClearSources : %d", error);
+			printf("\n");
+			return -1;
+		}
+		return 0;
+	}
+
 	int SetSource(ALuint& source, ALuint& buffer, ALboolean loop)
 	{
 		// Generate the sources 
@@ -411,7 +423,7 @@ namespace AudioManager
 	void PlayBackground(std::string soundName, float volume)
 	{
 		//StopSource(sourceBackground);
-
+		ClearSource(sourceBackground);
 		//get pregenerated buffer
 		ALuint buffer = GetBuffer(soundName);
 
@@ -433,6 +445,7 @@ namespace AudioManager
 	void PlayMovement(std::string soundName, float volume)
 	{
 		//StopSource(sourceBackground);
+		ClearSource(sourceMovement);
 
 		//get pregenerated buffer
 		ALuint buffer = GetBuffer(soundName);
