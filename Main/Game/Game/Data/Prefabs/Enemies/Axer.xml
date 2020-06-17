@@ -19,6 +19,9 @@
         <property name="attackDistance" value="1.5f"/>
 		<property name="triggerDistance" value="500.0f"/>
 		<property name="attackDamage" value="5.0f"/>
+		<property name="soundAttack" value="hit3"/>
+		<property name="soundDmg" value="damage2"/>
+		<property name="soundDeath" value="monsterdeath"/>
 	  </component>
 
 

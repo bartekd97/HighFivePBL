@@ -36,6 +36,7 @@ private: // variables
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
+	ALuint sourceMiniGhostDamage;
 	TimerAnimator timerAnimator;
 	float ghostLightDefaultIntensity;
 	float ghostMaterialDefaultOpacity;
@@ -163,6 +164,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
+			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.1f);
 			enemyController->TakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}
@@ -170,6 +172,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto bossController = scriptContainer.GetScript<BossController>();
+			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.2f);
 			bossController->RequestToTakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}

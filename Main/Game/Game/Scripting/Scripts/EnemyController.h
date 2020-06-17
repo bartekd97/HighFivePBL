@@ -29,6 +29,9 @@ private: // parameters
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
 	float attackDamage = 5.0f;
+	std::string soundAttack;
+	std::string soundDmg;
+	std::string soundDeath;
 	float stunTimeAfterPush = 0.7f;
 
 private: // variables
@@ -73,6 +76,9 @@ public:
 		RegisterFloatParameter("attackDistance", &attackDistance);
 		RegisterFloatParameter("triggerDistance", &triggerDistance);
 		RegisterFloatParameter("attackDamage", &attackDamage);
+		RegisterStringParameter("soundAttack", &soundAttack);
+		RegisterStringParameter("soundDmg", &soundDmg);
+		RegisterStringParameter("soundDeath", &soundDeath);
 		RegisterFloatParameter("stunTimeAfterPush", &stunTimeAfterPush);
 	}
 
@@ -152,7 +158,7 @@ public:
 		{
 			if (raycaster.GetOut().distance <= attackDistance)
 			{
-				AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "hit3", false, 0.2f);
+				AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundAttack, false, 0.2f);
 				playerController->TakeDamage(attackDamage);
 			}
 		}
@@ -348,11 +354,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
-		AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "hit4", false, 1.0f);
+		AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundDmg, false, 1.0f);
 
 		if (health <= 0)
 		{
-			AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, "monsterdeath", false, 0.5f);
+			AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundDeath, false, 0.5f);
 			DestroyGameObjectSafely();
 		}
 	}

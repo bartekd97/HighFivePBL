@@ -23,6 +23,8 @@
 	<sound name="choking" path="Data/Assets/Sounds/choking.wav"/>
 	<sound name="mud" path="Data/Assets/Sounds/mud.wav"/>
     <sound name="ghost" path="Data/Assets/Sounds/ghost.wav"/>
+    <sound name="ghostend" path="Data/Assets/Sounds/ghostend.wav"/>
+    <sound name="ghostattack" path="Data/Assets/Sounds/ghostattack.wav"/>
 	<sound name="ghostly_game_over" path="Data/Assets/Sounds/ghostly_game_over.wav"/>
 	<sound name="fire_screaming" path="Data/Assets/Sounds/fire_screaming.wav"/>
 	<sound name="necro_boss" path="Data/Assets/Sounds/necro_boss.wav"/>
@@ -30,4 +32,5 @@
 	<sound name="pushback" path="Data/Assets/Sounds/pushback.wav"/>
 	<sound name="necro_spawning_enemies" path="Data/Assets/Sounds/necro_spawning_enemies.wav"/>
 	<sound name="flyer_dmg" path="Data/Assets/Sounds/flyer_dmg.wav"/>
+	<sound name="fire" path="Data/Assets/Sounds/fire.wav"/>
 </sounds>

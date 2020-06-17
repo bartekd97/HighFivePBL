@@ -38,11 +38,16 @@ namespace AudioManager
 	void CreateDefaultSourceAndPlay(ALuint &source, std::string soundName, bool loop, float volume = 1.0f);
 	void PlayBackground(std::string soundName, float volume);
 	void StopBackground();
+	void PlayMovement(std::string soundName, float volume);
+	void PlayMovement();
+	void SetMovementSound(std::string soundName, float volume);
+	void StopMovement();
 	void StopSource(ALuint& source);
 	void PauseSource(ALuint& source);
 	void ContinuePlayingSource(ALuint& source);
 	void RewindSource(ALuint& source);
 	void SetSourceVolume(ALuint& source, float volume);
+	ALint GetSourceState(ALuint &source);
 
 	//ALenum error;
 	//bool Initialized = false;

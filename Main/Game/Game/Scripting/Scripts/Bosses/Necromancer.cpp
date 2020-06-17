@@ -3,6 +3,7 @@
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/ParticleEmitter.h"
 #include "ECS/Components/PointLightRenderer.h"
+#include "Audio/AudioManager.h"
 #include "Necromancer.h"
 
 #define GetBossTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
@@ -50,12 +51,19 @@ namespace Bosses {
 	{
 		if (GetGameObject() != ev.GetParam<GameObject>(Events::GameObject::GameObject)) return;
 
+		AudioManager::CreateDefaultSourceAndPlay(sourceNecromancerInit, "necro_boss", false, 1.0f);
+		AudioManager::StopBackground();
+		AudioManager::PlayBackground("bossKorpecki", 0.2f);
+
 		ScheduleWavesSpawning();
 	}
 
 	void Necromancer::OnBossDead(Event& ev)
 	{
 		// TODO
+		AudioManager::StopBackground();
+		AudioManager::PlayBackground("gameplayKorpecki", 0.1f);
+
 
 		auto magicBallEffects = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "MagicBallEffect");
 		for (auto go : magicBallEffects)
@@ -69,6 +77,7 @@ namespace Bosses {
 
 	void Necromancer::OnRequestToTakeDamage(float value)
 	{
+		AudioManager::CreateDefaultSourceAndPlay(sourceNecromancerDamage, "damage1", false, 1.0f);
 		bossController->TakeDamage(value);
 	}
 
@@ -85,6 +94,8 @@ namespace Bosses {
 
 		if (shouldSpawnWave)
 		{
+			AudioManager::CreateDefaultSourceAndPlay(sourceNecromancerInit, "necro_spawning_enemies", false, 1.0f);
+
 			float randomRot = RandomFloat(0.0f, M_PI * 2.0f);
 			glm::vec3 direction = {
 				glm::sin(randomRot), 0.0f, glm::cos(randomRot)
