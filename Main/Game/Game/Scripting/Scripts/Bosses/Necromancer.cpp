@@ -35,10 +35,10 @@ namespace Bosses {
 		//int maxWaves
 		//int enemiesInWave
 		stages.push_back({ 1.0f, 0, 0.0f, 0, 0 });
-		stages.push_back({ 1.0f, 2, 17.5f, 3, 2 });
-		stages.push_back({ 0.75f, 2, 14.0f, 4, 3 });
-		stages.push_back({ 0.5f, 3, 13.5f, 5, 3 });
-		stages.push_back({ 0.25f, 4, 13.0f, 4, 4 });
+		stages.push_back({ 1.0f, 2, 25.5f, 2, 2 });
+		stages.push_back({ 0.75f, 2, 22.0f, 3, 3 });
+		stages.push_back({ 0.5f, 3, 21.5f, 4, 3 });
+		stages.push_back({ 0.25f, 4, 18.0f, 3, 4 });
 		for (int i = 0; i < stages.size(); i++) spawnedEnemies.push_back(std::vector<GameObject>());  // xD
 		//spawnedEnemies.resize(stages.size());
 	}
@@ -229,7 +229,7 @@ namespace Bosses {
 				continue;
 			}
 			if (stages[stage].enemiesInWave == 0) continue;
-			waves += spawnedEnemies[stage].size() / stages[stage].enemiesInWave;
+			waves += std::ceil(spawnedEnemies[stage].size() / stages[stage].enemiesInWave);
 		}
 		return waves;
 	}
