@@ -13,7 +13,7 @@ private:
 	float scrollingSpeed = 0.1f;
 	bool scrolling = false;
 	TimerAnimator timerAnimator;
-	float fadeTime = 3.5f;
+	float fadeTime = 6.5f;
 
 public:
 	~Credits()
