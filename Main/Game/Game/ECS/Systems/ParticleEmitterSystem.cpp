@@ -82,7 +82,7 @@ void ParticleEmitterSystem::WorkUpdateQueue(float dt)
 
 		container.lastUpdate = HFEngine::CURRENT_FRAME_NUMBER;
 
-		if (emitter.emitting)
+		if (emitter.emitting && emitter.rate > 0.01f)
 		{
 			workerEmitQueue.push(gameObject);
 

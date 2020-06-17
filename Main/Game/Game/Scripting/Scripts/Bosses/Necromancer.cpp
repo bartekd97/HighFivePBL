@@ -1,6 +1,8 @@
 #include <random>
 #include <glm/glm.hpp>
 #include "ECS/Components/MapLayoutComponents.h"
+#include "ECS/Components/ParticleEmitter.h"
+#include "ECS/Components/PointLightRenderer.h"
 #include "Necromancer.h"
 
 #define GetBossTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
@@ -54,6 +56,15 @@ namespace Bosses {
 	void Necromancer::OnBossDead(Event& ev)
 	{
 		// TODO
+
+		auto magicBallEffects = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "MagicBallEffect");
+		for (auto go : magicBallEffects)
+		{
+			auto& emitter = HFEngine::ECS.GetComponent<ParticleEmitter>(go);
+			auto& light = HFEngine::ECS.GetComponent<PointLightRenderer>(go);
+			timerAnimator.AnimateVariable(&emitter.rate, emitter.rate, 0.0f, 0.75f);
+			timerAnimator.AnimateVariable(&light.light.intensity, light.light.intensity, 0.0f, 0.75f);
+		}
 	}
 
 	void Necromancer::OnRequestToTakeDamage(float value)
