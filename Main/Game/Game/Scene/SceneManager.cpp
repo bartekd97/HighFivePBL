@@ -26,6 +26,16 @@ namespace SceneManager
 // privates
 namespace SceneManager
 {
+	std::string GetLoadedScene()
+	{
+		for (auto& scene : scenes)
+		{
+			if (scene.second == currentScene) return scene.first;
+		}
+
+		return "";
+	}
+
 	void FrameStart(Event& event)
 	{
 		//AudioManager::StopSource(sourceMenu);

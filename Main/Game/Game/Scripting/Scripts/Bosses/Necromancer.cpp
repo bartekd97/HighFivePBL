@@ -5,6 +5,7 @@
 #include "ECS/Components/PointLightRenderer.h"
 #include "Audio/AudioManager.h"
 #include "Necromancer.h"
+#include "../../../InputManager.h"
 
 #define GetBossTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPlayerTransform() HFEngine::ECS.GetComponent<Transform>(bossController->GetPlayerObject())
@@ -38,7 +39,8 @@ namespace Bosses {
 		stages.push_back({ 0.75f, 2, 14.0f, 4, 3 });
 		stages.push_back({ 0.5f, 3, 13.5f, 5, 3 });
 		stages.push_back({ 0.25f, 4, 13.0f, 4, 4 });
-		spawnedEnemies.resize(stages.size());
+		for (int i = 0; i < stages.size(); i++) spawnedEnemies.push_back(std::vector<GameObject>());  // xD
+		//spawnedEnemies.resize(stages.size());
 	}
 
 	void Necromancer::Start()
@@ -95,6 +97,9 @@ namespace Bosses {
 			timerAnimator.AnimateVariable(&emitter.rate, emitter.rate, 0.0f, 0.75f);
 			timerAnimator.AnimateVariable(&light.light.intensity, light.light.intensity, 0.0f, 0.75f);
 		}
+		timerAnimator.DelayAction(0.5f, [&]() {
+			PrefabManager::GetPrefab("Credits")->Instantiate();
+			});
 	}
 
 	void Necromancer::OnRequestToTakeDamage(float value)
@@ -113,6 +118,11 @@ namespace Bosses {
 		timerAnimator.Process(dt);
 
 		if (bossController->IsDead()) return;
+
+		if (InputManager::GetKeyDown(GLFW_KEY_P))
+		{
+			bossController->RequestToTakeDamage(35.0f);
+		}
 
 		auto nextStage = currentStage + 1;
 		if (nextStage < stages.size())
@@ -210,6 +220,11 @@ namespace Bosses {
 		int waves = 0;
 		for (int stage = 0; stage < stages.size(); stage++)
 		{
+			if (stage >= spawnedEnemies.size())
+			{
+				spawnedEnemies.push_back(std::vector<GameObject>());
+				continue;
+			}
 			if (stages[stage].enemiesInWave == 0) continue;
 			waves += spawnedEnemies[stage].size() / stages[stage].enemiesInWave;
 		}

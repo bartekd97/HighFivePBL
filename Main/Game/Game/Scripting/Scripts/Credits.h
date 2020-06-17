@@ -4,6 +4,7 @@
 #include "../../GUI/GUIManager.h"
 #include "../../GUI/Panel.h"
 #include "../../InputManager.h"
+#include "../../Scene/SceneManager.h"
 
 class Credits : public Script
 {
@@ -12,7 +13,7 @@ private:
 	float scrollingSpeed = 0.1f;
 	bool scrolling = false;
 	TimerAnimator timerAnimator;
-	float fadeTime = 1.5f;
+	float fadeTime = 3.5f;
 
 public:
 	~Credits()
@@ -50,6 +51,14 @@ public:
 
 	void Hide()
 	{
-		DestroyGameObjectSafely();
+		if (SceneManager::GetLoadedScene() != "MainMenu")
+		{
+			SceneManager::RequestLoadScene("MainMenu");
+		}
+		else
+		{
+			DestroyGameObjectSafely();
+		}
+
 	}
 };
