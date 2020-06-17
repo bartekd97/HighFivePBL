@@ -20,7 +20,7 @@ class GhostController : public Script
 {
 private: // parameters
 	float moveSpeed = 10.0f;
-	float damageToEnemies = 5.0f;
+	float damageToEnemies = 7.5f;
 
 	std::shared_ptr<Prefab> miniGhostPrefab;
 
