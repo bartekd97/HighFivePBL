@@ -25,10 +25,10 @@ namespace Bosses {
 
 		float waveDistance = 6.0f;
 		float waveEnemyDistance = 1.5f;
-		float timeBetweenWaves = 7.5f;
-		int enemiesInWave = 3;
-		int amountOfWaves = 3;
 
+		float dmgAnimationDuration = 0.5f;
+		glm::vec3 defaultColor;
+		glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
 	private:
 		std::shared_ptr<BossController> bossController;
 
@@ -48,6 +48,7 @@ namespace Bosses {
 
 		int GetCurrentWaveNumber();
 		void ClearSpawnedEnemies();
+		void RestoreDefaultEmissive();
 
 	public:
 		void Awake();

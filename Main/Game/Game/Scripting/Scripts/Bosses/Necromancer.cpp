@@ -49,6 +49,15 @@ namespace Bosses {
 
 		for (auto& ep : enemyPrefabs)
 			ep->MakeWarm();
+
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
+		defaultColor = mesh.material->emissiveColor;
+	}
+
+	void Necromancer::RestoreDefaultEmissive()
+	{
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
+		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, defaultColor, dmgAnimationDuration / 2.0f);
 	}
 
 	void Necromancer::OnBossScriptInitialize(Event& ev)
@@ -89,6 +98,9 @@ namespace Bosses {
 	{
 		AudioManager::CreateDefaultSourceAndPlay(sourceNecromancerDamage, "damage1", false, 1.0f);
 		bossController->TakeDamage(value);
+		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
+		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
+		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&Necromancer::RestoreDefaultEmissive, this));
 	}
 
 	void Necromancer::Update(float dt)
@@ -127,7 +139,7 @@ namespace Bosses {
 			bool clearPath = true;
 			if (raycaster.Raycast(currentPos, direction))
 			{
-				float pathLength = waveDistance + waveEnemyDistance * enemiesInWave;
+				float pathLength = waveDistance + waveEnemyDistance * stages[currentStage].enemiesInWave;
 				if (raycaster.GetOut().distance < waveDistance)
 					clearPath = false;
 			}
@@ -136,7 +148,7 @@ namespace Bosses {
 			{
 				auto enemyPrefab = enemyPrefabs[HFEngine::CURRENT_FRAME_NUMBER % enemyPrefabs.size()];
 				float roty = GetBossTransform().GetRotationEuler().y;
-				for (int i = 0; i < enemiesInWave; i++)
+				for (int i = 0; i < stages[currentStage].enemiesInWave; i++)
 				{
 					SpawnEnemy(enemyPrefab, currentPos + direction * (waveDistance + waveEnemyDistance * i), roty);
 				}
