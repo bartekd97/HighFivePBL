@@ -47,6 +47,8 @@ namespace Bosses {
 			PrefabManager::GetPrefab("Enemies/Flyer")
 		};
 
+		smokeSplashEffect = PrefabManager::GetPrefab("SmokeSplashEffect");
+
 		for (auto& ep : enemyPrefabs)
 			ep->MakeWarm();
 	}
@@ -195,6 +197,8 @@ namespace Bosses {
 
 	void Necromancer::CastWaveSpawn()
 	{
+		if (bossController->IsDead()) return;
+
 		if (!bossController->RequestAnimationAction("cast", 0.15f, 0.6f, 0.9f,
 			[&]() {
 				shouldSpawnWave = true;
@@ -206,10 +210,20 @@ namespace Bosses {
 
 	void Necromancer::SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec3 position, float rotation)
 	{
-		CellChild& cellChild = HFEngine::ECS.GetComponent<CellChild>(GetGameObject());
-		GameObject enemy = prefab->Instantiate(position, { 0.0f, rotation , 0.0f });
-		HFEngine::ECS.AddComponent<CellChild>(enemy, { cellChild.cell });
-		spawnedEnemies.push_back(enemy);
+		GameObject smokeSplash = smokeSplashEffect->Instantiate(position);
+
+		timerAnimator.DelayAction(0.5f, [&, prefab, position, rotation, smokeSplash]() {
+			CellChild& cellChild = HFEngine::ECS.GetComponent<CellChild>(GetGameObject());
+			GameObject enemy = prefab->Instantiate(position, { 0.0f, rotation , 0.0f });
+			HFEngine::ECS.AddComponent<CellChild>(enemy, { cellChild.cell });
+			spawnedEnemies.push_back(enemy);
+
+			(*HFEngine::ECS.GetComponentInChildren<ParticleEmitter>(smokeSplash))->emitting = false;
+			});
+
+		timerAnimator.DelayAction(2.0f, [smokeSplash]() {
+			HFEngine::ECS.DestroyGameObject(smokeSplash);
+			});
 	}
 
 	void Necromancer::LateUpdate(float dt)

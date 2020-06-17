@@ -40,6 +40,8 @@ namespace Bosses {
 		int currentStage = 0;
 		std::chrono::steady_clock::time_point lastSpawnTime;
 
+		std::shared_ptr<Prefab> smokeSplashEffect;
+
 		TimerAnimator timerAnimator;
 		ALuint sourceNecromancerInit;
 		ALuint sourceNecromancerDamage;
