@@ -41,6 +41,8 @@ namespace Bosses {
 		std::chrono::steady_clock::time_point lastSpawnTime;
 
 		std::shared_ptr<Prefab> smokeSplashEffect;
+		GameObject castingFireObject;
+		GameObject castedMotionEffectObject;
 
 		TimerAnimator timerAnimator;
 		ALuint sourceNecromancerInit;

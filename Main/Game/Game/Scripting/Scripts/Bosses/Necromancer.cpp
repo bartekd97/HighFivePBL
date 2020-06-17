@@ -50,6 +50,9 @@ namespace Bosses {
 
 		smokeSplashEffect = PrefabManager::GetPrefab("SmokeSplashEffect");
 
+		castingFireObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "CastingFire")[0];
+		castedMotionEffectObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "CastedMotionEffect")[0];
+
 		for (auto& ep : enemyPrefabs)
 			ep->MakeWarm();
 
@@ -226,6 +229,20 @@ namespace Bosses {
 			}))
 		{
 			isCasting = false;
+		}
+		else
+		{
+			HFEngine::ECS.GetComponent<ParticleEmitter>(castingFireObject).emitting = true;
+			timerAnimator.DelayAction(1.5f, [&]() {HFEngine::ECS.GetComponent<ParticleEmitter>(castingFireObject).emitting = false;});
+			timerAnimator.DelayAction(1.1f, [&]() {
+				auto& emitter = HFEngine::ECS.GetComponent<ParticleEmitter>(castedMotionEffectObject);
+				auto& transform = HFEngine::ECS.GetComponent<Transform>(castedMotionEffectObject);
+				emitter.emitting = true;
+				timerAnimator.UpdateInTime(0.6f, [&](float dt) {
+					transform.SetPosition({0.0f, glm::mix(3.0f,0.0f,dt), 0.0f});
+					});
+				timerAnimator.DelayAction(0.6f, [&]() {emitter.emitting = false;});
+				});
 		}
 	}
 
