@@ -28,6 +28,10 @@ namespace Bosses {
 		std::vector<GameObject> spawnedEnemies;
 
 		TimerAnimator timerAnimator;
+		ALuint sourceNecromancerInit;
+		ALuint sourceNecromancerDamage;
+		ALuint sourceNecromancerSpawner;
+
 
 	public:
 		void Awake();

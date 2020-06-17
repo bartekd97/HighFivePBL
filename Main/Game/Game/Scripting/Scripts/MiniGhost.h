@@ -164,14 +164,15 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
-			enemyController->TakeDamage(damageToEnemies);
 			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.1f);
+			enemyController->TakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}
 		else if (!strcmp(otherName, "boss"))
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto bossController = scriptContainer.GetScript<BossController>();
+			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.2f);
 			bossController->RequestToTakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}
