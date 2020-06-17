@@ -10,6 +10,7 @@
 #include "Event/EventManager.h"
 #include "Physics/Physics.h"
 #include "EnemyController.h"
+#include "BossController.h"
 
 #include "HFEngine.h"
 
@@ -34,6 +35,8 @@
 	} 
 
 ALuint sourceGhostController;
+ALuint sourceGhostDamage;
+ALuint sourceGhostEnd;
 
 
 float GhostController::GetUpgradedMoveSpeed(bool force)
@@ -95,11 +98,23 @@ void GhostController::Start()
 
 void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 {
-	if (!strcmp(HFEngine::ECS.GetNameGameObject(other), "enemy") && numberOfEnemyHit < numberOfEnemyToHit)
+	if (numberOfEnemyHit >= numberOfEnemyToHit) return;
+
+	auto otherName = HFEngine::ECS.GetNameGameObject(other);
+	if (!strcmp(otherName, "enemy"))
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto enemyController = scriptContainer.GetScript<EnemyController>();
+		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.2f);
 		enemyController->TakeDamage(damageToEnemies);
+		numberOfEnemyHit += 1;
+	}
+	else if (!strcmp(otherName, "boss"))
+	{
+		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
+		auto bossController = scriptContainer.GetScript<BossController>();
+		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.4f);
+		bossController->RequestToTakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
 }
@@ -275,6 +290,8 @@ void GhostController::EndMarking()
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
 	AudioManager::StopSource(sourceGhostController);
+	AudioManager::CreateDefaultSourceAndPlay(sourceGhostEnd,"ghostend", false, 0.2f);
+
 	recordedPositions.emplace_back(glm::vec2{
 		transformPosition.x,
 		transformPosition.z

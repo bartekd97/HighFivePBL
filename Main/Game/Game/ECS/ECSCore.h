@@ -40,6 +40,7 @@ public:
 
 	void UpdateSystems(float dt);
 	void PostUpdateSystems(float dt);
+	void PostRenderSystems();
 
 	std::shared_ptr<System> GetSystemByTypeName(const char* typeName);
 

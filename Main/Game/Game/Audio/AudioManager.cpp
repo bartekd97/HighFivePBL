@@ -10,6 +10,8 @@ using namespace tinyxml2;
 namespace AudioManager
 {
 	ALuint sourceBackground;
+	ALuint sourceMovement;
+
 	ALenum error;
 	bool Initialized = false;
 	const char* CONFIG_FILE = "Data/Assets/Sounds/config.xml";
@@ -426,6 +428,48 @@ namespace AudioManager
 	void StopBackground()
 	{
 		alSourceStop(sourceBackground);
+	}
+
+	void PlayMovement(std::string soundName, float volume)
+	{
+		//StopSource(sourceBackground);
+
+		//get pregenerated buffer
+		ALuint buffer = GetBuffer(soundName);
+
+		//attach source to buffer and set default values
+		SetSource(sourceMovement, buffer, true);
+
+		//set volume
+		SetSourceVolume(sourceMovement, volume);
+
+		//play source
+		PlaySoundFromSource(sourceMovement);
+	}
+
+	void PlayMovement()
+	{
+		//play source
+		PlaySoundFromSource(sourceMovement);
+	}
+
+	void SetMovementSound(std::string soundName, float volume)
+	{
+		//StopSource(sourceBackground);
+
+		//get pregenerated buffer
+		ALuint buffer = GetBuffer(soundName);
+
+		//attach source to buffer and set default values
+		SetSource(sourceMovement, buffer, true);
+
+		//set volume
+		SetSourceVolume(sourceMovement, volume);
+	}
+
+	void StopMovement()
+	{
+		alSourceStop(sourceMovement);
 	}
 
 	void StopSource(ALuint& source)

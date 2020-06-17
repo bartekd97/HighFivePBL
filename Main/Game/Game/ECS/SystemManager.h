@@ -33,6 +33,10 @@ public:
 		{
 			postUpdateQueue.push_back(system);
 		}
+		if constexpr (std::is_base_of<ISystemPostRender, T>::value)
+		{
+			postRenderQueue.push_back(system);
+		}
 		return system;
 	}
 
@@ -87,6 +91,7 @@ public:
 
 	std::vector<std::shared_ptr<ISystemUpdate>> updateQueue;
 	std::vector<std::shared_ptr<ISystemPostUpdate>> postUpdateQueue;
+	std::vector<std::shared_ptr<ISystemPostRender>> postRenderQueue;
 private:
 	std::unordered_map<const char*, Signature> signatures{};
 	std::unordered_map<const char*, std::shared_ptr<System>> systems{};

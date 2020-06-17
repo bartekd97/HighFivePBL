@@ -54,6 +54,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(PlayerUpgrader);
 		REGISTER_SCRIPT(MiniGhost);
 		REGISTER_SCRIPT(EnemyController);
+		REGISTER_SCRIPT(BossController);
 		REGISTER_SCRIPT(MapCellOptimizer);
 		REGISTER_SCRIPT(CellSupervisor);
 		REGISTER_SCRIPT(GateOpener);
@@ -65,6 +66,8 @@ namespace ScriptManager
 		REGISTER_SCRIPT(MudController);
 		REGISTER_SCRIPT(FireController);
 		REGISTER_SCRIPT(GasController);
+
+		REGISTER_SCRIPT(Bosses::Necromancer);
 
 		REGISTER_SCRIPT(Upgrade::GhostDistance);
 		REGISTER_SCRIPT(Upgrade::GhostRecovery);

@@ -11,6 +11,7 @@
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "EnemyController.h"
+#include "BossController.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -35,6 +36,7 @@ private: // variables
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
+	ALuint sourceMiniGhostDamage;
 	TimerAnimator timerAnimator;
 	float ghostLightDefaultIntensity;
 	float ghostMaterialDefaultOpacity;
@@ -157,11 +159,21 @@ public:
 	void OnTriggerEnter(GameObject that, GameObject other)
 	{
 		if (!attacking) return;
-		if (!strcmp(HFEngine::ECS.GetNameGameObject(other), "enemy"))
+		auto otherName = HFEngine::ECS.GetNameGameObject(other);
+		if (!strcmp(otherName, "enemy"))
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
+			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.1f);
 			enemyController->TakeDamage(damageToEnemies);
+			FadeMeOut(0.5);
+		}
+		else if (!strcmp(otherName, "boss"))
+		{
+			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
+			auto bossController = scriptContainer.GetScript<BossController>();
+			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.2f);
+			bossController->RequestToTakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}
 	}

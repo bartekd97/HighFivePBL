@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "MapGenerator/ConvexPolygon.h"
 #include "ECS/ECSTypes.h"
 

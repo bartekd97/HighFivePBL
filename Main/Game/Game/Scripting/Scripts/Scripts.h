@@ -8,6 +8,7 @@
 #include "PlayerUpgrader.h"
 #include "MiniGhost.h"
 #include "EnemyController.h"
+#include "BossController.h"
 #include "MapCellOptimizer.h"
 #include "CellSupervisor.h"
 #include "GateOpener.h"
@@ -19,6 +20,8 @@
 #include "MudController.h"
 #include "FireController.h"
 #include "GasController.h"
+
+#include "Bosses/Necromancer.h"
 
 #include "Upgrades/GhostDistance.h"
 #include "Upgrades/GhostRecovery.h"

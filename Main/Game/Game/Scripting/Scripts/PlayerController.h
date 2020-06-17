@@ -106,8 +106,7 @@ public:
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
-		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerMovement, "footsteps_in_grass", true, 0.1f);
-		AudioManager::StopSource(sourcePlayerMovement);
+		AudioManager::SetMovementSound("footsteps_in_grass", 0.1f);
 
 	}
 
@@ -288,7 +287,7 @@ public:
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 
-			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE))
+			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE) &&  !hasGhostMovement)
 			{
 				StartPushBack();
 				isPushingBack = true;
@@ -395,16 +394,16 @@ public:
 			else if (InputManager::GetKeyStatus(GLFW_KEY_S)) direction.z = 1.0f;
 		}
 
-		if((InputManager::GetMouseButtonDown(GLFW_KEY_W) || InputManager::GetMouseButtonDown(GLFW_KEY_S) || 
-			InputManager::GetMouseButtonDown(GLFW_KEY_A) || InputManager::GetMouseButtonDown(GLFW_KEY_D)) && isReadyToStartMovement == true)
+		if((InputManager::GetKeyStatus(GLFW_KEY_W) || InputManager::GetKeyStatus(GLFW_KEY_S) ||
+			InputManager::GetKeyStatus(GLFW_KEY_A) || InputManager::GetKeyStatus(GLFW_KEY_D)) && isReadyToStartMovement == true)
 		{
-			AudioManager::PlaySoundFromSource(sourcePlayerMovement);
+			AudioManager::PlayMovement();
 			isReadyToStartMovement = false;
 		}
 		else if ((!InputManager::GetKeyStatus(GLFW_KEY_W) && !InputManager::GetKeyStatus(GLFW_KEY_S) &&
 			!InputManager::GetKeyStatus(GLFW_KEY_A) && !InputManager::GetKeyStatus(GLFW_KEY_D)) && isReadyToStartMovement == false)
 		{
-			AudioManager::StopSource(sourcePlayerMovement);
+			AudioManager::StopMovement();
 			isReadyToStartMovement = true;
 		}
 
@@ -461,7 +460,7 @@ public:
 			emitterSmoke.emitting = true;
 			});
 		timerAnimator.DelayAction(0.35f, [&]() {
-			PushbackTest();
+			Pushback();
 			});
 		timerAnimator.DelayAction(0.5f, [&]() {
 			emitterSmoke.emitting = false;
@@ -479,7 +478,7 @@ public:
 			});
 	}
 
-	void PushbackTest()
+	void Pushback()
 	{
 		auto objects = HFEngine::ECS.GetGameObjectsByName("enemy");
 		glm::vec3 dir;
@@ -512,6 +511,12 @@ public:
 			}
 		}
 	}
+
+	void SetIsReadyToStartMovementTrue()
+	{
+		isReadyToStartMovement = true;
+	}
+
 };
 
 

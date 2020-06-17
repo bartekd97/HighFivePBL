@@ -3,6 +3,7 @@
 namespace Physics
 {
 	const float step = 0.15f;
+    const float maxDelta = 1.0f;
 	const int maxSteps = 20;
 
     std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;

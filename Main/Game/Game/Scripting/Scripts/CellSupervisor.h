@@ -13,6 +13,8 @@ private:
 	bool isThisCurrentCell = false;
 	bool scanForNoEnemies = false;
 
+	GameObject bossObjectHere = NULL_GAMEOBJECT;
+
 	TimerAnimator timerAnimator;
 
 public:
@@ -23,6 +25,13 @@ public:
 
 	void Start()
 	{
+		MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(GetGameObject());
+		if (mc.CellType == MapCell::Type::BOSS)
+		{
+			bossObjectHere = gameObjectHierarchy.GetChildren(mc.EnemyContainer)[0];
+			EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::TRIGGERED, CellSupervisor::OnBossTriggered));
+			EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::DEAD, CellSupervisor::OnBossDead));
+		}
 	}
 
 	void OnCellEntered(Event& ev)
@@ -31,16 +40,34 @@ public:
 		if (isThisCurrentCell)
 		{
 			MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(GetGameObject());
-			auto& enemies = gameObjectHierarchy.GetChildren(mc.EnemyContainer);
-			if (enemies.size() > 0)
+			if (mc.CellType == MapCell::Type::NORMAL)
 			{
-				CloseGatesHere();
-				scanForNoEnemies = true;
+				auto& enemies = gameObjectHierarchy.GetChildren(mc.EnemyContainer);
+				if (enemies.size() > 0)
+				{
+					CloseGatesHere();
+					scanForNoEnemies = true;
+				}
+				else
+				{
+					scanForNoEnemies = false;
+				}
 			}
-			else
-			{
-				scanForNoEnemies = false;
-			}
+		}
+	}
+
+	void OnBossTriggered(Event& ev)
+	{
+		if (bossObjectHere == ev.GetParam<GameObject>(Events::GameObject::GameObject))
+		{
+			CloseGatesHere();
+		}
+	}
+	void OnBossDead(Event& ev)
+	{
+		if (bossObjectHere == ev.GetParam<GameObject>(Events::GameObject::GameObject))
+		{
+			OpenGatesHere();
 		}
 	}
 

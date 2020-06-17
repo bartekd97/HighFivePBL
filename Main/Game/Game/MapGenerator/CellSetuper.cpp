@@ -221,9 +221,12 @@ void CellSetuper::Setup()
 	{
 		int bossNumber = int(glm::length2(HFEngine::ECS.GetComponent<Transform>(cell).GetPosition())) % 2;
 
+		bossNumber = 0; // only necromacner works for now
+
 		if (bossNumber == 0) // necromancer
 		{
 			CreateFenceFires(setupConfig.cellFenceFireConfig.necromancerFire);
+			SpawnEnemy(setupConfig.bossNecromancerPrefab, { 0.0f, 0.0f }, 155.0f);
 		}
 		else if (bossNumber == 1) // ragnaros
 		{
@@ -283,6 +286,8 @@ void CellSetuper::Setup()
 		}
 	}
 
+	ClearTempObstacleColliders();
+
 }
 
 
@@ -295,7 +300,24 @@ void CellSetuper::SpawnStructure(std::shared_ptr<Prefab> prefab, glm::vec2 local
 }
 void CellSetuper::SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation)
 {
-	prefab->Instantiate(obstacleContainer, { localPos.x, 0.0f, localPos.y }, {0.0f, rotation, 0.0f});
+	static float width, height;
+	Collider col;
+	col.type = Collider::ColliderTypes::STATIC;
+	col.shape = Collider::ColliderShapes::BOX;
+	BoxCollider boxCol;
+	prefab->Properties().GetFloat("width", width);
+	prefab->Properties().GetFloat("height", height);
+
+	GameObject obstacle = prefab->Instantiate(obstacleContainer, { localPos.x, 0.0f, localPos.y }, {0.0f, rotation, 0.0f});
+
+	boxCol.SetWidthHeight(width, height);
+
+	GameObject tmpCollider = HFEngine::ECS.CreateGameObject(obstacle);
+	HFEngine::ECS.AddComponent<Collider>(tmpCollider, col);
+	HFEngine::ECS.AddComponent<BoxCollider>(tmpCollider, boxCol);
+	tempObstacleColliders.push_back(tmpCollider);
+
+	Physics::ProcessGameObjects(tsl::robin_set<GameObject>({ tmpCollider }));
 }
 
 void CellSetuper::SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation)
@@ -464,9 +486,17 @@ void CellSetuper::ClearTempColliders()
 {
 	for (auto c : tempColliders)
 		HFEngine::ECS.DestroyGameObject(c);
+
 	tempColliders.clear();
 }
 
+void CellSetuper::ClearTempObstacleColliders()
+{
+	for (auto c : tempObstacleColliders)
+		HFEngine::ECS.DestroyGameObject(c);
+
+	tempObstacleColliders.clear();
+}
 
 void CellSetuper::CreateFenceFires(std::shared_ptr<Prefab> firePrefab)
 {

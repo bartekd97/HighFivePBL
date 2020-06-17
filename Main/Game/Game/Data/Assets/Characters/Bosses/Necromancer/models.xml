@@ -1,0 +1,12 @@
+<models materialLibrary="this">
+    <model name="Ganfaul" mesh="ganfaul_m_aure.glb" material="GanfaulMat" skinned="true">
+        <animation name="praying"           clip="anim/Praying.glb"/>
+        <animation name="cast"              clip="anim/Standing 2H Cast Spell 01.glb"/>
+        <animation name="idle"              clip="anim/Standing Idle.glb"/>
+        <animation name="dying"             clip="anim/Standing React Death Backward.glb"/>
+        <animation name="running_back"      clip="anim/Standing Run Back.glb"/>
+        <animation name="running"           clip="anim/Standing Run Forward.glb"/>
+        <animation name="running_left"      clip="anim/Standing Run Left.glb"/>
+        <animation name="running_right"     clip="anim/Standing Run Right.glb"/>
+    </model>
+</models>

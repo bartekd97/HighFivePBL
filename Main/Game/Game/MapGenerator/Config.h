@@ -160,6 +160,7 @@ struct CellSetupConfig
 
     std::vector<std::shared_ptr<Prefab>> enemyPrefabs;
 
+    std::shared_ptr<Prefab> bossNecromancerPrefab;
 
     CellSetupConfig()
     {
@@ -209,6 +210,9 @@ struct CellSetupConfig
 
         enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Axer"));
         enemyPrefabs.push_back(PrefabManager::GetPrefab("Enemies/Flyer"));
+
+
+        bossNecromancerPrefab = PrefabManager::GetPrefab("Bosses/Necromancer");
     }
 };
 

@@ -32,6 +32,7 @@ private: // parameters
 	std::string soundAttack;
 	std::string soundDmg;
 	std::string soundDeath;
+	float stunTimeAfterPush = 0.7f;
 
 private: // variables
 	GameObject visualObject;
@@ -45,6 +46,8 @@ private: // variables
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
 	TimerAnimator timerAnimator;
+	bool lastFrameIsFalling = false;
+	std::chrono::steady_clock::time_point falledTime;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -76,6 +79,7 @@ public:
 		RegisterStringParameter("soundAttack", &soundAttack);
 		RegisterStringParameter("soundDmg", &soundDmg);
 		RegisterStringParameter("soundDeath", &soundDeath);
+		RegisterFloatParameter("stunTimeAfterPush", &stunTimeAfterPush);
 	}
 
 	~EnemyController()
@@ -202,13 +206,28 @@ public:
 			{
 				DestroyGameObjectSafely();
 			}
+			if (!lastFrameIsFalling)
+			{
+				EndAttack(true);
+				lastFrameIsFalling = true;
+			}
 			return;
 		}
+		else if (lastFrameIsFalling)
+		{
+			falledTime = std::chrono::steady_clock::now();
+		}
+		lastFrameIsFalling = rigidBody.isFalling;
 
 		if (playerController->IsDead())
 		{
 			if (isAttacking) EndAttack(true);
 
+			return;
+		}
+
+		if (std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::steady_clock::now() - falledTime).count() < stunTimeAfterPush)
+		{
 			return;
 		}
 
@@ -355,8 +374,11 @@ public:
 		}
 #endif
 		auto& transform = GetTransform();
-		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
-		healthValuePanel->SetSize({ health / maxHealth, 1.0f });
+		if (healthBarPanel && healthValuePanel) // to prevent bug when LateUpdate calls before Start
+		{
+			healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
+			healthValuePanel->SetSize({ health / maxHealth, 1.0f });
+		}
 	}
 
 

@@ -40,6 +40,12 @@ namespace Events::Gameplay
 	{
 		const EventId MAKE_ME_USABLE = "Events::Gameplay::Statue::MAKE_ME_USABLE"_hash;
 	}
+	namespace Boss
+	{
+		const EventId INITLIAZE_SCRIPT = "Events::Gameplay::Boss::INITLIAZE_SCRIPT"_hash;
+		const EventId TRIGGERED = "Events::Gameplay::Boss::TRIGGERED"_hash;
+		const EventId DEAD = "Events::Gameplay::Boss::DEAD"_hash;
+	}
 	namespace Player
 	{
 		const EventId DEATH = "Events::Gameplay::Player::DEATH"_hash;
