@@ -116,6 +116,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alGenBuffers : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -129,6 +130,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alGenBuffers : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -147,7 +149,8 @@ namespace AudioManager
 		buffer = alutCreateBufferFromFile(path1);
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
-			printf("alutLoadWAVFile exciting_sound.wav : %d", error);
+			printf("alutLoadWAVFile : %d", error);
+			printf("\n");
 			//Delete Buffers 
 			alDeleteBuffers(1, &buffer);
 			return -1;
@@ -180,7 +183,8 @@ namespace AudioManager
 
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
-			printf("alutLoadWAVFile exciting_sound.wav : %d", error);
+			printf("alutLoadWAVFile : %d", error);
+			printf("\n");
 			//Delete Buffers 
 			alDeleteBuffers(1, &buffer);
 			return -1;
@@ -196,6 +200,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alGenSources : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -225,6 +230,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alSourcefv : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -237,6 +243,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alSourcei attach : %d", error);
+			printf("\n");
 			return -1;
 		}
 		return 0;
@@ -249,6 +256,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alGenSources : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -267,6 +275,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alSourcei : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -280,6 +289,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alSourcefv : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -293,6 +303,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alGenSources : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -308,6 +319,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alSourcei : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -321,6 +333,7 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alSourcefv : %d", error);
+			printf("\n");
 			return -1;
 		}
 
@@ -333,12 +346,14 @@ namespace AudioManager
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alListenerfv pos : %d", error);
+			printf("\n");
 			return -1;
 		}
 		alListener3f(AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
 			printf("alListenerfv  vel : %d", error);
+			printf("\n");
 			return -1;
 		}
 		return 0;
@@ -480,5 +495,12 @@ namespace AudioManager
 	void SetSourceVolume(ALuint& source, float volume)
 	{
 		alSourcef(source, AL_GAIN, volume);
+	}
+
+	ALint GetSourceState(ALuint& source)
+	{
+		ALint state;
+		alGetSourcei(source, AL_SOURCE_STATE, &state);
+		return state;
 	}
 }

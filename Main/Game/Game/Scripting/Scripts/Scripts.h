@@ -2,6 +2,7 @@
 
 #include "TestScript.h"
 #include "TestScript2.h"
+#include "RotateAround.h"
 #include "PlayerController.h"
 #include "PlayerCameraFollower.h"
 #include "GhostController.h"

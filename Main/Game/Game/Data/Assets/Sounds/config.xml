@@ -32,4 +32,5 @@
 	<sound name="pushback" path="Data/Assets/Sounds/pushback.wav"/>
 	<sound name="necro_spawning_enemies" path="Data/Assets/Sounds/necro_spawning_enemies.wav"/>
 	<sound name="flyer_dmg" path="Data/Assets/Sounds/flyer_dmg.wav"/>
+	<sound name="fire" path="Data/Assets/Sounds/fire.wav"/>
 </sounds>

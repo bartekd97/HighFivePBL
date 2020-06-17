@@ -35,5 +35,121 @@
             </component>
         </child>
 
+        <child name="MagicBall" position="0.0,0.9,0" rotation="15,0,0" scale="1,1,1">
+            <component name="ScriptComponent">
+                <property name="name" value="RotateAround"/>
+                <property name="speed" value="200.0"/>
+            </component>
+            <children>
+                <child name="MagicBallEffect" position="0.65,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ParticleContainer">
+                        <property name="maxParticles" value="50"/>
+                    </component>
+                    <component name="ParticleEmitter">
+                        <property name="shape" value="CIRCLE"/>
+                        <property name="sourcShapeeSize" value="0.2,0.2"/>
+                        <property name="targetShapeSize" value="0.2,0.2"/>
+                        <property name="shapeInnerLevel" value="0.0"/>
+                        <property name="size" value="0.2,0.35"/>
+                        <property name="lifetime" value="0.13,0.17"/>
+                        <property name="velocity" value="-1.0,1.0"/>
+                        <property name="rate" value="200.0"/>
+                        <property name="emitting" value="true"/>
+                    </component>
+                    <component name="ParticleRenderer">
+                        <property name="spriteSheet" value="Particles:Smokes"/>
+                        <property name="spriteSheetCount" value="8"/>
+                        <property name="colorOverTime" value="0.0,1.0,0.0;0.0,0.75,0.25;0.0,0.2,0.25"/>
+                        <property name="opacityOverTime" value="1.0;0.5;0.0"/>
+                        <property name="visibilityRadius" value="5.0"/>
+                    </component>
+
+                    <component name="PointLightRenderer">
+                        <property name="color" value="0.0,1.0,0.5"/>
+                        <property name="radius" value="2.5"/>
+                        <property name="intensity" value="1.0"/>
+                        <property name="shadowIntensity" value="0.7"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+        <child name="MagicBall" position="0.0,1.3,0" rotation="0,50,-30" scale="1,1,1">
+            <component name="ScriptComponent">
+                <property name="name" value="RotateAround"/>
+                <property name="speed" value="-250.0"/>
+            </component>
+            <children>
+                <child name="MagicBallEffect" position="0.70,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ParticleContainer">
+                        <property name="maxParticles" value="50"/>
+                    </component>
+                    <component name="ParticleEmitter">
+                        <property name="shape" value="CIRCLE"/>
+                        <property name="sourcShapeeSize" value="0.2,0.2"/>
+                        <property name="targetShapeSize" value="0.2,0.2"/>
+                        <property name="shapeInnerLevel" value="0.0"/>
+                        <property name="size" value="0.2,0.35"/>
+                        <property name="lifetime" value="0.13,0.17"/>
+                        <property name="velocity" value="-1.0,1.0"/>
+                        <property name="rate" value="200.0"/>
+                        <property name="emitting" value="true"/>
+                    </component>
+                    <component name="ParticleRenderer">
+                        <property name="spriteSheet" value="Particles:Smokes"/>
+                        <property name="spriteSheetCount" value="8"/>
+                        <property name="colorOverTime" value="0.0,1.0,0.0;0.0,0.75,0.25;0.0,0.2,0.25"/>
+                        <property name="opacityOverTime" value="1.0;0.5;0.0"/>
+                        <property name="visibilityRadius" value="5.0"/>
+                    </component>
+
+                    <component name="PointLightRenderer">
+                        <property name="color" value="0.0,1.0,0.5"/>
+                        <property name="radius" value="2.5"/>
+                        <property name="intensity" value="1.0"/>
+                        <property name="shadowIntensity" value="0.7"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+        <child name="MagicBall" position="0.0,1.1,0" rotation="-15,130,35" scale="1,1,1">
+            <component name="ScriptComponent">
+                <property name="name" value="RotateAround"/>
+                <property name="speed" value="150.0"/>
+            </component>
+            <children>
+                <child name="MagicBallEffect" position="0.75,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ParticleContainer">
+                        <property name="maxParticles" value="50"/>
+                    </component>
+                    <component name="ParticleEmitter">
+                        <property name="shape" value="CIRCLE"/>
+                        <property name="sourcShapeeSize" value="0.2,0.2"/>
+                        <property name="targetShapeSize" value="0.2,0.2"/>
+                        <property name="shapeInnerLevel" value="0.0"/>
+                        <property name="size" value="0.2,0.35"/>
+                        <property name="lifetime" value="0.13,0.17"/>
+                        <property name="velocity" value="-1.0,1.0"/>
+                        <property name="rate" value="200.0"/>
+                        <property name="emitting" value="true"/>
+                    </component>
+                    <component name="ParticleRenderer">
+                        <property name="spriteSheet" value="Particles:Smokes"/>
+                        <property name="spriteSheetCount" value="8"/>
+                        <property name="colorOverTime" value="0.0,1.0,0.0;0.0,0.75,0.25;0.0,0.2,0.25"/>
+                        <property name="opacityOverTime" value="1.0;0.5;0.0"/>
+                        <property name="visibilityRadius" value="5.0"/>
+                    </component>
+
+                    <component name="PointLightRenderer">
+                        <property name="color" value="0.0,1.0,0.5"/>
+                        <property name="radius" value="2.5"/>
+                        <property name="intensity" value="1.0"/>
+                        <property name="shadowIntensity" value="0.7"/>
+                    </component>
+                </child>
+            </children>
+        </child>
     </children>
 </prefab>

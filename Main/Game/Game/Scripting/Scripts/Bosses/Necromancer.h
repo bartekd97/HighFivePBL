@@ -41,6 +41,10 @@ namespace Bosses {
 		std::chrono::steady_clock::time_point lastSpawnTime;
 
 		TimerAnimator timerAnimator;
+		ALuint sourceNecromancerInit;
+		ALuint sourceNecromancerDamage;
+		ALuint sourceNecromancerSpawner;
+
 
 		int GetCurrentWaveNumber();
 		void ClearSpawnedEnemies();

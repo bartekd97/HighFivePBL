@@ -105,14 +105,15 @@ void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto enemyController = scriptContainer.GetScript<EnemyController>();
-		enemyController->TakeDamage(damageToEnemies);
 		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.2f);
+		enemyController->TakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
 	else if (!strcmp(otherName, "boss"))
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto bossController = scriptContainer.GetScript<BossController>();
+		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.4f);
 		bossController->RequestToTakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
