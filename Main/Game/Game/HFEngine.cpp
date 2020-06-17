@@ -212,6 +212,13 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<ScriptContainer>());
 			ECS.SetSystemSignature<ScriptLateUpdateSystem>(signature);
 		}
+		auto garbageCollectorUpdateSystem = ECS.RegisterSystem<GarbageCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			ECS.SetSystemSignature<GarbageCollectorSystem>(signature);
+		}
 
 		Renderer.Init();
 
