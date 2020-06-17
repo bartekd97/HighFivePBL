@@ -221,9 +221,12 @@ void CellSetuper::Setup()
 	{
 		int bossNumber = int(glm::length2(HFEngine::ECS.GetComponent<Transform>(cell).GetPosition())) % 2;
 
+		bossNumber = 0; // only necromacner works for now
+
 		if (bossNumber == 0) // necromancer
 		{
 			CreateFenceFires(setupConfig.cellFenceFireConfig.necromancerFire);
+			SpawnEnemy(setupConfig.bossNecromancerPrefab, { 0.0f, 0.0f }, 155.0f);
 		}
 		else if (bossNumber == 1) // ragnaros
 		{

@@ -85,6 +85,7 @@
     <ClCompile Include="Audio\SoundManager.cpp" />
     <ClCompile Include="Audio\SoundObject.cpp" />
     <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
+    <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
     <ClCompile Include="ECS\Systems\GarbageCollectorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -248,6 +249,8 @@
     <ClInclude Include="Scripting\Scripts\Upgrades\GhostActiveLines.h" />
     <ClInclude Include="Scripting\Scripts\Upgrades\PushbackDistance.h" />
     <ClInclude Include="Scripting\Scripts\Upgrades\PushbackForce.h" />
+    <ClInclude Include="Scripting\Scripts\BossController.h" />
+    <ClInclude Include="Scripting\Scripts\Bosses\Necromancer.h" />
     <ClInclude Include="Scripting\Scripts\CreatureController.h" />
     <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
     <ClInclude Include="Scripting\Scripts\MudController.h" />

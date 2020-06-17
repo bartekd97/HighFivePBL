@@ -163,6 +163,7 @@
     <ClCompile Include="Scene\Scenes\GameLite.cpp" />
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
+    <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
     <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
@@ -302,6 +303,8 @@
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
+    <ClInclude Include="Scripting\Scripts\BossController.h" />
+    <ClInclude Include="Scripting\Scripts\Bosses\Necromancer.h" />
     <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
     <ClInclude Include="Scripting\Scripts\CreatureController.h" />
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />

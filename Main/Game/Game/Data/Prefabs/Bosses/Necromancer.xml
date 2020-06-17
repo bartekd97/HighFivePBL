@@ -1,0 +1,39 @@
+<prefab defaultScale="2.0,2.0,2.0">
+    <component name="RigidBody">
+        <property name="velocity" value="0.0,0.0,0.0"/>
+        <property name="acceleration" value="0.0,0.0,0.0"/>
+        <property name="mass" value="50.0"/>
+    </component>
+    <component name="CircleCollider">
+        <property name="radius" value="0.85"/>
+    </component>
+
+
+    <component name="ScriptComponent">
+        <property name="name" value="BossController"/>
+        <property name="moveSpeed" value="10.0"/>
+		<property name="maxHealth" value="100.0"/>
+        <property name="awaitingAnimation" value="praying"/>
+    </component>
+    <component name="ScriptComponent">
+        <property name="name" value="Bosses::Necromancer"/>
+    </component>
+
+
+    <children>
+        <!-- front vector rotation fix -->
+        <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Characters/Bosses/Necromancer:Ganfaul"/>
+            </component>
+            <component name="SkinnedMeshRenderer">
+                <property name="configureFromHolder" value="true" />
+				<property name="individualMaterial" value="true" />
+            </component>
+            <component name="SkinAnimator">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+
+    </children>
+</prefab>

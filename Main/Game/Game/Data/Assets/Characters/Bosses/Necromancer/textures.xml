@@ -1,0 +1,7 @@
+<textures>
+    <texture name="albedo" file="Ganfaul_albedo.png" format="srgb" />
+    <texture name="norm" file="Ganfaul_normal.png" />
+    <texture name="metal" file="Ganfaul_metalness.png" format="r" />
+    <texture name="rough" file="Ganfaul_roughness.png" format="r" />
+    <texture name="emis" file="Ganfaul_emissive.png" format="srgb" />
+</textures>

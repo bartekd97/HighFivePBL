@@ -368,8 +368,11 @@ public:
 		}
 #endif
 		auto& transform = GetTransform();
-		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
-		healthValuePanel->SetSize({ health / maxHealth, 1.0f });
+		if (healthBarPanel && healthValuePanel) // to prevent bug when LateUpdate calls before Start
+		{
+			healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
+			healthValuePanel->SetSize({ health / maxHealth, 1.0f });
+		}
 	}
 
 
