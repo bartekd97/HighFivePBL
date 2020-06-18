@@ -23,6 +23,7 @@ private: // parameters
 	float attackPreparationTime = 0.4f;
 	float attackTime = 1.25f;
 	float damageToEnemies = 20.0f;
+	float damageDealtMultiplier = 0.7f;
 
 	glm::vec3 attackAlbedoColor = { 2.5f, 0.4f, 1.5f };
 	glm::vec3 attackEmissiveColor = { 0.5f, 0.1f, 0.3f };
@@ -60,6 +61,7 @@ public:
 		RegisterFloatParameter("attackPreparationTime", &attackPreparationTime);
 		RegisterFloatParameter("attackTime", &attackTime);
 		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
+		RegisterFloatParameter("damageDealtMultiplier", &damageDealtMultiplier);
 
 		RegisterVec3Parameter("attackAlbedoColor", &attackAlbedoColor);
 		RegisterVec3Parameter("attackEmissiveColor", &attackEmissiveColor);
@@ -166,7 +168,7 @@ public:
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
 			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.1f);
 			enemyController->TakeDamage(damageToEnemies);
-			FadeMeOut(0.5);
+			damageToEnemies *= damageDealtMultiplier;
 		}
 		else if (!strcmp(otherName, "boss"))
 		{
@@ -174,7 +176,7 @@ public:
 			auto bossController = scriptContainer.GetScript<BossController>();
 			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.2f);
 			bossController->RequestToTakeDamage(damageToEnemies);
-			FadeMeOut(0.5);
+			damageToEnemies *= damageDealtMultiplier;
 		}
 	}
 
