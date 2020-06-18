@@ -21,6 +21,7 @@ class GhostController : public Script
 private: // parameters
 	float moveSpeed = 10.0f;
 	float damageToEnemies = 7.5f;
+	float playerMarkingCost = 1.5f;
 
 	std::shared_ptr<Prefab> miniGhostPrefab;
 
@@ -43,6 +44,7 @@ private: // variables
 	int numberOfEnemyHit = 0;
 
 	bool forceCancelNextLine = false;
+	bool playerMarking = false;
 
 public:
 	float maxGhostDistance = 20.0f;
@@ -78,6 +80,7 @@ public:
 		RegisterIntParameter("numberOfEnemyToHit", &numberOfEnemyToHit);
 		RegisterFloatParameter("maxGhostDistance", &maxGhostDistance);
 		RegisterFloatParameter("ghostDistanceRecoverySpeed", &ghostDistanceRecoverySpeed);
+		RegisterFloatParameter("playerMarkingCost", &playerMarkingCost);
 	}
 
 	void Awake();
@@ -91,6 +94,8 @@ public:
 	void MovementStop(Event& event);
 	void MovementCancel(Event& event);
 
+	void PlayerMarkingStart(Event& event);
+	void PlayerMarkingStop(Event& event);
 
 	void Update(float dt);
 

@@ -53,6 +53,7 @@ private: // variables
 	float attackAnimationLevel = 0.5f;
 
 	bool hasGhostMovement = false;
+	bool hasGhostMarking = false;
 	bool ghostOnCooldown = false;
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
@@ -105,6 +106,8 @@ public:
 		ghostObject = PrefabManager::GetPrefab("PlayerGhost")->Instantiate();
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerController::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MARKING_START, PlayerController::GhostMarkingStart));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MARKING_STOP, PlayerController::GhostMarkingStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
 		AudioManager::SetMovementSound("footsteps_in_grass", 0.1f);
 
@@ -203,20 +206,35 @@ public:
 		GetAnimator().TransitToAnimation("idle", 0.2f);
 	}
 
+	void SwitchTorch(bool on)
+	{
+		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, on ? torchLightDefaultIntensity : 0.0f, 0.3f);
+		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = on;
+	}
+
 	void GhostMovementStart(Event& event) {
 		hasGhostMovement = true;
-		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
-		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, 0.0f, 0.3f);
-		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = false;
+		SwitchTorch(false);
 	}
 	void GhostMovementStop(Event& event) {
 		hasGhostMovement = false;
-		auto& torch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
-		timerAnimator.AnimateVariable(&torch.light.intensity, torch.light.intensity, torchLightDefaultIntensity, 0.3f);
-		HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject).emitting = true;
+		SwitchTorch(true);
 
 		ghostOnCooldown = true;
 		timerAnimator.DelayAction(ghostCooldown, [&]() {ghostOnCooldown = false;});
+	}
+
+	void GhostMarkingStart(Event& event) {
+		hasGhostMarking = true;
+		SwitchTorch(false);
+	}
+	void GhostMarkingStop(Event& event) {
+		hasGhostMarking = false;
+		SwitchTorch(true);
+
+		ghostOnCooldown = true;
+		timerAnimator.DelayAction(ghostCooldown, [&]() {ghostOnCooldown = false; });
 	}
 
 	void BackToMainMenu()
@@ -296,7 +314,12 @@ public:
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 
-			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE) &&  !hasGhostMovement)
+			else if (!hasGhostMovement && !hasGhostMarking && !ghostOnCooldown && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_RIGHT))
+				EventManager::FireEvent(Events::Gameplay::Ghost::MARKING_START);
+			else if (hasGhostMarking && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_RIGHT))
+				EventManager::FireEvent(Events::Gameplay::Ghost::MARKING_STOP);
+
+			else if (!onPushBackCooldown && InputManager::GetKeyDown(GLFW_KEY_SPACE) && !hasGhostMovement && !hasGhostMarking)
 			{
 				StartPushBack();
 				isPushingBack = true;

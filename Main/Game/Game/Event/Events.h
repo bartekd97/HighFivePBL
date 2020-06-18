@@ -56,6 +56,8 @@ namespace Events::Gameplay
 	{
 		const EventId MOVEMENT_START = "Events::Gameplay::Ghost::MOVEMENT_START"_hash;
 		const EventId MOVEMENT_STOP = "Events::Gameplay::Ghost::MOVEMENT_STOP"_hash;
+		const EventId MARKING_START = "Events::Gameplay::Ghost::MARKING_START"_hash;
+		const EventId MARKING_STOP = "Events::Gameplay::Ghost::MARKING_STOP"_hash;
 		const EventId MOVEMENT_CANCEL = "Events::Gameplay::Ghost::MOVEMENT_CANCEL"_hash; // consequently triggers MOVEMENT_STOP in GhostController
 		const EventId LINE_CREATED = "Events::Gameplay::Ghost::LINE_CREATED"_hash; // cancellable
 	}

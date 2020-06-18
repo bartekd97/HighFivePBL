@@ -71,6 +71,8 @@ void GhostController::Awake()
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
+	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MARKING_START, GhostController::PlayerMarkingStart));
+	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MARKING_STOP, GhostController::PlayerMarkingStop));
 	AudioManager::CreateDefaultSourceAndPlay(sourceGhostController, "ghost", false);
 	AudioManager::StopSource(sourceGhostController);
 
@@ -163,6 +165,21 @@ void GhostController::MovementCancel(Event& event)
 	EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
 }
 
+void GhostController::PlayerMarkingStart(Event& event)
+{
+	HFEngine::ECS.SetEnabledGameObject(GetGameObject(), true);
+	hasGhostMovement = true;
+	playerMarking = true;
+	StartMarking();
+}
+
+void GhostController::PlayerMarkingStop(Event& event)
+{
+	hasGhostMovement = false;
+	playerMarking = false;
+	EndMarking();
+}
+
 void GhostController::Update(float dt)
 {
 	timerAnimator.Process(dt);
@@ -201,7 +218,7 @@ void GhostController::Update(float dt)
 	if (currentMoveSpeed > 0.01f)
 		transform.TranslateSelf(moveBy);
 
-	leftGhostDistance -= VECLEN(moveBy);
+	leftGhostDistance -= VECLEN(moveBy) * (playerMarking ? playerMarkingCost : 1.0f);
 	if (leftGhostDistance <= 0.0f)
 	{
 		leftGhostDistance = 0.0f;
@@ -233,7 +250,7 @@ float GhostController::GetRotationdifferenceToMousePosition()
 // GHOST MARKING FUNCTIONS
 void GhostController::StartMarking()
 {
-	auto& transform = GetTransform();
+	auto& transform = playerMarking ? HFEngine::ECS.GetComponent<Transform>(playerObject) : GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
 	AudioManager::PlaySoundFromSource(sourceGhostController);
 
@@ -258,7 +275,7 @@ void GhostController::StartMarking()
 }
 void GhostController::UpdateMarking()
 {
-	auto& transform = GetTransform();
+	auto& transform = playerMarking ? HFEngine::ECS.GetComponent<Transform>(playerObject) : GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
 
 	distanceReached += glm::distance(lastDistanceRecordPos, transformPosition);
@@ -287,7 +304,7 @@ void GhostController::UpdateMarking()
 }
 void GhostController::EndMarking()
 {
-	auto& transform = GetTransform();
+	auto& transform = playerMarking ? HFEngine::ECS.GetComponent<Transform>(playerObject) : GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
 	AudioManager::StopSource(sourceGhostController);
 	AudioManager::CreateDefaultSourceAndPlay(sourceGhostEnd,"ghostend", false, 0.2f);
