@@ -168,6 +168,8 @@ void GhostController::MovementCancel(Event& event)
 void GhostController::PlayerMarkingStart(Event& event)
 {
 	HFEngine::ECS.SetEnabledGameObject(GetGameObject(), true);
+	auto& transform = HFEngine::ECS.GetComponent<Transform>(playerObject);
+	lastPlayerPos = transform.GetWorldPosition();
 	hasGhostMovement = true;
 	playerMarking = true;
 	StartMarking();
@@ -190,35 +192,47 @@ void GhostController::Update(float dt)
 
 	UpdateMarking();
 
-	// smooth rotate
+	if (playerMarking)
 	{
-		float diff = GetRotationdifferenceToMousePosition();
-		float change = dt * rotateSpeedSmoothing;
-		if (glm::abs(change) > glm::abs(diff))
-			change = diff;
-		else
-			change *= glm::sign(diff);
+		//auto& transform = HFEngine::ECS.GetComponent<Transform>(playerObject);
+		//leftGhostDistance -= glm::distance2(lastPlayerPos, transform.GetWorldPosition()) * playerMarkingCost * 5.0f;
 
-		if (glm::abs(change) > 0.01f)
-			transform.RotateSelf(glm::degrees(change), transform.GetUp());
+		//lastPlayerPos = transform.GetWorldPosition();
+		//leftGhostDistance -= glm::distance(lastDistanceRecordPos, transform.GetWorldPosition());
+	}
+	else
+	{
+		// smooth rotate
+		{
+			float diff = GetRotationdifferenceToMousePosition();
+			float change = dt * rotateSpeedSmoothing;
+			if (glm::abs(change) > glm::abs(diff))
+				change = diff;
+			else
+				change *= glm::sign(diff);
+
+			if (glm::abs(change) > 0.01f)
+				transform.RotateSelf(glm::degrees(change), transform.GetUp());
+		}
+
+		// smoth move speed
+		float targetMoveSpeed = GetUpgradedMoveSpeed();
+		{
+			float diff = targetMoveSpeed - currentMoveSpeed;
+			float change = dt * moveSpeedSmoothing;
+			if (glm::abs(change) > glm::abs(diff))
+				currentMoveSpeed = targetMoveSpeed;
+			else
+				currentMoveSpeed += change * glm::sign(diff);
+		}
+
+		auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
+		if (currentMoveSpeed > 0.01f)
+			transform.TranslateSelf(moveBy);
+
+		//leftGhostDistance -= VECLEN(moveBy);
 	}
 
-	// smoth move speed
-	float targetMoveSpeed = GetUpgradedMoveSpeed();
-	{
-		float diff = targetMoveSpeed - currentMoveSpeed;
-		float change = dt * moveSpeedSmoothing;
-		if (glm::abs(change) > glm::abs(diff))
-			currentMoveSpeed = targetMoveSpeed;
-		else
-			currentMoveSpeed += change * glm::sign(diff);
-	}
-
-	auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
-	if (currentMoveSpeed > 0.01f)
-		transform.TranslateSelf(moveBy);
-
-	leftGhostDistance -= VECLEN(moveBy) * (playerMarking ? playerMarkingCost : 1.0f);
 	if (leftGhostDistance <= 0.0f)
 	{
 		leftGhostDistance = 0.0f;
@@ -278,7 +292,9 @@ void GhostController::UpdateMarking()
 	auto& transform = playerMarking ? HFEngine::ECS.GetComponent<Transform>(playerObject) : GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
 
-	distanceReached += glm::distance(lastDistanceRecordPos, transformPosition);
+	float dist = glm::distance(lastDistanceRecordPos, transformPosition);
+	distanceReached += dist;// glm::distance(lastDistanceRecordPos, transformPosition);
+	leftGhostDistance -= dist * (playerMarking ? playerMarkingCost : 1.0f);
 	lastDistanceRecordPos = transformPosition;
 
 	if (distanceReached >= miniGhostSpawnDistance)

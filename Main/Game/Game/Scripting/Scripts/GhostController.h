@@ -46,6 +46,8 @@ private: // variables
 	bool forceCancelNextLine = false;
 	bool playerMarking = false;
 
+	glm::vec3 lastPlayerPos;
+
 public:
 	float maxGhostDistance = 20.0f;
 	float ghostDistanceRecoverySpeed = 5.0f;
