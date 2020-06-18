@@ -28,6 +28,7 @@ class PlayerController : public CreatureController
 private: // parameters
 	float healthRecoverySpeed = 5.0f;
 	float idleToStartRecoveryTime = 3.0f;
+	float markingSlow = 4.0f;
 
 	float ghostCooldown = 0.35f;
 	float pushbackCooldown = 2.0f;
@@ -90,6 +91,7 @@ public:
 
 		RegisterFloatParameter("torchCooldownEmitRate", &torchCooldownEmitRate);
 		RegisterVec3Parameter("torchLightCooldownLightColor", &torchLightCooldownLightColor);
+		RegisterFloatParameter("markingSlow", &markingSlow);
 	}
 
 	~PlayerController()
@@ -227,10 +229,14 @@ public:
 
 	void GhostMarkingStart(Event& event) {
 		hasGhostMarking = true;
+		SetSlow(GetSlow() + markingSlow);
+		GetAnimator().SetAnimatorSpeed(1.0 - (markingSlow / moveSpeed));
 		SwitchTorch(false);
 	}
 	void GhostMarkingStop(Event& event) {
 		hasGhostMarking = false;
+		SetSlow(GetSlow() - markingSlow);
+		GetAnimator().SetAnimatorSpeed(1.0 + (markingSlow / moveSpeed));
 		SwitchTorch(true);
 
 		ghostOnCooldown = true;

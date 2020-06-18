@@ -10,7 +10,7 @@
 class Font
 {
 public:
-    Font(FT_Library ft, const char* path, int size = 28);
+    Font(FT_Library ft, const char* path, int size = 48);
     const Character& GetCharacter(char c);
     bool IsInitialized();
     int GetSize();
