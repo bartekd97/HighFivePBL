@@ -65,6 +65,10 @@ public:
 		RegisterVec3Parameter("attackEmissiveColor", &attackEmissiveColor);
 		RegisterVec3Parameter("attackLightColor", &attackLightColor);
 	}
+	~MiniGhost()
+	{
+		AudioManager::DeleteSource(sourceMiniGhostDamage);
+	}
 
 	void Awake()
 	{
@@ -81,6 +85,11 @@ public:
 	
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::MiniGhost::FADE_ME_OUT, MiniGhost::OnFadeMeOut));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::MiniGhost::ATTACK, MiniGhost::OnAttack));
+		printf("Cos sie odjebalo w MINI GHOST");
+		printf("\n");
+
+		
+
 	}
 
 	void Start()
@@ -88,6 +97,8 @@ public:
 		moveSpeedSmoothing = moveSpeed * 4.0f;
 		auto& collider = HFEngine::ECS.GetComponent<Collider>(GetGameObject());
 		collider.OnTriggerEnter.push_back(TriggerMethodPointer(MiniGhost::OnTriggerEnter));
+		AudioManager::InitSource(sourceMiniGhostDamage);
+		AudioManager::SetSoundInSource(sourceMiniGhostDamage, "bum6", false, 0.1f);
 	}
 
 	void Update(float dt)
@@ -164,7 +175,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
-			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.1f);
+			AudioManager::PlaySoundFromSource(sourceMiniGhostDamage);
 			enemyController->TakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}
@@ -172,7 +183,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto bossController = scriptContainer.GetScript<BossController>();
-			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.2f);
+			AudioManager::PlaySoundFromSource(sourceMiniGhostDamage);
 			bossController->RequestToTakeDamage(damageToEnemies);
 			FadeMeOut(0.5);
 		}

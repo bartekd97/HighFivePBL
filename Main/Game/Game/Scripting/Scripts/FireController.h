@@ -18,7 +18,9 @@ private: // PARAMETERS
 private: // VARIABLES
 	std::unordered_map<GameObject, FireEffect> refreshList;
 	std::shared_ptr<Prefab> firedEffectPrefab;
-	ALuint source;
+	ALuint sourceFire;
+	ALuint sourceFireScreaming;
+
 public:
 	FireController()
 	{
@@ -31,6 +33,12 @@ public:
 	{
 		ObstacleController::Start();
 		firedEffectPrefab = PrefabManager::GetPrefab("FiredCreatureEffect");
+
+		AudioManager::InitSource(sourceFire);
+		AudioManager::SetSoundInSource(sourceFire, "fire", false, 0.2f);
+
+		AudioManager::InitSource(sourceFireScreaming);
+		AudioManager::SetSoundInSource(sourceFireScreaming, "fire_screaming", false);
 	}
 
 	void Update(float dt)
@@ -79,11 +87,11 @@ public:
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
 			if (controllers[object] == scriptContainer.GetScript<PlayerController>())
 			{
-				AudioManager::CreateDefaultSourceAndPlay(source, "fire", false, 0.2f);
+				AudioManager::PlaySoundFromSource(sourceFire);
 
 				if (scriptContainer.GetScript<PlayerController>()->GetHealth() < scriptContainer.GetScript<PlayerController>()->GetMaxHealth() *0.2f)
 				{
-					AudioManager::CreateDefaultSourceAndPlay(source, "fire_screaming", false);
+					AudioManager::PlaySoundFromSource(sourceFireScreaming);
 				}
 			}
 		}
@@ -91,7 +99,8 @@ public:
 
 	void OnObstacleExit(GameObject object) override
 	{
-		AudioManager::StopSource(source);
+		AudioManager::StopSource(sourceFire);
+		AudioManager::StopSource(sourceFireScreaming);
 	}
 
 };

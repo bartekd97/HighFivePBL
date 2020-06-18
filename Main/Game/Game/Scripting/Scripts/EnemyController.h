@@ -60,7 +60,10 @@ private: // variables
 	std::shared_ptr<MapCellOptimizer> playerCellOptimizer;
 
 	Raycaster raycaster;
-	ALuint sourceEnemyController;
+	ALuint sourceEnemyAttack;
+	ALuint sourceEnemyDamage;
+	ALuint sourceEnemyDeath;
+
 
 	std::shared_ptr<Panel> healthBarPanel;
 	std::shared_ptr<Panel> healthRedPanel;
@@ -90,6 +93,16 @@ public:
 	void Awake()
 	{
 		HFEngine::ECS.SetNameGameObject(GetGameObject(), "enemy");
+
+		AudioManager::InitSource(sourceEnemyAttack);
+		AudioManager::InitSource(sourceEnemyDamage);
+		AudioManager::InitSource(sourceEnemyDeath);
+
+
+		AudioManager::SetSoundInSource(sourceEnemyAttack, soundAttack, false, 0.2f);
+		AudioManager::SetSoundInSource(sourceEnemyDamage, soundDmg, false, 1.0f);
+		AudioManager::SetSoundInSource(sourceEnemyDeath, soundDeath, false, 0.5f);
+
 	}
 
 	void Start()
@@ -158,7 +171,7 @@ public:
 		{
 			if (raycaster.GetOut().distance <= attackDistance)
 			{
-				AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundAttack, false, 0.2f);
+				AudioManager::PlaySoundFromSource(sourceEnemyAttack);
 				playerController->TakeDamage(attackDamage);
 			}
 		}
@@ -354,11 +367,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
-		AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundDmg, false, 1.0f);
+		AudioManager::PlaySoundFromSource(sourceEnemyDamage);
 
 		if (health <= 0)
 		{
-			AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundDeath, false, 0.5f);
+			AudioManager::PlaySoundFromSource(sourceEnemyDeath);
 			DestroyGameObjectSafely();
 		}
 	}

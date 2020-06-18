@@ -53,6 +53,10 @@ public:
 		rightWingObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), rightWingName)[0];
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::OPEN_ME, GateOpener::OnOpenMe));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::CLOSE_ME, GateOpener::OnCloseMe));
+
+		AudioManager::InitSource(sourceGate);
+		AudioManager::SetSoundInSource(sourceGate, "squeaky_metal_gate", false, 0.05f);
+
 	}
 
 	void Update(float dt)
@@ -73,7 +77,7 @@ public:
 		});
 
 		currentState = State::OPENED;
-		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.05f);
+		AudioManager::PlaySoundFromSource(sourceGate);
 
 	}
 
@@ -88,7 +92,7 @@ public:
 			leftTransform.SetRotation(glm::mix(leftRotationOpened, leftRotationClosed, prog));
 			rightTransform.SetRotation(glm::mix(rightRotationOpened, rightRotationClosed, prog));
 			});
-		AudioManager::CreateDefaultSourceAndPlay(sourceGate, "squeaky_metal_gate", false, 0.05f);
+		AudioManager::PlaySoundFromSource(sourceGate);
 
 		currentState = State::CLOSED;
 	}

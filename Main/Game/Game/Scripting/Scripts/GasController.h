@@ -33,6 +33,10 @@ public:
 	{
 		ObstacleController::Start();
 		gasEffectPrefab = PrefabManager::GetPrefab("GasCreatureEffect");
+
+		AudioManager::InitSource(source);
+		AudioManager::SetSoundInSource(source, "choking", false);
+
 	}
 
 	void Update(float dt)
@@ -86,7 +90,7 @@ public:
 				float playerMaxHealth = scriptContainer.GetScript<PlayerController>()->GetMaxHealth();
 				if (playerHealth < playerMaxHealth * 0.5f)
 				{
-					AudioManager::CreateDefaultSourceAndPlay(source, "choking", false);
+					AudioManager::PlaySoundFromSource(source);
 				}
 			}
 			

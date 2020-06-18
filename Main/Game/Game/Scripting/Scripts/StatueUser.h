@@ -47,6 +47,8 @@ public:
 	void Awake()
 	{
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Statue::MAKE_ME_USABLE, StatueUser::OnMakeMeUsable));
+		AudioManager::InitSource(sourceStatue);
+		AudioManager::SetSoundInSource(sourceStatue, "bum2", false, 0.5f);
 	}
 
 	void Start()
@@ -90,7 +92,7 @@ public:
 				auto& lightRenderer = HFEngine::ECS.GetComponent<PointLightRenderer>(lightObject);
 				timerAnimator.AnimateVariable(&lightRenderer.light.intensity, lightRenderer.light.intensity, usedLightIntensity, 1.0f);
 			}
-			AudioManager::CreateDefaultSourceAndPlay(sourceStatue, "bum2", false, 0.5f);
+			AudioManager::PlaySoundFromSource(sourceStatue);
 
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_CANCEL);
 			EventManager::FireEvent(Events::Gameplay::Upgrades::REQUEST_UPGRADE);

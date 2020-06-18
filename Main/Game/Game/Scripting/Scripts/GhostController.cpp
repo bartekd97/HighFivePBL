@@ -64,6 +64,13 @@ int GhostController::GetUpgradedMaxActiveLines(bool force)
 }
 
 
+GhostController::~GhostController()
+{
+	AudioManager::DeleteSource(sourceGhostController);
+	AudioManager::DeleteSource(sourceGhostDamage);
+	AudioManager::DeleteSource(sourceGhostEnd);
+}
+
 void GhostController::Awake()
 {
 	miniGhostPrefab = PrefabManager::GetPrefab("MiniGhost");
@@ -71,10 +78,14 @@ void GhostController::Awake()
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
-	AudioManager::CreateDefaultSourceAndPlay(sourceGhostController, "ghost", false);
-	AudioManager::StopSource(sourceGhostController);
-
-
+	printf("Cos sie odjebalo w GHOST");
+	printf("\n");
+	AudioManager::InitSource(sourceGhostController);
+	AudioManager::SetSoundInSource(sourceGhostController, "ghost", false);
+	AudioManager::InitSource(sourceGhostDamage);
+	AudioManager::SetSoundInSource(sourceGhostDamage, "ghostattack", false, 0.2f);
+	AudioManager::InitSource(sourceGhostEnd);
+	AudioManager::SetSoundInSource(sourceGhostEnd, "ghostend", false, 0.2f);
 }
 
 void GhostController::Start()
@@ -105,7 +116,7 @@ void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto enemyController = scriptContainer.GetScript<EnemyController>();
-		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.2f);
+		AudioManager::PlaySoundFromSource(sourceGhostDamage);
 		enemyController->TakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
@@ -113,7 +124,7 @@ void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto bossController = scriptContainer.GetScript<BossController>();
-		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.4f);
+		AudioManager::PlaySoundFromSource(sourceGhostDamage);
 		bossController->RequestToTakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
@@ -290,7 +301,7 @@ void GhostController::EndMarking()
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
 	AudioManager::StopSource(sourceGhostController);
-	AudioManager::CreateDefaultSourceAndPlay(sourceGhostEnd,"ghostend", false, 0.2f);
+	AudioManager::PlaySoundFromSource(sourceGhostEnd);
 
 	recordedPositions.emplace_back(glm::vec2{
 		transformPosition.x,

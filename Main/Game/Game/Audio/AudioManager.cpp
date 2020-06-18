@@ -261,12 +261,32 @@ namespace AudioManager
 		return 0;
 	}
 
+	int DeleteSource(ALuint& source)
+	{
+		ClearSource(source);
+		alDeleteSources(1, &source);
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			printf("DeleteSource : %d", error);
+			printf("\n");
+			return -1;
+		}
+		return 0;
+	}
+
 	int SetSource(ALuint& source, ALuint& buffer, ALboolean loop)
 	{
 		// Generate the sources 
 		alGenSources(1, &source);
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
+			for (int i = 0; i < buffers.size(); i++)
+			{
+				if (buffer == buffers[i].buffer)
+				{
+					printf(buffers[i].soundName.c_str());
+				}
+			}
 			printf("alGenSources : %d", error);
 			printf("\n");
 			return -1;
@@ -352,6 +372,69 @@ namespace AudioManager
 		return 0;
 	}
 
+	int InitSource(ALuint& source)
+	{
+		// Generate the sources 
+		alGenSources(1, &source);
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			printf("alInitGenSources : %d", error);
+			printf("\n");
+			return -1;
+		}
+
+		return 0;
+	}
+
+	int SetExistingSource(ALuint& source, ALuint& buffer, ALboolean loop)
+	{
+
+		// Generate the sources 
+	/*	alGenSources(1, &source);
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			printf("alGenSources : %d", error);
+			printf("\n");
+			return -1;
+		}*/
+		//atach buffers to sources
+		alSourcei(source, AL_BUFFER, buffer);
+
+		if (loop == true)
+		{
+			alSourcei(source, AL_LOOPING, AL_TRUE);
+		}
+		else
+		{
+			alSourcei(source, AL_LOOPING, AL_FALSE);
+		}
+
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			printf("WINNER : %d", error);
+
+			printf("alSourcei : %d", error);
+			printf("\n");
+			return -1;
+		}
+
+		float sourcePos[] = { 0.0f, 0.0f, 0.0f };
+		float sourceVel[] = { 0.0f, 0.0f, 0.0f };
+		float sourceDir[] = { 0.0f, 0.0f, 0.0f };
+
+		alSourcefv(source, AL_POSITION, sourcePos);
+		alSourcefv(source, AL_VELOCITY, sourceVel);
+		alSourcefv(source, AL_DIRECTION, sourceDir);
+		if ((error = alGetError()) != AL_NO_ERROR)
+		{
+			printf("alSourcefv : %d", error);
+			printf("\n");
+			return -1;
+		}
+
+		return 0;
+	}
+
 	int SetListener()
 	{
 		alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
@@ -371,7 +454,7 @@ namespace AudioManager
 		return 0;
 	}
 
-	int PlaySoundFromSource(ALuint source)
+	int PlaySoundFromSource(ALuint& source)
 	{
 		alSourcePlay(source);
 		return 0;
@@ -420,6 +503,27 @@ namespace AudioManager
 		PlaySoundFromSource(source);
 	}
 
+
+	void SetSoundInSource(ALuint& source, std::string soundName, bool loop, float volume)
+	{
+		//StopSource(sourceBackground);
+
+		//get pregenerated buffer
+		ALuint buffer = GetBuffer(soundName);
+
+		//attach source to buffer and set default values
+		SetExistingSource(source, buffer, loop);
+
+		//set volume
+		SetSourceVolume(source, volume);
+	}
+
+	int InitBackgroundSource()
+	{
+		InitSource(sourceBackground);
+		return 0;		
+	}
+
 	void PlayBackground(std::string soundName, float volume)
 	{
 		//StopSource(sourceBackground);
@@ -428,7 +532,7 @@ namespace AudioManager
 		ALuint buffer = GetBuffer(soundName);
 
 		//attach source to buffer and set default values
-		SetSource(sourceBackground, buffer, true);
+		SetExistingSource(sourceBackground, buffer, true);
 
 		//set volume
 		SetSourceVolume(sourceBackground, volume);
@@ -451,7 +555,7 @@ namespace AudioManager
 		ALuint buffer = GetBuffer(soundName);
 
 		//attach source to buffer and set default values
-		SetSource(sourceMovement, buffer, true);
+		SetExistingSource(sourceMovement, buffer, true);
 
 		//set volume
 		SetSourceVolume(sourceMovement, volume);
@@ -474,7 +578,7 @@ namespace AudioManager
 		ALuint buffer = GetBuffer(soundName);
 
 		//attach source to buffer and set default values
-		SetSource(sourceMovement, buffer, true);
+		SetExistingSource(sourceMovement, buffer, true);
 
 		//set volume
 		SetSourceVolume(sourceMovement, volume);

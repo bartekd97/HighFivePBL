@@ -52,6 +52,7 @@ int main()
 	//ac.CreateDefaultSourceAndPlay(source2, "glass_ping", true, 0.01f);
 
 	// request initial scene
+	AudioManager::InitBackgroundSource();
 	AudioManager::PlayBackground("menuKorpecki", 1.0f);
 	SceneManager::RequestLoadScene("MainMenu");
 
