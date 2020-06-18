@@ -6,7 +6,7 @@
 // requires ParticleContainer
 // requires ParticleEmitter
 // requires ParticleRenderer
-class ParticleEmitterSystem : public System, public ISystemUpdate, public ISystemPostUpdate
+class ParticleEmitterSystem : public System, public ISystemUpdate, public ISystemPostUpdate, public ISystemPostRender
 {
 private:
 	TaskPool<1, ITaskPool::Priority::NORMAL> particleEmitterWorker; // only 1 thread for particle system is supported DON'T CHANGE IT
@@ -20,4 +20,5 @@ private:
 public:
 	void Update(float dt) override;
 	void PostUpdate(float dt) override;
+	void PostRender() override;
 };
