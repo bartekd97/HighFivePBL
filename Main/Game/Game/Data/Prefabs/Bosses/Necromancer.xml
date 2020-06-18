@@ -6,6 +6,7 @@
     </component>
     <component name="CircleCollider">
         <property name="radius" value="0.85"/>
+        <property name="type" value="STATIC"/>
     </component>
 
 

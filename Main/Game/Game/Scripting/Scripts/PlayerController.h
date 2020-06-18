@@ -309,7 +309,7 @@ public:
 
 		if (!isPushingBack)
 		{
-			if (!hasGhostMovement && !ghostOnCooldown && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
+			if (!hasGhostMovement && !ghostOnCooldown && !hasGhostMarking && InputManager::GetMouseButtonDown(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_START);
 			else if (hasGhostMovement && InputManager::GetMouseButtonUp(GLFW_MOUSE_BUTTON_LEFT))
 				EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
