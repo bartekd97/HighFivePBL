@@ -10,7 +10,7 @@ class Event;
 class WorldFogEffect : public IPostprocessingEffect
 {
 public:
-	const float FogHeightLevel = 3.5f;
+	const float FogHeightLevel = 5.0f;
 
 private:
 	std::shared_ptr<Shader> shader;
