@@ -101,6 +101,7 @@
     <ClCompile Include="ECS\Systems\GravitySystem.cpp" />
     <ClCompile Include="ECS\Systems\NextFrameDestroySystem.cpp" />
     <ClCompile Include="ECS\Systems\ParticleEmitterSystem.cpp" />
+    <ClCompile Include="ECS\Systems\PhysicsSpawnTriggerSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\ColliderCollectorSystem.cpp" />
@@ -115,6 +116,7 @@
     <ClCompile Include="ECS\Systems\ScriptUpdateSystem.cpp" />
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\TriggerColliderCollectorSystem.cpp" />
     <ClCompile Include="Event\EventManager.cpp" />
     <ClCompile Include="Global.cpp" />
     <ClCompile Include="GUI\Button.cpp" />
@@ -220,6 +222,7 @@
     <ClInclude Include="ECS\Systems\GravitySystem.h" />
     <ClInclude Include="ECS\Systems\NextFrameDestroySystem.h" />
     <ClInclude Include="ECS\Systems\ParticleEmitterSystem.h" />
+    <ClInclude Include="ECS\Systems\PhysicsSpawnTriggerSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\ColliderCollectorSystem.h" />
@@ -237,6 +240,7 @@
     <ClInclude Include="ECS\Systems\ScriptUpdateSystem.h" />
     <ClInclude Include="ECS\Systems\SkinAnimatorSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\SkinnedMeshRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\TriggerColliderCollectorSystem.h" />
     <ClInclude Include="Event\Event.h" />
     <ClInclude Include="Event\EventManager.h" />
     <ClInclude Include="Event\Events.h" />

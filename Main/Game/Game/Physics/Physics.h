@@ -26,6 +26,8 @@ namespace Physics
 	void ClearGameObjects();
 	void RemoveNode(GameObject gameObject);
 
+	void ReLaunchTriggers(GameObject gameObject);
+
 	bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
 	bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
 
