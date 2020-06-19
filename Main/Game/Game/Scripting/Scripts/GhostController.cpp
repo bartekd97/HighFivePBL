@@ -34,10 +34,6 @@
 	pairName.second = ev.GetParam<int>(Events::StatModification::IntValue); \
 	} 
 
-ALuint sourceGhostController;
-ALuint sourceGhostDamage;
-ALuint sourceGhostEnd;
-
 
 float GhostController::GetUpgradedMoveSpeed(bool force)
 {
@@ -63,7 +59,6 @@ int GhostController::GetUpgradedMaxActiveLines(bool force)
 	return _upgradedMaxActiveLines.second;
 }
 
-
 void GhostController::Awake()
 {
 	miniGhostPrefab = PrefabManager::GetPrefab("MiniGhost");
@@ -71,9 +66,6 @@ void GhostController::Awake()
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
-	AudioManager::CreateDefaultSourceAndPlay(sourceGhostController, "ghost", false);
-	AudioManager::StopSource(sourceGhostController);
-
 
 }
 
@@ -105,7 +97,7 @@ void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto enemyController = scriptContainer.GetScript<EnemyController>();
-		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.2f);
+		AudioManager::PlayFromDefaultSource("ghostattack", false, 0.2f);
 		enemyController->TakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
@@ -113,7 +105,7 @@ void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto bossController = scriptContainer.GetScript<BossController>();
-		AudioManager::CreateDefaultSourceAndPlay(sourceGhostDamage, "ghostattack", false, 0.4f);
+		AudioManager::PlayFromDefaultSource("ghostattack", false, 0.2f);
 		bossController->RequestToTakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
@@ -235,7 +227,7 @@ void GhostController::StartMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
-	AudioManager::PlaySoundFromSource(sourceGhostController);
+	AudioManager::PlayGhost();
 
 	distanceReached = 0.0f;
 	lastDistanceRecordPos = transformPosition;
@@ -289,8 +281,8 @@ void GhostController::EndMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
-	AudioManager::StopSource(sourceGhostController);
-	AudioManager::CreateDefaultSourceAndPlay(sourceGhostEnd,"ghostend", false, 0.2f);
+	AudioManager::StopGhost();
+	AudioManager::PlayFromDefaultSource("ghostend", false, 0.2f);
 
 	recordedPositions.emplace_back(glm::vec2{
 		transformPosition.x,

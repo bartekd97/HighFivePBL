@@ -60,7 +60,6 @@ private: // variables
 	std::shared_ptr<MapCellOptimizer> playerCellOptimizer;
 
 	Raycaster raycaster;
-	ALuint sourceEnemyController;
 
 	std::shared_ptr<Panel> healthBarPanel;
 	std::shared_ptr<Panel> healthRedPanel;
@@ -90,6 +89,7 @@ public:
 	void Awake()
 	{
 		HFEngine::ECS.SetNameGameObject(GetGameObject(), "enemy");
+
 	}
 
 	void Start()
@@ -158,7 +158,7 @@ public:
 		{
 			if (raycaster.GetOut().distance <= attackDistance)
 			{
-				AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundAttack, false, 0.2f);
+				AudioManager::PlayFromDefaultSource(soundAttack, false, 0.2f);
 				playerController->TakeDamage(attackDamage);
 			}
 		}
@@ -354,11 +354,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
-		AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundDmg, false, 1.0f);
+		AudioManager::PlayFromDefaultSource(soundDmg, false, 1.0f);
 
 		if (health <= 0)
 		{
-			AudioManager::CreateDefaultSourceAndPlay(sourceEnemyController, soundDeath, false, 0.5f);
+			AudioManager::PlayFromDefaultSource(soundDeath, false, 0.5f);
 			DestroyGameObjectSafely();
 		}
 	}
