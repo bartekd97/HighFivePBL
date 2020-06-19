@@ -62,11 +62,6 @@ Button::Button()
 	textureColors[state].texture = GUIManager::defaultTexture;
 }
 
-Button::~Button()
-{
-	//AudioManager::DeleteSource(sourceHover);
-}
-
 void Button::Update(const glm::vec2& mousePosition)
 {
 
@@ -88,7 +83,7 @@ void Button::Update(const glm::vec2& mousePosition)
 			}
 			if (state != STATE::PRESSED && OnStateChanged) OnStateChanged(STATE::PRESSED);
 			state = STATE::PRESSED;
-			//AudioManager::PlaySoundFromSource(sourcePress);
+			AudioManager::PlayFromDefaultSource("bum4", false, 0.5f);
 		}
 		else
 		{
