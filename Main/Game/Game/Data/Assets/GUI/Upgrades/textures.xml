@@ -1,0 +1,13 @@
+<textures>
+    <texture name="UpgradesBarAvatar" file="guzik_bonusy.png" format="rgba" />
+    <texture name="UpgradesBar" file="pasek.png" format="rgba" />
+
+    <texture name="CardButton_Normal" file="cardbutton_normal.png" format="rgba" />
+    <texture name="CardButton_Hover" file="cardbutton_hover.png" format="rgba" />
+
+    <texture name="Icon_1" file="icons/1.png" format="rgba" />
+    <texture name="Icon_2" file="icons/2.png" format="rgba" />
+    <texture name="Icon_3" file="icons/3.png" format="rgba" />
+    <texture name="Icon_4" file="icons/4.png" format="rgba" />
+    <texture name="Icon_5" file="icons/5.png" format="rgba" />
+</textures>

@@ -1,0 +1,18 @@
+<models materialLibrary="this">
+    <model name="Vampire" mesh="vampire_a_lusth.glb" material="VampireMortalMat" skinned="true">
+        <animation name="menuidle"          clip="anim/Standing Torch Idle 01.glb"/>
+        <animation name="idle"              clip="anim/Standing Torch Idle 02.glb"/>
+        <animation name="running"           clip="anim/Standing Torch Run Forward.glb"/>
+        <animation name="attack"            clip="anim/Standing Melee Attack 360 High.glb"/>
+        <animation name="standToCrouch"     clip="anim/Standing Torch To Crouch Torch.glb"/>
+        <animation name="ghostrunning"      clip="anim/Ghost Running.glb"/>
+        <animation name="dying"             clip="anim/Sword And Shield Death.glb"/>
+    </model>
+
+    <model name="VampireLite" mesh="vampire_a_lusth_LITE.glb" material="VampireMortalMat" skinned="true">
+        <animation name="ghostrunning"      clip="anim/Ghost Running.glb"/>
+    </model>
+
+    <model name="FireTorch" mesh="firetorch.glb"    material="FireTorchMat" />
+    <model name="FireTorchFlame" mesh="flame.glb"   material="FireTorcFlamehMat" />
+</models>

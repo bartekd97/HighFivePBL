@@ -1,0 +1,3 @@
+<models materialLibrary="this">
+    <model name="SkyPlane" mesh="skyplane.glb"    material="skyMaterial" />
+</models>

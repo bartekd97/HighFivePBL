@@ -1,76 +1,97 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 #include <iostream>
 #include <memory>
 #include <tinyxml2.h>
+#include <chrono>
+#include <math.h>
 
-#include "Shader.h"
-#include "PrimitiveRenderer.h"
-#include "Logger.h"
+#include "ECS/Components.h"
+#include "Utility/Logger.h"
+
+#include "HFEngine.h"
+#include "WindowManager.h"
+#include "InputManager.h"
+#include "Event/EventManager.h"
+#include "Event/Events.h"
+
+#include "GUI/Button.h"
+#include "Audio/AudioManager.h"
+
+#include "Scene/SceneManager.h"
+#include "Scene/Scenes/Game.h"
+#include "Scene/Scenes/GameLite.h"
+#include "Scene/Scenes/MainMenu.h"
 
 const int SCREEN_WIDTH = 1280;
 const int SCREEN_HEIGHT = 720;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
+void ReportGameObjects(float dt);
 
 int main()
 {
-	LoggerInitialize();
-
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", nullptr, nullptr);
-
-	if (window == nullptr)
+	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "HFEngine test"))
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
-		glfwTerminate();
+		std::cout << "Failed to initialize engine" << std::endl;
 		return -1;
 	}
 
-	glfwMakeContextCurrent(window);
+	GLFWwindow* window = WindowManager::GetWindow();
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
+	// register scenes
+	SceneManager::RegisterScene("Game", std::make_shared<GameScene>());
+	SceneManager::RegisterScene("GameLite", std::make_shared<GameLiteScene>());
+	SceneManager::RegisterScene("MainMenu", std::make_shared<MainMenuScene>());
 
+	//AudioManager ac;
+	//ac.Init_al();
 
+	
+	//ALuint source2;
+	//ac.CreateDefaultSourceAndPlay(source2, "glass_ping", true, 0.01f);
 
-	//glViewport(0,0, 1280, 720);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	// request initial scene
+	AudioManager::PlayBackground("menuKorpecki", 1.0f);
+	SceneManager::RequestLoadScene("MainMenu");
 
-
-	ShaderManager::Initialize();
-
-	auto hwShader = ShaderManager::GetShader("HelloWorldShader");
-
-
+	float dt = 0.0f;
 	while (!glfwWindowShouldClose(window))
 	{
-		glfwPollEvents();
+		auto startTime = std::chrono::high_resolution_clock::now();
 
-		glClearColor(0.2f, 0.7f, 0.5f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		InputManager::PollEvents();
 
-		hwShader->use();
-		PrimitiveRenderer::DrawScreenQuad();
+		HFEngine::ProcessGameFrame(dt);
+
+		ReportGameObjects(dt);
 
 		glfwSwapBuffers(window);
+
+		ModelManager::UnloadUnused();
+		
+		auto stopTime = std::chrono::high_resolution_clock::now();
+		dt = std::chrono::duration<float, std::chrono::seconds::period>(stopTime - startTime).count();
 	}
 
-	glfwTerminate();
+	//ac.Exit_al();
+
+	HFEngine::Terminate();
+
 	return 0;
 }
 
-
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void ReportGameObjects(float dt)
 {
-	glViewport(0, 0, width, height);
+	const float interval = 5.0f;
+	static int frames = 0;
+	static float accumulator = 0.0f;
+	accumulator += dt;
+	frames += 1;
+	if (isgreaterequal(accumulator, interval))
+	{
+		LogInfo("FPS: {}; GameObjects count: {}", frames / interval, HFEngine::ECS.GetLivingGameObjectsCount());
+		accumulator = 0.0f;
+		frames = 0;
+	}
 }

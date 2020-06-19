@@ -1,0 +1,21 @@
+<materials textureLibrary="this">
+    <material name="mudMaterial">
+        <property name="albedoMap" value="mudAlbedo"/>
+        <property name="normalMap" value="mudNormal"/>
+        <property name="metalnessMap" value="mudMetal"/>
+        <property name="roughnessMap" value="mudRough"/>
+
+        <property name="emissiveMap" value="mudAlbedo"/>
+        <property name="emissiveColor" value="0.2,0.2,0.2"/>
+    </material>
+
+    <material name="mudFireMaterial">
+        <property name="albedoMap" value="mudAlbedo"/>
+        <property name="albedoColor" value="0.25,0.25,0.25"/>
+        <property name="normalMap" value="mudNormal"/>
+        <property name="metalnessMap" value="mudMetal"/>
+        <property name="roughnessMap" value="mudFireRough"/>
+        <property name="emissiveMap" value="mudFireEmissive"/>
+        <property name="emissiveColor" value="0.7,0.7,0.7"/>
+    </material>
+</materials>

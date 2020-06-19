@@ -1,0 +1,9 @@
+<prefab defaultScale="1.0,1.0,1.0">
+    <property name="description" value="Additional active ghost line" />
+    <property name="icon" value="Icon_4" />
+
+    <component name="ScriptComponent">
+        <property name="name" value="Upgrade::GhostActiveLines"/>
+        <property name="increaseBy" value="1"/>
+    </component>
+</prefab>

@@ -1,3 +1,33 @@
 <shaders>
     <shader name="HelloWorldShader" vertex="ScreenPass.glsl" fragment="HelloWorld.glsl"/>
+    <shader name="CubeShader" vertex="CubeVertex.glsl" fragment="CubeFragment.glsl"/>
+
+    <shader name="ToShadowmap" vertex="SimpleGeometryPass.glsl" fragment="Shadowmap.glsl"/>
+    <shader name="ToShadowmapSkinned" vertex="SimpleSkinnedGeometryPass.glsl" fragment="Shadowmap.glsl"/>
+    <shader name="ToGBuffer" vertex="GeometryPass.glsl" fragment="ToGBuffer.glsl"/>
+    <shader name="ToGBufferSkinned" vertex="SkinnedGeometryPass.glsl" fragment="ToGBuffer.glsl"/>
+    <shader name="ForwardRender" vertex="GeometryPass.glsl" fragment="ForwardRender.glsl"/>
+    <shader name="ForwardRenderSkinned" vertex="SkinnedGeometryPass.glsl" fragment="ForwardRender.glsl"/>
+
+    <shader name="PointLight" vertex="SimpleGeometryPass.glsl" fragment="PointLight.glsl"/>
+
+    <shader name="ParticleRender" vertex="ParticleBillboard.glsl" fragment="Particle.glsl"/>
+
+    <shader name="CombineGBuffer" vertex="ScreenPass.glsl" fragment="CombineGBuffer.glsl"/>
+    <shader name="GUIShader" vertex="GUI.glsl" fragment="GUI.glsl"/>
+    <shader name="PaintCellTerrain" vertex="ScreenPass.glsl" fragment="PaintCellTerrain.glsl"/>
+    <shader name="TextShader" vertex="Text.glsl" fragment="Text.glsl"/>
+
+    <!-- postprocessing -->
+    <shader name="PPRiverFog" vertex="GeometryPass.glsl" fragment="postprocessing/RiverFog.glsl"/>
+    <shader name="PPWorldFog" vertex="GeometryPass.glsl" fragment="postprocessing/WorldFog.glsl"/>
+    <shader name="PPSSAO" vertex="ScreenPass.glsl" fragment="postprocessing/SSAO.glsl"/>
+    <shader name="PPSSAOBlur" vertex="ScreenPass.glsl" fragment="postprocessing/SSAOBlur.glsl"/>
+    <shader name="PPOrthoSSR" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSR.glsl"/>
+    <shader name="PPOrthoSSRBlend" vertex="ScreenPass.glsl" fragment="postprocessing/OrthoSSRBlend.glsl"/>
+    <shader name="Bloom" vertex="ScreenPass.glsl" fragment="postprocessing/Bloom.glsl"/>
+    <shader name="HorizontalBlur" vertex="ScreenPass.glsl" fragment="postprocessing/HorizontalBlur.glsl"/>
+    <shader name="VerticalBlur" vertex="ScreenPass.glsl" fragment="postprocessing/VerticalBlur.glsl"/>
+    <shader name="BloomResult" vertex="ScreenPass.glsl" fragment="postprocessing/BloomResult.glsl"/>
+    <shader name="FXAA" vertex="ScreenPass.glsl" fragment="postprocessing/FXAA.glsl"/>
 </shaders>

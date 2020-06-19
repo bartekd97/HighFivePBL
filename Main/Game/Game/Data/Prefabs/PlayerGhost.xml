@@ -1,0 +1,39 @@
+<prefab defaultScale="1.5,1.5,1.5">
+    <component name="ScriptComponent">
+        <property name="name" value="GhostController"/>
+        <property name="moveSpeed" value="11.0"/>
+		<property name="damageToEnemies" value="3.5"/>
+		<property name="maxGhostDistance" value="15.0"/>
+		<property name="ghostDistanceRecoverySpeed" value="5.0"/>
+		<property name="numberOfEnemyToHit" value="1"/>
+	</component>
+	<component name="CircleCollider">
+		<property name="radius" value="0.75"/>
+		<property name="type" value="TRIGGER"/>
+	</component>
+
+    <children>
+        <child name="Visual" position="0,0,0" rotation="0,180,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Characters/Player:Vampire"/>
+            </component>
+            <component name="SkinnedMeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="material" value="Characters/Player:VampireGhostMat"/>
+                <property name="individualMaterial" value="true" />
+                <property name="castShadows" value="false" />
+            </component>
+            <component name="SkinAnimator">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+        <child name="GhostLight" position="0,2.5,0" rotation="0,0,0" scale="1,1,1">
+            <component name="PointLightRenderer">
+                <property name="color" value="0.0,1.0,0.5"/>
+                <property name="radius" value="10.5"/>
+                <property name="intensity" value="2.0"/>
+                <property name="shadowIntensity" value="0.7"/>
+            </component>
+        </child>
+    </children>
+</prefab>

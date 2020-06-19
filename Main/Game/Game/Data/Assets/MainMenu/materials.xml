@@ -1,0 +1,8 @@
+<materials textureLibrary="this">
+    <material name="skyMaterial">
+        <property name="albedoColor" value="0.0,0.0,0.0"/>
+        <property name="roughnessValue" value="0.0"/>
+        <property name="metalnessValue" value="0.0"/>
+        <property name="emissiveMap" value="skyTexture"/>
+    </material>
+</materials>

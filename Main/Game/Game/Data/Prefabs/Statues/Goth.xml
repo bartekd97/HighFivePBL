@@ -1,0 +1,93 @@
+<prefab defaultScale="2.963,2.963,2.963">
+    <component name="ModelHolder">
+        <property name="model" value="Structures/Statues:Goth"/>
+    </component>
+    <component name="MeshRenderer">
+        <property name="configureFromHolder" value="true" />
+        <property name="individualMaterial" value="true" />
+    </component>
+    <component name="RigidBody">
+        <property name="velocity" value="0.0,0.0,0.0"/>
+        <property name="acceleration" value="0.0,0.0,0.0"/>
+        <property name="mass" value="99999.0"/>
+    </component>
+    <component name="CircleCollider">
+        <property name="radius" value="1.0"/>
+    </component>
+
+
+    <component name="ScriptComponent">
+        <property name="name" value="StatueUser"/>
+
+        <property name="usableMaxPulseEmissive" value="0.012,0.012,0.0"/>
+        <property name="usedEmissive" value="0.007,0.007,0.007"/>
+        <property name="usedFlashEmissive" value="0.25,1.0,1.0"/>
+        <property name="usedFlashOpacity" value="0.8"/>
+        <property name="usedLightIntensity" value="60.0"/>
+    </component>
+
+
+    <children>
+        <child name="StatueFlashObject" position="0,0,0" rotation="0,0,0" scale="1.05,0.1,1.05">
+            <component name="ModelHolder">
+                <property name="model" value="Structures/Statues:Goth"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="material" value="Structures/Statues:FlashMaterial"/>
+                <property name="individualMaterial" value="true" />
+                <property name="castShadows" value="false" />
+            </component>
+        </child>
+
+        <child name="StatueUsedLight" position="0,2.33,0.15" rotation="0,0,0" scale="1,1,1">
+            <component name="PointLightRenderer">
+                <property name="color" value="0.07,1.0,0.8"/>
+                <property name="radius" value="3.0"/>
+                <property name="intensity" value="0.0"/>
+                <property name="shadowIntensity" value="0.0"/>
+            </component>
+        </child>
+        <child name="StatueUsedLight" position="0,1.35,0.15" rotation="0,0,0" scale="1,1,1">
+            <component name="PointLightRenderer">
+                <property name="color" value="0.0,1.0,0.8"/>
+                <property name="radius" value="2.0"/>
+                <property name="intensity" value="0.0"/>
+                <property name="shadowIntensity" value="0.0"/>
+            </component>
+        </child>
+
+        <child name="StatueCollider" position="0.451,0,0" rotation="0,0,0" scale="1.0,1.0,1.0">
+            <component name="BoxCollider">
+                <property name="width" value="0.45"/>
+                <property name="height" value="3.25"/>
+                <property name="frozen" value="true"/>
+                <property name="type" value="STATIC"/>
+            </component>
+        </child>
+        <child name="StatueCollider" position="-0.451,0,0" rotation="0,0,0" scale="1.0,1.0,1.0">
+            <component name="BoxCollider">
+                <property name="width" value="0.45"/>
+                <property name="height" value="3.25"/>
+                <property name="frozen" value="true"/>
+                <property name="type" value="STATIC"/>
+            </component>
+        </child>
+        <child name="StatueCollider" position="0,0,0.451" rotation="0,0,0" scale="1.0,1.0,1.0">
+            <component name="BoxCollider">
+                <property name="width" value="3.25"/>
+                <property name="height" value="0.45"/>
+                <property name="frozen" value="true"/>
+                <property name="type" value="STATIC"/>
+            </component>
+        </child>
+        <child name="StatueCollider" position="0,0,-0.451" rotation="0,0,0" scale="1.0,1.0,1.0">
+            <component name="BoxCollider">
+                <property name="width" value="3.25"/>
+                <property name="height" value="0.45"/>
+                <property name="frozen" value="true"/>
+                <property name="type" value="STATIC"/>
+            </component>
+        </child>
+    </children>
+</prefab>

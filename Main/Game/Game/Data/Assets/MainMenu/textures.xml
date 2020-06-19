@@ -1,0 +1,12 @@
+<textures>
+    <texture name="skyTexture" file="background.jpg" format="srgb" />
+
+    <texture name="menuViniete" file="viniete.png" format="rgba" />
+
+    <texture name="btnStart" file="start.png" format="rgba" />
+    <texture name="btnStartLite" file="startlite.png" format="rgba" />
+    <texture name="btnCredits" file="credits.png" format="rgba" />
+    <texture name="btnQuit" file="quit.png" format="rgba" />
+
+    <texture name="hoverBtn" file="hover.png" format="rgba" />
+</textures>

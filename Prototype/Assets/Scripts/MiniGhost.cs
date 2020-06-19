@@ -92,7 +92,7 @@ public class MiniGhost : MonoBehaviour
         if (!doingAttack)
             return;
 
-        if (!other.gameObject.CompareTag("Enemy"))
+        if (!other.gameObject.CompareTag("Enemy") && !other.gameObject.CompareTag("Boss"))
             return;
 
         EnemyController ec = other.GetComponent<EnemyController>();
@@ -102,5 +102,23 @@ public class MiniGhost : MonoBehaviour
             //DisappearDoingAttack();
             Destroy(gameObject);
         }
+
+        BossSpawnerController bc = other.GetComponent<BossSpawnerController>();
+        if (bc != null)
+        {
+            bc.TakeDamage(damageToEnemies);
+            Destroy(gameObject);
+        }
+    }
+
+    string output;
+
+    public override string ToString()
+    {
+        output = "";
+        output += "<component name=\"ScriptComponent\">";
+        output += "<property name=\"name\" value=\"" + this.name + "\"/>";
+        output += "</component>";
+        return output;
     }
 }

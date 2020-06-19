@@ -1,0 +1,80 @@
+<prefab defaultScale="2.0,2.0,2.0">
+    <property name="length" value="5.672" />
+
+    <component name="ScriptComponent">
+        <property name="name" value="GateOpener"/>
+
+        <property name="leftWingName" value="LeftWingAxle"/>
+        <property name="rightWingName" value="RightWingAxle"/>
+
+        <property name="leftRotationOpened" value="0.0,90.0,0.0"/>
+        <property name="leftRotationClosed" value="0.0,0.0,0.0"/>
+        <property name="rightRotationOpened" value="0.0,-90.0,0.0"/>
+        <property name="rightRotationClosed" value="0.0,0.0,0.0"/>
+
+        <property name="animTime" value="1.0"/>
+    </component>
+
+   <children>
+        <child name="LeftColumn" position="-1.275,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Structures/Fences/SecondSet:Column"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+        <child name="LeftWingAxle" position="-1.0815,0,0" rotation="0,90,0" scale="1,1,1">
+            <children>
+                <child name="LeftWing" position="0.5815001,0,0" rotation="0,0,0" scale="-1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Structures/Fences/SecondSet:Gate"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                    <component name="BoxCollider">
+                        <property name="width" value="2.75"/>
+                        <property name="height" value="0.25"/>
+                        <property name="type" value="STATIC"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+        <child name="RightColumn" position="1.275,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Structures/Fences/SecondSet:Column"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+        <child name="RightWingAxle" position="1.0815,0,0" rotation="0,-90,0" scale="1,1,1">
+            <children>
+                <child name="RightWing" position="-0.5815001,0,0" rotation="0,0,0" scale="1,1,1">
+                    <component name="ModelHolder">
+                        <property name="model" value="Structures/Fences/SecondSet:Gate"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                    </component>
+                    <component name="BoxCollider">
+                        <property name="width" value="2.75"/>
+                        <property name="height" value="0.25"/>
+                        <property name="type" value="STATIC"/>
+                    </component>
+                </child>
+            </children>
+        </child>
+
+        <child name="GateTrigger" position="0,0,1.125" rotation="0,0,0" scale="1,1,1">
+            <component name="BoxCollider">
+                <property name="type" value="TRIGGER"/>
+                <property name="width" value="6.5"/>
+                <property name="height" value="2.0"/>
+                <property name="frozen" value="true"/>
+            </component>
+        </child>
+    </children>
+</prefab>

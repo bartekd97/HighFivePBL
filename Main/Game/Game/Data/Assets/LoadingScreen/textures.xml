@@ -1,0 +1,3 @@
+<textures>
+    <texture name="Screen" file="LoadingScreen.png" format="rgb" />
+</textures>
