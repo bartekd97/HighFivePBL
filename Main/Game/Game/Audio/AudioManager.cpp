@@ -441,8 +441,6 @@ namespace AudioManager
 
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
-			printf("wINNER : %d", error);
-
 			printf("alSourcei : %d", error);
 			printf("\n");
 			return -1;
@@ -562,7 +560,6 @@ namespace AudioManager
 		sourceInd++;
 		if (sourceInd > 49)
 		{
-			printf("KAMIL GENIUSZ");
 			sourceInd = 0;
 		}
 	}
