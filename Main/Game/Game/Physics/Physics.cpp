@@ -32,7 +32,6 @@ namespace Physics
         {
             if (cacheNode.collider.type == Collider::ColliderTypes::TRIGGER)
             {
-                LogInfo("xD  {}", cacheNode.triggers.size());
                 for (auto& trigger : cacheNode.triggers)
                 {
                     for (auto& onEnter : cacheNode.collider.OnTriggerEnter)
