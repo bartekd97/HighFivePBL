@@ -11,6 +11,9 @@ namespace AudioManager
 {
 	ALuint sourceBackground;
 	ALuint sourceMovement;
+	ALuint sourceGhost;
+	ALuint sourceObstacles;
+
 
 	ALenum error;
 	bool Initialized = false;
@@ -26,8 +29,16 @@ namespace AudioManager
 		std::string soundName;
 	};
 
+	struct SoundSource {
+		ALuint source;
+		std::string sourceName;
+	};
+
 	std::vector <SoundInfo> soundInformation;
 	std::vector <SoundBuffer> buffers;
+	std::vector <ALuint> sources;
+	int sourceInd;
+
 
 	void Init_al()
 	{
@@ -43,6 +54,8 @@ namespace AudioManager
 		error = alGetError(); //clear error code
 
 		PregenerateBuffers();
+
+		InitSources();
 	}
 
 	void Exit_al()
@@ -160,6 +173,23 @@ namespace AudioManager
 		sb.buffer = buffer;
 		sb.soundName = name;
 		buffers.push_back(sb);
+
+		return 0;
+	}
+
+	int InitSources()
+	{
+		for (int i = 0; i < 50; i++)
+		{
+			ALuint source;
+			alGenSources(1, &source);
+			sources.push_back(source);
+		}
+		sourceInd = 0;
+		InitSource(sourceMovement);
+		InitSource(sourceBackground);
+		InitSource(sourceGhost);
+		InitSource(sourceObstacles);
 
 		return 0;
 	}
@@ -411,7 +441,7 @@ namespace AudioManager
 
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
-			printf("WINNER : %d", error);
+			printf("wINNER : %d", error);
 
 			printf("alSourcei : %d", error);
 			printf("\n");
@@ -485,6 +515,18 @@ namespace AudioManager
 		return -1;
 	}
 
+	/*ALuint GetSource(std::string sourceName)
+	{
+		for (int i = 0; i < sources.size(); i++)
+		{
+			if (sources.at(i).sourceName == sourceName)
+			{
+				return sources.at(i).source;
+			}
+		}
+		return -1;
+	}*/
+
 	void CreateDefaultSourceAndPlay(ALuint& source, std::string soundName, bool loop, float volume)
 	{
 		//create source
@@ -503,6 +545,28 @@ namespace AudioManager
 		PlaySoundFromSource(source);
 	}
 
+	void PlayFromDefaultSource(std::string soundName, bool loop, float volume)
+	{
+		ClearSource(sources[sourceInd]);
+		//get pregenerated buffer
+		ALuint buffer = GetBuffer(soundName);
+
+		//attach source to buffer and set default values
+		SetExistingSource(sources[sourceInd], buffer, loop);
+
+		//set volume
+		SetSourceVolume(sources[sourceInd], volume);
+
+		//play source
+		PlaySoundFromSource(sources[sourceInd]);
+		sourceInd++;
+		if (sourceInd > 49)
+		{
+			printf("KAMIL GENIUSZ");
+			sourceInd = 0;
+		}
+	}
+
 
 	void SetSoundInSource(ALuint& source, std::string soundName, bool loop, float volume)
 	{
@@ -516,12 +580,6 @@ namespace AudioManager
 
 		//set volume
 		SetSourceVolume(source, volume);
-	}
-
-	int InitBackgroundSource()
-	{
-		InitSource(sourceBackground);
-		return 0;		
 	}
 
 	void PlayBackground(std::string soundName, float volume)
@@ -587,6 +645,28 @@ namespace AudioManager
 	void StopMovement()
 	{
 		alSourceStop(sourceMovement);
+	}
+
+	void PlayGhost()
+	{
+		ClearSource(sourceMovement);
+
+		//get pregenerated buffer
+		ALuint buffer = GetBuffer("ghost");
+
+		//attach source to buffer and set default values
+		SetExistingSource(sourceGhost, buffer, false);
+
+		//set volume
+		SetSourceVolume(sourceGhost, 1.0f);
+
+		//play source
+		PlaySoundFromSource(sourceGhost);
+	}
+
+	void StopGhost()
+	{
+		StopSource(sourceGhost);
 	}
 
 	void StopSource(ALuint& source)

@@ -29,15 +29,6 @@ namespace Bosses {
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::TRIGGERED, Necromancer::OnBossTriggered));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::DEAD, Necromancer::OnBossDead));
 
-		AudioManager::InitSource(sourceNecromancerInit);
-		AudioManager::SetSoundInSource(sourceNecromancerInit, "necro_boss", false, 1.0f);
-
-		AudioManager::InitSource(sourceNecromancerDamage);
-		AudioManager::SetSoundInSource(sourceNecromancerDamage, "damage1", false, 1.0f);
-
-		AudioManager::InitSource(sourceNecromancerSpawner);
-		AudioManager::SetSoundInSource(sourceNecromancerSpawner, "necro_spawning_enemies", false, 1.0f);
-
 		//float hpPercentage
 		//int instantWavesNumber
 		//float randomWaveInterval
@@ -89,10 +80,10 @@ namespace Bosses {
 		if (GetGameObject() != ev.GetParam<GameObject>(Events::GameObject::GameObject)) return;
 		currentStage += 1;
 
-		AudioManager::PlaySoundFromSource(sourceNecromancerInit);
+		AudioManager::PlayFromDefaultSource("necro_boss", false, 1.0f);
 
-		/*AudioManager::StopBackground();
-		AudioManager::PlayBackground("bossKorpecki", 0.2f);*/
+		AudioManager::StopBackground();
+		AudioManager::PlayBackground("bossKorpecki", 0.2f);
 	}
 
 	void Necromancer::OnBossDead(Event& ev)
@@ -117,7 +108,7 @@ namespace Bosses {
 
 	void Necromancer::OnRequestToTakeDamage(float value)
 	{
-		AudioManager::PlaySoundFromSource(sourceNecromancerDamage);
+		AudioManager::PlayFromDefaultSource("damage1", false, 1.0f);
 		bossController->TakeDamage(value);
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(bossController->GetVisualObject());
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
@@ -155,7 +146,7 @@ namespace Bosses {
 
 		if (shouldSpawnWave)
 		{
-			AudioManager::PlaySoundFromSource(sourceNecromancerInit);
+			AudioManager::PlayFromDefaultSource("necro_spawning_enemies", false, 1.0f);
 
 			float randomRot = RandomFloat(0.0f, M_PI * 2.0f);
 			glm::vec3 direction = {

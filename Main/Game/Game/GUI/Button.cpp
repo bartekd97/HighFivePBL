@@ -9,9 +9,6 @@
 
 GLuint Button::vao;
 GLuint Button::vboVertices;
-ALuint sourceHover;
-ALuint sourcePress;
-
 
 
 Button::Button()
@@ -20,10 +17,10 @@ Button::Button()
 
 	if (!initialized)
 	{
-		AudioManager::InitSource(sourceHover);
-		AudioManager::InitSource(sourcePress);
-		AudioManager::SetSoundInSource(sourcePress, "bum6", false, 0.5f);
-		AudioManager::SetSoundInSource(sourceHover, "click_button", false, 0.1f);
+		//AudioManager::InitSource("sourceHover");
+		//AudioManager::InitSource(sourcePress);
+		//AudioManager::SetSoundInSource(sourcePress, "bum6", false, 0.5f);
+		//AudioManager::SetSoundInSource(sourceHover, "click_button", false, 0.1f);
 
 		float vertices[] = {
 			0.0f, -1.0f, 0.0f,  0.0f, 0.0f,
@@ -67,7 +64,7 @@ Button::Button()
 
 Button::~Button()
 {
-	AudioManager::DeleteSource(sourceHover);
+	//AudioManager::DeleteSource(sourceHover);
 }
 
 void Button::Update(const glm::vec2& mousePosition)
@@ -91,13 +88,13 @@ void Button::Update(const glm::vec2& mousePosition)
 			}
 			if (state != STATE::PRESSED && OnStateChanged) OnStateChanged(STATE::PRESSED);
 			state = STATE::PRESSED;
-			AudioManager::PlaySoundFromSource(sourcePress);
+			//AudioManager::PlaySoundFromSource(sourcePress);
 		}
 		else
 		{
 			if (state != STATE::HOVER && OnStateChanged) {
 				OnStateChanged(STATE::HOVER);
-				AudioManager::PlaySoundFromSource(sourceHover);
+				AudioManager::PlayFromDefaultSource("click_button", false, 0.1f);
 			}
 			state = STATE::HOVER;
 		}

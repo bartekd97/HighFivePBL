@@ -30,7 +30,6 @@ private: // variables
 
 	float dtsum = 0.0f;
 	TimerAnimator timerAnimator;
-	ALuint sourceStatue;
 
 	State currentState = State::INACTIVE;
 
@@ -47,8 +46,6 @@ public:
 	void Awake()
 	{
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Statue::MAKE_ME_USABLE, StatueUser::OnMakeMeUsable));
-		AudioManager::InitSource(sourceStatue);
-		AudioManager::SetSoundInSource(sourceStatue, "bum2", false, 0.5f);
 	}
 
 	void Start()
@@ -92,7 +89,7 @@ public:
 				auto& lightRenderer = HFEngine::ECS.GetComponent<PointLightRenderer>(lightObject);
 				timerAnimator.AnimateVariable(&lightRenderer.light.intensity, lightRenderer.light.intensity, usedLightIntensity, 1.0f);
 			}
-			AudioManager::PlaySoundFromSource(sourceStatue);
+			AudioManager::PlayFromDefaultSource("bum2", false, 0.5f);
 
 			EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_CANCEL);
 			EventManager::FireEvent(Events::Gameplay::Upgrades::REQUEST_UPGRADE);

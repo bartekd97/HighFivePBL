@@ -79,7 +79,6 @@ public:
 		RegisterFloatParameter("maxGhostDistance", &maxGhostDistance);
 		RegisterFloatParameter("ghostDistanceRecoverySpeed", &ghostDistanceRecoverySpeed);
 	}
-	~GhostController();
 	
 
 	void Awake();

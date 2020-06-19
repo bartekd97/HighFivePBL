@@ -45,10 +45,6 @@ namespace Bosses {
 		GameObject castedMotionEffectObject;
 
 		TimerAnimator timerAnimator;
-		ALuint sourceNecromancerInit;
-		ALuint sourceNecromancerDamage;
-		ALuint sourceNecromancerSpawner;
-
 
 		int GetCurrentWaveNumber();
 		void ClearSpawnedEnemies();

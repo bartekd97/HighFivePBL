@@ -28,7 +28,6 @@ private:
 	GameObject rightWingObject;
 
 	State currentState = State::OPENED;
-	ALuint sourceGate;
 
 	TimerAnimator timerAnimator;
 
@@ -53,10 +52,6 @@ public:
 		rightWingObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), rightWingName)[0];
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::OPEN_ME, GateOpener::OnOpenMe));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::CLOSE_ME, GateOpener::OnCloseMe));
-
-		AudioManager::InitSource(sourceGate);
-		AudioManager::SetSoundInSource(sourceGate, "squeaky_metal_gate", false, 0.05f);
-
 	}
 
 	void Update(float dt)
@@ -77,7 +72,7 @@ public:
 		});
 
 		currentState = State::OPENED;
-		AudioManager::PlaySoundFromSource(sourceGate);
+		AudioManager::PlayFromDefaultSource("squeaky_metal_gate", false, 0.05f);
 
 	}
 
@@ -92,7 +87,7 @@ public:
 			leftTransform.SetRotation(glm::mix(leftRotationOpened, leftRotationClosed, prog));
 			rightTransform.SetRotation(glm::mix(rightRotationOpened, rightRotationClosed, prog));
 			});
-		AudioManager::PlaySoundFromSource(sourceGate);
+		AudioManager::PlayFromDefaultSource("squeaky_metal_gate", false, 0.05f);
 
 		currentState = State::CLOSED;
 	}

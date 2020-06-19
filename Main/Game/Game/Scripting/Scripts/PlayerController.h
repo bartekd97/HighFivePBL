@@ -57,10 +57,6 @@ private: // variables
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
 	Raycaster raycaster;
-	ALuint sourcePlayerDamage;
-	ALuint sourcePlayerDeath;
-	ALuint sourcePlayerGameOver;
-	ALuint sourcePlayerPushback;
 	bool isReadyToStartMovement = true;
 
 
@@ -99,11 +95,6 @@ public:
 		GUIManager::RemoveWidget(lostGameButton);
 		GUIManager::RemoveWidget(ghostCircleBarPanel);
 		GUIManager::RemoveWidget(healthPanel);
-
-		AudioManager::DeleteSource(sourcePlayerDamage);
-		AudioManager::DeleteSource(sourcePlayerDeath);
-		AudioManager::DeleteSource(sourcePlayerGameOver);
-		AudioManager::DeleteSource(sourcePlayerPushback);
 	}
 
 	void Awake()
@@ -113,16 +104,6 @@ public:
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerController::GhostMovementStop));
 		raycaster.SetIgnoredGameObject(GetGameObject());
 		AudioManager::SetMovementSound("footsteps_in_grass", 0.1f);
-
-		AudioManager::InitSource(sourcePlayerDamage);
-		AudioManager::InitSource(sourcePlayerDeath);
-		AudioManager::InitSource(sourcePlayerGameOver);
-		AudioManager::InitSource(sourcePlayerPushback);
-
-		AudioManager::SetSoundInSource(sourcePlayerDamage, "damage4", false, 0.5f);
-		AudioManager::SetSoundInSource(sourcePlayerDeath, "death", false, 0.5f);
-		AudioManager::SetSoundInSource(sourcePlayerGameOver, "ghostly_game_over", false, 2.0f);
-		AudioManager::SetSoundInSource(sourcePlayerPushback, "pushback", false);
 
 	}
 
@@ -246,13 +227,13 @@ public:
 		lastDmgTime = std::chrono::high_resolution_clock::now();
 		if (health > 0.0f)
 		{
-			AudioManager::PlaySoundFromSource(sourcePlayerDamage);
+			AudioManager::PlayFromDefaultSource("damage4", false, 0.5f);
 		}
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
 
-			AudioManager::PlaySoundFromSource(sourcePlayerDeath);
+			AudioManager::PlayFromDefaultSource("death", false, 0.5f);
 
 			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
@@ -279,7 +260,7 @@ public:
 			}
 			lostGameButton->SetEnabled(true);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
-			AudioManager::PlaySoundFromSource(sourcePlayerGameOver);
+			AudioManager::PlayFromDefaultSource("ghostly_game_over", false, 2.0f);
 
 		}
 	}
@@ -478,7 +459,7 @@ public:
 		auto& emitterTorch = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject);
 		auto& lightTorch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
  
-		AudioManager::PlaySoundFromSource(sourcePlayerPushback);
+		AudioManager::PlayFromDefaultSource("pushback", false);
 
 		// anim & pushback stuff
 		timerAnimator.DelayAction(0.2f, [&]() {

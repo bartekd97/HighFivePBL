@@ -30,24 +30,31 @@ namespace AudioManager
 	int PlaySoundFromSource(ALuint& source);
 	int LoadSound(std::string soundName, ALuint& buffer);
 	int GenerateBufferAndLoadSound(ALuint& buffer, std::string name);
+	int InitSources();
 	int AttachSourceBuffer(ALuint& buffer, ALuint& source);
-	int ClearSource(ALuint& source);
-	int DeleteSource(ALuint& source);
+
 	int SetSource(ALuint& source, float sourcePosX, float sourcePosY, float sourcePosZ, ALboolean loop);
-	int InitSource(ALuint& source);
-	int SetExistingSource(ALuint& source, ALuint& buffer, ALboolean loop);
 	void PregenerateBuffers();
 	ALuint GetBuffer(std::string soundName);
+	ALuint GetSource(std::string sourceName);//mozna usunac
+
 	int SetSource(ALuint& source, ALuint& buffer, ALboolean loop);
-	//void CreateDefaultSourceAndPlay(ALuint &source, std::string soundName, bool loop, float volume = 1.0f);
-	void SetSoundInSource(ALuint& source, std::string soundName, bool loop, float volume = 1.0f);
-	int InitBackgroundSource();
+	void CreateDefaultSourceAndPlay(ALuint &source, std::string soundName, bool loop, float volume = 1.0f);//mozna usunac
+	void PlayFromDefaultSource(std::string soundName, bool loop, float volume = 1.0f);
+	void SetSoundInSource(ALuint& source, std::string soundName, bool loop, float volume = 1.0f);//mozna usunac
 	void PlayBackground(std::string soundName, float volume);
 	void StopBackground();
-	void PlayMovement(std::string soundName, float volume);
+	void PlayMovement(std::string soundName, float volume);//mozna usunac
 	void PlayMovement();
 	void SetMovementSound(std::string soundName, float volume);
 	void StopMovement();
+	void PlayGhost();
+	void StopGhost();
+
+	int InitSource(ALuint& source);
+	int SetExistingSource(ALuint& source, ALuint& buffer, ALboolean loop);
+	int ClearSource(ALuint& source);
+	int DeleteSource(ALuint& source);
 	void StopSource(ALuint& source);
 	void PauseSource(ALuint& source);
 	void ContinuePlayingSource(ALuint& source);
