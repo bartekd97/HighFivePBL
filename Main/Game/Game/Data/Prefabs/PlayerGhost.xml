@@ -1,7 +1,7 @@
 <prefab defaultScale="1.5,1.5,1.5">
     <component name="ScriptComponent">
         <property name="name" value="GhostController"/>
-        <property name="moveSpeed" value="11.0"/>
+        <property name="moveSpeed" value="20.0"/>
 		<property name="damageToEnemies" value="3.5"/>
 		<property name="maxGhostDistance" value="15.0"/>
 		<property name="ghostDistanceRecoverySpeed" value="5.0"/>
