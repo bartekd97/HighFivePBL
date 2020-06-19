@@ -1,5 +1,6 @@
 <models materialLibrary="this">
     <model name="Ganfaul" mesh="ganfaul_m_aure.glb" material="GanfaulMat" skinned="true">
+        <animation name="praying_pre"       clip="anim/PrayingPre.glb"/>
         <animation name="praying"           clip="anim/Praying.glb"/>
         <animation name="cast"              clip="anim/Standing 2H Cast Spell 01.glb"/>
         <animation name="idle"              clip="anim/Standing Idle.glb"/>

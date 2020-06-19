@@ -1,5 +1,6 @@
 #pragma once
 
+#include <unordered_map>
 #include "../../Script.h"
 #include "..\BossController.h"
 #include "Event/Events.h"
@@ -29,6 +30,9 @@ namespace Bosses {
 		float dmgAnimationDuration = 0.5f;
 		glm::vec3 defaultColor;
 		glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
+
+		std::unordered_map<GameObject, std::pair<float, float>> magicBallsDefaultRateIntensity;
+
 	private:
 		std::shared_ptr<BossController> bossController;
 
@@ -56,6 +60,7 @@ namespace Bosses {
 		void Start();
 
 		void OnBossScriptInitialize(Event& ev);
+		void OnIntroAction(Event& ev);
 		void OnBossTriggered(Event& ev);
 		void OnBossDead(Event& ev);
 		void OnRequestToTakeDamage(float value);

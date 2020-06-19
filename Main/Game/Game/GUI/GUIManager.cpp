@@ -11,8 +11,13 @@
 
 namespace GUIManager
 {
+	struct TrueBool {
+		bool value = true;
+	};
+
 	std::vector<std::shared_ptr<Widget>> root;
 	std::map<int, std::vector<std::shared_ptr<Widget>>> indexedWidgets;
+	std::map<int, TrueBool> layersEnablement;
 	std::shared_ptr<Shader> guiShader;
 	std::shared_ptr<Texture> defaultTexture;
 	bool initialized = false;
@@ -79,6 +84,8 @@ namespace GUIManager
 		glm::vec2 minMax[2];
 		for (auto it = indexedWidgets.begin(); it != indexedWidgets.end(); it++)
 		{
+			if (!layersEnablement[it->first].value) continue;
+
 			for (auto widget : it->second)
 			{
 				if (widget->GetEnabled())
@@ -149,5 +156,9 @@ namespace GUIManager
 		}
 
 		
+	}
+	void SetLayerEnabled(int zIndex, bool status)
+	{
+		layersEnablement[zIndex] = { status };
 	}
 }
