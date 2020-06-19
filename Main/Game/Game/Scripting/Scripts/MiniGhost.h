@@ -166,7 +166,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
-			AudioManager::PlayFromDefaultSource("bum6", false, 0.1f);
+			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
 			enemyController->TakeDamage(damageToEnemies);
 			damageToEnemies *= damageDealtMultiplier;
 		}
@@ -174,7 +174,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto bossController = scriptContainer.GetScript<BossController>();
-			AudioManager::PlayFromDefaultSource("bum6", false, 0.1f);
+			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
 			bossController->RequestToTakeDamage(damageToEnemies);
 			damageToEnemies *= damageDealtMultiplier;
 		}

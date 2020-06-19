@@ -5,7 +5,7 @@
         <property name="moveSpeed" value="6.0"/>
         <property name="attackPreparationTime" value="0.4"/>
         <property name="attackTime" value="1.25"/>
-      <property name="damageToEnemies" value="2.4"/>
+      <property name="damageToEnemies" value="5"/>
 		<property name="damageDealtMultiplier" value="0.6"/>
 
         <property name="attackAlbedoColor" value="2.5,0.4,1.5"/>

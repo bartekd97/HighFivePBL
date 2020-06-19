@@ -213,11 +213,11 @@ void TutorialEnemy::OnTriggerEnter(GameObject that, GameObject other)
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&TutorialEnemy::RestoreDefaultEmissive, this));
-		AudioManager::PlayFromDefaultSource("hit3", false, 1.0f);
+		AudioManager::PlayFromDefaultSource("hit3", false, 0.2f);
 
 		if (health <= 0)
 		{
-			AudioManager::PlayFromDefaultSource("monsterdeath", false, 0.5f);
+			AudioManager::PlayFromDefaultSource("monsterdeath", false, 0.2f);
 			EventManager::FireEvent(Events::Gameplay::Tutorial::ENEMYTOY_KILLED);
 			DestroyGameObjectSafely();
 		}

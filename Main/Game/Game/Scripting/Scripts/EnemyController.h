@@ -32,7 +32,7 @@ private: // parameters
 	std::string soundAttack;
 	std::string soundDmg;
 	std::string soundDeath;
-	float stunTimeAfterPush = 0.7f;
+	float stunTimeAfterPush = 1.8f;
 
 private: // variables
 	GameObject visualObject;
@@ -354,11 +354,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
-		AudioManager::PlayFromDefaultSource(soundDmg, false, 1.0f);
+		AudioManager::PlayFromDefaultSource(soundDmg, false, 0.2f);
 
 		if (health <= 0)
 		{
-			AudioManager::PlayFromDefaultSource(soundDeath, false, 0.5f);
+			AudioManager::PlayFromDefaultSource(soundDeath, false, 0.2f);
 			DestroyGameObjectSafely();
 		}
 	}
