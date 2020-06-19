@@ -199,6 +199,7 @@ public:
 			animator.SetAnimatorSpeed(1.0f);
 			rotatingToAttack = false;
 			attacking = true;
+			Physics::ReLaunchTriggers(GetGameObject());
 
 			timerAnimator.DelayAction(attackTime, std::bind(&MiniGhost::FadeMeOut, this, 0.3f));
 		});

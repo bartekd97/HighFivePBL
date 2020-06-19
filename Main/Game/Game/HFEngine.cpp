@@ -175,6 +175,21 @@ namespace HFEngine
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
 		physicsSystem->SetCollector(colliderCollectorSystem);
+		auto triggerColliderCollectorSystem = ECS.RegisterSystem<TriggerColliderCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Collider>());
+			ECS.SetSystemSignature<TriggerColliderCollectorSystem>(signature);
+		}
+		auto physicsSpawnTriggerSystem = ECS.RegisterSystem<PhysicsSpawnTriggerSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			signature.set(ECS.GetComponentType<Collider>());
+			ECS.SetSystemSignature<PhysicsSpawnTriggerSystem>(signature);
+		}
+		physicsSpawnTriggerSystem->SetCollector(triggerColliderCollectorSystem);
 		auto gravitySystem = ECS.RegisterSystem<GravitySystem>();
 		{
 			Signature signature;
