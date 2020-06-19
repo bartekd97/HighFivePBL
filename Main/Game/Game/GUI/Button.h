@@ -17,7 +17,6 @@ public:
 	};
 
 	Button();
-	~Button();
 
 	void Update(const glm::vec2& mousePosition) override;
 	void Draw() override;
