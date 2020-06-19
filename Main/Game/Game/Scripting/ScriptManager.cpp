@@ -68,6 +68,7 @@ namespace ScriptManager
 		REGISTER_SCRIPT(FireController);
 		REGISTER_SCRIPT(GasController);
 		REGISTER_SCRIPT(Credits);
+		REGISTER_SCRIPT(IntroMovie);
 
 		REGISTER_SCRIPT(Bosses::Necromancer);
 

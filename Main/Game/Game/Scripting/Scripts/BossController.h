@@ -23,7 +23,7 @@ class BossController : public Script
 private: // parameters
 	float moveSpeed = 10.0f;
 	float maxHealth = 100.0f;
-	std::string awaitingAnimation = "idle";
+	std::string defaultAwaitingAnimation = "idle";
 
 private: // variables
 	GameObject visualObject;
@@ -68,7 +68,7 @@ public:
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 		RegisterFloatParameter("maxHealth", &maxHealth);
-		RegisterStringParameter("awaitingAnimation", &awaitingAnimation);
+		RegisterStringParameter("defaultAwaitingAnimation", &defaultAwaitingAnimation);
 	}
 
 	~BossController()
@@ -105,7 +105,7 @@ public:
 
 		visualObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "Visual")[0];
 		moveSpeedSmoothing = moveSpeed * 4.0f;
-		GetAnimator().SetAnimation(awaitingAnimation);
+		GetAnimator().SetAnimation(defaultAwaitingAnimation);
 
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
@@ -135,6 +135,11 @@ public:
 		raycaster.SetIgnoredGameObject(GetGameObject());
 
 		EventManager::FireEventTo(GetGameObject(), Events::Gameplay::Boss::INITLIAZE_SCRIPT);
+	}
+
+	void ChangeAwaitingAnimation(std::string name, float transitionTime = 0.25f)
+	{
+		GetAnimator().TransitToAnimation(name, transitionTime);
 	}
 
 	void Update(float dt)

@@ -26,6 +26,7 @@ namespace Bosses {
 	void Necromancer::Awake()
 	{
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::INITLIAZE_SCRIPT, Necromancer::OnBossScriptInitialize));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::INTRO_ACTION, Necromancer::OnIntroAction));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::TRIGGERED, Necromancer::OnBossTriggered));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::DEAD, Necromancer::OnBossDead));
 
@@ -55,6 +56,16 @@ namespace Bosses {
 		castingFireObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "CastingFire")[0];
 		castedMotionEffectObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "CastedMotionEffect")[0];
 
+		auto magicBallEffects = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "MagicBallEffect");
+		for (auto go : magicBallEffects)
+		{
+			auto& emitter = HFEngine::ECS.GetComponent<ParticleEmitter>(go);
+			auto& light = HFEngine::ECS.GetComponent<PointLightRenderer>(go);
+			magicBallsDefaultRateIntensity[go] = { emitter.rate, light.light.intensity };
+			emitter.rate = 0.0f;
+			light.light.intensity = 0.0f;
+		}
+
 		for (auto& ep : enemyPrefabs)
 			ep->MakeWarm();
 
@@ -73,6 +84,33 @@ namespace Bosses {
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(GetGameObject());
 		bossController = scriptContainer.GetScript<BossController>();
 		bossController->OnRequestToTakeDamage = std::bind(&Necromancer::OnRequestToTakeDamage, this, std::placeholders::_1);
+	}
+
+	void Necromancer::OnIntroAction(Event& ev)
+	{
+		auto magicBallEffects = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "MagicBallEffect");
+		for (auto go : magicBallEffects)
+		{
+			auto& emitter = HFEngine::ECS.GetComponent<ParticleEmitter>(go);
+			auto& light = HFEngine::ECS.GetComponent<PointLightRenderer>(go);
+			auto def = magicBallsDefaultRateIntensity[go];
+			timerAnimator.AnimateVariable(&emitter.rate, emitter.rate, def.first, 1.0f);
+			timerAnimator.AnimateVariable(&light.light.intensity, light.light.intensity, def.second, 1.0f);
+		}
+
+		timerAnimator.DelayAction(0.15f, [&]() {
+			bossController->ChangeAwaitingAnimation("praying", 0.4f);
+			});
+
+		timerAnimator.DelayAction(0.25f, [&]() {
+			auto& emitter = HFEngine::ECS.GetComponent<ParticleEmitter>(castedMotionEffectObject);
+			auto& transform = HFEngine::ECS.GetComponent<Transform>(castedMotionEffectObject);
+			emitter.emitting = true;
+			timerAnimator.UpdateInTime(0.7f, [&](float dt) {
+				transform.SetPosition({ 0.0f, glm::mix(3.0f,0.0f,dt), 0.0f });
+				});
+			timerAnimator.DelayAction(0.7f, [&]() {emitter.emitting = false;});
+			});
 	}
 
 	void Necromancer::OnBossTriggered(Event& ev)
@@ -117,10 +155,11 @@ namespace Bosses {
 
 	void Necromancer::Update(float dt)
 	{
-		if (!bossController || !bossController->IsTriggered()) return;
+		if (!bossController) return;
 
 		timerAnimator.Process(dt);
 
+		if (!bossController->IsTriggered()) return;
 		if (bossController->IsDead()) return;
 
 		if (InputManager::GetKeyDown(GLFW_KEY_P))

@@ -1,0 +1,5 @@
+<prefab defaultScale="1.0,1.0,1.0">
+  <component name="ScriptComponent">
+    <property name="name" value="IntroMovie"/>
+  </component>
+</prefab>

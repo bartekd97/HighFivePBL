@@ -12,9 +12,9 @@
 
 namespace Physics
 {
-	extern const float step;
-	extern const float maxDelta;
-	extern const int maxSteps;
+	extern float step;
+	extern float maxDelta;
+	extern int maxSteps;
 
 	extern std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
 	extern int maxGameObject;

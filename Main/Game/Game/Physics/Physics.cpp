@@ -2,9 +2,10 @@
 
 namespace Physics
 {
-	const float step = 0.15f;
-    const float maxDelta = 1.0f;
-	const int maxSteps = 20;
+    // TODO: maybe const and change it in Intromovie in more elegant way?
+    float step = 0.15f;
+    float maxDelta = 1.0f;
+    int maxSteps = 20;
 
     std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
     int maxGameObject = -1;

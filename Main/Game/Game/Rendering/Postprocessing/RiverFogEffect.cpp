@@ -73,7 +73,7 @@ bool RiverFogEffect::PreForwardProcess(
 
 	float stepsToFog = -((mainCameraPosition.y - FogHeightLevel) / mainCameraDirection.y);
 	glm::vec3 fogPos = mainCameraPosition + (mainCameraDirection * stepsToFog);
-	glm::vec2 camSize = viewCamera.GetSize() * 0.55f;
+	glm::vec2 camSize = viewCamera.GetSize() * 0.75f;
 	float viewSize = glm::max(camSize.x, camSize.y) * viewCamera.GetScale();
 	glm::mat4 model = glm::translate(glm::mat4(1.0), fogPos) * glm::scale(glm::mat4(1.0), glm::vec3(viewSize));
 

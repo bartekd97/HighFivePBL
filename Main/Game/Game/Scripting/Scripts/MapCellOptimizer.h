@@ -31,8 +31,8 @@ public:
 
 		auto cellsContainer = HFEngine::ECS.GetGameObjectByName("Cells");
 		cells = gameObjectHierarchy.GetChildren(cellsContainer.value());
-		CalculateCurrentCell();
-		EnableDisableCells();
+		//CalculateCurrentCell();
+		//EnableDisableCells();
 	}
 
 	void LateUpdate(float dt)

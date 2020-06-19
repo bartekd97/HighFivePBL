@@ -3,6 +3,7 @@
 #include "../Script.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
+#include "InputManager.h"
 
 class PlayerCameraFollower : public Script
 {
@@ -14,6 +15,8 @@ private:
 	GameObject ghostObject;
 
 public:
+	bool Paused = false;
+
 	PlayerCameraFollower()
 	{
 		RegisterVec3Parameter("cameraOffset", &cameraOffset);
@@ -22,13 +25,13 @@ public:
 
 	void Awake()
 	{
+		mortalObject = GetGameObject();
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, PlayerCameraFollower::GhostMovementStart));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, PlayerCameraFollower::GhostMovementStop));
 	}
 
 	void Start()
 	{
-		mortalObject = GetGameObject();
 		// TODO: load it from some external, global structure
 		ghostObject = HFEngine::ECS.GetGameObjectByName("PlayerGhost").value();
 
@@ -43,7 +46,10 @@ public:
 		glm::vec3 targetPosition = GetCameraTargetPosition();
 		currentCameraTarget = glm::mix(targetPosition, currentCameraTarget, cameraSmoothing);
 
-		glm::vec3 cameraPosition = currentCameraTarget + cameraOffset;
+		glm::vec3 cameraPosition = GetCameraTargetSourcePosition(currentCameraTarget);
+
+		if (Paused) return;
+
 		HFEngine::MainCamera.SetView(cameraPosition, currentCameraTarget);
 
 		// TODO: Remove it, its for testing only
@@ -71,6 +77,11 @@ public:
 			targetPosition.y = yLookOffset;
 		}
 		return targetPosition;
+	}
+
+	glm::vec3 GetCameraTargetSourcePosition(glm::vec3 targetPosition)
+	{
+		return targetPosition + cameraOffset;
 	}
 
 
