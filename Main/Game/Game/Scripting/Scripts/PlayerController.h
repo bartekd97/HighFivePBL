@@ -57,9 +57,6 @@ private: // variables
 	bool isPushingBack = false;
 	bool onPushBackCooldown = false;
 	Raycaster raycaster;
-	ALuint sourcePlayerDamage;
-	ALuint sourcePlayerMovement;
-	ALuint sourcePlayerPushback;
 	bool isReadyToStartMovement = true;
 
 
@@ -230,13 +227,13 @@ public:
 		lastDmgTime = std::chrono::high_resolution_clock::now();
 		if (health > 0.0f)
 		{
-			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "damage4", false, 0.5f);
+			AudioManager::PlayFromDefaultSource("damage4", false, 0.5f);
 		}
 		if (health <= 0.0f)
 		{
 			health = 0.0f;
 
-			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "death", false, 0.5f);
+			AudioManager::PlayFromDefaultSource("death", false, 0.5f);
 
 			GetAnimator().TransitToAnimation("dying", 0.1f, AnimationClip::PlaybackMode::SINGLE);
 			timerAnimator.AnimateVariable(&healthPanel->textureColor.color,
@@ -263,7 +260,7 @@ public:
 			}
 			lostGameButton->SetEnabled(true);
 			EventManager::FireEvent(Events::Gameplay::Player::DEATH);
-			AudioManager::CreateDefaultSourceAndPlay(sourcePlayerDamage, "ghostly_game_over", false, 2.0f);
+			AudioManager::PlayFromDefaultSource("ghostly_game_over", false, 2.0f);
 
 		}
 	}
@@ -462,7 +459,7 @@ public:
 		auto& emitterTorch = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject);
 		auto& lightTorch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
  
-		AudioManager::CreateDefaultSourceAndPlay(sourcePlayerPushback, "pushback", false);
+		AudioManager::PlayFromDefaultSource("pushback", false);
 
 		// anim & pushback stuff
 		timerAnimator.DelayAction(0.2f, [&]() {

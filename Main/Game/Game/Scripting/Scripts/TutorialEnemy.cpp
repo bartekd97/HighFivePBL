@@ -16,7 +16,7 @@
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 #define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
-ALuint sourceTutorialEnemy;
+
 
 TutorialEnemy::TutorialEnemy()
 {
@@ -36,6 +36,7 @@ void TutorialEnemy::Awake()
 {
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Player::PUSHBACK_ENEMIES, TutorialEnemy::OnPushBackEnemies));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, TutorialEnemy::GhostMovementStart));
+
 }
 
 void TutorialEnemy::Start()
@@ -212,11 +213,11 @@ void TutorialEnemy::OnTriggerEnter(GameObject that, GameObject other)
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&TutorialEnemy::RestoreDefaultEmissive, this));
-		AudioManager::CreateDefaultSourceAndPlay(sourceTutorialEnemy, "hit4", false, 1.0f);
+		AudioManager::PlayFromDefaultSource("hit3", false, 0.2f);
 
 		if (health <= 0)
 		{
-			AudioManager::CreateDefaultSourceAndPlay(sourceTutorialEnemy, "monsterdeath", false, 0.5f);
+			AudioManager::PlayFromDefaultSource("monsterdeath", false, 0.2f);
 			EventManager::FireEvent(Events::Gameplay::Tutorial::ENEMYTOY_KILLED);
 			DestroyGameObjectSafely();
 		}

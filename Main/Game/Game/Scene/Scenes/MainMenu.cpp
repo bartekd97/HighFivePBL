@@ -113,8 +113,6 @@ namespace MainMenuUI
 		{
 			HFEngine::Terminate();
 		}
-		//AudioManager::StopSource(sourceMenu);
-
 	}
 }
 

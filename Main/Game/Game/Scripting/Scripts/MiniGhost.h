@@ -37,7 +37,6 @@ private: // variables
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 4.0f * M_PI;
 
-	ALuint sourceMiniGhostDamage;
 	TimerAnimator timerAnimator;
 	float ghostLightDefaultIntensity;
 	float ghostMaterialDefaultOpacity;
@@ -83,6 +82,7 @@ public:
 	
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::MiniGhost::FADE_ME_OUT, MiniGhost::OnFadeMeOut));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::MiniGhost::ATTACK, MiniGhost::OnAttack));
+
 	}
 
 	void Start()
@@ -166,7 +166,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
-			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.1f);
+			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
 			enemyController->TakeDamage(damageToEnemies);
 			damageToEnemies *= damageDealtMultiplier;
 		}
@@ -174,7 +174,7 @@ public:
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto bossController = scriptContainer.GetScript<BossController>();
-			AudioManager::CreateDefaultSourceAndPlay(sourceMiniGhostDamage, "ghostattack", false, 0.2f);
+			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
 			bossController->RequestToTakeDamage(damageToEnemies);
 			damageToEnemies *= damageDealtMultiplier;
 		}

@@ -19,7 +19,6 @@ private: // PARAMETERS
 private: // VARIABLES
 	std::unordered_map<GameObject, GasEffect> refreshList;
 	std::shared_ptr<Prefab> gasEffectPrefab;
-	ALuint source;
 public:
 	GasController()
 	{
@@ -33,6 +32,10 @@ public:
 	{
 		ObstacleController::Start();
 		gasEffectPrefab = PrefabManager::GetPrefab("GasCreatureEffect");
+
+		//AudioManager::InitSource(source);
+		//AudioManager::PlayFromDefaultSource( "choking", false);
+
 	}
 
 	void Update(float dt)
@@ -86,7 +89,7 @@ public:
 				float playerMaxHealth = scriptContainer.GetScript<PlayerController>()->GetMaxHealth();
 				if (playerHealth < playerMaxHealth * 0.5f)
 				{
-					AudioManager::CreateDefaultSourceAndPlay(source, "choking", false);
+					//AudioManager::PlaySoundFromSource(source);
 				}
 			}
 			
@@ -100,6 +103,6 @@ public:
 		auto& controller = controllers[object];
 		if (!controller->GetIsFlying()) controller->SetSlow(controller->GetSlow() - slowForce);
 
-		AudioManager::StopSource(source);
+		//AudioManager::StopSource(source);
 	}
 };
