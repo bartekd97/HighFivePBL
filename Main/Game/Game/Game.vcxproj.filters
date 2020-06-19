@@ -87,6 +87,8 @@
     <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
     <ClCompile Include="ECS\Systems\GarbageCollectorSystem.cpp" />
+    <ClCompile Include="ECS\Systems\PhysicsSpawnTriggerSystem.cpp" />
+    <ClCompile Include="ECS\Systems\TriggerColliderCollectorSystem.cpp" />
     <ClCompile Include="Rendering\Postprocessing\WorldFogEffect.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -259,6 +261,8 @@
     <ClInclude Include="Scripting\Scripts\GasController.h" />
     <ClInclude Include="ECS\Systems\GarbageCollectorSystem.h" />
     <ClInclude Include="Scripting\Scripts\Credits.h" />
+    <ClInclude Include="ECS\Systems\PhysicsSpawnTriggerSystem.h" />
+    <ClInclude Include="ECS\Systems\TriggerColliderCollectorSystem.h" />
     <ClInclude Include="Rendering\Postprocessing\WorldFogEffect.h" />
   </ItemGroup>
   <ItemGroup>

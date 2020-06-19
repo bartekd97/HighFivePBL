@@ -192,6 +192,15 @@ public:
 
 		GUIManager::AddWidget(lostGameButton, nullptr, 3);
 		lostGameButton->SetEnabled(false);
+
+		// TODO: tmp
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Boss::DEAD, PlayerController::OnBossDead));
+	}
+
+	void OnBossDead(Event& ev)
+	{
+		health = 0;
+		GetAnimator().TransitToAnimation("idle", 0.2f);
 	}
 
 	void GhostMovementStart(Event& event) {

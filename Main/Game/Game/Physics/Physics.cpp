@@ -25,6 +25,24 @@ namespace Physics
         }
     }
 
+    void ReLaunchTriggers(GameObject gameObject)
+    {
+        auto& cacheNode = cacheNodes[gameObject];
+        if (cacheNode.state == CacheNode::STATE::ACTIVE)
+        {
+            if (cacheNode.collider.type == Collider::ColliderTypes::TRIGGER)
+            {
+                for (auto& trigger : cacheNode.triggers)
+                {
+                    for (auto& onEnter : cacheNode.collider.OnTriggerEnter)
+                    {
+                        onEnter(gameObject, trigger);
+                    }
+                }
+            }
+        }
+    }
+
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers)
 	{
         if (disableOthers)
