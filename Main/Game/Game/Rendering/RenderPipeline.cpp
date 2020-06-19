@@ -13,6 +13,7 @@
 #include "InputManager.h"
 
 #include "Postprocessing/RiverFogEffect.h"
+#include "Postprocessing/WorldFogEffect.h"
 #include "Postprocessing/SSAOEffect.h"
 #include "Postprocessing/OrthoSSREffect.h"
 #include "Postprocessing/BloomEffect.h"
@@ -149,6 +150,7 @@ void RenderPipeline::InitPostprocessingEffects()
 	postprocessingEffects.push_back(std::make_shared<RiverFogEffect>());
 	postprocessingEffects.push_back(std::make_shared<OrthoSSREffect>());
 	postprocessingEffects.push_back(std::make_shared<BloomEffect>());
+	postprocessingEffects.push_back(std::make_shared<WorldFogEffect>());
 	postprocessingEffects.push_back(std::make_shared<FXAAEffect>());
 
 	for (auto fx : postprocessingEffects)

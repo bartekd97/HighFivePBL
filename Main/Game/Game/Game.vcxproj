@@ -149,6 +149,7 @@
     <ClCompile Include="Rendering\Postprocessing\OrthoSSREffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\RiverFogEffect.cpp" />
     <ClCompile Include="Rendering\Postprocessing\SSAOEffect.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\WorldFogEffect.cpp" />
     <ClCompile Include="Rendering\PrimitiveRenderer.cpp" />
     <ClCompile Include="Rendering\RenderPipeline.cpp" />
     <ClCompile Include="Resourcing\Material.cpp" />
@@ -282,6 +283,7 @@
     <ClInclude Include="Rendering\Postprocessing\OrthoSSREffect.h" />
     <ClInclude Include="Rendering\Postprocessing\RiverFogEffect.h" />
     <ClInclude Include="Rendering\Postprocessing\SSAOEffect.h" />
+    <ClInclude Include="Rendering\Postprocessing\WorldFogEffect.h" />
     <ClInclude Include="Rendering\PrimitiveRenderer.h" />
     <ClInclude Include="Rendering\RenderPipeline.h" />
     <ClInclude Include="Resourcing\AnimationClip.h" />
