@@ -5,6 +5,7 @@
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/ScriptContainer.h"
 #include "Physics/Physics.h"
+#include "Audio/AudioManager.h"
 
 IntroMovie::~IntroMovie()
 {
@@ -104,6 +105,8 @@ void IntroMovie::Start()
 	Physics::maxDelta = -1.0f;
 
 	cameraAnimating = true;
+
+	AudioManager::PlayFromDefaultSource("intro", false);
 }
 
 void IntroMovie::LateUpdate(float dt)
