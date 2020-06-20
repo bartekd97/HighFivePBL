@@ -82,6 +82,10 @@ public:
 		RegisterIntParameter("numberOfEnemyToHit", &numberOfEnemyToHit);
 		RegisterFloatParameter("maxGhostDistance", &maxGhostDistance);
 		RegisterFloatParameter("ghostDistanceRecoverySpeed", &ghostDistanceRecoverySpeed);
+		RegisterFloatParameter("minShapeMultiplier", &minShapeMultiplier);
+		RegisterFloatParameter("minShapeArea", &minShapeArea);
+		RegisterFloatParameter("maxShapeMultiplier", &maxShapeMultiplier);
+		RegisterFloatParameter("maxShapeArea", &maxShapeArea);
 	}
 	
 

@@ -69,6 +69,10 @@ public:
 		RegisterFloatParameter("attackTime", &attackTime);
 		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
 		RegisterFloatParameter("damageDealtMultiplier", &damageDealtMultiplier);
+		RegisterFloatParameter("minMultiplier", &minMultiplier);
+		RegisterFloatParameter("maxMultiplier", &maxMultiplier);
+		RegisterFloatParameter("minScale", &minScale);
+		RegisterFloatParameter("maxScale", &maxScale);
 
 		RegisterVec3Parameter("attackAlbedoColor", &attackAlbedoColor);
 		RegisterVec3Parameter("attackEmissiveColor", &attackEmissiveColor);
