@@ -391,9 +391,9 @@ void GhostController::AttackWithClosedFigure(
 	std::unordered_set<std::shared_ptr<GhostLine>>& lines,
 	std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
 {
-	float area = CalculateAreaMultipliers(crossings);
-	float percentage = (std::min(std::max(minShapeArea, area), maxShapeArea) - minShapeArea) / (maxShapeArea - minShapeArea);
-	float multiplier = (percentage * (maxShapeMultiplier - minShapeMultiplier)) + minShapeMultiplier;
+	float area = CalculateArea(crossings);
+	float percentage = (std::min(std::max(minFigureArea, area), maxFigureArea) - minFigureArea) / (maxFigureArea - minFigureArea);
+	float multiplier = (percentage * (maxFigureMultiplier - minFigureMultiplier)) + minFigureMultiplier;
 	glm::vec2 center = { 0.0f, 0.0f };
 	for (const auto& c : crossings)
 		center += c->position;
@@ -420,7 +420,7 @@ void GhostController::AttackWithClosedFigure(
 	}
 }
 
-float GhostController::CalculateAreaMultipliers(std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
+float GhostController::CalculateArea(std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
 {
 	float area = 0.0f;
 

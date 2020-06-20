@@ -26,8 +26,6 @@ private: // parameters
 	float damageDealtMultiplier = 0.7f;
 
 	float figureSizeMultiplier = 1.0f;
-	float minMultiplier = 0.5f;
-	float maxMultiplier = 2.0f;
 	float minScale = 0.8f;
 	float maxScale = 1.4f;
 	float scale = 1.0f;
@@ -69,8 +67,6 @@ public:
 		RegisterFloatParameter("attackTime", &attackTime);
 		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
 		RegisterFloatParameter("damageDealtMultiplier", &damageDealtMultiplier);
-		RegisterFloatParameter("minMultiplier", &minMultiplier);
-		RegisterFloatParameter("maxMultiplier", &maxMultiplier);
 		RegisterFloatParameter("minScale", &minScale);
 		RegisterFloatParameter("maxScale", &maxScale);
 
