@@ -9,7 +9,6 @@ namespace InputManager
 	std::map<int, bool> currentlyPressed;
 	std::map<int, bool> currentlyReleased;
 	glm::vec2 mousePosition;
-	int mouseButtonStates[2];
 
 	void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 	{
@@ -27,8 +26,6 @@ namespace InputManager
 
 	void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 	{
-		mouseButtonStates[button] = action;
-
 		if (action == GLFW_PRESS)
 			currentlyPressed[button] = true;
 		else if (action == GLFW_RELEASE)
@@ -41,11 +38,6 @@ namespace InputManager
 		{
 			LogWarning("InputManager::Initialize(): Already initialized");
 			return;
-		}
-
-		for (int i = 0; i < 2; i++)
-		{
-			mouseButtonStates[i] = GLFW_RELEASE;
 		}
 
 		window = WindowManager::GetWindow();
@@ -100,6 +92,7 @@ namespace InputManager
 	int GetMouseButtonState(int button)
 	{
 		// TODO: assert?
-		return mouseButtonStates[button];
+		//return mouseButtonStates[button];
+		return glfwGetMouseButton(window, button);
 	}
 }

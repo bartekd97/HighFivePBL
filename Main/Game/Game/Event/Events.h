@@ -43,6 +43,7 @@ namespace Events::Gameplay
 	namespace Boss
 	{
 		const EventId INITLIAZE_SCRIPT = "Events::Gameplay::Boss::INITLIAZE_SCRIPT"_hash;
+		const EventId INTRO_ACTION = "Events::Gameplay::Boss::INTRO_ACTION"_hash;
 		const EventId TRIGGERED = "Events::Gameplay::Boss::TRIGGERED"_hash;
 		const EventId DEAD = "Events::Gameplay::Boss::DEAD"_hash;
 	}

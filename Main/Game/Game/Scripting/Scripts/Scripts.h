@@ -22,6 +22,7 @@
 #include "FireController.h"
 #include "GasController.h"
 #include "Credits.h"
+#include "IntroMovie.h"
 
 #include "Bosses/Necromancer.h"
 

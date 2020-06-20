@@ -24,6 +24,9 @@ void GameScene::OnLoad()
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
+	auto introMoviePrefab = PrefabManager::GetPrefab("IntroMovie");
+	auto introMovie = introMoviePrefab->Instantiate();
+
 	//
 	// SETUP ENVIRO
 	//
