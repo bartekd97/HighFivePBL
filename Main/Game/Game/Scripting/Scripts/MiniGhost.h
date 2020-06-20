@@ -25,7 +25,11 @@ private: // parameters
 	float damageToEnemies = 20.0f;
 	float damageDealtMultiplier = 0.7f;
 
-	float figureSizeMultiplier;
+	float figureSizeMultiplier = 1.0f;
+	float minMultiplier = 0.5f;
+	float maxMultiplier = 2.0f;
+	float minScale = 0.8f;
+	float maxScale = 1.4f;
 	float scale = 1.0f;
 	bool scaleChanged = false;
 
@@ -108,7 +112,7 @@ public:
 
 		if (scaleChanged)
 		{
-			transform.SetScale(glm::vec3(scale));
+			transform.SetScale(glm::vec3(std::min(std::max(minScale, scale), maxScale)));
 		}
 
 		glm::vec3 translateVec = { 0.0f, 0.0f, 0.0f };
@@ -176,7 +180,7 @@ public:
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
 			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
-			enemyController->TakeDamage(damageToEnemies);
+			enemyController->TakeDamage(damageToEnemies * figureSizeMultiplier);
 			damageToEnemies *= damageDealtMultiplier;
 		}
 		else if (!strcmp(otherName, "boss"))
@@ -184,7 +188,7 @@ public:
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto bossController = scriptContainer.GetScript<BossController>();
 			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
-			bossController->RequestToTakeDamage(damageToEnemies);
+			bossController->RequestToTakeDamage(damageToEnemies * figureSizeMultiplier);
 			damageToEnemies *= damageDealtMultiplier;
 		}
 	}
@@ -196,6 +200,8 @@ public:
 
 		rotatingToAttack = true;
 		attackDirection = ev.GetParam<glm::vec3>(Events::Gameplay::MiniGhost::Direction);
+		figureSizeMultiplier = ev.GetParam<float>(Events::Gameplay::MiniGhost::Multiplier);
+		float scaleTmp = (ev.GetParam<float>(Events::Gameplay::MiniGhost::ScalePercentage) * (maxScale - minScale)) + minScale;
 		
 		auto& ghostLight = HFEngine::ECS.GetComponent<PointLightRenderer>(ghostLightObject);
 		auto& ghostMesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
@@ -203,8 +209,8 @@ public:
 		timerAnimator.AnimateVariable(&ghostMesh.material->albedoColor, ghostMesh.material->albedoColor, attackAlbedoColor, attackPreparationTime);
 		timerAnimator.AnimateVariable(&ghostMesh.material->emissiveColor, ghostMesh.material->emissiveColor, attackEmissiveColor, attackPreparationTime);
 
-		//scaleChanged = true;
-		//timerAnimator.AnimateVariable(&scale, scale, 1.5f, attackPreparationTime);
+		scaleChanged = true;
+		timerAnimator.AnimateVariable(&scale, scale, scaleTmp, attackPreparationTime);
 		timerAnimator.DelayAction(attackPreparationTime, [&]() {
 			animator.TransitToAnimation("ghostrunning");
 			animator.SetAnimatorSpeed(1.0f);

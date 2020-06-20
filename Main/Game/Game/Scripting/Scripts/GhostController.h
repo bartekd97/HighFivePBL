@@ -21,6 +21,10 @@ class GhostController : public Script
 private: // parameters
 	float moveSpeed = 10.0f;
 	float damageToEnemies = 7.5f;
+	float minShapeMultiplier = 0.7f;
+	float minShapeArea = 10.0f;
+	float maxShapeMultiplier = 1.4f;
+	float maxShapeArea = 20.0f;
 
 	std::shared_ptr<Prefab> miniGhostPrefab;
 
@@ -114,6 +118,8 @@ public:
 	void AttackWithClosedFigure(
 		std::unordered_set<std::shared_ptr<GhostLine>>& lines,
 		std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings);
+
+	float CalculateAreaMultipliers(std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings);
 
 	void CalculateCrossings(
 		std::shared_ptr<GhostLine>& l1,

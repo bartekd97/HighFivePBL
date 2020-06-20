@@ -118,6 +118,8 @@ namespace Events::Gameplay
 	namespace MiniGhost
 	{
 		const ParamId Direction = "Events::Gameplay::MiniGhost::Direction"_hash; // glm::vec3
+		const ParamId Multiplier = "Events::Gameplay::MiniGhost::Multiplier"_hash; // float
+		const ParamId ScalePercentage = "Events::Gameplay::MiniGhost::ScalePercentage"_hash; // float
 	}
 }
 
