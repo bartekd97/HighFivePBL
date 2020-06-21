@@ -25,6 +25,7 @@ namespace TextureManager {
 	std::shared_ptr<Texture> CreateTextureFromRawData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config);
 	std::shared_ptr<Texture> CreateEmptyTexture(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat, GLenum filtering = GL_LINEAR);
 	std::shared_ptr<Texture> CreateTextureFromFile(std::string filename, TextureConfig& config);
+	std::vector<unsigned char> LoadRawDataFromFile(std::string libraryName, std::string textureName, int& width, int& height);
 	std::shared_ptr<TextureLibrary> GetLibrary(std::string name);
 	std::shared_ptr<Texture> GetTexture(std::string libraryName, std::string textureName);
 }
@@ -50,4 +51,5 @@ private:
 public:
 	~TextureLibrary();
 	std::shared_ptr<Texture> GetTexture(std::string name);
+	std::shared_ptr<LibraryEntity> GetEntity(std::string name);
 };
