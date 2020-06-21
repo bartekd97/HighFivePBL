@@ -51,5 +51,5 @@ private:
 public:
 	~TextureLibrary();
 	std::shared_ptr<Texture> GetTexture(std::string name);
-	std::shared_ptr<LibraryEntity> GetEntity(std::string name);
+	LibraryEntity* GetRawEntity(std::string name);
 };

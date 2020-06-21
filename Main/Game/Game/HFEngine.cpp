@@ -27,7 +27,7 @@
 
 namespace HFEngine
 {
-	GLFWcursor* cursor;
+	GLFWcursor* cursor = nullptr;
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
@@ -287,6 +287,7 @@ namespace HFEngine
 		if (cursor != nullptr)
 		{
 			glfwDestroyCursor(cursor);
+			cursor = nullptr;
 		}
 
 		if (WindowManager::IsClosing())
