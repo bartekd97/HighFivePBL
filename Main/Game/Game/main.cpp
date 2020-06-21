@@ -31,7 +31,7 @@ void ReportGameObjects(float dt);
 
 int main()
 {
-	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "HFEngine test"))
+	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "Unholy Survivor: Reckoning"))
 	{
 		std::cout << "Failed to initialize engine" << std::endl;
 		return -1;
