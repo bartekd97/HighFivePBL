@@ -27,6 +27,7 @@
 
 namespace HFEngine
 {
+	GLFWcursor* cursor;
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
@@ -36,6 +37,30 @@ namespace HFEngine
 	int RENDER_HEIGHT;
 	FrameCounter CURRENT_FRAME_NUMBER = 1;
 	int SHADOWMAP_SIZE = 1024;
+
+	void InitializeCursor()
+	{
+		static bool cursorInitialized = false;
+		if (!cursorInitialized)
+		{
+			GLFWimage image;
+			auto data = TextureManager::LoadRawDataFromFile("GUI", "Cursor", image.width, image.height);
+			if (data.size() == 0)
+			{
+				LogError("HFEngine::InitializeCursor: failed to load cursor image");
+				return;
+			}
+			image.pixels = data.data();
+			cursor = glfwCreateCursor(&image, 0, 0);
+			if (cursor == nullptr)
+			{
+				LogError("HFEngine::InitializeCursor: failed to initialize cursor");
+				return;
+			}
+			glfwSetCursor(WindowManager::GetWindow(), cursor);
+			cursorInitialized = true;
+		}
+	}
 
 	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
 	{
@@ -91,6 +116,8 @@ namespace HFEngine
 		//MainCamera.SetScale(0.03125f); // 1/32
 		//MainCamera.SetScale(0.0625f); // 1/16
 		//MainCamera.SetScale(1.75f);
+
+		InitializeCursor();
 
 		ECS.Init();
 
@@ -256,6 +283,10 @@ namespace HFEngine
 		{
 			LogError("HFEngine not initialized");
 			return;
+		}
+		if (cursor != nullptr)
+		{
+			glfwDestroyCursor(cursor);
 		}
 
 		if (WindowManager::IsClosing())

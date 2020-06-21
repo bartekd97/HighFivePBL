@@ -53,6 +53,7 @@ private: // variables
 	float healthPulseTime = 0.8f;
 	float healthPulsePauseTime = 0.0f;
 	bool isHealthPulsing = false;
+	bool isGhostCircleFaded = false;
 	glm::vec2 healthPanelMinSize = { 1.0f, 1.0f };
 	glm::vec2 healthPanelMaxSize = { 1.3f, 1.3f };
 	glm::vec2 healthPanelSize = healthPanelMaxSize;
@@ -69,8 +70,6 @@ private: // variables
 
 
 	std::shared_ptr<GhostController> ghostController;
-	std::shared_ptr<Panel> ghostBarPanel;
-	std::shared_ptr<Panel> ghostValueBarPanel;
 	std::shared_ptr<Panel> ghostCircleBarPanel;
 	std::shared_ptr<Panel> healthPanel;
 	std::shared_ptr<Panel> lostGamePanel;
@@ -99,7 +98,6 @@ public:
 
 	~PlayerController()
 	{
-		GUIManager::RemoveWidget(ghostBarPanel);
 		GUIManager::RemoveWidget(lostGamePanel);
 		GUIManager::RemoveWidget(lostGameButton);
 		GUIManager::RemoveWidget(ghostCircleBarPanel);
@@ -136,25 +134,6 @@ public:
 
 		auto& ghostScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(ghostObject);
 		ghostController = ghostScriptContainer.GetScript<GhostController>();
-
-		ghostBarPanel = std::make_shared<Panel>();
-		//ghostBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
-		//ghostBarPanel->SetPositionAnchor(glm::vec3(((1.0f - ghostBarWidth) / 2.0f) * WindowManager::SCREEN_WIDTH, -100.0f, 0.0f), Anchor::BOTTOMLEFT);
-		//ghostBarPanel->SetSize(glm::vec2(ghostBarWidth * WindowManager::SCREEN_WIDTH, 50.0f));
-		ghostBarPanel->SetPositionAnchor({ (1.0f - ghostBarWidth) / 2.0f, -0.1388f, 0.0f }, Anchor::BOTTOMLEFT);
-		ghostBarPanel->SetSize({ ghostBarWidth, 0.07f });
-		ghostBarPanel->SetClipping(true);
-		ghostBarPanel->textureColor.color = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		GUIManager::AddWidget(ghostBarPanel);
-
-		ghostValueBarPanel = std::make_shared<Panel>();
-		ghostValueBarPanel->SetPositionAnchor(glm::vec3(ghostValueBarOffset, ghostValueBarOffset, 0.0f), Anchor::TOPLEFT);
-		ghostValueBarPanel->SetSize(glm::vec2(0.0f, 50.0f - 2 * ghostValueBarOffset));
-		ghostValueBarPanel->SetClipping(true);
-		ghostValueBarPanel->textureColor.color = glm::vec4(0.0f, 0.78f, 0.76f, 0.75f);
-
-		GUIManager::AddWidget(ghostValueBarPanel, ghostBarPanel);
-
 
 		ghostCircleBarPanel = std::make_shared<Panel>();
 		ghostCircleBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
@@ -386,8 +365,19 @@ public:
 
 		float ghostLevel = ghostController->GetLeftGhostLevel();
 		ghostCircleBarPanel->SetCircleFilling(ghostLevel);
-		ghostCircleBarPanel->textureColor.color.a = ghostLevel > 0.99f ? 0.25f : 0.75f;
-		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
+		if (ghostLevel > 0.99f)
+		{
+			if (!isGhostCircleFaded)
+			{
+				isGhostCircleFaded = true;
+				timerAnimator.AnimateVariable(&ghostCircleBarPanel->textureColor.color.a, 0.25f, 0.0f, 0.2f);
+			}
+		}
+		else
+		{
+			isGhostCircleFaded = false;
+			ghostCircleBarPanel->textureColor.color.a = 0.75f;
+		}
 		if (!isHealthPulsing)
 			healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, (1.0f - health / maxHealth) * healthMaxOpacity);
 

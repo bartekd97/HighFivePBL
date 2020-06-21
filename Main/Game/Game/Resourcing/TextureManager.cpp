@@ -137,6 +137,30 @@ std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filen
 	return std::shared_ptr<Texture>(new Texture(textureId, width, height, config.format));
 }
 
+std::vector<unsigned char> TextureManager::LoadRawDataFromFile(std::string libraryName, std::string textureName, int& width, int& height)
+{
+	auto library = TextureManager::GetLibrary(libraryName);
+	auto entity = library->GetEntity(textureName);
+	if (entity == nullptr) return {};
+	int noChannels;
+	stbi_set_flip_vertically_on_load(false);
+	unsigned char* texData = stbi_load(entity->path.c_str(), &width, &height, &noChannels, STBI_rgb_alpha);
+
+	if (texData == NULL)
+	{
+		const char* failreason = stbi_failure_reason();
+		if (failreason == NULL)
+			failreason = "Unknown error";
+		LogError("TextureManager::LoadRawDataFromFile(): Cannot load {}, Reason: {}", entity->path, failreason);
+		return {};
+	}
+	std::vector<unsigned char> result(texData, texData + (width * height * 8));
+
+	stbi_image_free(texData);
+
+	return result;
+}
+
 std::shared_ptr<TextureLibrary> TextureManager::GetLibrary(std::string name)
 {
 #ifdef _DEBUG
@@ -273,4 +297,18 @@ std::shared_ptr<Texture> TextureLibrary::GetTexture(std::string name)
 		LogWarning("TextureLibrary::GetTexture(): Cannot find texture '{}' in '{}' library", name, this->name);
 		return TextureManager::BLANK_TEXTURE;
 	}
+}
+
+std::shared_ptr<TextureLibrary::LibraryEntity> TextureLibrary::GetEntity(std::string name)
+{
+	try
+	{
+		TextureLibrary::LibraryEntity* entity = entities.at(name);
+		return std::shared_ptr<TextureLibrary::LibraryEntity>(entity);
+	}
+	catch (std::out_of_range ex)
+	{
+		LogWarning("TextureLibrary::GetTexture(): Cannot find texture '{}' in '{}' library", name, this->name);
+	}
+	return nullptr;
 }
