@@ -7,9 +7,9 @@
 		<property name="ghostDistanceRecoverySpeed" value="5.0"/>
 		<property name="numberOfEnemyToHit" value="1"/>
 		<property name="minFigureMultiplier" value="0.7"/>
-		<property name="minFigureArea" value="10.0"/>
-		<property name="maxFigureMultiplier" value="1.4"/>
-		<property name="maxFigureArea" value="20.0"/>
+		<property name="minFigureArea" value="8.0"/>
+		<property name="maxFigureMultiplier" value="1.6"/>
+		<property name="maxFigureArea" value="26.0"/>
 	</component>
 	<component name="CircleCollider">
 		<property name="radius" value="0.75"/>

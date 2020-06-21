@@ -394,6 +394,7 @@ void GhostController::AttackWithClosedFigure(
 	float area = CalculateArea(crossings);
 	float percentage = (std::min(std::max(minFigureArea, area), maxFigureArea) - minFigureArea) / (maxFigureArea - minFigureArea);
 	float multiplier = (percentage * (maxFigureMultiplier - minFigureMultiplier)) + minFigureMultiplier;
+	LogInfo("Ghost Attack Figure: Area {} Perc {} Multi {}", area, percentage, multiplier);
 	glm::vec2 center = { 0.0f, 0.0f };
 	for (const auto& c : crossings)
 		center += c->position;
