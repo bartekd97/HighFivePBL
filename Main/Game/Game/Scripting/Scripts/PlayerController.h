@@ -53,6 +53,7 @@ private: // variables
 	float healthPulseTime = 0.8f;
 	float healthPulsePauseTime = 0.0f;
 	bool isHealthPulsing = false;
+	bool isGhostCircleFaded = false;
 	glm::vec2 healthPanelMinSize = { 1.0f, 1.0f };
 	glm::vec2 healthPanelMaxSize = { 1.3f, 1.3f };
 	glm::vec2 healthPanelSize = healthPanelMaxSize;
@@ -386,7 +387,19 @@ public:
 
 		float ghostLevel = ghostController->GetLeftGhostLevel();
 		ghostCircleBarPanel->SetCircleFilling(ghostLevel);
-		ghostCircleBarPanel->textureColor.color.a = ghostLevel > 0.99f ? 0.25f : 0.75f;
+		if (ghostLevel > 0.99f)
+		{
+			if (!isGhostCircleFaded)
+			{
+				isGhostCircleFaded = true;
+				timerAnimator.AnimateVariable(&ghostCircleBarPanel->textureColor.color.a, 0.25f, 0.0f, 0.2f);
+			}
+		}
+		else
+		{
+			isGhostCircleFaded = false;
+			ghostCircleBarPanel->textureColor.color.a = 0.75f;
+		}
 		ghostValueBarPanel->SetSize(glm::vec2(ghostController->GetLeftGhostLevel() * ghostBarPanel->GetLocalSize().x - 2 * ghostValueBarOffset, ghostValueBarPanel->GetLocalSize().y));
 		if (!isHealthPulsing)
 			healthPanel->textureColor.color = glm::vec4(1.0f, 1.0f, 1.0f, (1.0f - health / maxHealth) * healthMaxOpacity);
