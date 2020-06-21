@@ -25,6 +25,12 @@ private:
 		bool wasReached = false;
 	};
 
+	struct Subtitle
+	{
+		float time;
+		std::string text;
+	};
+
 	GameObject playerObject;
 	GameObject bossObject;
 
@@ -33,9 +39,13 @@ private:
 	CameraPoint finalPoint;
 	std::vector<CameraPoint> cameraPoints;
 
+	int subtitleIndex = -1;
+	std::vector<Subtitle> subtitles;
+
 	std::shared_ptr<Panel> blackScreenPanel;
 	std::shared_ptr<Panel> topBarPanel;
 	std::shared_ptr<Panel> bottomBarPanel;
+	std::shared_ptr<Label> subtitlesLabel;
 	int introGUILayer = 50;
 	float screenBarSize = 0.15f;
 

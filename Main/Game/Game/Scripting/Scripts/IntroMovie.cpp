@@ -12,6 +12,7 @@ IntroMovie::~IntroMovie()
 	GUIManager::RemoveWidget(blackScreenPanel);
 	GUIManager::RemoveWidget(topBarPanel);
 	GUIManager::RemoveWidget(bottomBarPanel);
+	GUIManager::RemoveWidget(subtitlesLabel);
 }
 
 void IntroMovie::Start()
@@ -42,6 +43,17 @@ void IntroMovie::Start()
 	bottomBarPanel->SetSize({ 1.0f, screenBarSize });
 	bottomBarPanel->textureColor.color = { 0.0f, 0.0f, 0.0f, 1.0f };
 	GUIManager::AddWidget(bottomBarPanel, nullptr, introGUILayer);
+
+
+	subtitlesLabel = std::make_shared<Label>();
+	subtitlesLabel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+	subtitlesLabel->SetAnchor(Anchor::CENTER);
+	subtitlesLabel->SetPivot(Anchor::CENTER);
+	subtitlesLabel->SetFontSize(32);
+	subtitlesLabel->SetPosition({ 0.0f, 0.5f - screenBarSize * 1.325f, 0.0f });
+	subtitlesLabel->color = { 0.75f, 0.75f, 0.4f, 1.0f };
+	GUIManager::AddWidget(subtitlesLabel, nullptr, introGUILayer);
+
 
 	for (int i = 0; i < introGUILayer; i++)
 		GUIManager::SetLayerEnabled(i, false);
@@ -99,6 +111,24 @@ void IntroMovie::Start()
 	finalPoint.timeToThisPoint = 8.0f;
 	cameraPoints.push_back(finalPoint);
 
+
+	// subtitles
+	subtitles = {
+		{0.0f, ""},
+		{4.75f, "Dark times have come for the whole known world."},
+		{9.25f, "The powerful... Necromancer..."},
+		{12.5f, "...led the most filthy creatures to crawl out of the pit of hell."}, 
+		{17.5f, "When everything seemed to be lost,"},
+		{20.25f, "help came from the least expected place."},
+		{24.5f, "The last hope for the victory of the forces of good..."},
+		{29.0f, "...turned out to be an exile from evil lands,"},
+		{34.0f, "who has sworn revenge on his old companions."},
+		{38.0f, "The first goal on his way to reckoning is death..."},
+		{43.25f, "...of The Necromancer."}, 
+		{45.0f, ""}
+	};
+
+
 	cameraFollower->Paused = true;
 
 	defaultPhysicsMaxDelta = Physics::maxDelta;
@@ -116,6 +146,21 @@ void IntroMovie::LateUpdate(float dt)
 	{
 		dtsum += dt;
 		timerAnimator.Process(dt);
+	}
+
+	int newSubutitleIndex = subtitles.size() - 1;
+	for (int i = 1; i < subtitles.size(); i++)
+	{
+		if (subtitles[i].time > dtsum)
+		{
+			newSubutitleIndex = i - 1;
+			break;
+		}
+	}
+	if (newSubutitleIndex != subtitleIndex)
+	{
+		subtitleIndex = newSubutitleIndex;
+		subtitlesLabel->SetText(subtitles[subtitleIndex].text);
 	}
 
 	if (!cameraAnimating) return;
