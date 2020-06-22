@@ -291,8 +291,7 @@ public:
 	{
 		if (!GetFreeUpgradeSlotOnBar().has_value())
 		{
-			// TODO: full on upgrades sound here
-
+			AudioManager::PlayFromDefaultSource("upgradesFull", false, 0.2f);
 
 			return;
 		}
