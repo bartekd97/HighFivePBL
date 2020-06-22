@@ -5,7 +5,7 @@
 class MudController : public ObstacleController
 {
 private: // PARAMETERS
-	float slowForce = 3.0f;
+	float slowForce = 0.5f;
 private: // VARIABLES
 
 public:
@@ -18,7 +18,7 @@ public:
 	{
 		auto& controller = controllers[object];
 		if (!controller->GetIsFlying()) {
-			controller->SetSlow(controller->GetSlow() + slowForce);
+			controller->SetSlow(controller->GetMoveSpeed() * slowForce);
 		}
 
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
@@ -35,7 +35,7 @@ public:
 
 		auto& controller = controllers[object];
 		if (!controller->GetIsFlying()) {
-			controller->SetSlow(controller->GetSlow() - slowForce);
+			controller->SetSlow(0.0f);// controller->GetMoveSpeed() / slowForce);
 		}
 
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
