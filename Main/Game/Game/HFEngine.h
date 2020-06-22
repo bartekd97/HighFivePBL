@@ -7,8 +7,18 @@
 
 namespace HFEngine
 {
-	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle);
+	struct HFEngineConfigStruct {
+		std::string WindowTitle;
+		int ScreenWidth;
+		int ScreenHeight;
+		bool FullscreenMode;
+	};
+
+	//bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle);
+	bool Initialize(const HFEngineConfigStruct& config);
 	void Terminate();
+
+	const HFEngineConfigStruct& GetConfig();
 
 	void ProcessGameFrame(float dt);
 

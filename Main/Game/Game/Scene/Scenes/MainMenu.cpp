@@ -28,6 +28,10 @@ namespace MainMenuUI
 		{
 			// menu already created - just show it
 			viniete->SetEnabled(true);
+			
+			for (auto& h : buttonHovers)
+				h.second->SetEnabled(false);
+
 			return;
 		}
 		// otherwise create one
@@ -79,8 +83,12 @@ namespace MainMenuUI
 		};
 
 		// 72 + 1 to fix hovering 2 buttons at once
+#ifdef HF_START_LITE
 		MakeButton("btnStart", 0, -73.0f * 5.0f);
 		MakeButton("btnStartLite", 1, -73.0f * 4.0f);
+#else
+		MakeButton("btnStart", 1, -73.0f * 4.0f);
+#endif
 		MakeButton("btnCredits", 2, -73.0f * 3.0f);
 		MakeButton("btnQuit", 3, -73.0f * 2.0f);
 	}
