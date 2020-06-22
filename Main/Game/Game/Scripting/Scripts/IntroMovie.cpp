@@ -138,7 +138,7 @@ void IntroMovie::Start()
 	cameraAnimating = true;
 	GUIManager::KeybindLock::Set(GUILockName);
 
-	AudioManager::PlayFromDefaultSource("intro", false);
+	AudioManager::PlayIntro();
 }
 
 void IntroMovie::LateUpdate(float dt)
@@ -241,7 +241,7 @@ void IntroMovie::FinishIntroAndClear()
 	Physics::maxDelta = defaultPhysicsMaxDelta;
 
 	GUIManager::KeybindLock::Release(GUILockName);
-	// TODO: stop intro sound here
+	AudioManager::StopIntro();
 
 	DestroyGameObjectSafely();
 }
