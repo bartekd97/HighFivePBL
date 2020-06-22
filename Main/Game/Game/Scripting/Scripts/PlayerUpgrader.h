@@ -36,6 +36,7 @@ private: // parameters
 	float buttonYPos = -0.1f;
 
 	const int MaxUpgradesOnBar = 8;
+	const std::string GUILockName = "PlayerUpgrader";
 
 private: // variables
 	GameObject upgradeContainer;
@@ -180,9 +181,6 @@ public:
 		for (auto& upgrade : upgradePrefabs)
 		{
 			std::string iconName;
-			upgrade->Properties().GetString("icon", iconName);
-			iconTexturesCache[iconName] = TextureManager::GetTexture("GUI/Upgrades", iconName);
-
 			upgrade->Properties().GetString("blackIcon", iconName);
 			iconTexturesCache[iconName] = TextureManager::GetTexture("GUI/Upgrades", iconName);
 			upgrade->Properties().GetString("whiteIcon", iconName);
@@ -284,6 +282,8 @@ public:
 		}
 
 		canClickUpgradeButton = false;
+
+		GUIManager::KeybindLock::Release(GUILockName);
 	}
 
 
@@ -355,6 +355,8 @@ public:
 		timerAnimator.DelayAction(1.5f, [&]() {
 			canClickUpgradeButton = true;
 			});
+
+		GUIManager::KeybindLock::Set(GUILockName);
 	}
 
 

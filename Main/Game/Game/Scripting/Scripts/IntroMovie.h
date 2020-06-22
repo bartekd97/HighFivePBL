@@ -11,6 +11,8 @@
 class IntroMovie : public Script
 {
 private:
+	const std::string GUILockName = "IntroMovie";
+
 	glm::vec3 mainCameraLookOffset = { 0.0f, 2.5f, 0.0f };
 	glm::vec3 mainCameraOffset = { 0.0f, 27.0f * 1.5f, 17.0f * 1.5f };
 
