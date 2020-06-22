@@ -1,0 +1,4 @@
+<textures>
+    <texture name="playerHealth" file="health.png" format="rgba" />
+    <texture name="playerGhostBar" file="ghostbar.png" format="rgba" />
+</textures>

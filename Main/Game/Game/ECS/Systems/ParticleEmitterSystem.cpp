@@ -82,7 +82,7 @@ void ParticleEmitterSystem::WorkUpdateQueue(float dt)
 
 		container.lastUpdate = HFEngine::CURRENT_FRAME_NUMBER;
 
-		if (emitter.emitting)
+		if (emitter.emitting && emitter.rate > 0.01f)
 		{
 			workerEmitQueue.push(gameObject);
 
@@ -171,4 +171,9 @@ void ParticleEmitterSystem::PostUpdate(float dt)
 
 	particleEmitterWorker.FillWorkers(std::bind(&ParticleEmitterSystem::WorkEmitQueue, this, dt));
 	//particleEmitterWorker.FillWorkers([this, dt]() {this->WorkEmitQueue(dt);});
+}
+
+void ParticleEmitterSystem::PostRender()
+{
+	particleEmitterWorker.WaitForAll();
 }

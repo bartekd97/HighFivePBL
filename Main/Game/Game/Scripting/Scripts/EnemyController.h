@@ -2,10 +2,8 @@
 
 #include <deque>
 #include <glm/gtx/vector_angle.hpp>
-#include "../Script.h"
+#include "CreatureController.h"
 #include "HFEngine.h"
-#include "ECS/Components/Transform.h"
-#include "ECS/Components/RigidBody.h"
 #include "ECS/Components/SkinAnimator.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/CellPathfinder.h"
@@ -16,32 +14,40 @@
 #include "GUI/Panel.h"
 #include "Resourcing/Model.h"
 #include "Physics/Raycaster.h"
+#include "PlayerController.h"
+#include "MapCellOptimizer.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetPathfinder() HFEngine::ECS.GetComponent<CellPathfinder>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
 #define GetRigidBody() HFEngine::ECS.GetComponent<RigidBody>(GetGameObject())
 
-class EnemyController : public Script
+class EnemyController : public CreatureController
 {
 private: // parameters
-	float moveSpeed = 5.0f;
-	float maxHealth = 10.0f;
 	float dmgAnimationDuration = 0.5f;
 	float attackDistance = 1.5f;
+	float triggerDistance = 10.0f;
+	float attackDamage = 5.0f;
+	std::string soundAttack;
+	std::string soundDmg;
+	std::string soundDeath;
+	float stunTimeAfterPush = 1.8f;
 
 private: // variables
 	GameObject visualObject;
 
-	float currentMoveSpeed = 0.0f;
 	float moveSpeedSmoothing = 50.0f; // set in Start()
 	float rotateSpeedSmoothing = 2.0f * M_PI;
-
-	float health;
+	bool isAttacking = false;
+	bool midAttack;
+	bool triggered = false;
 
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
 	TimerAnimator timerAnimator;
+	bool lastFrameIsFalling = false;
+	std::chrono::steady_clock::time_point falledTime;
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -50,6 +56,8 @@ private: // variables
 
 	GameObject playerObject;
 	GameObject cellObject;
+	std::shared_ptr<PlayerController> playerController;
+	std::shared_ptr<MapCellOptimizer> playerCellOptimizer;
 
 	Raycaster raycaster;
 
@@ -63,10 +71,14 @@ public:
 
 	EnemyController()
 	{
-		RegisterFloatParameter("moveSpeed", &moveSpeed);
-		RegisterFloatParameter("maxHealth", &maxHealth); 
 		RegisterFloatParameter("dmgAnimationDuration", &dmgAnimationDuration);
 		RegisterFloatParameter("attackDistance", &attackDistance);
+		RegisterFloatParameter("triggerDistance", &triggerDistance);
+		RegisterFloatParameter("attackDamage", &attackDamage);
+		RegisterStringParameter("soundAttack", &soundAttack);
+		RegisterStringParameter("soundDmg", &soundDmg);
+		RegisterStringParameter("soundDeath", &soundDeath);
+		RegisterFloatParameter("stunTimeAfterPush", &stunTimeAfterPush);
 	}
 
 	~EnemyController()
@@ -77,6 +89,7 @@ public:
 	void Awake()
 	{
 		HFEngine::ECS.SetNameGameObject(GetGameObject(), "enemy");
+
 	}
 
 	void Start()
@@ -91,6 +104,10 @@ public:
 
 		playerObject = HFEngine::ECS.GetGameObjectByName("Player").value();
 		cellObject = HFEngine::ECS.GetComponent<CellChild>(GetGameObject()).cell;
+
+		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(playerObject);
+		playerController = scriptContainer.GetScript<PlayerController>();
+		playerCellOptimizer = scriptContainer.GetScript<MapCellOptimizer>();
 
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		defaultColor = mesh.material->emissiveColor;
@@ -120,6 +137,53 @@ public:
 		raycaster.SetIgnoredGameObject(GetGameObject());
 	}
 
+	void Attack()
+	{
+		isAttacking = true;
+		midAttack = false;
+		auto& animator = GetAnimator();
+		animator.TransitToAnimation("attack", 0.0f, AnimationClip::PlaybackMode::SINGLE);
+		animator.SetAnimatorSpeed(animator.GetCurrentClipDuration() / 1000.0f / dmgAnimationDuration);
+	}
+
+	void MidAttack()
+	{
+		midAttack = true;
+		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
+		glm::vec3 pos = GetTransform().GetPosition();
+		glm::vec3 playerDir = glm::normalize(playerPos - pos);
+		raycaster.Raycast(pos, playerDir);
+
+		if (raycaster.GetOut().hittedObject == playerObject)
+		{
+			if (raycaster.GetOut().distance <= attackDistance)
+			{
+				AudioManager::PlayFromDefaultSource(soundAttack, false, 0.2f);
+				playerController->TakeDamage(attackDamage);
+			}
+		}
+	}
+
+	void EndAttack(bool random = false)
+	{
+		isAttacking = false;
+		auto& animator = GetAnimator();
+		if (random)
+		{
+			auto pos = GetTransform().GetWorldPosition();
+			float delay = pos.x * (GetGameObject() / 100.0f);
+			delay = (delay - floorf(delay));
+			timerAnimator.DelayAction(delay, [&]() {
+				animator.TransitToAnimation("move", 0.0f);
+				animator.SetAnimatorSpeed(1.0f);
+			});
+		}
+		else
+		{
+			animator.TransitToAnimation("move", 0.0f);
+			animator.SetAnimatorSpeed(1.0f);
+		}
+	}
 
 	bool CanQueuePathThisFrame()
 	{
@@ -130,42 +194,71 @@ public:
 	//float pathdt = 0.0f;
 	void Update(float dt)
 	{
+		timerAnimator.Process(dt);
+
 		auto& transform = GetTransform();
 		auto& rigidBody = GetRigidBody();
 		auto& pathfinder = GetPathfinder();
 
-		std::optional<glm::vec3> targetPoint;
+		if (rigidBody.isFalling)
+		{
+			if (transform.GetWorldPosition().y < -15.0f)
+			{
+				DestroyGameObjectSafely();
+			}
+			if (!lastFrameIsFalling)
+			{
+				EndAttack(true);
+				lastFrameIsFalling = true;
+			}
+			return;
+		}
+		else if (lastFrameIsFalling)
+		{
+			falledTime = std::chrono::steady_clock::now();
+		}
+		lastFrameIsFalling = rigidBody.isFalling;
+
+		if (playerController->IsDead())
+		{
+			if (isAttacking) EndAttack(true);
+
+			return;
+		}
+
+		if (std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::steady_clock::now() - falledTime).count() < stunTimeAfterPush)
+		{
+			return;
+		}
+
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
-		glm::vec3 pos = transform.GetPosition();
-		glm::vec3 playerDir = glm::normalize(playerPos - pos);
-		raycaster.Raycast(pos, playerDir);
 
-		if (raycaster.GetOut().hittedObject == playerObject)
+		if (!triggered)
 		{
-			if (raycaster.GetOut().distance >= attackDistance)
+			if (playerCellOptimizer->GetCurrentCell() == cellObject)
 			{
-				targetPoint = playerPos - (playerDir * attackDistance);
-			}
-		}
-		else
-		{
-			// update test path
-			if (CanQueuePathThisFrame())
-			{
-				if (glm::distance2(playerPos, transform.GetPosition()) < 900.0f
-					//&& glm::distance2(playerPos, pathfinder.GetCurrentTargetPosition()) > 1.0f
-					&& glm::distance2(playerPos, transform.GetPosition()) > attackDistance
-					&& !rigidBody.isFalling)
-					pathfinder.QueuePath(playerPos);
+				if (glm::distance2(playerPos, transform.GetPosition()) <= triggerDistance)
+				{
+					triggered = true;
+				}
 			}
 
-			targetPoint = GetTargetPoint();
+			return;
 		}
-		
-		if (targetPoint.has_value())
+
+		if (isAttacking)
 		{
-			// smooth rotate
-			float diff = GetRotationdifferenceToPoint(targetPoint.value());
+			auto& animator = GetAnimator();
+			if (animator.GetCurrentClipLevel() >= 0.5f && !midAttack)
+			{
+				MidAttack();
+			}
+			if (animator.GetCurrentClipLevel() >= 1.0f)
+			{
+				EndAttack();
+			}
+
+			float diff = GetRotationdifferenceToPoint(playerPos);
 			float change = dt * rotateSpeedSmoothing;
 			if (glm::abs(change) > glm::abs(diff))
 				change = diff;
@@ -175,23 +268,64 @@ public:
 			if (glm::abs(change) > 0.01f)
 				transform.RotateSelf(glm::degrees(change), transform.GetUp());
 		}
-
-		// smoth move speed
-		float targetMoveSpeed = targetPoint.has_value() ? moveSpeed : 0.0f;
+		else
 		{
-			float diff = targetMoveSpeed - currentMoveSpeed;
-			float change = dt * moveSpeedSmoothing;
-			if (glm::abs(change) > glm::abs(diff))
-				currentMoveSpeed = targetMoveSpeed;
+			std::optional<glm::vec3> targetPoint;
+			glm::vec3 pos = transform.GetPosition();
+			glm::vec3 playerDir = glm::normalize(playerPos - pos);
+			raycaster.Raycast(pos, playerDir);
+
+			if (raycaster.GetOut().hittedObject == playerObject)
+			{
+				if (raycaster.GetOut().distance >= attackDistance)
+				{
+					targetPoint = playerPos - (playerDir * attackDistance);
+				}
+				else
+				{
+					Attack();
+				}
+			}
 			else
-				currentMoveSpeed += change * glm::sign(diff);
+			{
+				// update test path
+				if (CanQueuePathThisFrame())
+				{
+					if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
+						pathfinder.QueuePath(playerPos);
+				}
+
+				targetPoint = GetTargetPoint();
+			}
+
+			if (targetPoint.has_value())
+			{
+				// smooth rotate
+				float diff = GetRotationdifferenceToPoint(targetPoint.value());
+				float change = dt * rotateSpeedSmoothing;
+				if (glm::abs(change) > glm::abs(diff))
+					change = diff;
+				else
+					change *= glm::sign(diff);
+
+				if (glm::abs(change) > 0.01f)
+					transform.RotateSelf(glm::degrees(change), transform.GetUp());
+			}
+
+			// smoth move speed
+			float targetMoveSpeed = targetPoint.has_value() ? moveSpeed : 0.0f;
+			{
+				float diff = targetMoveSpeed - currentMoveSpeed;
+				float change = dt * moveSpeedSmoothing;
+				if (glm::abs(change) > glm::abs(diff))
+					currentMoveSpeed = targetMoveSpeed;
+				else
+					currentMoveSpeed += change * glm::sign(diff);
+			}
+
+			if (currentMoveSpeed > 0.01f)
+				Move(transform.GetFront(), dt);
 		}
-
-		auto moveBy = (currentMoveSpeed * dt) * transform.GetFront();
-		if (currentMoveSpeed > 0.01f)
-			rigidBody.Move(transform.GetPosition() + moveBy);
-
-		timerAnimator.Process(dt);
 	}
 
 
@@ -220,9 +354,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
+		AudioManager::PlayFromDefaultSource(soundDmg, false, 0.2f);
 
 		if (health <= 0)
 		{
+			AudioManager::PlayFromDefaultSource(soundDeath, false, 0.2f);
 			DestroyGameObjectSafely();
 		}
 	}
@@ -238,8 +374,11 @@ public:
 		}
 #endif
 		auto& transform = GetTransform();
-		healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
-		healthValuePanel->SetSize({ health / maxHealth, 1.0f });
+		if (healthBarPanel && healthValuePanel) // to prevent bug when LateUpdate calls before Start
+		{
+			healthBarPanel->SetPosition(transform.GetWorldPosition() + glm::vec3(0.0f, 3.0f, 0.0f));
+			healthValuePanel->SetSize({ health / maxHealth, 1.0f });
+		}
 	}
 
 

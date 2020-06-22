@@ -1,0 +1,60 @@
+<prefab defaultScale="1.0,1.0,1.0">
+
+    <component name="ScriptComponent">
+        <property name="name" value="TutorialPlayground"/>
+
+        <property name="minGhostCountPerLine" value="4"/>
+        <property name="maxGhostDistance" value="1.0"/>
+        <property name="maxEndpointDistance" value="2.25"/>
+    </component>
+
+    <children>
+        <child name="HelperGhost" position="0,0,0" rotation="0,0,0" scale="1,1,1">
+            <component name="ModelHolder">
+                <property name="model" value="Characters/Player:Vampire"/>
+            </component>
+            <component name="SkinnedMeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="material" value="Characters/Player:VampirePlaygroundGhostMat"/>
+                <property name="castShadows" value="false" />
+            </component>
+            <component name="SkinAnimator">
+                <property name="configureFromHolder" value="true" />
+            </component>
+        </child>
+
+
+        <child name="TemplateLine1" position="1.6,0.0,-0.55" rotation="0,120,0" scale="4.0,0.1,0.4">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:GhostTemplateLine"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="individualMaterial" value="true" />
+                <property name="castShadows" value="false" />
+            </component>
+        </child>
+
+        <child name="TemplateLine2" position="-1.6,0.0,-0.55" rotation="0,60,0" scale="4.0,0.1,0.4">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:GhostTemplateLine"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="individualMaterial" value="true" />
+                <property name="castShadows" value="false" />
+            </component>
+        </child>
+
+        <child name="TemplateLine3" position="0.0,0.0,2.0" rotation="0,0,0" scale="4.0,0.1,0.4">
+            <component name="ModelHolder">
+                <property name="model" value="Tutorial:GhostTemplateLine"/>
+            </component>
+            <component name="MeshRenderer">
+                <property name="configureFromHolder" value="true" />
+                <property name="individualMaterial" value="true" />
+                <property name="castShadows" value="false" />
+            </component>
+        </child>
+    </children>
+</prefab>

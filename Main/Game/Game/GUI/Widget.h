@@ -41,6 +41,7 @@ public:
 	void SetEnabled(bool enabled);
 	bool GetEnabled();
 	void SetCoordinatesType(CoordinatesType type);
+	CoordinatesType GetCoordinatesType();
 	void Recalculate();
 
 	std::shared_ptr<Widget> parent;

@@ -64,7 +64,7 @@ void Panel::Draw()
 	mat = glm::scale(mat, glm::vec3(screenSize.x * 2.0f, screenSize.y * 2.0f, 1.0f));
 	GUIManager::guiShader->setVector4F("uColor", textureColor.color);
 	GUIManager::guiShader->setMat4("model", mat);
-	//GUIManager::guiShader->setFloat("circleFilling", circleFilling);
+	GUIManager::guiShader->setFloat("circleFilling", circleFilling);
 
 	textureColor.texture->bind(0);
 

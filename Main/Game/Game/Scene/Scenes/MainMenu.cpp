@@ -7,18 +7,23 @@
 #include "GUI/Widgets.h"
 #include "Resourcing/Texture.h"
 #include "Scene/SceneManager.h"
+#include "Audio/AudioManager.h"
 
 namespace MainMenuUI
 {
 	std::shared_ptr<Panel> viniete = nullptr; // main menu parent
+	GameObject creditsGameObject = NULL_GAMEOBJECT;
+	std::shared_ptr<Prefab> creditsPrefab;
 
 	std::map<int, std::shared_ptr<Button>> buttons;
 	std::map<int, std::shared_ptr<Panel>> buttonHovers;
+	//ALuint sourceMenu;
 
 	void ButtonClicked(std::string name);
 
 	void Show()
 	{
+		//AudioManager::CreateDefaultSourceAndPlay(sourceMenu, "menuKorpecki", true, 0.2f);
 		if (viniete != nullptr)
 		{
 			// menu already created - just show it
@@ -28,6 +33,7 @@ namespace MainMenuUI
 		// otherwise create one
 
 		auto library = TextureManager::GetLibrary("MainMenu");
+		creditsPrefab = PrefabManager::GetPrefab("Credits");
 
 		viniete = std::make_shared<Panel>();
 		viniete->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
@@ -97,7 +103,11 @@ namespace MainMenuUI
 		}
 		else if (btnNaame == "btnCredits")
 		{
-			//
+			if (creditsGameObject == NULL_GAMEOBJECT) creditsGameObject = creditsPrefab->Instantiate();
+			else
+			{
+				if (!HFEngine::ECS.IsValidGameObject(creditsGameObject)) creditsGameObject = creditsPrefab->Instantiate();
+			}
 		}
 		else if (btnNaame == "btnQuit")
 		{
@@ -112,7 +122,8 @@ void MainMenuScene::OnLoad()
 	//
 	// SPAWN THINGS
 	//
-
+	AudioManager::StopBackground();
+	AudioManager::PlayBackground("menuKorpecki", 0.2f);
 	auto mainMenuPrefab = PrefabManager::GetPrefab("MainMenu");
 	auto mainMenuObject = mainMenuPrefab->Instantiate();
 	auto playerDummyObject = HFEngine::ECS.GetByNameInChildren(mainMenuObject, "PlayerDummy")[0];

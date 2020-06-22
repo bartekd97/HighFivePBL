@@ -10,11 +10,54 @@
 #include "Event/EventManager.h"
 #include "Physics/Physics.h"
 #include "EnemyController.h"
+#include "BossController.h"
 
 #include "HFEngine.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
+
+#define CheckUpgradeFloat(pairName, originalValue, eventName, force) if (HFEngine::CURRENT_FRAME_NUMBER - pairName.first > 4 || force) \
+	{ \
+	Event ev(eventName); \
+	ev.SetParam(Events::StatModification::FloatValue, originalValue); \
+	EventManager::FireEvent(ev); \
+	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
+	pairName.second = ev.GetParam<float>(Events::StatModification::FloatValue); \
+	} 
+#define CheckUpgradeInt(pairName, originalValue, eventName, force) if (HFEngine::CURRENT_FRAME_NUMBER - pairName.first > 4 || force) \
+	{ \
+	Event ev(eventName); \
+	ev.SetParam(Events::StatModification::IntValue, originalValue); \
+	EventManager::FireEvent(ev); \
+	pairName.first = HFEngine::CURRENT_FRAME_NUMBER; \
+	pairName.second = ev.GetParam<int>(Events::StatModification::IntValue); \
+	} 
+
+
+float GhostController::GetUpgradedMoveSpeed(bool force)
+{
+	CheckUpgradeFloat(_upgradedMoveSpeed, moveSpeed, Events::StatModification::GHOST_MOVE_SPEED, force);
+	return _upgradedMoveSpeed.second;
+}
+
+float GhostController::GetUpgradedDistanseRecoverySpeed(bool force)
+{
+	CheckUpgradeFloat(_upgradedDistanceRecoverySpeed, ghostDistanceRecoverySpeed, Events::StatModification::GHOST_RECOVERY_SPEED, force);
+	return _upgradedDistanceRecoverySpeed.second;
+}
+
+float GhostController::GetUpgradedMaxGhostDistance(bool force)
+{
+	CheckUpgradeFloat(_upgradedMaxGhostDistance, maxGhostDistance, Events::StatModification::GHOST_MAX_DISTANCE, force);
+	return _upgradedMaxGhostDistance.second;
+}
+
+int GhostController::GetUpgradedMaxActiveLines(bool force)
+{
+	CheckUpgradeInt(_upgradedMaxActiveLines, maxActiveLines, Events::StatModification::GHOST_MAX_ACTIVE_LINES, force);
+	return _upgradedMaxActiveLines.second;
+}
 
 void GhostController::Awake()
 {
@@ -22,6 +65,8 @@ void GhostController::Awake()
 	miniGhostPrefab->MakeWarm();
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_START, GhostController::MovementStart));
 	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_STOP, GhostController::MovementStop));
+	EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Ghost::MOVEMENT_CANCEL, GhostController::MovementCancel));
+
 }
 
 void GhostController::Start()
@@ -45,11 +90,23 @@ void GhostController::Start()
 
 void GhostController::OnTriggerEnter(GameObject that, GameObject other)
 {
-	if (!strcmp(HFEngine::ECS.GetNameGameObject(other), "enemy") && numberOfEnemyHit < numberOfEnemyToHit)
+	if (numberOfEnemyHit >= numberOfEnemyToHit) return;
+
+	auto otherName = HFEngine::ECS.GetNameGameObject(other);
+	if (!strcmp(otherName, "enemy"))
 	{
 		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 		auto enemyController = scriptContainer.GetScript<EnemyController>();
+		AudioManager::PlayFromDefaultSource("ghostattack", false, 0.2f);
 		enemyController->TakeDamage(damageToEnemies);
+		numberOfEnemyHit += 1;
+	}
+	else if (!strcmp(otherName, "boss"))
+	{
+		auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
+		auto bossController = scriptContainer.GetScript<BossController>();
+		AudioManager::PlayFromDefaultSource("ghostattack", false, 0.2f);
+		bossController->RequestToTakeDamage(damageToEnemies);
 		numberOfEnemyHit += 1;
 	}
 }
@@ -92,6 +149,12 @@ void GhostController::MovementStop(Event& event)
 	EndMarking();
 }
 
+void GhostController::MovementCancel(Event& event)
+{
+	forceCancelNextLine = true;
+	EventManager::FireEvent(Events::Gameplay::Ghost::MOVEMENT_STOP);
+}
+
 void GhostController::Update(float dt)
 {
 	timerAnimator.Process(dt);
@@ -116,7 +179,7 @@ void GhostController::Update(float dt)
 	}
 
 	// smoth move speed
-	float targetMoveSpeed = moveSpeed;
+	float targetMoveSpeed = GetUpgradedMoveSpeed();
 	{
 		float diff = targetMoveSpeed - currentMoveSpeed;
 		float change = dt * moveSpeedSmoothing;
@@ -164,6 +227,7 @@ void GhostController::StartMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
+	AudioManager::PlayGhost();
 
 	distanceReached = 0.0f;
 	lastDistanceRecordPos = transformPosition;
@@ -217,6 +281,8 @@ void GhostController::EndMarking()
 {
 	auto& transform = GetTransform();
 	glm::vec3 transformPosition = transform.GetPosition();
+	AudioManager::StopGhost();
+	AudioManager::PlayFromDefaultSource("ghostend", false, 0.2f);
 
 	recordedPositions.emplace_back(glm::vec2{
 		transformPosition.x,
@@ -232,13 +298,25 @@ void GhostController::EndMarking()
 		activeLines.emplace_back(gline);
 
 		CheckNewLineCrossings(gline);
-		CheckClosedLines();
 
-		if (activeLines.size() > maxActiveLines)
+		Event ev(Events::Gameplay::Ghost::LINE_CREATED);
+		ev.SetParam(Events::Gameplay::Ghost::GhostLine, gline);
+		EventManager::FireEvent(ev);
+
+		if (ev.WasCanceled() || forceCancelNextLine)
 		{
-			//while (activeLines.Count > 0)
-			FadeOutLine(activeLines[0]);
+			FadeOutLine(gline);
 		}
+		else
+		{
+			CheckClosedLines();
+			if (activeLines.size() > GetUpgradedMaxActiveLines())
+			{
+				//while (activeLines.Count > 0)
+				FadeOutLine(activeLines[0]);
+			}
+		}
+		forceCancelNextLine = false;
 	}
 
 	recordedPositions.clear();
@@ -313,13 +391,17 @@ void GhostController::AttackWithClosedFigure(
 	std::unordered_set<std::shared_ptr<GhostLine>>& lines,
 	std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
 {
+	float area = CalculateArea(crossings);
+	float percentage = (std::min(std::max(minFigureArea, area), maxFigureArea) - minFigureArea) / (maxFigureArea - minFigureArea);
+	float multiplier = (percentage * (maxFigureMultiplier - minFigureMultiplier)) + minFigureMultiplier;
+	LogInfo("Ghost Attack Figure: Area {} Perc {} Multi {}", area, percentage, multiplier);
 	glm::vec2 center = { 0.0f, 0.0f };
 	for (const auto& c : crossings)
 		center += c->position;
 	center /= (float)crossings.size();
 
 	glm::vec3 center3 = { center.x, 0.0f, center.y };
-	for (const auto& line : lines)
+	for (const auto& line : lines) 
 	{
 		glm::vec3 targetDir = { 0.0f, 0.0f, 0.0f };
 
@@ -330,11 +412,31 @@ void GhostController::AttackWithClosedFigure(
 
 		Event ev(Events::Gameplay::MiniGhost::ATTACK);
 		ev.SetParam<glm::vec3>(Events::Gameplay::MiniGhost::Direction, targetDir);
+		ev.SetParam<float>(Events::Gameplay::MiniGhost::Multiplier, multiplier);
+		ev.SetParam<float>(Events::Gameplay::MiniGhost::ScalePercentage, percentage);
 		for (auto const& g : line->ghosts)
 			EventManager::FireEventTo(g, ev);
 
 		RemoveGhostLineFromData(line);
 	}
+}
+
+float GhostController::CalculateArea(std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
+{
+	float area = 0.0f;
+
+	auto crossingsSize = crossings.size();
+	int i = 0;
+	for (const auto& c : crossings)
+	{
+		int j = (i + 1) % crossingsSize;
+		auto otherCrossing = crossings.begin();
+		std::advance(otherCrossing, j);
+		area += 0.5f * float(c->position.x * (*otherCrossing)->position.y - (*otherCrossing)->position.x * c->position.y);
+		i++;
+	}
+
+	return std::fabs(area);
 }
 
 void GhostController::CalculateCrossings(

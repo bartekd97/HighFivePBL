@@ -23,9 +23,11 @@
 #include "GUI/GUIManager.h"
 #include "Scene/SceneManager.h"
 #include "Physics/Physics.h"
+#include "Audio/AudioManager.h"
 
 namespace HFEngine
 {
+	GLFWcursor* cursor = nullptr;
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
@@ -35,6 +37,30 @@ namespace HFEngine
 	int RENDER_HEIGHT;
 	FrameCounter CURRENT_FRAME_NUMBER = 1;
 	int SHADOWMAP_SIZE = 1024;
+
+	void InitializeCursor()
+	{
+		static bool cursorInitialized = false;
+		if (!cursorInitialized)
+		{
+			GLFWimage image;
+			auto data = TextureManager::LoadRawDataFromFile("GUI", "Cursor", image.width, image.height);
+			if (data.size() == 0)
+			{
+				LogError("HFEngine::InitializeCursor: failed to load cursor image");
+				return;
+			}
+			image.pixels = data.data();
+			cursor = glfwCreateCursor(&image, 0, 0);
+			if (cursor == nullptr)
+			{
+				LogError("HFEngine::InitializeCursor: failed to initialize cursor");
+				return;
+			}
+			glfwSetCursor(WindowManager::GetWindow(), cursor);
+			cursorInitialized = true;
+		}
+	}
 
 	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
 	{
@@ -81,6 +107,8 @@ namespace HFEngine
 		GUIManager::Initialize();
 		SceneManager::Initialize();
 
+		AudioManager::Init_al();
+
 		MainCamera.SetMode(Camera::ORTHOGRAPHIC);
 		MainCamera.SetSize((float)RENDER_WIDTH / (float)RENDER_HEIGHT, 1.0f);
 		//MainCamera.SetSize((float)RENDER_WIDTH / 100.0f, (float)RENDER_HEIGHT / 100.0f);
@@ -88,6 +116,8 @@ namespace HFEngine
 		//MainCamera.SetScale(0.03125f); // 1/32
 		//MainCamera.SetScale(0.0625f); // 1/16
 		//MainCamera.SetScale(1.75f);
+
+		InitializeCursor();
 
 		ECS.Init();
 
@@ -172,6 +202,21 @@ namespace HFEngine
 			ECS.SetSystemSignature<PhysicsSystem>(signature);
 		}
 		physicsSystem->SetCollector(colliderCollectorSystem);
+		auto triggerColliderCollectorSystem = ECS.RegisterSystem<TriggerColliderCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Collider>());
+			ECS.SetSystemSignature<TriggerColliderCollectorSystem>(signature);
+		}
+		auto physicsSpawnTriggerSystem = ECS.RegisterSystem<PhysicsSpawnTriggerSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			signature.set(ECS.GetComponentType<Collider>());
+			ECS.SetSystemSignature<PhysicsSpawnTriggerSystem>(signature);
+		}
+		physicsSpawnTriggerSystem->SetCollector(triggerColliderCollectorSystem);
 		auto gravitySystem = ECS.RegisterSystem<GravitySystem>();
 		{
 			Signature signature;
@@ -209,12 +254,27 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<ScriptContainer>());
 			ECS.SetSystemSignature<ScriptLateUpdateSystem>(signature);
 		}
+		auto garbageCollectorUpdateSystem = ECS.RegisterSystem<GarbageCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<Transform>());
+			signature.set(ECS.GetComponentType<RigidBody>());
+			ECS.SetSystemSignature<GarbageCollectorSystem>(signature);
+		}
 
 		Renderer.Init();
+
 
 		initialized = true;
 
 		return true;
+	}
+
+	void ClearGameObjects()
+	{
+		ECS.ClearGameObjects();
+		Physics::ClearGameObjects();
+		EventManager::FireEvent(Events::General::GAMEOBJECTS_CLEAR);
 	}
 
 	void Terminate()
@@ -224,11 +284,17 @@ namespace HFEngine
 			LogError("HFEngine not initialized");
 			return;
 		}
+		if (cursor != nullptr)
+		{
+			glfwDestroyCursor(cursor);
+			cursor = nullptr;
+		}
 
 		if (WindowManager::IsClosing())
 		{
 			glfwTerminate();
 			GUIManager::Terminate();
+			AudioManager::Exit_al();
 		}
 		else
 		{
@@ -308,6 +374,7 @@ namespace HFEngine
 		HFEngine::ECS.PostUpdateSystems(dt);
 
 		HFEngine::Renderer.Render();
+		HFEngine::ECS.PostRenderSystems();
 		GUIManager::Draw();
 	}
 }

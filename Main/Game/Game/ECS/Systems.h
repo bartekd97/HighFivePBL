@@ -10,6 +10,7 @@
 #include "Systems/LifeTimeSystem.h"
 #include "Systems/ColliderCollectorSystem.h"
 #include "Systems/PhysicsSystem.h"
+#include "Systems/PhysicsSpawnTriggerSystem.h"
 
 #include "Systems/ParticleEmitterSystem.h"
 #include "Systems/CellPathfinderSystem.h"
@@ -19,4 +20,4 @@
 #include "Systems/MapCellCollectorSystem.h"
 #include "Systems/GravitySystem.h"
 #include "Systems/RigidBodyCollectorSystem.h"
-
+#include "Systems/GarbageCollectorSystem.h"

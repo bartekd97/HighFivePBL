@@ -32,7 +32,18 @@ public:
 		return type;
 	}
 
+	void Cancel()
+	{
+		canceled = true;
+	}
+
+	bool WasCanceled() const
+	{
+		return canceled;
+	}
+
 private:
+	bool canceled = false;
 	EventId type{};
 	std::unordered_map<ParamId, std::any> data{};
 };

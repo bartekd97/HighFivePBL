@@ -13,10 +13,11 @@ public:
 	void SetText(std::string text);
 	void SetFontSize(int size);
 	int GetFontSize();
+
+	glm::vec4 color;
 private:
 	void CalculateSize();
 
 	std::string text;
 	int fontSize;
-	glm::vec3 color;
 };

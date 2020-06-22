@@ -2,8 +2,10 @@
 
 namespace Physics
 {
-	const float step = 0.15f;
-	const int maxSteps = 20;
+    // TODO: maybe const and change it in Intromovie in more elegant way?
+    float step = 0.15f;
+    float maxDelta = 1.0f;
+    int maxSteps = 20;
 
     std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
     int maxGameObject = -1;
@@ -13,6 +15,33 @@ namespace Physics
     void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector)
     {
         Physics::rigidBodyCollector = rigidBodyCollector;
+    }
+
+    void ClearGameObjects()
+    {
+        maxGameObject = -1;
+        for (int i = 0; i <= maxGameObject; i++)
+        {
+            cacheNodes[i].state = CacheNode::STATE::REMOVED;
+        }
+    }
+
+    void ReLaunchTriggers(GameObject gameObject)
+    {
+        auto& cacheNode = cacheNodes[gameObject];
+        if (cacheNode.state == CacheNode::STATE::ACTIVE)
+        {
+            if (cacheNode.collider.type == Collider::ColliderTypes::TRIGGER)
+            {
+                for (auto& trigger : cacheNode.triggers)
+                {
+                    for (auto& onEnter : cacheNode.collider.OnTriggerEnter)
+                    {
+                        onEnter(gameObject, trigger);
+                    }
+                }
+            }
+        }
     }
 
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers)

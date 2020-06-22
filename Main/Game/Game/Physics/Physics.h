@@ -12,8 +12,9 @@
 
 namespace Physics
 {
-	extern const float step;
-	extern const int maxSteps;
+	extern float step;
+	extern float maxDelta;
+	extern int maxSteps;
 
 	extern std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
 	extern int maxGameObject;
@@ -22,7 +23,10 @@ namespace Physics
 	void SetRigidBodyCollector(std::shared_ptr<System> rigidBodyCollector);
 
 	void ProcessGameObjects(const tsl::robin_set<GameObject>& gameObjects, bool disableOthers = false);
+	void ClearGameObjects();
 	void RemoveNode(GameObject gameObject);
+
+	void ReLaunchTriggers(GameObject gameObject);
 
 	bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
 	bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);

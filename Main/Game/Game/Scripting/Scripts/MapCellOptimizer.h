@@ -8,6 +8,7 @@
 #include "../../InputManager.h"
 #include "../../ECS/Systems/MapCellCollectorSystem.h"
 #include "../../MapGenerator/Config.h"
+#include "Event/Events.h"
 
 class MapCellOptimizer : public Script
 {
@@ -30,8 +31,8 @@ public:
 
 		auto cellsContainer = HFEngine::ECS.GetGameObjectByName("Cells");
 		cells = gameObjectHierarchy.GetChildren(cellsContainer.value());
-		CalculateCurrentCell();
-		EnableDisableCells();
+		//CalculateCurrentCell();
+		//EnableDisableCells();
 	}
 
 	void LateUpdate(float dt)
@@ -40,6 +41,10 @@ public:
 		{
 			currentCell = newCurrentCell;
 			EnableDisableCells();
+
+			Event ev(Events::Gameplay::Player::CELL_ENTERED);
+			ev.SetParam(Events::GameObject::GameObject, currentCell);
+			EventManager::FireEvent(ev);
 		}
 	}
 
@@ -51,6 +56,11 @@ public:
 			auto& cellGate = HFEngine::ECS.GetComponent<CellGate>(gate.value());
 			newCurrentCell = cellGate.Cell;
 		}
+	}
+
+	GameObject GetCurrentCell()
+	{
+		return currentCell;
 	}
 
 private:

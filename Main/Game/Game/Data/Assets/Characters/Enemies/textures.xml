@@ -4,6 +4,8 @@
     <texture name="axerMetal" file="axer_DefaultMaterial_Metallic.png" format="r" />
     <texture name="axerRough" file="axer_DefaultMaterial_Roughness.png" format="r" />
 
+    <texture name="axerToyAlbedo" file="axerToy_DefaultMaterial_BaseColor.png" format="srgb" />
+
     <texture name="flyerAlbedo" file="flyer_BaseColor.png" format="srgb" />
     <texture name="flyerNorm" file="flyer_Normal.png" />
     <texture name="flyerMetal" file="flyer_Metallic.png" format="r" />

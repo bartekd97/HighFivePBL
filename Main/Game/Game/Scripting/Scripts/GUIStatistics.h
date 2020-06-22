@@ -12,6 +12,11 @@
 class GUIStatistics : public Script
 {
 public:
+	~GUIStatistics()
+	{
+		GUIManager::RemoveWidget(panel);
+	}
+
 	void Awake()
 	{
 		hidden = false;
@@ -103,6 +108,7 @@ public:
 		vsyncLabel->SetPivot(Anchor::CENTER);
 		vsyncLabel->SetPositionAnchor(glm::vec3(0.0f, 0.0f, 0.0f), Anchor::CENTER);
 		GUIManager::AddWidget(vsyncLabel, vsyncButton);
+		panel->SetEnabled(false);
 	}
 
 	void Update(float dt)

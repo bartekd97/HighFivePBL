@@ -69,7 +69,7 @@
     <ClCompile Include="Utility\TextureTools.cpp" />
     <ClCompile Include="MapGenerator\MapSetuper.cpp" />
     <ClCompile Include="Utility\TimerAnimator.cpp" />
-    <ClCompile Include="Audio\AudioController.cpp" />
+    <ClCompile Include="Audio\AudioManager.cpp" />
     <ClCompile Include="ECS\Systems\CellPathfinderSystem.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -82,8 +82,15 @@
     <ClCompile Include="Rendering\Postprocessing\FXAAEffect.cpp" />
     <ClCompile Include="ECS\Systems\NextFrameDestroySystem.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
-	<ClCompile Include="Audio\SoundManager.cpp" />
-	<ClCompile Include="Audio\SoundObject.cpp" />
+    <ClCompile Include="Audio\SoundManager.cpp" />
+    <ClCompile Include="Audio\SoundObject.cpp" />
+    <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
+    <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
+    <ClCompile Include="ECS\Systems\GarbageCollectorSystem.cpp" />
+    <ClCompile Include="ECS\Systems\PhysicsSpawnTriggerSystem.cpp" />
+    <ClCompile Include="ECS\Systems\TriggerColliderCollectorSystem.cpp" />
+    <ClCompile Include="Rendering\Postprocessing\WorldFogEffect.cpp" />
+    <ClCompile Include="Scripting\Scripts\IntroMovie.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -216,7 +223,7 @@
     <ClInclude Include="Scripting\Scripts\EnemyController.h" />
     <ClInclude Include="Utility\TimerAnimator.h" />
     <ClInclude Include="Utility\Pathfinding.h" />
-    <ClInclude Include="Audio\AudioController.h" />
+    <ClInclude Include="Audio\AudioManager.h" />
     <ClInclude Include="ECS\Components\CellPathfinder.h" />
     <ClInclude Include="ECS\Systems\CellPathfinderSystem.h" />
     <ClInclude Include="Scene\SceneManager.h" />
@@ -231,8 +238,35 @@
     <ClInclude Include="Scripting\Scripts\MiniGhost.h" />
     <ClInclude Include="Scripting\Types\GhostTypes.h" />
     <ClInclude Include="ECS\Systems\NextFrameDestroySystem.h" />
-	<ClInclude Include="Audio\SoundManager.h" />
-	<ClInclude Include="Audio\SoundObject.h" />
+    <ClInclude Include="Audio\SoundManager.h" />
+    <ClInclude Include="Audio\SoundObject.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerDeathController.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialPlayground.h" />
+    <ClInclude Include="Scripting\Scripts\TutorialEnemy.h" />
+    <ClInclude Include="Scripting\Scripts\GateOpener.h" />
+    <ClInclude Include="Scripting\Scripts\CellSupervisor.h" />
+    <ClInclude Include="Scripting\Scripts\StatueUser.h" />
+    <ClInclude Include="Scripting\Scripts\PlayerUpgrader.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostDistance.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostRecovery.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostSpeed.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\GhostActiveLines.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\PushbackDistance.h" />
+    <ClInclude Include="Scripting\Scripts\Upgrades\PushbackForce.h" />
+    <ClInclude Include="Scripting\Scripts\BossController.h" />
+    <ClInclude Include="Scripting\Scripts\Bosses\Necromancer.h" />
+    <ClInclude Include="Scripting\Scripts\CreatureController.h" />
+    <ClInclude Include="Scripting\Scripts\ObstacleController.h" />
+    <ClInclude Include="Scripting\Scripts\MudController.h" />
+    <ClInclude Include="Scripting\Scripts\FireController.h" />
+    <ClInclude Include="Scripting\Scripts\GasController.h" />
+    <ClInclude Include="ECS\Systems\GarbageCollectorSystem.h" />
+    <ClInclude Include="Scripting\Scripts\Credits.h" />
+    <ClInclude Include="ECS\Systems\PhysicsSpawnTriggerSystem.h" />
+    <ClInclude Include="ECS\Systems\TriggerColliderCollectorSystem.h" />
+    <ClInclude Include="Rendering\Postprocessing\WorldFogEffect.h" />
+    <ClInclude Include="Scripting\Scripts\RotateAround.h" />
+    <ClInclude Include="Scripting\Scripts\IntroMovie.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

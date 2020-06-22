@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "MapGenerator/ConvexPolygon.h"
 #include "ECS/ECSTypes.h"
 
@@ -23,6 +24,7 @@ public:
     Type CellType;
     std::vector<BridgeTo> Bridges;
     GameObject EnemyContainer = NULL_GAMEOBJECT;
+    GameObject Statue = NULL_GAMEOBJECT;
 
     std::shared_ptr<PathfindingGrid> PathFindingGrid;
     //std::vector<GameObject> Enemies;

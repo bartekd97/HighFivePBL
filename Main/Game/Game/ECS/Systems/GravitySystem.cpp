@@ -12,6 +12,12 @@ const float minFallingDist = 0.01f;
 void GravitySystem::Init()
 {
     minimalMovement = 0.01f;
+    EventManager::AddListener(METHOD_LISTENER(Events::General::GAMEOBJECTS_CLEAR, GravitySystem::OnGameObjectsClear));
+}
+
+void GravitySystem::OnGameObjectsClear(Event& ev)
+{
+    cells.clear();
 }
 
 void GravitySystem::Update(float dt)
@@ -26,8 +32,9 @@ void GravitySystem::Update(float dt)
     {
         check = false;
     }*/
-    float level;
-    if (cells.size() == 0) LoadCells();
+    static float level;
+
+    if (dt > Physics::maxDelta) return;
 
     for (auto const& gameObject : gameObjects)
     {
@@ -47,6 +54,7 @@ void GravitySystem::Update(float dt)
             LogWarning("GravitySystem::Update(): closest cell not found for {}", gameObject);
             continue;
         }*/
+        if (cells.size() == 0) LoadCells();
         bool shouldFall = true;
         if (closestCell != -1) // TODO: remove it and find out why some objects sometimes have WTF positions causing this
         {

@@ -14,6 +14,8 @@ void PhysicsSystem::Init()
 
 void PhysicsSystem::Update(float dt)
 {
+    if (dt > Physics::maxDelta) return;
+
     Physics::ProcessGameObjects(colliderCollectorSystem->gameObjects, true);
     bool localCollided;
     int steps;
@@ -96,6 +98,10 @@ void PhysicsSystem::Update(float dt)
                                 {
                                     onTriggerEnter(i, gameObject);
                                 }
+                                for (const auto& onTriggerEnter : HFEngine::ECS.GetComponent<Collider>(gameObject).OnTriggerEnter)
+                                {
+                                    onTriggerEnter(gameObject, i);
+                                }
                             }
                         }
                         else
@@ -106,6 +112,10 @@ void PhysicsSystem::Update(float dt)
                                 for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>(i).OnTriggerExit)
                                 {
                                     onTriggerExit(i, gameObject);
+                                }
+                                for (const auto& onTriggerExit : HFEngine::ECS.GetComponent<Collider>(gameObject).OnTriggerExit)
+                                {
+                                    onTriggerExit(gameObject, i);
                                 }
                             }
                         }

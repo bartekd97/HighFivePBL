@@ -76,7 +76,7 @@ public:
 		{
 			assert(clips.find(name) != clips.end() && "Trying to set non-existing animation clip");
 
-			if (transitioning)
+			if (transitioning && nextAnimTime >= transitionDuration * 0.5f)
 			{
 				currentClip = nextClip;
 				animTime = nextAnimTime;
@@ -124,5 +124,9 @@ public:
 	void SetAnimatorSpeed(float speed)
 	{
 		animatorSpeed = speed;
+	}
+	float GetCurrentClipDuration()
+	{
+		return currentClip->duration;
 	}
 };

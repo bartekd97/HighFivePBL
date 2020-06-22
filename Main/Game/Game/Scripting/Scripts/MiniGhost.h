@@ -11,6 +11,7 @@
 #include "Event/Events.h"
 #include "Event/EventManager.h"
 #include "EnemyController.h"
+#include "BossController.h"
 
 #define GetTransform() HFEngine::ECS.GetComponent<Transform>(GetGameObject())
 #define GetAnimator() HFEngine::ECS.GetComponent<SkinAnimator>(visualObject)
@@ -21,7 +22,14 @@ private: // parameters
 	float moveSpeed = 7.0f;
 	float attackPreparationTime = 0.4f;
 	float attackTime = 1.25f;
-	float damageToEnemies = 2.0f;
+	float damageToEnemies = 20.0f;
+	float damageDealtMultiplier = 0.7f;
+
+	float figureSizeMultiplier = 1.0f;
+	float minScale = 0.8f;
+	float maxScale = 1.4f;
+	float scale = 1.0f;
+	bool scaleChanged = false;
 
 	glm::vec3 attackAlbedoColor = { 2.5f, 0.4f, 1.5f };
 	glm::vec3 attackEmissiveColor = { 0.5f, 0.1f, 0.3f };
@@ -47,12 +55,20 @@ private: // variables
 
 public:
 
+	bool IsAttacking() const
+	{
+		return attacking;
+	}
+
 	MiniGhost()
 	{
 		RegisterFloatParameter("moveSpeed", &moveSpeed);
 		RegisterFloatParameter("attackPreparationTime", &attackPreparationTime);
 		RegisterFloatParameter("attackTime", &attackTime);
 		RegisterFloatParameter("damageToEnemies", &damageToEnemies);
+		RegisterFloatParameter("damageDealtMultiplier", &damageDealtMultiplier);
+		RegisterFloatParameter("minScale", &minScale);
+		RegisterFloatParameter("maxScale", &maxScale);
 
 		RegisterVec3Parameter("attackAlbedoColor", &attackAlbedoColor);
 		RegisterVec3Parameter("attackEmissiveColor", &attackEmissiveColor);
@@ -74,6 +90,7 @@ public:
 	
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::MiniGhost::FADE_ME_OUT, MiniGhost::OnFadeMeOut));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::MiniGhost::ATTACK, MiniGhost::OnAttack));
+
 	}
 
 	void Start()
@@ -92,6 +109,11 @@ public:
 	void LateUpdate(float dt)
 	{
 		auto& transform = GetTransform();
+
+		if (scaleChanged)
+		{
+			transform.SetScale(glm::vec3(std::min(std::max(minScale, scale), maxScale)));
+		}
 
 		glm::vec3 translateVec = { 0.0f, 0.0f, 0.0f };
 
@@ -152,12 +174,22 @@ public:
 	void OnTriggerEnter(GameObject that, GameObject other)
 	{
 		if (!attacking) return;
-		if (!strcmp(HFEngine::ECS.GetNameGameObject(other), "enemy"))
+		auto otherName = HFEngine::ECS.GetNameGameObject(other);
+		if (!strcmp(otherName, "enemy"))
 		{
 			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 			auto enemyController = scriptContainer.GetScript<EnemyController>();
-			enemyController->TakeDamage(damageToEnemies);
-			FadeMeOut(0.5);
+			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
+			enemyController->TakeDamage(damageToEnemies * figureSizeMultiplier);
+			damageToEnemies *= damageDealtMultiplier;
+		}
+		else if (!strcmp(otherName, "boss"))
+		{
+			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
+			auto bossController = scriptContainer.GetScript<BossController>();
+			AudioManager::PlayFromDefaultSource("ghostattack", false, 0.1f);
+			bossController->RequestToTakeDamage(damageToEnemies * figureSizeMultiplier);
+			damageToEnemies *= damageDealtMultiplier;
 		}
 	}
 
@@ -168,6 +200,8 @@ public:
 
 		rotatingToAttack = true;
 		attackDirection = ev.GetParam<glm::vec3>(Events::Gameplay::MiniGhost::Direction);
+		figureSizeMultiplier = ev.GetParam<float>(Events::Gameplay::MiniGhost::Multiplier);
+		float scaleTmp = (ev.GetParam<float>(Events::Gameplay::MiniGhost::ScalePercentage) * (maxScale - minScale)) + minScale;
 		
 		auto& ghostLight = HFEngine::ECS.GetComponent<PointLightRenderer>(ghostLightObject);
 		auto& ghostMesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
@@ -175,11 +209,14 @@ public:
 		timerAnimator.AnimateVariable(&ghostMesh.material->albedoColor, ghostMesh.material->albedoColor, attackAlbedoColor, attackPreparationTime);
 		timerAnimator.AnimateVariable(&ghostMesh.material->emissiveColor, ghostMesh.material->emissiveColor, attackEmissiveColor, attackPreparationTime);
 
+		scaleChanged = true;
+		timerAnimator.AnimateVariable(&scale, scale, scaleTmp, attackPreparationTime);
 		timerAnimator.DelayAction(attackPreparationTime, [&]() {
 			animator.TransitToAnimation("ghostrunning");
 			animator.SetAnimatorSpeed(1.0f);
 			rotatingToAttack = false;
 			attacking = true;
+			Physics::ReLaunchTriggers(GetGameObject());
 
 			timerAnimator.DelayAction(attackTime, std::bind(&MiniGhost::FadeMeOut, this, 0.3f));
 		});

@@ -3,11 +3,13 @@
 #include "../WindowManager.h"
 #include "../Utility/Logger.h"
 #include "Text/TextRenderer.h"
+#include "Audio/AudioManager.h"
 
 #include "GUIManager.h"
 
 GLuint Button::vao;
 GLuint Button::vboVertices;
+
 
 Button::Button()
 {
@@ -15,6 +17,11 @@ Button::Button()
 
 	if (!initialized)
 	{
+		//AudioManager::InitSource("sourceHover");
+		//AudioManager::InitSource(sourcePress);
+		//AudioManager::SetSoundInSource(sourcePress, "bum6", false, 0.5f);
+		//AudioManager::SetSoundInSource(sourceHover, "click_button", false, 0.1f);
+
 		float vertices[] = {
 			0.0f, -1.0f, 0.0f,  0.0f, 0.0f,
 			1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
@@ -44,7 +51,7 @@ Button::Button()
 		initialized = true;
 	}
 
-	// TODO: ogar to gówno razem z enumami zjebanymi
+	// TODO: ogar to gÃ³wno razem z enumami zjebanymi
 	for (int i = (int)STATE::NORMAL; i <= (int)STATE::HOVER; i++)
 	{
 		TextureColor tc;
@@ -57,6 +64,7 @@ Button::Button()
 
 void Button::Update(const glm::vec2& mousePosition)
 {
+
 	bool isOver = IsMouseOver(mousePosition);
 	bool isClicked = InputManager::GetMouseButtonState(GLFW_MOUSE_BUTTON_LEFT);
 
@@ -75,10 +83,14 @@ void Button::Update(const glm::vec2& mousePosition)
 			}
 			if (state != STATE::PRESSED && OnStateChanged) OnStateChanged(STATE::PRESSED);
 			state = STATE::PRESSED;
+			AudioManager::PlayFromDefaultSource("bum4", false, 0.5f);
 		}
 		else
 		{
-			if (state != STATE::HOVER && OnStateChanged) OnStateChanged(STATE::HOVER);
+			if (state != STATE::HOVER && OnStateChanged) {
+				OnStateChanged(STATE::HOVER);
+				AudioManager::PlayFromDefaultSource("click_button", false, 0.1f);
+			}
 			state = STATE::HOVER;
 		}
 	}

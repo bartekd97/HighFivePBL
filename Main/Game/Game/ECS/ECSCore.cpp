@@ -68,6 +68,14 @@ void ECSCore::SetEnabledGameObject(GameObject gameObject, bool enabled)
 	}
 }
 
+void ECSCore::ClearGameObjects()
+{
+	for (GameObject i = 0; i < MAX_GAMEOBJECTS; i++)
+	{
+		if (gameObjectManager->IsValid(i)) DestroyGameObject(i);
+	}
+}
+
 bool ECSCore::IsEnabledGameObject(GameObject gameObject)
 {
 	return gameObjectManager->IsEnabled(gameObject);
@@ -120,5 +128,12 @@ void ECSCore::PostUpdateSystems(float dt)
 	for (auto it = systemManager->postUpdateQueue.begin(); it != systemManager->postUpdateQueue.end(); ++it)
 	{
 		(*it)->PostUpdate(dt);
+	}
+}
+void ECSCore::PostRenderSystems()
+{
+	for (auto it = systemManager->postRenderQueue.begin(); it != systemManager->postRenderQueue.end(); ++it)
+	{
+		(*it)->PostRender();
 	}
 }

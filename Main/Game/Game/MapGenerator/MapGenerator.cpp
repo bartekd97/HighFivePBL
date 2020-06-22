@@ -9,6 +9,7 @@
 #include "ext/LloydRelaxation.h"
 #include "HFEngine.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/ScriptContainer.h"
 
 namespace {
 	std::vector<Delaunay::Point*> GeneratePoints(DiagramLayout layout)
@@ -111,6 +112,7 @@ void MapGenerator::Generate()
     mapSetuper->Setup();
 
     _generated = true;
+    EventManager::FireEvent(Events::Gameplay::Map::GENERATED);
 }
 
 GameObject MapGenerator::GetStartupCell()
@@ -138,6 +140,11 @@ GameObject MapGenerator::CreateCell(Delaunay::Site* cell, GameObject parent)
     mCell.CellSiteIndex = cell->index();
     mCell._BaseDelaunayPolygon = CreateLocalPolygon(cell, bounds);
     HFEngine::ECS.AddComponent<MapCell>(cellObject, mCell);
+    
+    HFEngine::ECS.AddComponent<ScriptContainer>(cellObject, {});
+    auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(cellObject);
+    scriptContainer.AddScript(cellObject, "CellSupervisor");
+
     return cellObject;
 }
 
@@ -189,9 +196,12 @@ void MapGenerator::CreateBridges(std::vector<GameObject> cells, GameObject paren
 bool MapGenerator::ValidateMapLayout(std::vector<GameObject> cells)
 {
     int cellsWithOneBridgeCount = 0;
+    float longestRoadInOneBridgeCell = 0.0f;
+
     for (auto cell : cells)
     {
-        MapCell mc = HFEngine::ECS.GetComponent<MapCell>(cell);
+        MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(cell);
+        glm::vec3 mcPos = HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition();
         if (mc.Bridges.size() == 0)
         {
             return false; // invalid cell with no bridges, throw away whole map...
@@ -199,11 +209,16 @@ bool MapGenerator::ValidateMapLayout(std::vector<GameObject> cells)
         else if (mc.Bridges.size() == 1)
         {
             cellsWithOneBridgeCount++;
+            glm::vec3 bridgePos = HFEngine::ECS.GetComponent<Transform>(mc.Bridges[0].Bridge).GetWorldPosition();
+            longestRoadInOneBridgeCell = glm::max(
+                longestRoadInOneBridgeCell,
+                glm::distance(mcPos, bridgePos)
+                );
         }
     }
 
-    // there must be at least one cell with only one bridge
-    if (cellsWithOneBridgeCount >= 1)
+    // there must be at least one cell with only one bridge and with long enough road
+    if (cellsWithOneBridgeCount >= 1 && longestRoadInOneBridgeCell >= 25.0f)
         return true;
     else
         return false;

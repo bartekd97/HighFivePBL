@@ -5,4 +5,11 @@
         <property name="metalnessMap" value="gothMetal"/>
         <property name="roughnessMap" value="gothRough"/>
     </material>
+
+    <material name="FlashMaterial" type="FORWARD">
+        <property name="albedoColor" value="0.0,0.0,0.0"/>
+        <property name="emissiveColor" value="1.0,1.0,0.25"/>
+        <property name="specularValue" value="4.0"/>
+        <property name="opacityValue" value="1.0"/>
+    </material>
 </materials>

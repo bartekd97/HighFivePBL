@@ -40,6 +40,7 @@ public:
 
 	void UpdateSystems(float dt);
 	void PostUpdateSystems(float dt);
+	void PostRenderSystems();
 
 	std::shared_ptr<System> GetSystemByTypeName(const char* typeName);
 
@@ -47,6 +48,8 @@ public:
 	{
 		return gameObjectManager->GetLivingGameObjectCount();
 	}
+
+	void ClearGameObjects();
 
 	template<typename T>
 	void RegisterComponent()

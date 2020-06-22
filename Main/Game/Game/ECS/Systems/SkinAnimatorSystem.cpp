@@ -128,3 +128,8 @@ void SkinAnimatorSystem::Update(float dt)
 	skinAimatorWorker.FillWorkers(std::bind(&SkinAnimatorSystem::WorkQueue, this, dt));
 	//skinAimatorWorker.FillWorkers([this, dt]() {this->WorkQueue(dt);});
 }
+
+void SkinAnimatorSystem::PostRender()
+{
+	skinAimatorWorker.WaitForAll();
+}
