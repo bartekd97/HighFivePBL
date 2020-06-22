@@ -1,6 +1,7 @@
 <prefab defaultScale="1.0,1.0,1.0">
     <property name="description" value="Increase ghost movement speed" />
-    <property name="icon" value="Icon_3" />
+    <property name="blackIcon" value="Icon_GhostSpeed_black" />
+    <property name="whiteIcon" value="Icon_GhostSpeed_white" />
 
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::GhostSpeed"/>

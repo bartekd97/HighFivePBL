@@ -125,7 +125,7 @@ void IntroMovie::Start()
 		{34.0f, "who has sworn revenge on his old companions."},
 		{38.0f, "The first goal on his way to reckoning is death..."},
 		{43.25f, "...of The Necromancer."}, 
-		{45.0f, ""}
+		{45.75f, ""}
 	};
 
 
