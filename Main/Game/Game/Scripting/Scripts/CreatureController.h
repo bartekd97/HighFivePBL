@@ -38,6 +38,11 @@ public:
 		return slow;
 	}
 
+	inline float GetMoveSpeed()
+	{
+		return moveSpeed;
+	}
+
 	inline bool GetIsFlying()
 	{
 		return isFlying;
