@@ -50,7 +50,8 @@ namespace AudioManager
 	void StopMovement();
 	void PlayGhost();
 	void StopGhost();
-
+	void PlayIntro();
+	void StopIntro();
 	int InitSource(ALuint& source);
 	int SetExistingSource(ALuint& source, ALuint& buffer, ALboolean loop);
 	int ClearSource(ALuint& source);
