@@ -1,5 +1,6 @@
 #include <vector>
 
+#include <tsl/robin_set.h>
 #include "GUIManager.h"
 #include "../InputManager.h"
 #include "../Resourcing/ShaderManager.h"
@@ -161,4 +162,33 @@ namespace GUIManager
 	{
 		layersEnablement[zIndex] = { status };
 	}
+
+
+
+	namespace KeybindLock
+	{
+		tsl::robin_set<std::string> locks;
+
+		void Set(std::string name)
+		{
+			assert(!locks.contains(name) && "This lock is already set");
+			locks.insert(name);
+		}
+
+		void Release(std::string name)
+		{
+			assert(locks.contains(name) && "This lock is not set");
+			locks.erase(name);
+		}
+
+		bool Is(std::string name)
+		{
+			return locks.contains(name);
+		}
+
+		bool Any()
+		{
+			return locks.size() > 0;
+		}
+	};
 }

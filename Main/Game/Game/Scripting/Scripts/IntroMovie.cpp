@@ -6,6 +6,7 @@
 #include "ECS/Components/ScriptContainer.h"
 #include "Physics/Physics.h"
 #include "Audio/AudioManager.h"
+#include "InputManager.h"
 
 IntroMovie::~IntroMovie()
 {
@@ -125,7 +126,7 @@ void IntroMovie::Start()
 		{34.0f, "who has sworn revenge on his old companions."},
 		{38.0f, "The first goal on his way to reckoning is death..."},
 		{43.25f, "...of The Necromancer."}, 
-		{45.0f, ""}
+		{45.75f, ""}
 	};
 
 
@@ -135,6 +136,7 @@ void IntroMovie::Start()
 	Physics::maxDelta = -1.0f;
 
 	cameraAnimating = true;
+	GUIManager::KeybindLock::Set(GUILockName);
 
 	AudioManager::PlayFromDefaultSource("intro", false);
 }
@@ -206,6 +208,11 @@ void IntroMovie::LateUpdate(float dt)
 		CameraPoint point = InterpolatePoint(a, b, t);
 		UpdateCamera(point);
 	}
+
+	if (InputManager::GetKeyDown(GLFW_KEY_ESCAPE))
+	{
+		FinishIntroAndClear();
+	}
 }
 
 void IntroMovie::CameraMoveFinished()
@@ -222,6 +229,8 @@ void IntroMovie::CameraMoveFinished()
 
 void IntroMovie::FinishIntroAndClear()
 {
+	UpdateCamera(finalPoint);
+
 	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(playerObject);
 	auto cameraFollower = scriptContainer.GetScript<PlayerCameraFollower>();
 	cameraFollower->Paused = false;
@@ -230,6 +239,9 @@ void IntroMovie::FinishIntroAndClear()
 		GUIManager::SetLayerEnabled(i, true);
 
 	Physics::maxDelta = defaultPhysicsMaxDelta;
+
+	GUIManager::KeybindLock::Release(GUILockName);
+	// TODO: stop intro sound here
 
 	DestroyGameObjectSafely();
 }
