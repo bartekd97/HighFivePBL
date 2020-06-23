@@ -29,7 +29,7 @@ private: // parameters
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
 	float attackDamage = 5.0f;
-	float avoidObstacleTime = 30.0f;
+	float avoidObstacleTime = 5.0f;
 	std::string soundAttack;
 	std::string soundDmg;
 	std::string soundDeath;
@@ -302,7 +302,7 @@ public:
 			glm::vec3 playerDir = glm::normalize(playerPos - pos);
 			raycaster.Raycast(pos, playerDir);
 
-			if (raycaster.GetOut().hittedObject == playerObject)
+			if (raycaster.GetOut().hittedObject == playerObject && !IsObstacleOnWay())
 			{
 				if (raycaster.GetOut().distance >= attackDistance)
 				{
@@ -438,6 +438,20 @@ public:
 			);
 
 		return diff;
+	}
+private:
+	bool IsObstacleOnWay()
+	{
+		auto& rayOut = raycaster.GetOut();
+		for (auto& triggerHitted : rayOut.triggersHitted)
+		{
+			for (auto& obstacle : avoidedObstacles)
+			{
+				if (obstacle.second.second.find(triggerHitted) != obstacle.second.second.end())
+					return true;
+			}
+		}
+		return false;
 	}
 };
 
