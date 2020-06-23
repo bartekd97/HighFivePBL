@@ -87,22 +87,36 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
         {
             if (BoxCast(startPos, dir, gameObjectPair.second, staticIntersection))
             {
-                tmpPos = staticIntersection - startPos;
-                raycastHitTmp.distance = VECLEN2D(tmpPos);
-                raycastHitTmp.hittedObject = gameObjectPair.second;
-                raycastHitTmp.hitPosition = glm::vec3(staticIntersection.x, 0.0f, staticIntersection.y);
-                hits.push_back(raycastHitTmp);
+                if (node.collider.type == Collider::ColliderTypes::TRIGGER)
+                {
+                    out.triggersHitted.push_back(gameObjectPair.second);
+                }
+                else
+                {
+                    tmpPos = staticIntersection - startPos;
+                    raycastHitTmp.distance = VECLEN2D(tmpPos);
+                    raycastHitTmp.hittedObject = gameObjectPair.second;
+                    raycastHitTmp.hitPosition = glm::vec3(staticIntersection.x, 0.0f, staticIntersection.y);
+                    hits.push_back(raycastHitTmp);
+                }
             }
         }
         else if (node.collider.shape == Collider::ColliderShapes::CIRCLE)
         {
             if (CircleCast(startPos, dir, gameObjectPair.second, staticIntersection))
             {
-                tmpPos = staticIntersection - startPos;
-                raycastHitTmp.distance = VECLEN2D(tmpPos);
-                raycastHitTmp.hittedObject = gameObjectPair.second;
-                raycastHitTmp.hitPosition = glm::vec3(staticIntersection.x, 0.0f, staticIntersection.y);
-                hits.push_back(raycastHitTmp);
+                if (node.collider.type == Collider::ColliderTypes::TRIGGER)
+                {
+                    out.triggersHitted.push_back(gameObjectPair.second);
+                }
+                else
+                {
+                    tmpPos = staticIntersection - startPos;
+                    raycastHitTmp.distance = VECLEN2D(tmpPos);
+                    raycastHitTmp.hittedObject = gameObjectPair.second;
+                    raycastHitTmp.hitPosition = glm::vec3(staticIntersection.x, 0.0f, staticIntersection.y);
+                    hits.push_back(raycastHitTmp);
+                }
             }
         }
     }
@@ -276,7 +290,7 @@ void Raycaster::RefreshStaticGameObjects(glm::vec3& position, glm::vec3& directi
         if (i == ignoredGameObject) continue;
         auto& node = Physics::cacheNodes[i];
         if (node.state != CacheNode::STATE::ACTIVE) continue;
-        if (node.collider.type == Collider::ColliderTypes::TRIGGER || node.collider.shape == Collider::ColliderShapes::GRAVITY || node.hasRigidBody) continue;
+        if (/*node.collider.type == Collider::ColliderTypes::TRIGGER || */node.collider.shape == Collider::ColliderShapes::GRAVITY || node.hasRigidBody) continue;
 
         tmpPos = node.position - position;
         tmpCheck = tmpPos * direction;
