@@ -7,8 +7,6 @@
         <property name="attackTime" value="1.25"/>
       <property name="damageToEnemies" value="5"/>
 		<property name="damageDealtMultiplier" value="0.6"/>
-		<property name="minSizeMultiplier" value="0.5"/>
-		<property name="maxSizeMultiplier" value="2.0"/>
 		<property name="minScale" value="0.8"/>
 		<property name="maxScale" value="1.3"/>
 

@@ -61,9 +61,16 @@ public:
 			auto it = activeGameObjects.find(other);
 			if (it == activeGameObjects.end())
 			{
-				activeGameObjects[other] = 1;
 				auto name = HFEngine::ECS.GetNameGameObject(other);
 				auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
+				if (strcmp(name, enemyName) == 0)
+				{
+					if (scriptContainer.GetScript<EnemyController>()->IsAvoiding(GetGameObject()))
+					{
+						return;
+					}
+				}
+				activeGameObjects[other] = 1;
 				if (strcmp(name, playerName) == 0) controllers[other] = scriptContainer.GetScript<PlayerController>();
 				if (strcmp(name, enemyName) == 0) controllers[other] = scriptContainer.GetScript<EnemyController>();
 				OnObstacleEnter(other);
