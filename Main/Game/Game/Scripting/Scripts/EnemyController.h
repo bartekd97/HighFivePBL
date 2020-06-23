@@ -29,7 +29,7 @@ private: // parameters
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
 	float attackDamage = 5.0f;
-	float avoidObstacleTime = 5.0f;
+	float avoidObstacleTime = 20.0f;
 	std::string soundAttack;
 	std::string soundDmg;
 	std::string soundDeath;
@@ -43,6 +43,8 @@ private: // variables
 	bool isAttacking = false;
 	bool midAttack;
 	bool triggered = false;
+	bool runningFromObstacle = false;
+	glm::vec3 runningPoint;
 
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
@@ -97,6 +99,11 @@ public:
 		{
 			auto triggers = HFEngine::ECS.GetGameObjectsWithComponentInChildren<Collider>(gameObject);
 			avoidedObstacles[gameObject] = std::make_pair(avoidObstacleTime, triggers);
+			auto& transform = GetTransform();
+			runningFromObstacle = true;
+			runningPoint = transform.GetWorldPosition() - transform.GetFront() * 20.0f;
+
+			LogInfo("{} start running from obstacle", GetGameObject());
 		}
 	}
 
@@ -298,31 +305,49 @@ public:
 		else
 		{
 			std::optional<glm::vec3> targetPoint;
-			glm::vec3 pos = transform.GetPosition();
-			glm::vec3 playerDir = glm::normalize(playerPos - pos);
-			raycaster.Raycast(pos, playerDir);
-
-			if (raycaster.GetOut().hittedObject == playerObject && !IsObstacleOnWay())
+			if (runningFromObstacle)
 			{
-				if (raycaster.GetOut().distance >= attackDistance)
+				LogInfo("{} running from obstacle", GetGameObject());
+				if (IsInObstacle())
 				{
-					targetPoint = playerPos - (playerDir * attackDistance);
+					LogInfo("{} unrunned from obstacle", GetGameObject());
+					targetPoint = runningPoint;
 				}
 				else
 				{
-					Attack();
+					LogInfo("{} runned from obstacle", GetGameObject());
+					runningFromObstacle = false;
 				}
 			}
-			else
+			
+			if (!targetPoint.has_value())
 			{
-				// update test path
-				if (CanQueuePathThisFrame())
-				{
-					if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
-						pathfinder.QueuePath(playerPos);
-				}
+				glm::vec3 pos = transform.GetPosition();
+				glm::vec3 playerDir = glm::normalize(playerPos - pos);
+				raycaster.Raycast(pos, playerDir);
 
-				targetPoint = GetTargetPoint();
+				if (raycaster.GetOut().hittedObject == playerObject && !IsObstacleOnWay())
+				{
+					if (raycaster.GetOut().distance >= attackDistance)
+					{
+						targetPoint = playerPos - (playerDir * attackDistance);
+					}
+					else
+					{
+						Attack();
+					}
+				}
+				else
+				{
+					// update test path
+					if (CanQueuePathThisFrame())
+					{
+						if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
+							pathfinder.QueuePath(playerPos);
+					}
+
+					targetPoint = GetTargetPoint();
+				}
 			}
 
 			if (targetPoint.has_value())
@@ -448,6 +473,25 @@ private:
 			for (auto& obstacle : avoidedObstacles)
 			{
 				if (obstacle.second.second.find(triggerHitted) != obstacle.second.second.end())
+					return true;
+			}
+		}
+
+		LogInfo("{} IsObstacleOnWay undetected, size {}", GetGameObject(), rayOut.triggersHitted.size());
+		return false;
+	}
+
+	bool IsInObstacle()
+	{
+		if (avoidedObstacles.size() == 0) return false;
+		auto& cacheNode = Physics::cacheNodes[GetGameObject()];
+		RaycastHit out;
+		auto pos = GetTransform().GetWorldPosition();
+		if (Physics::Raycast(pos, cacheNode.circleCollider, out, GetGameObject(), false))
+		{
+			for (auto& obstacle : avoidedObstacles)
+			{
+				if (obstacle.second.second.find(out.hittedObject) != obstacle.second.second.end())
 					return true;
 			}
 		}

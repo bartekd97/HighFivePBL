@@ -84,7 +84,7 @@ public:
 
 			if (strcmp(HFEngine::ECS.GetNameGameObject(object), enemyName) == 0)
 			{
-				std::dynamic_pointer_cast<EnemyController>(controller)->AvoidObstacle(object);
+				std::dynamic_pointer_cast<EnemyController>(controller)->AvoidObstacle(GetGameObject());
 			}
 			
 			/*auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object); // popatrz wy¿ej jak to siê dzieje /\
