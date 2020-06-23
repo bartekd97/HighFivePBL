@@ -472,6 +472,13 @@ public:
 
 		return diff;
 	}
+
+	bool IsAvoiding(GameObject gameObject)
+	{
+		auto it = avoidedObstacles.find(gameObject);
+		return it != avoidedObstacles.end();
+	}
+
 private:
 	bool IsObstacleOnWay(RaycastHit& rayOut)
 	{
