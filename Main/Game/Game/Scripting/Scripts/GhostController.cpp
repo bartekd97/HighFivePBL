@@ -316,8 +316,8 @@ void GhostController::EndMarking()
 				FadeOutLine(activeLines[0]);
 			}
 		}
-		forceCancelNextLine = false;
 	}
+	forceCancelNextLine = false;
 
 	recordedPositions.clear();
 	spawnedMiniGhostsCurrent.clear();
