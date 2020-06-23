@@ -81,17 +81,22 @@ public:
 			effect.object = gasEffectPrefab->Instantiate(object);
 			effect.spawnTime = std::chrono::steady_clock::now();
 			refreshList[object] = effect;
+
+			if (strcmp(HFEngine::ECS.GetNameGameObject(object), enemyName) == 0)
+			{
+				std::dynamic_pointer_cast<EnemyController>(controller)->AvoidObstacle(object);
+			}
 			
-			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
+			/*auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object); // popatrz wy¿ej jak to siê dzieje /\
 			if (controllers[object] == scriptContainer.GetScript<PlayerController>())
 			{
-				float playerHealth = scriptContainer.GetScript<PlayerController>()->GetHealth();
-				float playerMaxHealth = scriptContainer.GetScript<PlayerController>()->GetMaxHealth();
+				float playerHealth = scriptContainer.GetScript<PlayerController>()->GetHealth(); // za ka¿dym razem przeszukujesz ca³¹ tablicê skryptów
+				float playerMaxHealth = scriptContainer.GetScript<PlayerController>()->GetMaxHealth(); // i znowu
 				if (playerHealth < playerMaxHealth * 0.5f)
 				{
-					//AudioManager::PlaySoundFromSource(source);
+					//AudioManager::PlaySoundFromSource(source); // ¿eby nic siê nie sta³o bo to jest wykomentowane
 				}
-			}
+			}*/
 			
 		}
 		if (!controller->GetIsFlying()) controller->SetSlow(controller->GetSlow() + slowForce);

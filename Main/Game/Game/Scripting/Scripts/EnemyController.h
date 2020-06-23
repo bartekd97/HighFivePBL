@@ -29,6 +29,7 @@ private: // parameters
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
 	float attackDamage = 5.0f;
+	float avoidObstacleTime = 30.0f;
 	std::string soundAttack;
 	std::string soundDmg;
 	std::string soundDeath;
@@ -48,6 +49,8 @@ private: // variables
 	TimerAnimator timerAnimator;
 	bool lastFrameIsFalling = false;
 	std::chrono::steady_clock::time_point falledTime;
+	std::unordered_map<GameObject, std::pair<float, tsl::robin_set<GameObject>>> avoidedObstacles;
+
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -79,11 +82,22 @@ public:
 		RegisterStringParameter("soundDmg", &soundDmg);
 		RegisterStringParameter("soundDeath", &soundDeath);
 		RegisterFloatParameter("stunTimeAfterPush", &stunTimeAfterPush);
+		RegisterFloatParameter("avoidObstacleTime", &avoidObstacleTime);
 	}
 
 	~EnemyController()
 	{
 		GUIManager::RemoveWidget(healthBarPanel);
+	}
+
+	void AvoidObstacle(GameObject gameObject)
+	{
+		auto it = avoidedObstacles.find(gameObject);
+		if (it == avoidedObstacles.end())
+		{
+			auto triggers = HFEngine::ECS.GetGameObjectsWithComponentInChildren<Collider>(gameObject);
+			avoidedObstacles[gameObject] = std::make_pair(avoidObstacleTime, triggers);
+		}
 	}
 
 	void Awake()
@@ -229,6 +243,19 @@ public:
 		if (std::chrono::duration<float, std::chrono::seconds::period>(std::chrono::steady_clock::now() - falledTime).count() < stunTimeAfterPush)
 		{
 			return;
+		}
+
+		for (auto it = avoidedObstacles.begin(); it != avoidedObstacles.end(); )
+		{
+			it->second.first -= dt;
+			if (it->second.first <= 0.0f)
+			{
+				it = avoidedObstacles.erase(it);
+			}
+			else
+			{
+				it++;
+			}
 		}
 
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
