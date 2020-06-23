@@ -102,8 +102,6 @@ public:
 			auto& transform = GetTransform();
 			runningFromObstacle = true;
 			runningPoint = transform.GetWorldPosition() - transform.GetFront() * 20.0f;
-
-			LogInfo("{} start running from obstacle", GetGameObject());
 		}
 	}
 
@@ -307,15 +305,12 @@ public:
 			std::optional<glm::vec3> targetPoint;
 			if (runningFromObstacle)
 			{
-				LogInfo("{} running from obstacle", GetGameObject());
 				if (IsInObstacle())
 				{
-					LogInfo("{} unrunned from obstacle", GetGameObject());
 					targetPoint = runningPoint;
 				}
 				else
 				{
-					LogInfo("{} runned from obstacle", GetGameObject());
 					runningFromObstacle = false;
 				}
 			}
@@ -468,6 +463,8 @@ private:
 	bool IsObstacleOnWay()
 	{
 		auto& rayOut = raycaster.GetOut();
+		if (rayOut.triggersHitted.size() > 0)
+			LogInfo("xD");
 		for (auto& triggerHitted : rayOut.triggersHitted)
 		{
 			for (auto& obstacle : avoidedObstacles)
@@ -477,7 +474,7 @@ private:
 			}
 		}
 
-		LogInfo("{} IsObstacleOnWay undetected, size {}", GetGameObject(), rayOut.triggersHitted.size());
+		//LogInfo("{} IsObstacleOnWay undetected, size {}", GetGameObject(), rayOut.triggersHitted.size());
 		return false;
 	}
 

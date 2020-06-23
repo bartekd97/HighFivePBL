@@ -28,10 +28,12 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
     static glm::vec2 dynamicIntersection, staticIntersection;
     static int dynamicChecks;
     static std::vector<RaycastHit> hits;
+    static std::vector<GameObject> triggersHitted;
     static RaycastHit raycastHitTmp;
 
     dynamicChecks = 0;
     hits.clear();
+    triggersHitted.clear();
 
     startPos.x = position.x;
     startPos.y = position.z;
@@ -89,7 +91,7 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
             {
                 if (node.collider.type == Collider::ColliderTypes::TRIGGER)
                 {
-                    out.triggersHitted.push_back(gameObjectPair.second);
+                    triggersHitted.push_back(gameObjectPair.second);
                 }
                 else
                 {
@@ -107,7 +109,7 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
             {
                 if (node.collider.type == Collider::ColliderTypes::TRIGGER)
                 {
-                    out.triggersHitted.push_back(gameObjectPair.second);
+                    triggersHitted.push_back(gameObjectPair.second);
                 }
                 else
                 {
@@ -133,6 +135,7 @@ bool Raycaster::Raycast(glm::vec3& position, glm::vec3& direction)
         }
     }
     out = hits[minIndex];
+    out.triggersHitted = triggersHitted;
 
     return true;
 }
