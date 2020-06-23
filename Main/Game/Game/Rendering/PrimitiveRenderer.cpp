@@ -54,7 +54,7 @@ void PrimitiveRenderer::DrawScreenQuad()
 }
 
 // xD
-void PrimitiveRenderer::DrawLine(glm::vec3& a, glm::vec3& b)
+void PrimitiveRenderer::DrawLine(const glm::vec3& a, const glm::vec3& b)
 {
 	linePoints.push_back(a);
 	linePoints.push_back(b);

@@ -320,29 +320,42 @@ public:
 				glm::vec3 pos = transform.GetPosition();
 				glm::vec3 playerDir = glm::normalize(playerPos - pos);
 				raycaster.Raycast(pos, playerDir);
+				auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(GetGameObject());
+				auto& mainOut = raycaster.GetOut();
 
-				if (raycaster.GetOut().hittedObject == playerObject && !IsObstacleOnWay())
+				if (mainOut.hittedObject == playerObject)
 				{
-					if (raycaster.GetOut().distance >= attackDistance)
+					auto leftPos = pos - transform.GetWorldRight() * circleCollider.radius;
+					raycaster.Raycast(leftPos, playerDir);
+					auto& leftOut = raycaster.GetOut();
+
+					auto rightPos = pos + transform.GetWorldRight() * circleCollider.radius;
+					raycaster.Raycast(rightPos, playerDir);
+					auto& rightOut = raycaster.GetOut();
+
+					if (!IsObstacleOnWay(mainOut) && !IsObstacleOnWay(leftOut) && !IsObstacleOnWay(rightOut))
 					{
-						targetPoint = playerPos - (playerDir * attackDistance);
-					}
-					else
-					{
-						Attack();
+						if (mainOut.distance >= attackDistance)
+						{
+							targetPoint = playerPos - (playerDir * attackDistance);
+						}
+						else
+						{
+							Attack();
+						}
 					}
 				}
-				else
-				{
-					// update test path
-					if (CanQueuePathThisFrame())
-					{
-						if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
-							pathfinder.QueuePath(playerPos);
-					}
+			}
 
-					targetPoint = GetTargetPoint();
+			if (!targetPoint.has_value())
+			{
+				if (CanQueuePathThisFrame())
+				{
+					if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
+						pathfinder.QueuePath(playerPos);
 				}
+
+				targetPoint = GetTargetPoint();
 			}
 
 			if (targetPoint.has_value())
@@ -460,11 +473,8 @@ public:
 		return diff;
 	}
 private:
-	bool IsObstacleOnWay()
+	bool IsObstacleOnWay(RaycastHit& rayOut)
 	{
-		auto& rayOut = raycaster.GetOut();
-		if (rayOut.triggersHitted.size() > 0)
-			LogInfo("xD");
 		for (auto& triggerHitted : rayOut.triggersHitted)
 		{
 			for (auto& obstacle : avoidedObstacles)
@@ -474,7 +484,6 @@ private:
 			}
 		}
 
-		//LogInfo("{} IsObstacleOnWay undetected, size {}", GetGameObject(), rayOut.triggersHitted.size());
 		return false;
 	}
 
