@@ -28,6 +28,7 @@
 namespace HFEngine
 {
 	GLFWcursor* cursor = nullptr;
+	HFEngineConfigStruct configStruct;
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
@@ -62,7 +63,8 @@ namespace HFEngine
 		}
 	}
 
-	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
+	//bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
+	bool Initialize(const HFEngineConfigStruct& config)
 	{
 		if (initialized)
 		{
@@ -77,10 +79,10 @@ namespace HFEngine
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		WindowManager::Initialize(screenWidth, screenHeight, windowTitle);
+		WindowManager::Initialize(config.ScreenWidth, config.ScreenHeight, config.WindowTitle, config.FullscreenMode);
 
-		RENDER_WIDTH = screenWidth;
-		RENDER_HEIGHT = screenHeight;
+		RENDER_WIDTH = config.ScreenWidth;
+		RENDER_HEIGHT = config.ScreenHeight;
 
 		if (WindowManager::GetWindow() == nullptr)
 		{
@@ -300,6 +302,11 @@ namespace HFEngine
 		{
 			WindowManager::Close();
 		}
+	}
+
+	const HFEngineConfigStruct& GetConfig()
+	{
+		return configStruct;
 	}
 
 /*

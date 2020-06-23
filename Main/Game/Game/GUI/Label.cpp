@@ -11,7 +11,7 @@ Label::Label()
 
 void Label::Draw()
 {
-	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - GetLocalSize().y, (float)fontSize / TextRenderer::GetCurrentFont()->GetSize(), color);
+	TextRenderer::RenderText(text, GetAbsolutePosition().x, WindowManager::SCREEN_HEIGHT - GetAbsolutePosition().y - GetLocalSize().y, ((float)fontSize / TextRenderer::GetCurrentFont()->GetSize()) * WindowManager::DPI_FACTOR, color);
 }
 
 void Label::Update(const glm::vec2& mousePosition)
@@ -56,6 +56,8 @@ void Label::CalculateSize()
 			tmpSize.y = tmp;
 		}
 	}
+
+	tmpSize *= WindowManager::DPI_FACTOR;
 
 	if (GetCoordinatesType() == Widget::CoordinatesType::RELATIVE)
 	{

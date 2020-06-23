@@ -6,6 +6,7 @@
 #include <tinyxml2.h>
 #include <chrono>
 #include <math.h>
+#include <cxxopts.hpp>
 
 #include "ECS/Components.h"
 #include "Utility/Logger.h"
@@ -24,14 +25,32 @@
 #include "Scene/Scenes/GameLite.h"
 #include "Scene/Scenes/MainMenu.h"
 
-const int SCREEN_WIDTH = 1280;
-const int SCREEN_HEIGHT = 720;
+//const int SCREEN_WIDTH = 1280;
+//const int SCREEN_HEIGHT = 720;
 
 void ReportGameObjects(float dt);
 
-int main()
+int main(int argc, char** argv)
 {
-	if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "Unholy Survivor: Reckoning"))
+	cxxopts::Options options("HFEngine", "HFEngine configuration");
+
+	options.add_options()
+		("width", "Screen width", cxxopts::value<int>()->default_value("1280"))
+		("height", "Screen height", cxxopts::value<int>()->default_value("720"))
+		("fullscreen", "Enable fullscreen mode", cxxopts::value<bool>()->default_value("false"))
+		;
+
+	auto result = options.parse(argc, argv);
+
+	HFEngine::HFEngineConfigStruct config;
+	config.WindowTitle = "Unholy Survivor: Reckoning";
+	config.ScreenWidth = result["width"].as<int>();
+	config.ScreenHeight = result["height"].as<int>();
+	config.FullscreenMode = result["fullscreen"].as<bool>();
+
+
+	//if (!HFEngine::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT, "Unholy Survivor: Reckoning"))
+	if (!HFEngine::Initialize(config))
 	{
 		std::cout << "Failed to initialize engine" << std::endl;
 		return -1;

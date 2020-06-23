@@ -28,6 +28,10 @@ namespace MainMenuUI
 		{
 			// menu already created - just show it
 			viniete->SetEnabled(true);
+			
+			for (auto& h : buttonHovers)
+				h.second->SetEnabled(false);
+
 			return;
 		}
 		// otherwise create one
@@ -43,11 +47,13 @@ namespace MainMenuUI
 		viniete->textureColor.texture = library->GetTexture("menuViniete");
 		GUIManager::AddWidget(viniete);
 
-		glm::vec2 buttonSize = { 512, 72 };
+		//glm::vec2 buttonSize = { 512, 72 };
+		glm::vec2 buttonSize = { 0.4f, 0.1f };
 		auto hoverBtnTexture = library->GetTexture("hoverBtn");
 		auto MakeButton = [&](std::string name, int index, float yPos) {
 			auto btnTexture = library->GetTexture(name);
 			auto button = std::make_shared<Button>();
+			button->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 			button->SetAnchor(Anchor::BOTTOMRIGHT);
 			button->SetPosition({ -buttonSize.x, yPos, 0.0f });
 			button->SetSize(buttonSize);
@@ -60,6 +66,7 @@ namespace MainMenuUI
 			button->textureColors[Button::STATE::PRESSED].color = { 1.0f, 1.0f, 1.0f, 0.5f };
 
 			auto hoverBtn = std::make_shared<Panel>();
+			hoverBtn->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 			hoverBtn->SetAnchor(Anchor::BOTTOMRIGHT);
 			hoverBtn->SetPosition({ -buttonSize.x, yPos, 0.0f });
 			hoverBtn->SetSize(buttonSize);
@@ -79,10 +86,16 @@ namespace MainMenuUI
 		};
 
 		// 72 + 1 to fix hovering 2 buttons at once
-		MakeButton("btnStart", 0, -73.0f * 5.0f);
-		MakeButton("btnStartLite", 1, -73.0f * 4.0f);
-		MakeButton("btnCredits", 2, -73.0f * 3.0f);
-		MakeButton("btnQuit", 3, -73.0f * 2.0f);
+
+		float marginedHeight = buttonSize.y + (2.0f / WindowManager::SCREEN_HEIGHT);
+#ifdef HF_START_LITE
+		MakeButton("btnStart", 0, -marginedHeight * 5.0f);
+		MakeButton("btnStartLite", 1, -marginedHeight * 4.0f);
+#else
+		MakeButton("btnStart", 1, -marginedHeight * 4.0f);
+#endif
+		MakeButton("btnCredits", 2, -marginedHeight * 3.0f);
+		MakeButton("btnQuit", 3, -marginedHeight * 2.0f);
 	}
 
 	void Hide()

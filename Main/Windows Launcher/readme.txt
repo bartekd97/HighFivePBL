@@ -1,0 +1,1 @@
+Inside Bin directory put executable files that will be copied with releasecopy
