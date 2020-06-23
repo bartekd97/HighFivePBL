@@ -57,6 +57,8 @@ void Label::CalculateSize()
 		}
 	}
 
+	tmpSize *= WindowManager::DPI_FACTOR;
+
 	if (GetCoordinatesType() == Widget::CoordinatesType::RELATIVE)
 	{
 		glm::vec2 parentSize(WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT);

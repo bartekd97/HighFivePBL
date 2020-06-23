@@ -51,7 +51,7 @@ namespace WindowManager
 			SCREEN_HEIGHT = mode->height;
 		}
 
-		window = glfwCreateWindow(SCREEN_WIDTH, screenHeight, windowTitle.c_str(), monitor, nullptr);
+		window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, windowTitle.c_str(), monitor, nullptr);
 		if (window != nullptr)
 		{
 			glfwMakeContextCurrent(window);

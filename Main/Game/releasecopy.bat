@@ -19,6 +19,11 @@ rem copy Data
 xcopy /s /y /c /i Game\Data Release\Data
 
 echo(
+echo Copying launcher...
+echo(
+xcopy /s /y /c /i "../Windows Launcher/Bin-Release-32" "Release"
+
+echo(
 echo Done.
 echo(
 
