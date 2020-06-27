@@ -65,9 +65,9 @@ public:
 				auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(other);
 				if (strcmp(name, enemyName) == 0)
 				{
-					if (scriptContainer.GetScript<EnemyController>()->IsAvoiding(GetGameObject()))
+					auto& rigidBody = HFEngine::ECS.GetComponent<RigidBody>(other);
+					if (scriptContainer.GetScript<EnemyController>()->IsAvoiding(GetGameObject()) && !rigidBody.isFalling)
 					{
-						//rb is falling
 						return;
 					}
 				}
