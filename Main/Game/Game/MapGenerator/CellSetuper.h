@@ -36,6 +36,7 @@ private:
 	std::vector<Zone> zones;
 	std::vector<GameObject> tempColliders;
 	std::vector<GameObject> tempObstacleColliders;
+	tsl::robin_set<GameObject> obstacles;
 	std::vector<float> rotations;
 	int largestZoneSize;
 
@@ -47,7 +48,7 @@ public:
 	void Setup();
 
 	bool _debugLiteMode = false;
-private:;
+private:
 	void SpawnStructure(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 	void SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
 	void SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation);
@@ -59,6 +60,7 @@ private:;
 	void UpdateColliders();
 	void ClearTempColliders();
 	void ClearTempObstacleColliders();
+	void ConvertObstacleColliders(bool toStatic);
 
 	void CreateFenceFires(std::shared_ptr<Prefab> firePrefab);
 

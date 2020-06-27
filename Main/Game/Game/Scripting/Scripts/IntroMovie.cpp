@@ -7,6 +7,7 @@
 #include "Physics/Physics.h"
 #include "Audio/AudioManager.h"
 #include "InputManager.h"
+#include "MapCellOptimizer.h"
 
 IntroMovie::~IntroMovie()
 {
@@ -234,6 +235,9 @@ void IntroMovie::FinishIntroAndClear()
 	auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(playerObject);
 	auto cameraFollower = scriptContainer.GetScript<PlayerCameraFollower>();
 	cameraFollower->Paused = false;
+
+	auto mapCellOptimizer = scriptContainer.GetScript<MapCellOptimizer>();
+	mapCellOptimizer->EnableOptimizer();
 
 	for (int i = 0; i < introGUILayer; i++)
 		GUIManager::SetLayerEnabled(i, true);

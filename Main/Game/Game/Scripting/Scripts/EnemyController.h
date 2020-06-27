@@ -321,21 +321,21 @@ public:
 				glm::vec3 playerDir = glm::normalize(playerPos - pos);
 				raycaster.Raycast(pos, playerDir);
 				auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(GetGameObject());
-				auto& mainOut = raycaster.GetOut();
+				auto mainOut = raycaster.GetOut();
 
 				if (mainOut.hittedObject == playerObject)
 				{
 					auto leftPos = pos - transform.GetWorldRight() * circleCollider.radius;
 					raycaster.Raycast(leftPos, playerDir);
-					auto& leftOut = raycaster.GetOut();
+					auto leftOut = raycaster.GetOut();
 
 					auto rightPos = pos + transform.GetWorldRight() * circleCollider.radius;
 					raycaster.Raycast(rightPos, playerDir);
-					auto& rightOut = raycaster.GetOut();
+					auto rightOut = raycaster.GetOut();
 
 					if (!IsObstacleOnWay(mainOut) && !IsObstacleOnWay(leftOut) && !IsObstacleOnWay(rightOut))
 					{
-						if (mainOut.distance >= attackDistance)
+						if (mainOut.distance > attackDistance)
 						{
 							targetPoint = playerPos - (playerDir * attackDistance);
 						}
