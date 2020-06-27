@@ -67,6 +67,7 @@ public:
 				{
 					if (scriptContainer.GetScript<EnemyController>()->IsAvoiding(GetGameObject()))
 					{
+						//rb is falling
 						return;
 					}
 				}
