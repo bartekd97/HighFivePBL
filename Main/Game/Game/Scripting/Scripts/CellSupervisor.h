@@ -85,6 +85,13 @@ public:
 			EventManager::FireEventTo(bridge.Gate, Events::Gameplay::Gate::OPEN_ME);
 	}
 
+	void LightOnGatesHere()
+	{
+		MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(GetGameObject());
+		for (auto bridge : mc.Bridges)
+			EventManager::FireEventTo(bridge.Gate, Events::Gameplay::Gate::LIGHTON_ME);
+	}
+
 	void MakeStatueUsable()
 	{
 		MapCell& mc = HFEngine::ECS.GetComponent<MapCell>(GetGameObject());
@@ -106,6 +113,7 @@ public:
 			{
 				scanForNoEnemies = false;
 				MakeStatueUsable();
+				LightOnGatesHere();
 				timerAnimator.DelayAction(0.5f, std::bind(&CellSupervisor::OpenGatesHere, this));
 			}
 		}

@@ -186,6 +186,7 @@ public:
 
 		playgroundActive = false;
 
+		EventManager::FireEventTo(cellGateObject, Events::Gameplay::Gate::LIGHTON_ME);
 		timerAnimator.DelayAction(0.5f, [&]() {
 			EventManager::FireEventTo(cellGateObject, Events::Gameplay::Gate::OPEN_ME);
 			DestroyGameObjectSafely();
