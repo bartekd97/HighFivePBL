@@ -35,6 +35,7 @@ namespace Events::Gameplay
 	{
 		const EventId OPEN_ME = "Events::Gameplay::Gate::OPEN_ME"_hash;
 		const EventId CLOSE_ME = "Events::Gameplay::Gate::CLOSE_ME"_hash;
+		const EventId LIGHTON_ME = "Events::Gameplay::Gate::LIGHTON_ME"_hash;
 	}
 	namespace Statue
 	{

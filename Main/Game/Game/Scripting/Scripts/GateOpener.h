@@ -23,11 +23,18 @@ private: // parameters
 	glm::vec3 rightRotationClosed = { 0.0f, 0.0f, 0.0f };
 	float animTime = 1.0f;
 
+	float lighOnIntenisity = 1.0f;
+	glm::vec3 lighOnEmissive = { 1.0f, 1.0f, 1.0f };
+	float lightOnAnimTime = 1.5f;
+
 private:
 	GameObject leftWingObject;
 	GameObject rightWingObject;
 
 	State currentState = State::OPENED;
+
+	std::vector<GameObject> lampRenderers;
+	std::vector<GameObject> lampLights;
 
 	TimerAnimator timerAnimator;
 
@@ -44,6 +51,10 @@ public:
 		RegisterVec3Parameter("rightRotationClosed", &rightRotationClosed);
 
 		RegisterFloatParameter("animTime", &animTime);
+
+		RegisterFloatParameter("lighOnIntenisity", &lighOnIntenisity);
+		RegisterVec3Parameter("lighOnEmissive", &lighOnEmissive);
+		RegisterFloatParameter("lightOnAnimTime", &lightOnAnimTime);
 	}
 
 	void Awake()
@@ -52,6 +63,13 @@ public:
 		rightWingObject = HFEngine::ECS.GetByNameInChildren(GetGameObject(), rightWingName)[0];
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::OPEN_ME, GateOpener::OnOpenMe));
 		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::CLOSE_ME, GateOpener::OnCloseMe));
+		EventManager::AddScriptListener(SCRIPT_LISTENER(Events::Gameplay::Gate::LIGHTON_ME, GateOpener::OnLightOnMe));
+	}
+
+	void Start()
+	{
+		lampRenderers = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "GateLamp");
+		lampLights = HFEngine::ECS.GetByNameInChildren(GetGameObject(), "GateLampLight");
 	}
 
 	void Update(float dt)
@@ -90,5 +108,20 @@ public:
 		AudioManager::PlayFromDefaultSource("squeaky_metal_gate", false, 0.05f);
 
 		currentState = State::CLOSED;
+	}
+
+	void OnLightOnMe(Event& ev)
+	{
+		for (auto& go : lampRenderers)
+		{
+			MeshRenderer& renderer = HFEngine::ECS.GetComponent<MeshRenderer>(go);
+			timerAnimator.AnimateVariable(&renderer.material->emissiveColor, renderer.material->emissiveColor, lighOnEmissive, lightOnAnimTime);
+		}
+
+		for (auto& go : lampLights)
+		{
+			PointLightRenderer& renderer = HFEngine::ECS.GetComponent<PointLightRenderer>(go);
+			timerAnimator.AnimateVariable(&renderer.light.intensity, renderer.light.intensity, lighOnIntenisity, lightOnAnimTime);
+		}
 	}
 };

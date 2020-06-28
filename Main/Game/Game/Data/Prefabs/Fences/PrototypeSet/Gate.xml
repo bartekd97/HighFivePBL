@@ -13,6 +13,10 @@
         <property name="rightRotationClosed" value="0.0,0.0,0.0"/>
 
         <property name="animTime" value="1.0"/>
+
+        <property name="lighOnIntenisity" value="1.0"/>
+        <property name="lighOnEmissive" value="1.0,1.0,1.0"/>
+        <property name="lightOnAnimTime" value="1.5"/>
     </component>
 
     <children>
@@ -23,6 +27,28 @@
             <component name="MeshRenderer">
                 <property name="configureFromHolder" value="true" />
             </component>
+
+            <children>
+                <child name="GateLamp" position="0,11.57,0" rotation="0,0,0" scale="8,8,8">
+                    <component name="ModelHolder">
+                        <property name="model" value="Structures/Fences:Lamp"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                        <property name="individualMaterial" value="true" />
+                    </component>
+                    <children>
+                        <child name="GateLampLight" position="0,0.1,0" rotation="0,0,0" scale="1,1,1">
+                            <component name="PointLightRenderer">
+                                <property name="color" value="1.0,0.9,0.5"/>
+                                <property name="radius" value="12.0"/>
+                                <property name="intensity" value="0.0"/>
+                                <property name="shadowIntensity" value="0.5"/>
+                            </component>
+                        </child>
+                    </children>
+                </child>
+            </children>
         </child>
         <child name="LeftWingAxle" position="-7.21,0,0" rotation="0,90,0" scale="1,1,1">
             <children>
@@ -49,6 +75,28 @@
             <component name="MeshRenderer">
                 <property name="configureFromHolder" value="true" />
             </component>
+
+            <children>
+                <child name="GateLamp" position="0,11.57,0" rotation="0,0,0" scale="8,8,8">
+                    <component name="ModelHolder">
+                        <property name="model" value="Structures/Fences:Lamp"/>
+                    </component>
+                    <component name="MeshRenderer">
+                        <property name="configureFromHolder" value="true" />
+                        <property name="individualMaterial" value="true" />
+                    </component>
+                    <children>
+                        <child name="GateLampLight" position="0,0.1,0" rotation="0,0,0" scale="1,1,1">
+                            <component name="PointLightRenderer">
+                                <property name="color" value="1.0,0.9,0.5"/>
+                                <property name="radius" value="12.0"/>
+                                <property name="intensity" value="0.0"/>
+                                <property name="shadowIntensity" value="0.5"/>
+                            </component>
+                        </child>
+                    </children>
+                </child>
+            </children>
         </child>
         <child name="RightWingAxle" position="7.21,0,0" rotation="0,-90,0" scale="1,1,1">
             <children>

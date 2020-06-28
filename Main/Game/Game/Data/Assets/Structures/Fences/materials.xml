@@ -1,0 +1,10 @@
+<materials textureLibrary="this">
+    <!-- LampOn is made dynamically from this using emissiveColor as multiplier -->
+    <material name="LampOffMaterial">
+        <property name="albedoMap" value="albedo"/>
+        <property name="metalnessMap" value="metal"/>
+        <property name="roughnessMap" value="rough"/>
+        <property name="emissiveMap" value="emiss"/>
+        <property name="emissiveColor" value="0.05,0.05,0.05"/>
+    </material>
+</materials>
