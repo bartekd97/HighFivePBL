@@ -15,6 +15,7 @@ namespace MainMenuUI
 	GameObject creditsGameObject = NULL_GAMEOBJECT;
 	std::shared_ptr<Prefab> creditsPrefab;
 
+	std::shared_ptr<Panel> gameTitlePanel;
 	std::map<int, std::shared_ptr<Button>> buttons;
 	std::map<int, std::shared_ptr<Panel>> buttonHovers;
 	//ALuint sourceMenu;
@@ -46,6 +47,15 @@ namespace MainMenuUI
 		//viniete->SetSize({WindowManager::SCREEN_WIDTH, WindowManager::SCREEN_HEIGHT });
 		viniete->textureColor.texture = library->GetTexture("menuViniete");
 		GUIManager::AddWidget(viniete);
+
+		gameTitlePanel = std::make_shared<Panel>();
+		gameTitlePanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+		gameTitlePanel->SetPivot(Anchor::TOPRIGHT);
+		gameTitlePanel->SetAnchor(Anchor::TOPRIGHT);
+		gameTitlePanel->SetPosition({ -0.025f, 0.03f, 0.0f });
+		gameTitlePanel->SetSize(glm::vec2{0.4542f, 0.2519f} * 0.75f);
+		gameTitlePanel->textureColor.texture = library->GetTexture("title");
+		GUIManager::AddWidget(gameTitlePanel, viniete);
 
 		//glm::vec2 buttonSize = { 512, 72 };
 		glm::vec2 buttonSize = { 0.4f, 0.1f };

@@ -9,4 +9,6 @@
     <texture name="btnQuit" file="quit.png" format="rgba" />
 
     <texture name="hoverBtn" file="hover.png" format="rgba" />
+
+    <texture name="title" file="title.png" format="rgba" />
 </textures>
