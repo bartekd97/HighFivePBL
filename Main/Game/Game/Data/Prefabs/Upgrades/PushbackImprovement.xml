@@ -5,10 +5,10 @@
 
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::PushbackDistance"/>
-        <property name="increaseBy" value="1.5"/>
+        <property name="increaseBy" value="1.2"/>
     </component>
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::PushbackForce"/>
-        <property name="increaseBy" value="4.0"/>
+        <property name="increaseBy" value="2.2"/>
     </component>
 </prefab>
