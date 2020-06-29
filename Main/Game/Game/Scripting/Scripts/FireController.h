@@ -82,7 +82,12 @@ public:
 			effect.spawnTime = std::chrono::steady_clock::now();
 			refreshList[object] = effect;
 
-			auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
+			if (strcmp(HFEngine::ECS.GetNameGameObject(object), enemyName) == 0)
+			{
+				std::dynamic_pointer_cast<EnemyController>(controller)->AvoidObstacle(GetGameObject());
+			}
+
+			/*auto& scriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(object);
 			if (controllers[object] == scriptContainer.GetScript<PlayerController>())
 			{
 				//AudioManager::PlaySoundFromSource(sourceFire);
@@ -91,7 +96,7 @@ public:
 				{
 					//AudioManager::PlaySoundFromSource(sourceFireScreaming);
 				}
-			}
+			}*/
 		}
 	}
 

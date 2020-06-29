@@ -236,6 +236,8 @@ void CellSetuper::Setup()
 
 	// clear temp colliders
 	ClearTempColliders();
+	ClearTempObstacleColliders();
+	ConvertObstacleColliders(true);
 	UpdateColliders();
 
 	// create pathfinding grid
@@ -286,10 +288,22 @@ void CellSetuper::Setup()
 		}
 	}
 
-	ClearTempObstacleColliders();
+	ConvertObstacleColliders(false);
 
 }
 
+
+void CellSetuper::ConvertObstacleColliders(bool toStatic)
+{
+	for (auto& obstacle : obstacles)
+	{
+		auto colliderObjects = HFEngine::ECS.GetGameObjectsWithComponentInChildren<Collider>(obstacle);
+		for (auto& colliderObject : colliderObjects)
+		{
+			Physics::cacheNodes[colliderObject].collider.type = toStatic ? Collider::ColliderTypes::STATIC : Collider::ColliderTypes::TRIGGER;
+		}
+	}
+}
 
 // only obstacles should have "random" rotation around Y axis
 // structures should have predefined, constant rotation
@@ -309,6 +323,7 @@ void CellSetuper::SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localP
 	prefab->Properties().GetFloat("height", height);
 
 	GameObject obstacle = prefab->Instantiate(obstacleContainer, { localPos.x, 0.0f, localPos.y }, {0.0f, rotation, 0.0f});
+	obstacles.insert(obstacle);
 
 	boxCol.SetWidthHeight(width, height);
 
@@ -317,7 +332,7 @@ void CellSetuper::SpawnObstacle(std::shared_ptr<Prefab> prefab, glm::vec2 localP
 	HFEngine::ECS.AddComponent<BoxCollider>(tmpCollider, boxCol);
 	tempObstacleColliders.push_back(tmpCollider);
 
-	Physics::ProcessGameObjects(tsl::robin_set<GameObject>({ tmpCollider }));
+	Physics::ProcessGameObjects({ tmpCollider }, false);
 }
 
 void CellSetuper::SpawnEnemy(std::shared_ptr<Prefab> prefab, glm::vec2 localPos, float rotation)

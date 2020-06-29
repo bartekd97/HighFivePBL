@@ -6,7 +6,7 @@ namespace PrimitiveRenderer {
 	void Init();
 	void DrawScreenQuad();
 
-	void DrawLine(glm::vec3& a, glm::vec3& b);
+	void DrawLine(const glm::vec3& a, const glm::vec3& b);
 	void DrawLines();
 	void RejectLines();
 

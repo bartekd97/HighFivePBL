@@ -15,4 +15,5 @@ struct RaycastHit
 	GameObject hittedObject;
 	float distance;
 	glm::vec3 hitPosition;
+	std::vector<GameObject> triggersHitted;
 };
