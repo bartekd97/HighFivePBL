@@ -21,10 +21,22 @@ public:
 		std::shared_ptr<Button> button;
 		std::shared_ptr<Panel> buttonIcon;
 		std::shared_ptr<Prefab> upgradePrefab;
+
+		std::shared_ptr<Texture> iconNormal;
+		std::shared_ptr<Texture> iconHover;
+	};
+
+	struct BarIcon
+	{
+		std::shared_ptr<Panel> background;
+		std::shared_ptr<Panel> icon;
 	};
 
 private: // parameters
 	float buttonYPos = -0.1f;
+
+	const int MaxUpgradesOnBar = 8;
+	const std::string GUILockName = "PlayerUpgrader";
 
 private: // variables
 	GameObject upgradeContainer;
@@ -32,13 +44,15 @@ private: // variables
 	std::shared_ptr<Panel> upgradePanel;
 	UpgradeButton upgradeButtons[3];
 	int currentHoveredButton = -1;
-	glm::vec2 upgradeButtonSize = { 0.14f, 0.37f };
+	glm::vec2 upgradeButtonSize = glm::vec2{ 0.25f, 0.7111f } * 0.75f;
+	glm::vec3 upgradeButtonIconPosition = glm::vec3{ 0.0f, -0.012f, 0.0f };
+	glm::vec2 upgradeButtonIconSize = glm::vec2{ 0.3125f, 0.1953f } * 1.5f; // 100x100 x multiplier
 	std::shared_ptr<Label> descriptionLabel;
 	bool canClickUpgradeButton = false;
 
 	std::shared_ptr<Panel> upgradesBarAvatarPanel;
 	std::shared_ptr<Panel> upgradesBarPanel;
-	std::vector<std::shared_ptr<Panel>> upgradesBarIcons;
+	std::vector<BarIcon> upgradesBarIcons;
 	std::shared_ptr<Panel> upgradeAnimIconPanel;
 
 	std::vector<std::shared_ptr<Prefab>> upgradePrefabs;
@@ -54,8 +68,8 @@ private: // variables
 		button->SetPivot(Anchor::CENTER);
 		button->SetPosition({ posX, buttonYPos, 0.0f });
 		button->SetSize(upgradeButtonSize);
-		button->textureColors[Button::STATE::NORMAL].texture = TextureManager::GetTexture("GUI/Upgrades", "CardButton_Normal");
-		button->textureColors[Button::STATE::HOVER].texture = TextureManager::GetTexture("GUI/Upgrades", "CardButton_Hover");
+		button->textureColors[Button::STATE::NORMAL].texture = TextureManager::GetTexture("GUI/Upgrades", "UpgradeStone");
+		button->textureColors[Button::STATE::HOVER].color = {0.75f, 0.75f, 0.75f, 1.0f};
 		button->OnStateChanged = std::bind(&PlayerUpgrader::ButtonStateChanged, this, index, std::placeholders::_1);
 		button->OnClickListener = std::bind(&PlayerUpgrader::ButtonClicked, this, index);
 
@@ -63,8 +77,9 @@ private: // variables
 		buttonIcon->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		buttonIcon->SetAnchor(Anchor::CENTER);
 		buttonIcon->SetPivot(Anchor::CENTER);
-		buttonIcon->SetPosition({ 0.0f, 0.0f, 0.0f });
-		buttonIcon->SetSize({1.0f, 1.0f});
+		buttonIcon->SetPosition(upgradeButtonIconPosition);
+		buttonIcon->SetSize(upgradeButtonIconSize);
+
 
 		upgradeButtons[index].button = button;
 		upgradeButtons[index].buttonIcon = buttonIcon;
@@ -116,28 +131,35 @@ public:
 		upgradesBarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		upgradesBarPanel->SetPivot(Anchor::BOTTOMLEFT);
 		upgradesBarPanel->SetPositionAnchor({ 0.045f, -0.06f, 0.0f }, Anchor::BOTTOMLEFT);
-		upgradesBarPanel->SetSize(glm::vec2{ 0.357f, 0.0695f } * 1.0f);
-		upgradesBarPanel->textureColor.texture = TextureManager::GetTexture("GUI/Upgrades", "UpgradesBar");
+		upgradesBarPanel->SetSize(glm::vec2{ 0.357f, 0.0695f * 0.286f } * 1.0f);
+		upgradesBarPanel->textureColor.texture = TextureManager::GetTexture("GUI/Upgrades", "UpgradesThinBar");
 		GUIManager::AddWidget(upgradesBarPanel);
 
 		upgradesBarAvatarPanel = std::make_shared<Panel>();
 		upgradesBarAvatarPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
 		upgradesBarAvatarPanel->SetPivot(Anchor::CENTER);
 		upgradesBarAvatarPanel->SetPositionAnchor({ 0.0f, 0.5f, 0.0f }, Anchor::TOPLEFT);
-		upgradesBarAvatarPanel->SetSize(glm::vec2{ 0.165f, 1.5f } * 1.2f);
+		upgradesBarAvatarPanel->SetSize(glm::vec2{ 0.165f, 1.5f / 0.286f } * 0.8f);
 		upgradesBarAvatarPanel->textureColor.texture = TextureManager::GetTexture("GUI/Upgrades", "UpgradesBarAvatar");
 		GUIManager::AddWidget(upgradesBarAvatarPanel, upgradesBarPanel);
 
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < MaxUpgradesOnBar; i++)
 		{
-			auto iconPanel = std::make_shared<Panel>();
-			iconPanel->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
-			iconPanel->SetPivot(Anchor::CENTER);
-			iconPanel->SetPositionAnchor({ 0.165f + 0.105f*float(i), 0.5f, 0.0f }, Anchor::TOPLEFT);
-			iconPanel->SetSize(glm::vec2{ 0.0825f, 0.75f } * 0.95f);
-			iconPanel->SetEnabled(false);
+			BarIcon iconPanel;
+			iconPanel.background = std::make_shared<Panel>();
+			iconPanel.background->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+			iconPanel.background->SetPivot(Anchor::CENTER);
+			iconPanel.background->SetPositionAnchor({ 0.15f + 0.11f*float(i), 0.5f, 0.0f }, Anchor::TOPLEFT);
+			iconPanel.background->SetSize(glm::vec2{ 0.0825f, 0.77f / 0.286f } * 0.95f);
+			iconPanel.background->textureColor.texture = TextureManager::GetTexture("GUI/Upgrades", "UpgradesBarUpgradeBackground");
+			iconPanel.icon = std::make_shared<Panel>();
+			iconPanel.icon->SetCoordinatesType(Widget::CoordinatesType::RELATIVE);
+			iconPanel.icon->SetSize(glm::vec2{ 1.0f, 1.0f });
 			upgradesBarIcons.push_back(iconPanel);
-			GUIManager::AddWidget(iconPanel, upgradesBarPanel);
+			GUIManager::AddWidget(iconPanel.background, upgradesBarPanel);
+			GUIManager::AddWidget(iconPanel.icon, iconPanel.background);
+			iconPanel.background->SetEnabled(false);
+			iconPanel.icon->SetEnabled(false);
 		}
 
 		// create icon for animating
@@ -159,7 +181,9 @@ public:
 		for (auto& upgrade : upgradePrefabs)
 		{
 			std::string iconName;
-			upgrade->Properties().GetString("icon", iconName);
+			upgrade->Properties().GetString("blackIcon", iconName);
+			iconTexturesCache[iconName] = TextureManager::GetTexture("GUI/Upgrades", iconName);
+			upgrade->Properties().GetString("whiteIcon", iconName);
 			iconTexturesCache[iconName] = TextureManager::GetTexture("GUI/Upgrades", iconName);
 		}
 	}
@@ -170,11 +194,16 @@ public:
 		if (hovered)
 		{
 			currentHoveredButton = index;
+			if (upgradeButtons[index].iconHover)
+				upgradeButtons[index].buttonIcon->textureColor.texture = upgradeButtons[index].iconHover;
 		}
 		else
 		{
 			if (currentHoveredButton == index)
 				currentHoveredButton = -1;
+
+			if (upgradeButtons[index].iconNormal)
+				upgradeButtons[index].buttonIcon->textureColor.texture = upgradeButtons[index].iconNormal;
 		}
 
 		if (currentHoveredButton == -1)
@@ -189,6 +218,17 @@ public:
 		}
 	}
 
+	std::optional<BarIcon> GetFreeUpgradeSlotOnBar()
+	{
+		for (auto& iconSlot : upgradesBarIcons)
+		{
+			if (!iconSlot.background->GetEnabled())
+			{
+				return iconSlot;
+			}
+		}
+		return std::nullopt;
+	}
 
 	void ButtonClicked(int index)
 	{
@@ -211,21 +251,16 @@ public:
 		timerAnimator.DelayAction(1.5f, [&]() {upgradePanel->SetEnabled(false);});
 
 
-		std::shared_ptr<Panel> freeIconSlot;
-		for (auto& iconSlot : upgradesBarIcons)
-		{
-			if (!iconSlot->GetEnabled())
-			{
-				freeIconSlot = iconSlot;
-				break;
-			}
-		}
-		if (freeIconSlot)
+		std::optional<BarIcon> freeIconSlot = GetFreeUpgradeSlotOnBar();
+		if (freeIconSlot.has_value())
 		{
 			glm::vec3 posFrom = upgradeButtons[index].buttonIcon->GetAbsolutePosition();
 			glm::vec2 scaleFrom = upgradeButtons[index].buttonIcon->GetLocalSize();
-			glm::vec3 posTo = freeIconSlot->GetAbsolutePosition();
-			glm::vec2 scaleTo = freeIconSlot->GetLocalSize();
+			glm::vec3 posTo = freeIconSlot->background->GetAbsolutePosition();
+			glm::vec2 scaleTo = freeIconSlot->background->GetLocalSize();
+
+			freeIconSlot->background->SetEnabled(true);
+			freeIconSlot->icon->SetEnabled(false);
 
 			upgradeAnimIconPanel->SetEnabled(true);
 			upgradeAnimIconPanel->textureColor.texture = upgradeButtons[index].buttonIcon->textureColor.texture;
@@ -239,19 +274,28 @@ public:
 				});
 			timerAnimator.DelayAction(1.2f, [&, freeIconSlot, index]() {
 				upgradeAnimIconPanel->SetEnabled(false);
-				freeIconSlot->SetEnabled(true);
-				freeIconSlot->textureColor.texture = upgradeButtons[index].buttonIcon->textureColor.texture;
+				freeIconSlot->icon->SetEnabled(true);
+				freeIconSlot->icon->textureColor.texture = upgradeAnimIconPanel->textureColor.texture;
 				});
 
 			upgradeButtons[index].buttonIcon->textureColor.color.a = 0.25f;
 		}
 
 		canClickUpgradeButton = false;
+
+		GUIManager::KeybindLock::Release(GUILockName);
 	}
 
 
 	void OnRequestUpgrade(Event& ev)
 	{
+		if (!GetFreeUpgradeSlotOnBar().has_value())
+		{
+			AudioManager::PlayFromDefaultSource("upgradesFull", false, 0.2f);
+
+			return;
+		}
+
 		std::vector<std::shared_ptr<Prefab>> upgrades = upgradePrefabs; // make copy
 
 		static std::random_device rd;
@@ -262,9 +306,12 @@ public:
 			int ui = dis(gen);
 			upgradeButtons[i].upgradePrefab = upgrades[ui];
 
-			std::string iconName;
-			upgrades[ui]->Properties().GetString("icon", iconName);
-			upgradeButtons[i].buttonIcon->textureColor.texture = iconTexturesCache[iconName];
+			std::string iconNameBlack, iconNameWhite;
+			upgrades[ui]->Properties().GetString("blackIcon", iconNameBlack);
+			upgrades[ui]->Properties().GetString("whiteIcon", iconNameWhite);
+			upgradeButtons[i].iconNormal = iconTexturesCache[iconNameBlack];
+			upgradeButtons[i].iconHover = iconTexturesCache[iconNameWhite];
+			upgradeButtons[i].buttonIcon->textureColor.texture = upgradeButtons[i].iconNormal;
 			upgradeButtons[i].buttonIcon->textureColor.color.a = 1.0f;
 			upgrades.erase(upgrades.begin() + ui);
 		}
@@ -307,6 +354,8 @@ public:
 		timerAnimator.DelayAction(1.5f, [&]() {
 			canClickUpgradeButton = true;
 			});
+
+		GUIManager::KeybindLock::Set(GUILockName);
 	}
 
 

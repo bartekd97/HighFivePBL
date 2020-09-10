@@ -3,6 +3,7 @@
 #include "ECS/Components/ScriptContainer.h"
 #include "MapGenerator/MapGenerator.h"
 #include "Audio/AudioManager.h"
+#include "../SceneUtilities.h"
 
 
 void GameScene::OnLoad()
@@ -24,6 +25,9 @@ void GameScene::OnLoad()
 	auto& tgScriptContainer = HFEngine::ECS.GetComponent<ScriptContainer>(testGuiObject);
 	tgScriptContainer.AddScript(testGuiObject, "GUIStatistics");
 
+	auto introMoviePrefab = PrefabManager::GetPrefab("IntroMovie");
+	auto introMovie = introMoviePrefab->Instantiate();
+
 	//
 	// SETUP ENVIRO
 	//
@@ -35,7 +39,11 @@ void GameScene::OnLoad()
 	HFEngine::WorldLight.shadowmapMaxDistanceSteps = 50.0f;
 	HFEngine::WorldLight.shadowmapScale = 1.25f;
 
-	HFEngine::MainCamera.SetScale(15.0f); // orig was 12.6f
+	float camScale;
+	//camScale = 15.0f;
+	camScale = SceneUtilities::CalculateGameplayCameraSizeFromWindowSize();
+	HFEngine::MainCamera.SetScale(camScale);
+
 	AudioManager::StopBackground();
 	AudioManager::PlayBackground("gameplayKorpecki", 0.1f);
 }

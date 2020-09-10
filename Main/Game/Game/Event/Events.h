@@ -35,6 +35,7 @@ namespace Events::Gameplay
 	{
 		const EventId OPEN_ME = "Events::Gameplay::Gate::OPEN_ME"_hash;
 		const EventId CLOSE_ME = "Events::Gameplay::Gate::CLOSE_ME"_hash;
+		const EventId LIGHTON_ME = "Events::Gameplay::Gate::LIGHTON_ME"_hash;
 	}
 	namespace Statue
 	{
@@ -43,6 +44,7 @@ namespace Events::Gameplay
 	namespace Boss
 	{
 		const EventId INITLIAZE_SCRIPT = "Events::Gameplay::Boss::INITLIAZE_SCRIPT"_hash;
+		const EventId INTRO_ACTION = "Events::Gameplay::Boss::INTRO_ACTION"_hash;
 		const EventId TRIGGERED = "Events::Gameplay::Boss::TRIGGERED"_hash;
 		const EventId DEAD = "Events::Gameplay::Boss::DEAD"_hash;
 	}
@@ -118,6 +120,8 @@ namespace Events::Gameplay
 	namespace MiniGhost
 	{
 		const ParamId Direction = "Events::Gameplay::MiniGhost::Direction"_hash; // glm::vec3
+		const ParamId Multiplier = "Events::Gameplay::MiniGhost::Multiplier"_hash; // float
+		const ParamId ScalePercentage = "Events::Gameplay::MiniGhost::ScalePercentage"_hash; // float
 	}
 }
 

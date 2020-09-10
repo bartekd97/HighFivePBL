@@ -13,7 +13,7 @@ namespace AudioManager
 	ALuint sourceMovement;
 	ALuint sourceGhost;
 	ALuint sourceObstacles;
-
+	ALuint sourceIntro;
 
 	ALenum error;
 	bool Initialized = false;
@@ -190,6 +190,7 @@ namespace AudioManager
 		InitSource(sourceBackground);
 		InitSource(sourceGhost);
 		InitSource(sourceObstacles);
+		InitSource(sourceIntro);
 
 		return 0;
 	}
@@ -441,8 +442,6 @@ namespace AudioManager
 
 		if ((error = alGetError()) != AL_NO_ERROR)
 		{
-			printf("wINNER : %d", error);
-
 			printf("alSourcei : %d", error);
 			printf("\n");
 			return -1;
@@ -562,7 +561,6 @@ namespace AudioManager
 		sourceInd++;
 		if (sourceInd > 49)
 		{
-			printf("KAMIL GENIUSZ");
 			sourceInd = 0;
 		}
 	}
@@ -667,6 +665,28 @@ namespace AudioManager
 	void StopGhost()
 	{
 		StopSource(sourceGhost);
+	}
+
+	void PlayIntro()
+	{
+		ClearSource(sourceIntro);
+
+		//get pregenerated buffer
+		ALuint buffer = GetBuffer("intro");
+
+		//attach source to buffer and set default values
+		SetExistingSource(sourceIntro, buffer, false);
+
+		//set volume
+		SetSourceVolume(sourceIntro, 1.0f);
+
+		//play source
+		PlaySoundFromSource(sourceIntro);
+	}
+
+	void StopIntro()
+	{
+		StopSource(sourceIntro);
 	}
 
 	void StopSource(ALuint& source)

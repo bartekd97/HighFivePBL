@@ -21,4 +21,13 @@ namespace GUIManager
 
 	void AddWidget(std::shared_ptr<Widget> widget, std::shared_ptr<Widget> parent = nullptr, int zIndex = 0);
 	void RemoveWidget(std::shared_ptr<Widget> widget);
+	void SetLayerEnabled(int zIndex, bool status);
+
+	namespace KeybindLock
+	{
+		void Set(std::string name);
+		void Release(std::string name);
+		bool Is(std::string name);
+		bool Any(); // true if any lock is active, false when no lock is currently active
+	};
 };

@@ -13,8 +13,8 @@
     <component name="ScriptComponent">
         <property name="name" value="BossController"/>
         <property name="moveSpeed" value="10.0"/>
-		<property name="maxHealth" value="150.0"/>
-        <property name="awaitingAnimation" value="praying"/>
+		<property name="maxHealth" value="200.0"/>
+        <property name="defaultAwaitingAnimation" value="praying_pre"/>
     </component>
     <component name="ScriptComponent">
         <property name="name" value="Bosses::Necromancer"/>

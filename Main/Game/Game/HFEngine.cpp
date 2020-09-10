@@ -27,6 +27,8 @@
 
 namespace HFEngine
 {
+	GLFWcursor* cursor = nullptr;
+	HFEngineConfigStruct configStruct;
 	bool initialized = false;
 	ECSCore ECS;
 	RenderPipeline Renderer;
@@ -37,7 +39,32 @@ namespace HFEngine
 	FrameCounter CURRENT_FRAME_NUMBER = 1;
 	int SHADOWMAP_SIZE = 1024;
 
-	bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
+	void InitializeCursor()
+	{
+		static bool cursorInitialized = false;
+		if (!cursorInitialized)
+		{
+			GLFWimage image;
+			auto data = TextureManager::LoadRawDataFromFile("GUI", "Cursor", image.width, image.height);
+			if (data.size() == 0)
+			{
+				LogError("HFEngine::InitializeCursor: failed to load cursor image");
+				return;
+			}
+			image.pixels = data.data();
+			cursor = glfwCreateCursor(&image, 0, 0);
+			if (cursor == nullptr)
+			{
+				LogError("HFEngine::InitializeCursor: failed to initialize cursor");
+				return;
+			}
+			glfwSetCursor(WindowManager::GetWindow(), cursor);
+			cursorInitialized = true;
+		}
+	}
+
+	//bool Initialize(const int& screenWidth, const int& screenHeight, const char* windowTitle)
+	bool Initialize(const HFEngineConfigStruct& config)
 	{
 		if (initialized)
 		{
@@ -52,10 +79,10 @@ namespace HFEngine
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		WindowManager::Initialize(screenWidth, screenHeight, windowTitle);
+		WindowManager::Initialize(config.ScreenWidth, config.ScreenHeight, config.WindowTitle, config.FullscreenMode);
 
-		RENDER_WIDTH = screenWidth;
-		RENDER_HEIGHT = screenHeight;
+		RENDER_WIDTH = config.ScreenWidth;
+		RENDER_HEIGHT = config.ScreenHeight;
 
 		if (WindowManager::GetWindow() == nullptr)
 		{
@@ -91,6 +118,8 @@ namespace HFEngine
 		//MainCamera.SetScale(0.03125f); // 1/32
 		//MainCamera.SetScale(0.0625f); // 1/16
 		//MainCamera.SetScale(1.75f);
+
+		InitializeCursor();
 
 		ECS.Init();
 
@@ -257,6 +286,11 @@ namespace HFEngine
 			LogError("HFEngine not initialized");
 			return;
 		}
+		if (cursor != nullptr)
+		{
+			glfwDestroyCursor(cursor);
+			cursor = nullptr;
+		}
 
 		if (WindowManager::IsClosing())
 		{
@@ -268,6 +302,11 @@ namespace HFEngine
 		{
 			WindowManager::Close();
 		}
+	}
+
+	const HFEngineConfigStruct& GetConfig()
+	{
+		return configStruct;
 	}
 
 /*

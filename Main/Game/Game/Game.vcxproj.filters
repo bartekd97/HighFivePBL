@@ -90,6 +90,8 @@
     <ClCompile Include="ECS\Systems\PhysicsSpawnTriggerSystem.cpp" />
     <ClCompile Include="ECS\Systems\TriggerColliderCollectorSystem.cpp" />
     <ClCompile Include="Rendering\Postprocessing\WorldFogEffect.cpp" />
+    <ClCompile Include="Scripting\Scripts\IntroMovie.cpp" />
+    <ClCompile Include="Scene\SceneUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -264,6 +266,9 @@
     <ClInclude Include="ECS\Systems\PhysicsSpawnTriggerSystem.h" />
     <ClInclude Include="ECS\Systems\TriggerColliderCollectorSystem.h" />
     <ClInclude Include="Rendering\Postprocessing\WorldFogEffect.h" />
+    <ClInclude Include="Scripting\Scripts\RotateAround.h" />
+    <ClInclude Include="Scripting\Scripts\IntroMovie.h" />
+    <ClInclude Include="Scene\SceneUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />

@@ -316,8 +316,8 @@ void GhostController::EndMarking()
 				FadeOutLine(activeLines[0]);
 			}
 		}
-		forceCancelNextLine = false;
 	}
+	forceCancelNextLine = false;
 
 	recordedPositions.clear();
 	spawnedMiniGhostsCurrent.clear();
@@ -391,13 +391,17 @@ void GhostController::AttackWithClosedFigure(
 	std::unordered_set<std::shared_ptr<GhostLine>>& lines,
 	std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
 {
+	float area = CalculateArea(crossings);
+	float percentage = (std::min(std::max(minFigureArea, area), maxFigureArea) - minFigureArea) / (maxFigureArea - minFigureArea);
+	float multiplier = (percentage * (maxFigureMultiplier - minFigureMultiplier)) + minFigureMultiplier;
+	LogInfo("Ghost Attack Figure: Area {} Perc {} Multi {}", area, percentage, multiplier);
 	glm::vec2 center = { 0.0f, 0.0f };
 	for (const auto& c : crossings)
 		center += c->position;
 	center /= (float)crossings.size();
 
 	glm::vec3 center3 = { center.x, 0.0f, center.y };
-	for (const auto& line : lines)
+	for (const auto& line : lines) 
 	{
 		glm::vec3 targetDir = { 0.0f, 0.0f, 0.0f };
 
@@ -408,11 +412,75 @@ void GhostController::AttackWithClosedFigure(
 
 		Event ev(Events::Gameplay::MiniGhost::ATTACK);
 		ev.SetParam<glm::vec3>(Events::Gameplay::MiniGhost::Direction, targetDir);
+		ev.SetParam<float>(Events::Gameplay::MiniGhost::Multiplier, multiplier);
+		ev.SetParam<float>(Events::Gameplay::MiniGhost::ScalePercentage, percentage);
 		for (auto const& g : line->ghosts)
 			EventManager::FireEventTo(g, ev);
 
 		RemoveGhostLineFromData(line);
 	}
+}
+
+int orientation(const glm::vec2& p, const glm::vec2& q, const glm::vec2& r)
+{
+	int val = (q.y - p.y) * (r.x - q.x) -
+		(q.x - p.x) * (r.y - q.y);
+
+	if (val == 0) return 0;
+	return (val > 0) ? 1 : 2;
+}
+
+std::vector<glm::vec2> CrossingsToPoints(std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
+{
+	std::vector<glm::vec2> initialPoints;
+	std::vector<glm::vec2> hull;
+
+	for (auto& crossing : crossings)
+	{
+		initialPoints.push_back(crossing->position);
+	}
+
+	int n = initialPoints.size();
+	if (n < 3) return hull;
+
+	int l = 0;
+	for (int i = 1; i < n; i++)
+		if (initialPoints[i].x < initialPoints[l].x)
+			l = i;
+
+	int p = l, q;
+	do
+	{
+		hull.push_back(initialPoints[p]);
+		q = (p + 1) % n;
+		for (int i = 0; i < n; i++)
+		{
+			if (orientation(initialPoints[p], initialPoints[i], initialPoints[q]) == 2)
+				q = i;
+		}
+
+		p = q;
+
+	} while (p != l);
+
+	return hull;
+}
+
+float GhostController::CalculateArea(std::unordered_set<std::shared_ptr<GhostCrossing>>& crossings)
+{
+	float area = 0.0f;
+
+	auto points = CrossingsToPoints(crossings);
+	auto crossingsSize = points.size();
+	if (crossingsSize < 3) return area;
+	int j;
+	for (int i = 0; i < crossingsSize; i++)
+	{
+		j = (i + 1) % crossingsSize;
+		area += 0.5f * (points[i].x * points[j].y - points[j].x * points[i].y);
+	}
+
+	return std::fabs(area);
 }
 
 void GhostController::CalculateCrossings(

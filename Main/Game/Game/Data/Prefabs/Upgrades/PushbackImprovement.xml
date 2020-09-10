@@ -1,13 +1,14 @@
 <prefab defaultScale="1.0,1.0,1.0">
     <property name="description" value="Improve pushback effect" />
-    <property name="icon" value="Icon_5" />
+    <property name="blackIcon" value="Icon_Torch_black" />
+    <property name="whiteIcon" value="Icon_Torch_white" />
 
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::PushbackDistance"/>
-        <property name="increaseBy" value="1.5"/>
+        <property name="increaseBy" value="1.2"/>
     </component>
     <component name="ScriptComponent">
         <property name="name" value="Upgrade::PushbackForce"/>
-        <property name="increaseBy" value="4.0"/>
+        <property name="increaseBy" value="2.2"/>
     </component>
 </prefab>

@@ -1,5 +1,6 @@
 #include <vector>
 
+#include <tsl/robin_set.h>
 #include "GUIManager.h"
 #include "../InputManager.h"
 #include "../Resourcing/ShaderManager.h"
@@ -11,8 +12,13 @@
 
 namespace GUIManager
 {
+	struct TrueBool {
+		bool value = true;
+	};
+
 	std::vector<std::shared_ptr<Widget>> root;
 	std::map<int, std::vector<std::shared_ptr<Widget>>> indexedWidgets;
+	std::map<int, TrueBool> layersEnablement;
 	std::shared_ptr<Shader> guiShader;
 	std::shared_ptr<Texture> defaultTexture;
 	bool initialized = false;
@@ -79,6 +85,8 @@ namespace GUIManager
 		glm::vec2 minMax[2];
 		for (auto it = indexedWidgets.begin(); it != indexedWidgets.end(); it++)
 		{
+			if (!layersEnablement[it->first].value) continue;
+
 			for (auto widget : it->second)
 			{
 				if (widget->GetEnabled())
@@ -150,4 +158,37 @@ namespace GUIManager
 
 		
 	}
+	void SetLayerEnabled(int zIndex, bool status)
+	{
+		layersEnablement[zIndex] = { status };
+	}
+
+
+
+	namespace KeybindLock
+	{
+		tsl::robin_set<std::string> locks;
+
+		void Set(std::string name)
+		{
+			assert(!locks.contains(name) && "This lock is already set");
+			locks.insert(name);
+		}
+
+		void Release(std::string name)
+		{
+			assert(locks.contains(name) && "This lock is not set");
+			locks.erase(name);
+		}
+
+		bool Is(std::string name)
+		{
+			return locks.contains(name);
+		}
+
+		bool Any()
+		{
+			return locks.size() > 0;
+		}
+	};
 }

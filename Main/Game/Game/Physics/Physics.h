@@ -12,9 +12,9 @@
 
 namespace Physics
 {
-	extern const float step;
-	extern const float maxDelta;
-	extern const int maxSteps;
+	extern float step;
+	extern float maxDelta;
+	extern int maxSteps;
 
 	extern std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
 	extern int maxGameObject;
@@ -28,8 +28,8 @@ namespace Physics
 
 	void ReLaunchTriggers(GameObject gameObject);
 
-	bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
-	bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT);
+	bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT, bool ignoreTriggers = true);
+	bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject = NULL_GAMEOBJECT, bool ignoreTriggers = true);
 
 	bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, const CircleCollider& c2, glm::vec3& sepVector);
 	bool DetectCollision(const glm::vec3& pos1, const CircleCollider& c1, const glm::vec3& pos2, glm::quat& rotation2, const BoxCollider& c2, glm::vec3& sepVector);

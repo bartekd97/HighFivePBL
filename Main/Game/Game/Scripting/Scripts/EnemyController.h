@@ -29,10 +29,11 @@ private: // parameters
 	float attackDistance = 1.5f;
 	float triggerDistance = 10.0f;
 	float attackDamage = 5.0f;
+	float avoidObstacleTime = 20.0f;
 	std::string soundAttack;
 	std::string soundDmg;
 	std::string soundDeath;
-	float stunTimeAfterPush = 0.7f;
+	float stunTimeAfterPush = 1.8f;
 
 private: // variables
 	GameObject visualObject;
@@ -42,12 +43,16 @@ private: // variables
 	bool isAttacking = false;
 	bool midAttack;
 	bool triggered = false;
+	bool runningFromObstacle = false;
+	glm::vec3 runningPoint;
 
 	glm::vec3 defaultColor;
 	glm::vec3 damagedColor = { 1.0f, 0.0f, 0.0f };
 	TimerAnimator timerAnimator;
 	bool lastFrameIsFalling = false;
 	std::chrono::steady_clock::time_point falledTime;
+	std::unordered_map<GameObject, std::pair<float, tsl::robin_set<GameObject>>> avoidedObstacles;
+
 
 	std::deque<glm::vec3> targetPath;
 	float nextPointMinDistance2 = 2.0f;
@@ -79,11 +84,25 @@ public:
 		RegisterStringParameter("soundDmg", &soundDmg);
 		RegisterStringParameter("soundDeath", &soundDeath);
 		RegisterFloatParameter("stunTimeAfterPush", &stunTimeAfterPush);
+		RegisterFloatParameter("avoidObstacleTime", &avoidObstacleTime);
 	}
 
 	~EnemyController()
 	{
 		GUIManager::RemoveWidget(healthBarPanel);
+	}
+
+	void AvoidObstacle(GameObject gameObject)
+	{
+		auto it = avoidedObstacles.find(gameObject);
+		if (it == avoidedObstacles.end())
+		{
+			auto triggers = HFEngine::ECS.GetGameObjectsWithComponentInChildren<Collider>(gameObject);
+			avoidedObstacles[gameObject] = std::make_pair(avoidObstacleTime, triggers);
+			auto& transform = GetTransform();
+			runningFromObstacle = true;
+			runningPoint = transform.GetWorldPosition() - transform.GetFront() * 20.0f;
+		}
 	}
 
 	void Awake()
@@ -231,6 +250,19 @@ public:
 			return;
 		}
 
+		for (auto it = avoidedObstacles.begin(); it != avoidedObstacles.end(); )
+		{
+			it->second.first -= dt;
+			if (it->second.first <= 0.0f)
+			{
+				it = avoidedObstacles.erase(it);
+			}
+			else
+			{
+				it++;
+			}
+		}
+
 		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
 
 		if (!triggered)
@@ -271,24 +303,52 @@ public:
 		else
 		{
 			std::optional<glm::vec3> targetPoint;
-			glm::vec3 pos = transform.GetPosition();
-			glm::vec3 playerDir = glm::normalize(playerPos - pos);
-			raycaster.Raycast(pos, playerDir);
-
-			if (raycaster.GetOut().hittedObject == playerObject)
+			if (runningFromObstacle)
 			{
-				if (raycaster.GetOut().distance >= attackDistance)
+				if (IsInObstacle())
 				{
-					targetPoint = playerPos - (playerDir * attackDistance);
+					targetPoint = runningPoint;
 				}
 				else
 				{
-					Attack();
+					runningFromObstacle = false;
 				}
 			}
-			else
+			
+			if (!targetPoint.has_value())
 			{
-				// update test path
+				glm::vec3 pos = transform.GetPosition();
+				glm::vec3 playerDir = glm::normalize(playerPos - pos);
+				raycaster.Raycast(pos, playerDir);
+				auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(GetGameObject());
+				auto mainOut = raycaster.GetOut();
+
+				if (mainOut.hittedObject == playerObject)
+				{
+					auto leftPos = pos - transform.GetWorldRight() * circleCollider.radius;
+					raycaster.Raycast(leftPos, playerDir);
+					auto leftOut = raycaster.GetOut();
+
+					auto rightPos = pos + transform.GetWorldRight() * circleCollider.radius;
+					raycaster.Raycast(rightPos, playerDir);
+					auto rightOut = raycaster.GetOut();
+
+					if (!IsObstacleOnWay(mainOut) && !IsObstacleOnWay(leftOut) && !IsObstacleOnWay(rightOut))
+					{
+						if (mainOut.distance > attackDistance)
+						{
+							targetPoint = playerPos - (playerDir * attackDistance);
+						}
+						else
+						{
+							Attack();
+						}
+					}
+				}
+			}
+
+			if (!targetPoint.has_value())
+			{
 				if (CanQueuePathThisFrame())
 				{
 					if (glm::distance2(playerPos, transform.GetPosition()) > attackDistance)
@@ -354,11 +414,11 @@ public:
 		auto& mesh = HFEngine::ECS.GetComponent<SkinnedMeshRenderer>(visualObject);
 		timerAnimator.AnimateVariable(&mesh.material->emissiveColor, mesh.material->emissiveColor, damagedColor, dmgAnimationDuration / 2.0f);
 		timerAnimator.DelayAction(dmgAnimationDuration / 2.0f, std::bind(&EnemyController::RestoreDefaultEmissive, this));
-		AudioManager::PlayFromDefaultSource(soundDmg, false, 1.0f);
+		AudioManager::PlayFromDefaultSource(soundDmg, false, 0.2f);
 
 		if (health <= 0)
 		{
-			AudioManager::PlayFromDefaultSource(soundDeath, false, 0.5f);
+			AudioManager::PlayFromDefaultSource(soundDeath, false, 0.2f);
 			DestroyGameObjectSafely();
 		}
 	}
@@ -411,6 +471,44 @@ public:
 			);
 
 		return diff;
+	}
+
+	bool IsAvoiding(GameObject gameObject)
+	{
+		auto it = avoidedObstacles.find(gameObject);
+		return it != avoidedObstacles.end();
+	}
+
+private:
+	bool IsObstacleOnWay(RaycastHit& rayOut)
+	{
+		for (auto& triggerHitted : rayOut.triggersHitted)
+		{
+			for (auto& obstacle : avoidedObstacles)
+			{
+				if (obstacle.second.second.find(triggerHitted) != obstacle.second.second.end())
+					return true;
+			}
+		}
+
+		return false;
+	}
+
+	bool IsInObstacle()
+	{
+		if (avoidedObstacles.size() == 0) return false;
+		auto& cacheNode = Physics::cacheNodes[GetGameObject()];
+		RaycastHit out;
+		auto pos = GetTransform().GetWorldPosition();
+		if (Physics::Raycast(pos, cacheNode.circleCollider, out, GetGameObject(), false))
+		{
+			for (auto& obstacle : avoidedObstacles)
+			{
+				if (obstacle.second.second.find(out.hittedObject) != obstacle.second.second.end())
+					return true;
+			}
+		}
+		return false;
 	}
 };
 

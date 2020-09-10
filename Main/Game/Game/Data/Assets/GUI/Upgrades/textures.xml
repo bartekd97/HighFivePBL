@@ -1,13 +1,29 @@
 <textures>
     <texture name="UpgradesBarAvatar" file="guzik_bonusy.png" format="rgba" />
     <texture name="UpgradesBar" file="pasek.png" format="rgba" />
+    <texture name="UpgradesThinBar" file="pasek_popraawiony.png" format="rgba" />
+    <texture name="UpgradesBarUpgradeBackground" file="kwadracik_na_pasek.png" format="rgba" />
 
     <texture name="CardButton_Normal" file="cardbutton_normal.png" format="rgba" />
     <texture name="CardButton_Hover" file="cardbutton_hover.png" format="rgba" />
 
-    <texture name="Icon_1" file="icons/1.png" format="rgba" />
-    <texture name="Icon_2" file="icons/2.png" format="rgba" />
-    <texture name="Icon_3" file="icons/3.png" format="rgba" />
-    <texture name="Icon_4" file="icons/4.png" format="rgba" />
-    <texture name="Icon_5" file="icons/5.png" format="rgba" />
+    <texture name="UpgradeStone" file="upgrade_stone.png" format="rgba" />
+
+
+
+    <texture name="Icon_Torch_black" file="icons/cooldownUpgrade_black.png" format="rgba" />
+    <texture name="Icon_Torch_white" file="icons/cooldownUpgrade_white.png" format="rgba" />
+
+    <texture name="Icon_GhostRenew_black" file="icons/ghostRenew_black.png" format="rgba" />
+    <texture name="Icon_GhostRenew_white" file="icons/ghostRenew_white.png" format="rgba" />
+
+    <texture name="Icon_GhostSpeed_black" file="icons/ghostSpeed_black.png" format="rgba" />
+    <texture name="Icon_GhostSpeed_white" file="icons/ghostSpeed_white.png" format="rgba" />
+
+    <texture name="Icon_LongerLine_black" file="icons/longerLine_black.png" format="rgba" />
+    <texture name="Icon_LongerLine_white" file="icons/longerLine_white.png" format="rgba" />
+
+    <texture name="Icon_MoreActiveLines_black" file="icons/moreActiveLines_black.png" format="rgba" />
+    <texture name="Icon_MoreActiveLines_white" file="icons/moreActiveLines_white.png" format="rgba" />
+
 </textures>

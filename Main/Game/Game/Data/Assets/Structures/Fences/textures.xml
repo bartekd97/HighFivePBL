@@ -1,0 +1,6 @@
+<textures>
+    <texture name="albedo" file="DefaultMaterial_Base_Color.png" format="srgb" />
+    <texture name="metal" file="DefaultMaterial_Metallic.png" format="r" />
+    <texture name="rough" file="DefaultMaterial_Roughness.png" format="r" />
+    <texture name="emiss" file="DefaultMaterial_Emissive.png" format="srgb" />
+</textures>

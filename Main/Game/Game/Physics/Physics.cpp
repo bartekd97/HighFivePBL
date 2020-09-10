@@ -2,9 +2,10 @@
 
 namespace Physics
 {
-	const float step = 0.15f;
-    const float maxDelta = 1.0f;
-	const int maxSteps = 20;
+    // TODO: maybe const and change it in Intromovie in more elegant way?
+    float step = 0.15f;
+    float maxDelta = 1.0f;
+    int maxSteps = 20;
 
     std::array<CacheNode, MAX_GAMEOBJECTS> cacheNodes;
     int maxGameObject = -1;
@@ -367,14 +368,14 @@ namespace Physics
         return (dist <= c2.radius);
     }*/
 
-    bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject)
+    bool Raycast(glm::vec3& position, glm::quat& rotation, const BoxCollider& boxCollider, RaycastHit& out, GameObject ignoredGameObject, bool ignoreTriggers)
     {
         glm::vec3 sepVector;
         for (int i = 0; i <= maxGameObject; i++)
         {
             auto& node = cacheNodes[i];
             if (node.state != CacheNode::STATE::ACTIVE) continue;
-            if (i == ignoredGameObject || node.collider.type == Collider::ColliderTypes::TRIGGER) continue;
+            if (i == ignoredGameObject || (node.collider.type == Collider::ColliderTypes::TRIGGER && ignoreTriggers)) continue;
             if (node.collider.shape == Collider::ColliderShapes::BOX)
             {
                 if (DetectCollision(position, rotation, boxCollider, i))
@@ -396,14 +397,14 @@ namespace Physics
         return false;
     }
 
-    bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject) // TODO: przy jednym odpaleniu ³apa³o ca³y czas jakiœ gameObject koñcowy
+    bool Raycast(glm::vec3& position, const CircleCollider& circleCollider, RaycastHit& out, GameObject ignoredGameObject, bool ignoreTriggers)
     {
         glm::vec3 sepVector;
         for (int i = 0; i <= maxGameObject; i++)
         {
             auto& node = cacheNodes[i];
             if (node.state != CacheNode::STATE::ACTIVE) continue;
-            if (i == ignoredGameObject || node.collider.type == Collider::ColliderTypes::TRIGGER) continue;
+            if (i == ignoredGameObject || (node.collider.type == Collider::ColliderTypes::TRIGGER && ignoreTriggers)) continue;
             if (node.collider.shape == Collider::ColliderShapes::BOX)
             {
                 if (DetectCollision(position, circleCollider, node.position, node.rotation, node.boxCollider, sepVector))

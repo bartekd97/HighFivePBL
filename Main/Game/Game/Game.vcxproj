@@ -53,7 +53,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;HF_LOGGER;HF_DEBUG_RENDER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;HF_LOGGER;HF_DEBUG_RENDER;HF_START_LITE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>..\3rd\include;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -165,9 +165,11 @@
     <ClCompile Include="Scene\Scenes\Game.cpp" />
     <ClCompile Include="Scene\Scenes\GameLite.cpp" />
     <ClCompile Include="Scene\Scenes\MainMenu.cpp" />
+    <ClCompile Include="Scene\SceneUtilities.cpp" />
     <ClCompile Include="Scripting\ScriptManager.cpp" />
     <ClCompile Include="Scripting\Scripts\Bosses\Necromancer.cpp" />
     <ClCompile Include="Scripting\Scripts\GhostController.cpp" />
+    <ClCompile Include="Scripting\Scripts\IntroMovie.cpp" />
     <ClCompile Include="Scripting\Scripts\TutorialEnemy.cpp" />
     <ClCompile Include="Utility\Logger.cpp" />
     <ClCompile Include="Utility\TaskPool.cpp" />
@@ -307,6 +309,8 @@
     <ClInclude Include="Scene\Scenes\Game.h" />
     <ClInclude Include="Scene\Scenes\GameLite.h" />
     <ClInclude Include="Scene\Scenes\MainMenu.h" />
+    <ClInclude Include="Scene\SceneUtilities.h" />
+    <ClInclude Include="Scripting\Scripts\IntroMovie.h" />
     <ClInclude Include="Scripting\Script.h" />
     <ClInclude Include="Scripting\ScriptManager.h" />
     <ClInclude Include="Scripting\Scripts\BossController.h" />
@@ -327,6 +331,7 @@
     <ClInclude Include="Scripting\Scripts\GUIStatistics.h" />
     <ClInclude Include="Scripting\Scripts\MapCellOptimizer.h" />
     <ClInclude Include="Scripting\Scripts\PlayerDeathController.h" />
+    <ClInclude Include="Scripting\Scripts\RotateAround.h" />
     <ClInclude Include="Scripting\Scripts\Scripts.h" />
     <ClInclude Include="Scripting\Scripts\StatueUser.h" />
     <ClInclude Include="Scripting\Scripts\TestScript.h" />
