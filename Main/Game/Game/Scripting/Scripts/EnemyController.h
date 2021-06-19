@@ -168,8 +168,8 @@ public:
 	void MidAttack()
 	{
 		midAttack = true;
-		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetPosition();
-		glm::vec3 pos = GetTransform().GetPosition();
+		glm::vec3 playerPos = HFEngine::ECS.GetComponent<Transform>(playerObject).GetWorldPosition();
+		glm::vec3 pos = GetTransform().GetWorldPosition();
 		glm::vec3 playerDir = glm::normalize(playerPos - pos);
 		raycaster.Raycast(pos, playerDir);
 
