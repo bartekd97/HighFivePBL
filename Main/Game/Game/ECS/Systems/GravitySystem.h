@@ -21,6 +21,7 @@ private:
 	GameObject GetBridge(GameObject gameObject, int closestCell);
 	float GetBridgeLevel(glm::vec3& position, GameObject bridge);
 	void OnGameObjectsClear(Event& ev);
+	void OnCellEntered(Event& ev);
 
 	float minimalMovement;
 	std::vector<std::pair<glm::vec3, MapCell>> cells;

@@ -13,9 +13,14 @@ void GravitySystem::Init()
 {
     minimalMovement = 0.01f;
     EventManager::AddListener(METHOD_LISTENER(Events::General::GAMEOBJECTS_CLEAR, GravitySystem::OnGameObjectsClear));
+    EventManager::AddListener(METHOD_LISTENER(Events::Gameplay::Player::CELL_ENTERED, GravitySystem::OnCellEntered));
 }
 
 void GravitySystem::OnGameObjectsClear(Event& ev)
+{
+    cells.clear();
+}
+void GravitySystem::OnCellEntered(Event& ev)
 {
     cells.clear();
 }
@@ -163,11 +168,22 @@ void GravitySystem::LoadCells()
 
 int GravitySystem::GetClosestCellIndex(glm::vec3& position)
 {
-    float dist, minDist = std::numeric_limits<float>::max();
-    float x, z;
+    //float dist, minDist = std::numeric_limits<float>::max();
+    //float x, z;
     int cellIndex = -1;
     for (int i = 0; i < cells.size(); i++)
     {
+        auto positionCell = cells[i].first;
+        auto& mapCell = cells[i].second;
+
+        glm::vec2 posTemp = glm::vec2(position.x - positionCell.x, position.z - positionCell.z);
+
+        if (mapCell.PolygonSmooth.IsPointInside(posTemp))
+        {
+            cellIndex = i;
+        }
+
+        /*
         x = cells[i].first.x - position.x;
         z = cells[i].first.z - position.z;
         dist = sqrt((x * x) + (z * z));
@@ -176,6 +192,7 @@ int GravitySystem::GetClosestCellIndex(glm::vec3& position)
             minDist = dist;
             cellIndex = i;
         }
+        */
     }
     return cellIndex;
 }
