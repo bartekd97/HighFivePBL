@@ -7,6 +7,7 @@
 #include "Components/MeshRenderer.h"
 #include "Components/SkinnedMeshRenderer.h"
 #include "Components/PointLightRenderer.h"
+#include "Components/GrassPatchRenderer.h"
 #include "Components/ParticleContainer.h"
 #include "Components/ParticleEmitter.h"
 #include "Components/ParticleRenderer.h"
@@ -18,3 +19,5 @@
 #include "Components/BoxCollider.h"
 #include "Components/GravityCollider.h"
 #include "Components/BoneAttacher.h"
+#include "Components/GrassCircleSimulationPrimitive.h"
+#include "Components/GrassSimulator.h"

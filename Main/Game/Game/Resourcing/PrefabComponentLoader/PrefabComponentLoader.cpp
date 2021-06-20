@@ -673,6 +673,55 @@ namespace {
 		}
 	};
 
+	class GrassCircleSimulationPrimitiveLoader : public IPrefabComponentLoader
+	{
+	public:
+		GrassCircleSimulationPrimitive primitive;
+
+		void Preprocess(PropertyReader& properties) override
+		{
+			static std::string tmpString;
+
+			primitive.radius = 0.0f;
+			primitive.innerRadius = 0.0f;
+			primitive.ring = 0.0f;
+			primitive.innerRing = 0.0f;
+
+			if (!properties.GetFloat("radius", primitive.radius, primitive.radius)) {
+				LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Missing 'radius' value. Using default: {}", primitive.radius);
+			}
+			if (!properties.GetFloat("innerRadius", primitive.innerRadius, primitive.innerRadius)) {
+				LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Missing 'innerRadius' value. Using default: {}", primitive.innerRadius);
+			}
+			if (!properties.GetFloat("ring", primitive.ring, primitive.ring)) {
+				LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Missing 'ring' value. Using default: {}", primitive.ring);
+			}
+			if (!properties.GetFloat("innerRing", primitive.innerRing, primitive.innerRing)) {
+				LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Missing 'innerRing' value. Using default: {}", primitive.innerRing);
+			}
+			if (!properties.GetFloat("targetHeight", primitive.targetHeight, primitive.targetHeight)) {
+				LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Missing 'targetHeight' value. Using default: {}", primitive.targetHeight);
+			}
+
+			if (properties.GetString("directionMode", tmpString))
+			{
+				if (tmpString.compare("SCRIPTED") == 0) primitive.directionMode = GrassCircleSimulationPrimitive::DirectionMode::SCRIPTED;
+				else if (tmpString.compare("RADIAL") == 0) primitive.directionMode = GrassCircleSimulationPrimitive::DirectionMode::RADIAL;
+				else
+					LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Invalid 'directionMode' value. Got: {}. Using default: {}", tmpString, "SCRIPTED");
+			}
+			else
+			{
+				LogWarning("GrassCircleSimulationPrimitiveLoader::Preprocess(): Missing 'directionMode' value. Using default: {}", "SCRIPTED");
+			}
+		}
+
+		virtual void Create(GameObject target) override {
+			GrassCircleSimulationPrimitive primitive = this->primitive;
+			HFEngine::ECS.AddComponent<GrassCircleSimulationPrimitive>(target, primitive);
+		}
+	};
+
 } // end of namespace
 
 
@@ -697,4 +746,6 @@ void PrefabComponentLoader::RegisterLoaders()
 	PrefabManager::RegisterComponentLoader("ScriptComponent", []() { return std::make_shared<ScriptComponentLoader>(); });
 
 	PrefabManager::RegisterComponentLoader("BoneAttacher", []() { return std::make_shared<BoneAttacherLoader>(); });
+	
+	PrefabManager::RegisterComponentLoader("GrassCircleSimulationPrimitive", []() { return std::make_shared<GrassCircleSimulationPrimitiveLoader>(); });
 }

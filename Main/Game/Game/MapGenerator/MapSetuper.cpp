@@ -1,8 +1,10 @@
 #include "MapSetuper.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/Transform.h"
+#include "ECS/Components/MeshRenderer.h"
 #include "HFEngine.h"
 #include "CellGenerator.h"
+#include "CellPainter.h"
 
 #define MAKE_SETUPER(cell, type) HFEngine::ECS.GetComponent<MapCell>(cell).CellType = type; cellSetupers[cell] = std::make_shared<CellSetuper>(config.cellStructuresConfig, cell);
 
@@ -34,6 +36,9 @@ void MapSetuper::Setup()
         cellSetupers[startupCell]->Setup();
         cellSetupers[secondCell]->Setup();
 
+        PaintCell(startupCell);
+        PaintCell(secondCell);
+
         // fix enemy container null gameobject
         for (auto cell : cells)
         {
@@ -55,6 +60,12 @@ void MapSetuper::Setup()
     for (auto& cs : cellSetupers)
     {
         cs.second->Setup();
+    }
+
+    // and finally paint
+    for (auto cell : cells)
+    {
+        PaintCell(cell);
     }
 }
 
@@ -91,10 +102,17 @@ void MapSetuper::GenerateCell(GameObject cell)
     ConvexPolygon& cellPolygon = HFEngine::ECS.GetComponent<MapCell>(cell)._BaseDelaunayPolygon;
     CellGenerator generator(
         config.cellMeshConfig,
-        cellType == MapCell::Type::BOSS ? config.cellBossFenceConfig : config.cellRegularFenceConfig,
-        config.cellTerrainConfig
+        cellType == MapCell::Type::BOSS ? config.cellBossFenceConfig : config.cellRegularFenceConfig
     );
     generator.Generate(cellPolygon, cell);
+}
+
+void MapSetuper::PaintCell(GameObject cell)
+{
+    CellPainter painter(config.cellTerrainConfig);
+    painter.Paint(cell);
+
+    HFEngine::ECS.GetComponent<MeshRenderer>(cell).material = painter.outputMaterial;
 }
 
 GameObject MapSetuper::CalculateBossCell(GameObject startupCell)

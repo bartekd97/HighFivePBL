@@ -1,0 +1,4 @@
+<textures>
+    <texture name="albedo" file="GrassFrond01AlbedoAlpha.tga" format="srgba" />
+    <texture name="WindNoise" file="noiseTexture.png" format="r" />
+</textures>

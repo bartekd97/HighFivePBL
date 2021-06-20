@@ -7,6 +7,7 @@ class Shader;
 class MeshRendererSystem;
 class SkinnedMeshRendererSystem;
 class PointLightRendererSystem;
+class GrassPatchRendererSystem;
 class ParticleRendererSystem;
 class CubeRenderSystem;
 class BoxColliderRenderSystem;
@@ -43,6 +44,7 @@ public:
 	struct RenderSystemsStruct {
 		std::shared_ptr<MeshRendererSystem> meshRenderer;
 		std::shared_ptr<SkinnedMeshRendererSystem> skinnedMeshRender;
+		std::shared_ptr<GrassPatchRendererSystem> grassPatchRender;
 		std::shared_ptr<PointLightRendererSystem> pointLightRenderer;
 		std::shared_ptr<ParticleRendererSystem> particleRenderer;
 #ifdef HF_DEBUG_RENDER
@@ -54,6 +56,7 @@ public:
 
 	struct FrameStatsStruct {
 		unsigned int renderedObjects = 0;
+		unsigned int renderedGrassPatches = 0;
 		unsigned int renderedPointLights = 0;
 		unsigned int renderedParticleEmitters = 0;
 	};

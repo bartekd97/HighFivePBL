@@ -197,9 +197,9 @@ void CellSetuper::Setup()
 
 		GameObject tutorialContainer = HFEngine::ECS.CreateGameObject(cell, "TutorialAssets");
 
-		setupConfig.cellTutorialConfig.WASD->Instantiate(tutorialContainer, roadSide * -6.0f);
-		setupConfig.cellTutorialConfig.SpaceKey->Instantiate(tutorialContainer, roadFront * -6.6f);
-		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, roadSide * 6.0f);
+		setupConfig.cellTutorialConfig.WASD->Instantiate(tutorialContainer, roadSide * -5.2f);
+		setupConfig.cellTutorialConfig.SpaceKey->Instantiate(tutorialContainer, roadFront * -5.2f);
+		setupConfig.cellTutorialConfig.LMBKey->Instantiate(tutorialContainer, roadSide * 5.2f);
 
 		float roadRotation = glm::atan(roadFront.x, roadFront.z);
 		GameObject ghostPlayground = setupConfig.cellTutorialConfig.GhostPlayground->Instantiate(

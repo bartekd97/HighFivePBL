@@ -10,6 +10,15 @@
         <property name="radius" value="0.65"/>
     </component>
 
+    <component name="GrassCircleSimulationPrimitive">
+        <property name="radius" value="1.3"/>
+        <property name="innerRadius" value="0.9"/>
+        <property name="ring" value="0.0"/>
+        <property name="innerRing" value="0.0"/>
+        <property name="targetHeight" value="0.1"/>
+        <property name="directionMode" value="SCRIPTED"/>
+    </component>
+
 
     <component name="ScriptComponent">
         <property name="name" value="EnemyController"/>

@@ -45,7 +45,6 @@
     <ClCompile Include="ECS\Systems\SkinAnimatorSystem.cpp" />
     <ClCompile Include="GUI\GUIManager.cpp" />
     <ClCompile Include="GUI\Button.cpp" />
-    <ClCompile Include="MapGenerator\CellMeshPainter.cpp" />
     <ClCompile Include="MapGenerator\CellSetuper.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\BoxColliderRenderSystem.cpp" />
     <ClCompile Include="ECS\Systems\Rendering\CircleColliderRenderSystem.cpp" />
@@ -92,6 +91,10 @@
     <ClCompile Include="Rendering\Postprocessing\WorldFogEffect.cpp" />
     <ClCompile Include="Scripting\Scripts\IntroMovie.cpp" />
     <ClCompile Include="Scene\SceneUtilities.cpp" />
+    <ClCompile Include="MapGenerator\CellPainter.cpp" />
+    <ClCompile Include="ECS\Systems\Rendering\GrassPatchRendererSystem.cpp" />
+    <ClCompile Include="ECS\Systems\GrassPrimitiveCollectorSystem.cpp" />
+    <ClCompile Include="ECS\Systems\GrassSimulatorSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -177,7 +180,6 @@
     <ClInclude Include="GUI\Anchor.h" />
     <ClInclude Include="Data\Shaders\Vertex\GUI.glsl" />
     <ClInclude Include="GUI\TextureColor.h" />
-    <ClInclude Include="MapGenerator\CellMeshPainter.h" />
     <ClInclude Include="MapGenerator\CellSetuper.h" />
     <ClInclude Include="ECS\Systems\Rendering\BoxColliderRenderSystem.h" />
     <ClInclude Include="ECS\Systems\Rendering\CircleColliderRenderSystem.h" />
@@ -269,10 +271,17 @@
     <ClInclude Include="Scripting\Scripts\RotateAround.h" />
     <ClInclude Include="Scripting\Scripts\IntroMovie.h" />
     <ClInclude Include="Scene\SceneUtilities.h" />
+    <ClInclude Include="MapGenerator\CellPainter.h" />
+    <ClInclude Include="ECS\Systems\Rendering\GrassPatchRendererSystem.h" />
+    <ClInclude Include="ECS\Systems\GrassPrimitiveCollectorSystem.h" />
+    <ClInclude Include="ECS\Systems\GrassSimulatorSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Data\Shaders\Fragment\CubeFragment.glsl" />
     <None Include="Data\Shaders\Fragment\GUI.glsl" />
     <None Include="Data\Shaders\Fragment\Text.glsl" />
+    <None Include="ECS\Components\GrassPatchRenderer.h" />
+    <None Include="ECS\Components\GrassSimulator.h" />
+    <None Include="ECS\Components\GrassCircleSimulationPrimitive.h" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,9 @@
+<materials textureLibrary="this">
+    <material name="grass">
+        <property name="albedoMap" value="albedo"/>
+        <property name="albedoColor" value="2.0,4.0,2.0"/> <!-- lighten a bit -->
+        <property name="metalnessValue" value="0"/>
+        <property name="roughnessValue" value="0.5"/>
+        <property name="emissiveColor" value="0.0,0.0,0.0"/>
+    </material>
+</materials>

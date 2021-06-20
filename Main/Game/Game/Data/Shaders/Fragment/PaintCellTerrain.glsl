@@ -2,13 +2,19 @@
 layout (location = 0) out vec3 gAlbedo;
 layout (location = 1) out float gMetalness;
 layout (location = 2) out float gRoughness;
+layout (location = 3) out float gGrassDensity;
 
 const float PI = 3.14159265359;
 
 uniform int GatesCount = 0;
 uniform vec2 Gates[8];
+
+uniform int CircleExcludersCount = 0;
+uniform vec4 CircleExcluders[32];
+
 uniform int PolygonPointsCount = 0;
 uniform vec2 PolygonPoints[64];
+
 uniform vec2 CellCenter;
 
 in vec2 TexCoords;
@@ -25,12 +31,14 @@ uniform float gRoadSmoothingWidth = 0.035f;
 uniform float gRoadCenterRadius = 0.06f;
 
 uniform float gCliffLevel = 0.9f;
+uniform float gCliffLevelGrass = 0.9f;
 uniform float gCliffSmoothing = 0.07f;
 
 float DistToLine(vec2 pt1, vec2 pt2, vec2 testPt);
 bool IsPointInside(vec2 point);
 float GetEdgeCenterRatio(vec2 point);
 float GetDistanceToRoadGate(vec2 point);
+bool isInsideEllipse(float h, float k, float x, float y, float a, float b);
 
 float GetRoadFactor()
 {
@@ -61,21 +69,34 @@ float GetRoadFactor()
     return 1.0f - min(cFactor, rFactor);
 }
 
-float GetCliffFactor()
+float GetCliffFactor(float level)
 {
     float factor;
     float innerLevel = GetEdgeCenterRatio(TexCoords - CellCenter);
-    if (innerLevel > gCliffLevel)
+    if (innerLevel > level)
         factor = 0.0f;
-    else if (innerLevel > (gCliffLevel - gCliffSmoothing))
+    else if (innerLevel > (level - gCliffSmoothing))
     {
-        float diff = gCliffLevel - innerLevel;
+        float diff = level - innerLevel;
         factor = pow(diff / gCliffSmoothing, 2);
     }
     else
         factor = 1.0f;
 
     return 1.0f - factor;
+}
+
+bool isInsideCircleExcluder()
+{
+    for (int i = 0; i < CircleExcludersCount; i++)
+    {
+        vec4 excluder = CircleExcluders[i];
+        if (isInsideEllipse(excluder.x, excluder.y, TexCoords.x, TexCoords.y, excluder.z, excluder.w))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 
@@ -87,7 +108,7 @@ void main()
     vec3 cliff = texture(cliffTexture, TexCoords * cliffTiling).rgb;
 
     float roadFactor = GetRoadFactor();
-    float cliffFactor = GetCliffFactor();
+    float cliffFactor = GetCliffFactor(gCliffLevel);
 
     vec3 albedo;
     albedo = mix(grass, road, roadFactor);
@@ -101,6 +122,11 @@ void main()
 
     //gMetalness = mix(0.2f, 0.3f, cliffFactor);
     gRoughness = mix(0.75f, 0.55f, roadFactor);
+
+    if (isInsideCircleExcluder())
+        gGrassDensity = 0.0;
+    else
+        gGrassDensity = mix((1.0 - roadFactor), 0.0, GetCliffFactor(gCliffLevelGrass));
 }
 
 
@@ -205,4 +231,9 @@ float GetDistanceToRoadGate(vec2 point)
     }
 
     return minDistance;
+}
+
+bool isInsideEllipse(float h, float k, float x, float y, float a, float b) {
+   float res = (pow((x - h), 2) / pow(a, 2)) + (pow((y - k), 2) / pow(b, 2));
+   return res <= 1.0;
 }

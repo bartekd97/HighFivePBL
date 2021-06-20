@@ -75,22 +75,29 @@ public:
 		renderedObjectsCountLabel->SetPositionAnchor(glm::vec3(10.0f, 85.0f, 0.0f), Anchor::TOPLEFT);
 		GUIManager::AddWidget(renderedObjectsCountLabel, panel);
 
+		renderedGrassPatchesCountLabel = std::make_shared<Label>();
+		renderedGrassPatchesCountLabel->SetText(RenderedGrassPatchesCountPrefix);
+		renderedGrassPatchesCountLabel->SetFontSize(16);
+		renderedGrassPatchesCountLabel->SetPivot(Anchor::TOPLEFT);
+		renderedGrassPatchesCountLabel->SetPositionAnchor(glm::vec3(10.0f, 105.0f, 0.0f), Anchor::TOPLEFT);
+		GUIManager::AddWidget(renderedGrassPatchesCountLabel, panel);
+
 		renderedPointLightsCountLabel = std::make_shared<Label>();
 		renderedPointLightsCountLabel->SetText(RenderedPointLightsCountPrefix);
 		renderedPointLightsCountLabel->SetFontSize(16);
 		renderedPointLightsCountLabel->SetPivot(Anchor::TOPLEFT);
-		renderedPointLightsCountLabel->SetPositionAnchor(glm::vec3(10.0f, 105.0f, 0.0f), Anchor::TOPLEFT);
+		renderedPointLightsCountLabel->SetPositionAnchor(glm::vec3(10.0f, 125.0f, 0.0f), Anchor::TOPLEFT);
 		GUIManager::AddWidget(renderedPointLightsCountLabel, panel);
 
 		renderedParticlesCountLabel = std::make_shared<Label>();
 		renderedParticlesCountLabel->SetText(RenderedParticlesCountPrefix);
 		renderedParticlesCountLabel->SetFontSize(16);
 		renderedParticlesCountLabel->SetPivot(Anchor::TOPLEFT);
-		renderedParticlesCountLabel->SetPositionAnchor(glm::vec3(10.0f, 125.0f, 0.0f), Anchor::TOPLEFT);
+		renderedParticlesCountLabel->SetPositionAnchor(glm::vec3(10.0f, 145.0f, 0.0f), Anchor::TOPLEFT);
 		GUIManager::AddWidget(renderedParticlesCountLabel, panel);
 
 		vsyncButton = std::make_shared<Button>();
-		vsyncButton->SetPositionAnchor(glm::vec3(10.0f, 150.0f, 0.0f), Anchor::TOPLEFT);
+		vsyncButton->SetPositionAnchor(glm::vec3(10.0f, 170.0f, 0.0f), Anchor::TOPLEFT);
 		vsyncButton->SetSize(glm::vec2(100.0f, 30.0f));
 		vsyncButton->SetPivot(Anchor::TOPLEFT);
 		vsyncButton->OnClickListener = GUI_METHOD_POINTER(GUIStatistics::OnVsyncButtonClick);
@@ -130,6 +137,7 @@ public:
 				fpsLabel->SetText(fpsPrefix + ss.str());
 				gameObjectCountLabel->SetText(GOCountPrefix + std::to_string(HFEngine::ECS.GetLivingGameObjectsCount()));
 				renderedObjectsCountLabel->SetText(RenderedObjectsCountPrefix + std::to_string(HFEngine::Renderer.GetLastFrameStats().renderedObjects));
+				renderedGrassPatchesCountLabel->SetText(RenderedGrassPatchesCountPrefix + std::to_string(HFEngine::Renderer.GetLastFrameStats().renderedGrassPatches));
 				renderedPointLightsCountLabel->SetText(RenderedPointLightsCountPrefix + std::to_string(HFEngine::Renderer.GetLastFrameStats().renderedPointLights));
 				renderedParticlesCountLabel->SetText(RenderedParticlesCountPrefix + std::to_string(HFEngine::Renderer.GetLastFrameStats().renderedParticleEmitters));
 
@@ -187,6 +195,7 @@ private:
 	const char* fpsPrefix = "FPS: ";
 	const char* GOCountPrefix = "GameObjects: ";
 	const char* RenderedObjectsCountPrefix = "Vis Objects: ";
+	const char* RenderedGrassPatchesCountPrefix = "Vis GrassPatches: ";
 	const char* RenderedPointLightsCountPrefix = "Vis PointLights: ";
 	const char* RenderedParticlesCountPrefix = "Vis Particles: ";
 	std::shared_ptr<Texture> expandTexture;
@@ -196,6 +205,7 @@ private:
 	std::shared_ptr<Label> fpsLabel;
 	std::shared_ptr<Label> gameObjectCountLabel;
 	std::shared_ptr<Label> renderedObjectsCountLabel;
+	std::shared_ptr<Label> renderedGrassPatchesCountLabel;
 	std::shared_ptr<Label> renderedPointLightsCountLabel;
 	std::shared_ptr<Label> renderedParticlesCountLabel;
 	std::shared_ptr<Button> vsyncButton;

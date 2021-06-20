@@ -3,6 +3,7 @@
 #include "ECS/Systems/Rendering/MeshRendererSystem.h"
 #include "ECS/Systems/Rendering/SkinnedMeshRendererSystem.h"
 #include "ECS/Systems/Rendering/PointLightRendererSystem.h"
+#include "ECS/Systems/Rendering/GrassPatchRendererSystem.h"
 #include "ECS/Systems/Rendering/ParticleRendererSystem.h"
 #include "ECS/Systems/Rendering/BoxColliderRenderSystem.h"
 #include "ECS/Systems/Rendering/CircleColliderRenderSystem.h"
@@ -101,6 +102,12 @@ void RenderPipeline::InitRenderSystems()
 		Signature signature;
 		signature.set(HFEngine::ECS.GetComponentType<PointLightRenderer>());
 		HFEngine::ECS.SetSystemSignature<PointLightRendererSystem>(signature);
+	}
+	RenderSystems.grassPatchRender = HFEngine::ECS.RegisterSystem<GrassPatchRendererSystem>();
+	{
+		Signature signature;
+		signature.set(HFEngine::ECS.GetComponentType<GrassPatchRenderer>());
+		HFEngine::ECS.SetSystemSignature<GrassPatchRendererSystem>(signature);
 	}
 	RenderSystems.particleRenderer = HFEngine::ECS.RegisterSystem<ParticleRendererSystem>();
 	{
@@ -206,10 +213,12 @@ void RenderPipeline::Render()
 	// schedule culling
 	RenderSystems.meshRenderer->ScheduleCulling(viewFrustum, lightFrustum);
 	RenderSystems.skinnedMeshRender->ScheduleCulling(viewFrustum, lightFrustum);
+	RenderSystems.grassPatchRender->ScheduleCulling(viewFrustum, lightFrustum);
 
 	// wait for culling
 	RenderSystems.meshRenderer->FinishCulling();
 	RenderSystems.skinnedMeshRender->FinishCulling();
+	RenderSystems.grassPatchRender->FinishCulling();
 	//auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	//long us = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 	//LogInfo("RENDERING: Culling time: {} us", us);
@@ -220,6 +229,7 @@ void RenderPipeline::Render()
 	glClear(GL_DEPTH_BUFFER_BIT);
 	RenderSystems.meshRenderer->RenderToShadowmap(lightCamera);
 	RenderSystems.skinnedMeshRender->RenderToShadowmap(lightCamera);
+	RenderSystems.grassPatchRender->RenderToShadowmap(lightCamera);
 
 	// schedule particle & point lights culling
 	RenderSystems.particleRenderer->ScheduleCulling(viewFrustum, lightFrustum);
@@ -232,6 +242,7 @@ void RenderPipeline::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	LastFrameStats.renderedObjects += RenderSystems.meshRenderer->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	LastFrameStats.renderedObjects += RenderSystems.skinnedMeshRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
+	LastFrameStats.renderedGrassPatches = RenderSystems.grassPatchRender->RenderToGBuffer(viewCamera, lightCamera, Shadowmap.depthmap);
 	//RenderSystems.cubeRenderer->Render();
 
 	// synchronize light rendering with finished gbuffer, make  write to emissive safely

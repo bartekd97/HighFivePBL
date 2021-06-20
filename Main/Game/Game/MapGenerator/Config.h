@@ -102,11 +102,11 @@ struct CellFenceFireConfig
 struct CellTerrainConfig
 {
     std::shared_ptr<Texture> grassTexture;
-    float grassTiling = 1.0f;
+    float grassTiling = 2.0f;
     std::shared_ptr<Texture> roadTexture;
-    float roadTiling = 4.0f;
+    float roadTiling = 8.0f;
     std::shared_ptr<Texture> cliffTexture;
-    float cliffTiling = 1.0f;
+    float cliffTiling = 2.0f;
 
     CellTerrainConfig()
     {

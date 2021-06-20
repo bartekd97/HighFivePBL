@@ -24,6 +24,7 @@ public:
 
 	bool IsPointInside(glm::vec2 point);
 	float GetEdgeCenterRatio(glm::vec2 point, int precision = 5);
+	glm::vec4 GetBounds();
 
 	ConvexPolygon ShellScaledBy(float mult);
 	ConvexPolygon ScaledBy(float mult);
