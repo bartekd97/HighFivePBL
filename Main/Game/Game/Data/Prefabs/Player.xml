@@ -8,6 +8,15 @@
         <property name="radius" value="0.75"/>
     </component>
 
+    <component name="GrassCircleSimulationPrimitive">
+        <property name="radius" value="1.2"/>
+        <property name="innerRadius" value="1.0"/>
+        <property name="ring" value="0.0"/>
+        <property name="innerRing" value="0.0"/>
+        <property name="targetHeight" value="0.0"/>
+        <property name="directionMode" value="SCRIPTED"/>
+    </component>
+
 
     <component name="ScriptComponent">
         <property name="name" value="PlayerController"/>
@@ -134,6 +143,14 @@
                 <property name="colorOverTime" value="0.2,0.2,0.2;0.05,0.05,0.05"/>
                 <property name="opacityOverTime" value="0.0;0.2;0.5;0.2;0.0"/>
                 <property name="visibilityRadius" value="7.5"/>
+            </component>
+            <component name="GrassCircleSimulationPrimitive">
+                <property name="radius" value="0.0"/>
+                <property name="innerRadius" value="0.0"/>
+                <property name="ring" value="0.0"/>
+                <property name="innerRing" value="0.0"/>
+                <property name="targetHeight" value="0.0"/>
+                <property name="directionMode" value="RADIAL"/>
             </component>
         </child>
 

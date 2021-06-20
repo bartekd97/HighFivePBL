@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include "MapGenerator/ConvexPolygon.h"
+#include "MapGenerator/CellMeshGenerator.h"
 #include "ECS/ECSTypes.h"
 
 class PathfindingGrid;
@@ -46,6 +47,7 @@ public:
 
     // don't use this, its only for generation purpose
     ConvexPolygon _BaseDelaunayPolygon;
+    CellMeshGenerator::UVData _uvData;
 };
 
 

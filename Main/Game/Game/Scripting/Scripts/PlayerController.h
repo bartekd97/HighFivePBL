@@ -494,12 +494,20 @@ public:
 		auto& emitterSmoke = HFEngine::ECS.GetComponent<ParticleEmitter>(attackSmokeObject);
 		auto& emitterTorch = HFEngine::ECS.GetComponent<ParticleEmitter>(torchFlameParticleObject);
 		auto& lightTorch = HFEngine::ECS.GetComponent<PointLightRenderer>(torchFlameLightObject);
+		auto& grassPrimitive = HFEngine::ECS.GetComponent<GrassCircleSimulationPrimitive>(attackSmokeObject);
  
 		AudioManager::PlayFromDefaultSource("pushback", false);
 
 		// anim & pushback stuff
 		timerAnimator.DelayAction(0.2f, [&]() {
 			emitterSmoke.emitting = true;
+
+			grassPrimitive.targetHeight = 0.0f;
+			timerAnimator.AnimateVariable(&grassPrimitive.radius, 0.0f, pushBackDistance * 1.25f, 0.8f);
+			timerAnimator.AnimateVariable(&grassPrimitive.innerRadius, 0.0f, pushBackDistance * 1.25f, 0.8f);
+			timerAnimator.UpdateInTime(0.8f, [&](float t) {
+				grassPrimitive.targetHeight = t*t*t;
+				});
 			});
 		timerAnimator.DelayAction(0.35f, [&]() {
 			Pushback();

@@ -6,6 +6,7 @@
 class Texture {
 	friend void TextureManager::Initialize();
 	friend std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config);
+	friend std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(float* data, int width, int height, GLint dataFormat, TextureConfig& config);
 	friend std::shared_ptr<Texture> TextureManager::CreateEmptyTexture(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat, GLenum filtering);
 	friend std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filename, TextureConfig& config);
 	

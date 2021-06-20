@@ -28,6 +28,7 @@ private:
 			{
 				cullingData.worldAABB = RecalculateWorldAABB(GetLocalAABB(renderer), transform);
 				cullingData.worldTransform = transform.GetWorldTransform();
+				cullingData.targetGameObject = gameObject;
 			}
 			cullingData.lastUpdate = HFEngine::CURRENT_FRAME_NUMBER;
 

@@ -21,3 +21,6 @@
 #include "Systems/GravitySystem.h"
 #include "Systems/RigidBodyCollectorSystem.h"
 #include "Systems/GarbageCollectorSystem.h"
+
+#include "Systems/GrassSimulatorSystem.h"
+#include "Systems/GrassPrimitiveCollectorSystem.h"

@@ -1,0 +1,3 @@
+<models materialLibrary="this">
+    <model name="Grass1" material="grass" mesh="grass1.glb" />
+</models>

@@ -25,6 +25,7 @@ public:
 	bool _debugLiteMode = false;
 private:
 	void GenerateCell(GameObject cell);
+	void PaintCell(GameObject cell);
 
 	GameObject CalculateBossCell(GameObject startupCell);
 };

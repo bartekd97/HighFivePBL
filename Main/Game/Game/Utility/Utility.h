@@ -9,6 +9,7 @@
 #define rad2deg(x) ((x)/M_PI)*180.0f
 #define deg2rad(x) ((x)/180.0f)*M_PI
 #define nullableString(s) s ? s : ""
+#define inverseLerp(x, a, b) ((x - a) / (b - a))
 
 constexpr std::uint32_t fnv1a_32(char const* s, std::size_t count)
 {

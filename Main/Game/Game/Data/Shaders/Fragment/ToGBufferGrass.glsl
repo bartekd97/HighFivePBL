@@ -1,0 +1,86 @@
+#version 330 core 
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec4 gAlbedoFade;
+layout (location = 3) out vec3 gMetalnessRoughnessShadow;
+layout (location = 4) out vec3 gEmissive;
+
+uniform sampler2DShadow shadowmap;
+
+uniform sampler2D albedoMap;
+uniform sampler2D roughnessMap;
+uniform sampler2D metalnessMap;
+uniform sampler2D normalMap;
+uniform sampler2D emissiveMap;
+
+uniform vec3 albedoColor;
+uniform float roughnessValue;
+uniform float metalnessValue;
+uniform vec3 emissiveColor;
+
+
+in VS_OUT {
+    vec3 FragPos;
+    vec3 FragPosWorld;
+    vec4 LightSpacePos;
+    vec2 TexCoords;
+    vec3 Normal;
+} fs_in;
+
+// distance fade
+uniform float fadeBelowY = -3.0f;
+uniform float fadeRangeY = 7.0f;
+uniform float alphaCutoff = 0.5f;
+
+
+float calculateShadowFactor()
+{
+    vec3 projCoords = fs_in.LightSpacePos.xyz / fs_in.LightSpacePos.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    float bias = 0.001;
+    projCoords.z -= bias;
+
+    vec2 offset = vec2(1.0) / textureSize(shadowmap, 0);
+    float factor = 0.0;
+
+    for (int y = -1 ; y <= 1 ; y++) {
+        for (int x = -1 ; x <= 1 ; x++) {
+            vec2 sampleOffset = vec2(x * offset.x, y * offset.y);
+            vec3 UVC = vec3(projCoords.xy + sampleOffset, projCoords.z);
+            factor += texture(shadowmap, UVC);
+        }
+    }
+
+    return (1.0f - factor / 9.0f);
+}
+
+
+void main()
+{
+    vec4 albedo = texture(albedoMap, fs_in.TexCoords).rgba;
+
+    if (albedo.a < alphaCutoff)
+        discard;
+
+    /*
+    vec3 normal = texture(normalMap, fs_in.TexCoords).rgb;
+    normal = normalize(normal * 2.0 - 1.0);   
+    normal = normalize(fs_in.TBN * normal); 
+    */
+    vec3 normal = fs_in.Normal;
+    if (!gl_FrontFacing)
+        normal = -normal;
+
+    float metalness = texture(metalnessMap, fs_in.TexCoords).r * metalnessValue;
+    float roughness = texture(roughnessMap, fs_in.TexCoords).r * roughnessValue;
+    float shadow = calculateShadowFactor();
+
+    float fadeY = -(fs_in.FragPosWorld.y - fadeBelowY);
+    fadeY = clamp(1.0f - (fadeY/fadeRangeY), 0.0, 1.0f);
+
+    gPosition = fs_in.FragPos;
+    gNormal = normal;
+    gAlbedoFade = vec4(albedo.rgb * albedoColor, fadeY);
+    gMetalnessRoughnessShadow = vec3(metalness, roughness, shadow);
+    gEmissive = texture(emissiveMap, fs_in.TexCoords).rgb * emissiveColor;
+}

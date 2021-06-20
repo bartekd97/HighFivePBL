@@ -137,6 +137,7 @@ namespace HFEngine
 		ECS.RegisterComponent<MeshRenderer>();
 		ECS.RegisterComponent<SkinnedMeshRenderer>();
 		ECS.RegisterComponent<PointLightRenderer>();
+		ECS.RegisterComponent<GrassPatchRenderer>();
 		// particle components
 		ECS.RegisterComponent<ParticleContainer>();
 		ECS.RegisterComponent<ParticleEmitter>();
@@ -150,6 +151,9 @@ namespace HFEngine
 		ECS.RegisterComponent<CellGate>();
 		ECS.RegisterComponent<CellBridge>();
 		ECS.RegisterComponent<CellChild>();
+		// grass components
+		ECS.RegisterComponent<GrassCircleSimulationPrimitive>();
+		ECS.RegisterComponent<GrassSimulator>();
 
 		auto nextFrameDestroySystem = ECS.RegisterSystem<NextFrameDestroySystem>(true);
 
@@ -247,6 +251,19 @@ namespace HFEngine
 			signature.set(ECS.GetComponentType<CellChild>());
 			signature.set(ECS.GetComponentType<CellPathfinder>());
 			ECS.SetSystemSignature<CellPathfinderSystem>(signature);
+		}
+
+		auto grassPrimitiveCollectorSystem = ECS.RegisterSystem<GrassPrimitiveCollectorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<GrassCircleSimulationPrimitive>());
+			ECS.SetSystemSignature<GrassPrimitiveCollectorSystem>(signature);
+		}
+		auto grassSimulatorSystem = ECS.RegisterSystem<GrassSimulatorSystem>();
+		{
+			Signature signature;
+			signature.set(ECS.GetComponentType<GrassSimulator>());
+			ECS.SetSystemSignature<GrassSimulatorSystem>(signature);
 		}
 
 

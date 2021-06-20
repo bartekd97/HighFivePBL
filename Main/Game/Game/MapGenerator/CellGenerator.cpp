@@ -1,7 +1,6 @@
 #include "CellGenerator.h"
 #include "CellMeshGenerator.h"
 #include "CellFenceGenerator.h"
-#include "CellMeshPainter.h"
 #include "ECS/Components/MapLayoutComponents.h"
 #include "ECS/Components/MeshRenderer.h"
 #include "HFEngine.h"
@@ -12,7 +11,6 @@ void CellGenerator::Generate(ConvexPolygon& originalPolygon, GameObject cell)
 
     GenerateMesh(cell);
     GenerateFence(cell);
-    PaintMesh(cell);
 }
 
 void CellGenerator::GenerateMesh(GameObject cell)
@@ -39,6 +37,7 @@ void CellGenerator::GenerateMesh(GameObject cell)
     HFEngine::ECS.GetComponent<MapCell>(cell).PolygonBaseInner = generator.PolygonBaseInner;
     HFEngine::ECS.GetComponent<MapCell>(cell).PolygonSmooth = generator.PolygonSmooth;
     HFEngine::ECS.GetComponent<MapCell>(cell).PolygonSmoothInner = generator.PolygonSmoothInner;
+    HFEngine::ECS.GetComponent<MapCell>(cell)._uvData = uvData;
 }
 
 void CellGenerator::GenerateFence(GameObject cell)
@@ -79,13 +78,4 @@ void CellGenerator::GenerateFence(GameObject cell)
         generator.MakeHoles();
     generator.PrepareObjects();
     generator.BuildSections(fenceContainer);
-}
-
-void CellGenerator::PaintMesh(GameObject cell)
-{
-    CellMeshPainter painter(terrainConfig, uvData);
-    for (auto go : gateObjects)
-        painter.AddGate(go);
-
-    HFEngine::ECS.GetComponent<MeshRenderer>(cell).material = painter.CreateMaterial();
 }

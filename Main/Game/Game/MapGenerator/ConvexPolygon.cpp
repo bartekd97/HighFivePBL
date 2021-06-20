@@ -119,6 +119,19 @@ float ConvexPolygon::GetEdgeCenterRatio(glm::vec2 point, int precision)
     return plen / (plen + edgeDist);
 }
 
+glm::vec4 ConvexPolygon::GetBounds()
+{
+    glm::vec4 bounds(0);
+    for (int i = 0; i < Points.size(); i++)
+    {
+        bounds.x = glm::min(Points[i].x, bounds.x);
+        bounds.y = glm::min(Points[i].y, bounds.y);
+        bounds.z = glm::max(Points[i].x, bounds.z);
+        bounds.w = glm::max(Points[i].y, bounds.w);
+    }
+    return bounds;
+}
+
 ConvexPolygon ConvexPolygon::ShellScaledBy(float mult)
 {
     float sumlen = 0.0f;

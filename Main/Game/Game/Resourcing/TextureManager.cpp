@@ -46,7 +46,7 @@ namespace TextureManager {
 
 		return textureId;
 	}
-	GLuint MakeTexture2DFromData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config)
+	GLuint MakeTexture2DFromData(void* data, int width, int height, GLint dataFormat, GLenum dataType, TextureConfig& config)
 	{
 		GLuint textureId;
 
@@ -60,7 +60,7 @@ namespace TextureManager {
 		glTexImage2D(GL_TEXTURE_2D, 0, config.format,
 			width, height,
 			0, // deprecated
-			dataFormat, GL_UNSIGNED_BYTE, data);
+			dataFormat, dataType, data);
 		if (config.generateMipmaps)
 			glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -98,7 +98,13 @@ void TextureManager::Initialize()
 std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(unsigned char* data, int width, int height, GLint dataFormat, TextureConfig& config)
 {
 	// TODO: Logging when texture creation failed
-	GLuint textureId = MakeTexture2DFromData(data, width, height, dataFormat, config);
+	GLuint textureId = MakeTexture2DFromData(data, width, height, dataFormat, GL_UNSIGNED_BYTE, config);
+	return std::shared_ptr<Texture>(new Texture(textureId, width, height, config.format));
+}
+std::shared_ptr<Texture> TextureManager::CreateTextureFromRawData(float* data, int width, int height, GLint dataFormat, TextureConfig& config)
+{
+	// TODO: Logging when texture creation failed
+	GLuint textureId = MakeTexture2DFromData(data, width, height, dataFormat, GL_FLOAT, config);
 	return std::shared_ptr<Texture>(new Texture(textureId, width, height, config.format));
 }
 std::shared_ptr<Texture> TextureManager::CreateEmptyTexture(int width, int height, GLint dataFormat, GLenum dataType, GLint internalFormat, GLenum filtering)
@@ -130,7 +136,7 @@ std::shared_ptr<Texture> TextureManager::CreateTextureFromFile(std::string filen
 	else if (noChannels == 4)
 		dataFormat = GL_RGBA;
 
-	GLuint textureId = MakeTexture2DFromData(texData, width, height, dataFormat, config);
+	GLuint textureId = MakeTexture2DFromData(texData, width, height, dataFormat, GL_UNSIGNED_BYTE, config);
 
 	stbi_image_free(texData);
 
