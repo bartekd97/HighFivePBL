@@ -168,9 +168,11 @@ void GravitySystem::LoadCells()
 
 int GravitySystem::GetClosestCellIndex(glm::vec3& position)
 {
-    //float dist, minDist = std::numeric_limits<float>::max();
-    //float x, z;
-    int cellIndex = -1;
+    float dist, minDist = std::numeric_limits<float>::max();
+    float x, z;
+
+    int cellIndexInside = -1;
+    int cellIndexNearest = -1;
     for (int i = 0; i < cells.size(); i++)
     {
         auto positionCell = cells[i].first;
@@ -180,21 +182,29 @@ int GravitySystem::GetClosestCellIndex(glm::vec3& position)
 
         if (mapCell.PolygonSmooth.IsPointInside(posTemp))
         {
-            cellIndex = i;
+            cellIndexInside = i;
+            break;
         }
 
-        /*
         x = cells[i].first.x - position.x;
         z = cells[i].first.z - position.z;
         dist = sqrt((x * x) + (z * z));
         if (dist < minDist)
         {
             minDist = dist;
-            cellIndex = i;
+            cellIndexNearest = i;
         }
-        */
     }
-    return cellIndex;
+
+    // if there is no cell tgat you are inside, then as a fallback return nearest cell to allow proper calculations
+    if (cellIndexInside == -1)
+    {
+        return cellIndexNearest;
+    }
+    else
+    {
+        return cellIndexInside;
+    }
 }
 
 GameObject GravitySystem::GetBridge(GameObject gameObject, int closestCell)
