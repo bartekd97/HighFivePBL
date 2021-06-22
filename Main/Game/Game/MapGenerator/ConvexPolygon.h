@@ -11,14 +11,15 @@ private:
 		float angle;
 	};
 	std::vector<PointAngle> pointAngles;
+	bool isValid;
 
 	void CalculatePointAngles();
 
 public:
 	std::vector<glm::vec2> Points = std::vector<glm::vec2>(3);
 
-	ConvexPolygon() { CalculatePointAngles(); }
-	ConvexPolygon(std::vector<glm::vec2>& points) : Points(points) { CalculatePointAngles(); }
+	ConvexPolygon() { CalculatePointAngles(); isValid = false; }
+	ConvexPolygon(std::vector<glm::vec2>& points) : Points(points) { CalculatePointAngles(); isValid = true; }
 
 	ConvexPolygon CreateCircular(int segments, int precision = 4);
 

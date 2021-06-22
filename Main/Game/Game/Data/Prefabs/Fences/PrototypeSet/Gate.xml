@@ -52,9 +52,9 @@
         </child>
         <child name="LeftWingAxle" position="-7.21,0,0" rotation="0,90,0" scale="1,1,1">
             <children>
-                <child name="LeftWing" position="3.569965,0,0" rotation="0,0,0" scale="-1,1,1">
+                <child name="LeftWing" position="3.569965,0,0" rotation="0,0,0" scale="1,1,1">
                     <component name="ModelHolder">
-                        <property name="model" value="Structures/Fences/PrototypeSet:Gate"/>
+                        <property name="model" value="Structures/Fences/PrototypeSet:GateInv"/>
                     </component>
                     <component name="MeshRenderer">
                         <property name="configureFromHolder" value="true" />

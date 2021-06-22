@@ -52,6 +52,8 @@ ConvexPolygon ConvexPolygon::CreateCircular(int segments, int precision)
 // https://stackoverflow.com/questions/1119627/how-to-test-if-a-point-is-inside-of-a-convex-polygon-in-2d-integer-coordinates
 bool ConvexPolygon::IsPointInside(glm::vec2 point)
 {
+    if (!isValid) return false;
+
     //Check if a triangle or higher n-gon
     assert(Points.size() >= 3);
 

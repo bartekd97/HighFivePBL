@@ -4,6 +4,7 @@
 #include "MapGenerator/MapGenerator.h"
 #include "Audio/AudioManager.h"
 #include "../SceneUtilities.h"
+#include "Scripting/Scripts/MapCellOptimizer.h"
 
 
 void GameLiteScene::OnLoad()

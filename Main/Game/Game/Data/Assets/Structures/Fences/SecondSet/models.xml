@@ -2,4 +2,5 @@
     <model name="Column" mesh="column_secondSet.glb"    material="ssMaterial" />
     <model name="Fence" mesh="fence_secondSet.glb"      material="ssMaterial" />
     <model name="Gate" mesh="gate_secondSet.glb"        material="ssMaterial" />
+    <model name="GateInv" mesh="gateInv_secondSet.glb"  material="ssMaterial" />
 </models>
