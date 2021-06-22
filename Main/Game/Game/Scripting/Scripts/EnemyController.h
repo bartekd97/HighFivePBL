@@ -323,7 +323,20 @@ public:
 				auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(GetGameObject());
 				auto mainOut = raycaster.GetOut();
 
-				if (mainOut.hittedObject == playerObject)
+				bool forwardClear = mainOut.hittedObject == playerObject;
+				if (!forwardClear)
+				{
+					auto positionCell = HFEngine::ECS.GetComponent<Transform>(cellObject).GetWorldPosition();
+					auto& mapCell = HFEngine::ECS.GetComponent<MapCell>(cellObject);
+					glm::vec2 posTemp = glm::vec2(pos.x - positionCell.x, pos.z - positionCell.z);
+					if (!mapCell.PolygonSmooth.IsPointInside(posTemp))
+					{
+						// if enemy is already out of cell, then force it to mvoe forward to player to make it allow falling off
+						forwardClear = true;
+					}
+				}
+
+				if (forwardClear)
 				{
 					auto leftPos = pos - transform.GetWorldRight() * circleCollider.radius;
 					raycaster.Raycast(leftPos, playerDir);
