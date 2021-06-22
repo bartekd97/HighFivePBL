@@ -54,7 +54,7 @@ void CellPainter::Paint(GameObject cell)
 		{
 			auto& circleCollider = HFEngine::ECS.GetComponent<CircleCollider>(colliderObject);
 			auto& colliderTransform = HFEngine::ECS.GetComponent<Transform>(colliderObject);
-			AddCircleExcluder(colliderTransform.GetWorldPosition(), circleCollider.radius * 2.0f);
+			AddCircleExcluder(colliderTransform.GetWorldPosition(), circleCollider.radius * 1.85f);
 		}
 	}
 
@@ -229,13 +229,13 @@ void CellPainter::AssignUniforms(std::shared_ptr<Shader> shader)
 		shader->setFloat("gCliffLevelGrass", 0.89f);
 		break;
 	case MapCell::Type::NORMAL:
-		shader->setFloat("gRoadWidth", 0.013f);
-		shader->setFloat("gRoadCenterRadius", 0.07f);
+		shader->setFloat("gRoadWidth", 0.015f);
+		shader->setFloat("gRoadCenterRadius", 0.08f);
 		shader->setFloat("gCliffLevelGrass", 0.89f);
 		break;
 	case MapCell::Type::BOSS:
-		shader->setFloat("gRoadWidth", 0.013f);
-		shader->setFloat("gRoadCenterRadius", 0.07f);
+		shader->setFloat("gRoadWidth", 0.015f);
+		shader->setFloat("gRoadCenterRadius", 0.08f);
 		shader->setFloat("gCliffLevelGrass", 0.84f);
 		break;
 	default:

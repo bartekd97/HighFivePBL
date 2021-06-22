@@ -72,18 +72,23 @@ private:
 	{
 		// TODO: make it somehow so it doesnt have to be calculated
 		auto position = HFEngine::ECS.GetComponent<Transform>(GetGameObject()).GetWorldPosition();
-		float dist, minDist = std::numeric_limits<float>::max();
-		float x, z;
+		//float dist, minDist = std::numeric_limits<float>::max();
+		//float x, z;
 		currentCell = NULL_GAMEOBJECT;
 		for (auto cell : cells)
 		{
 			auto positionCell = HFEngine::ECS.GetComponent<Transform>(cell).GetWorldPosition();
-			x = positionCell.x - position.x;
-			z = positionCell.z - position.z;
-			dist = sqrt((x * x) + (z * z));
-			if (dist < minDist)
+			auto& mapCell = HFEngine::ECS.GetComponent<MapCell>(cell);
+
+			glm::vec2 posTemp = glm::vec2(position.x - positionCell.x, position.z - positionCell.z);
+
+			//x = positionCell.x - position.x;
+			//z = positionCell.z - position.z;
+			//dist = sqrt((x * x) + (z * z));
+			//if (dist < minDist)
+			if (mapCell.PolygonSmooth.IsPointInside(posTemp))
 			{
-				minDist = dist;
+				//minDist = dist;
 				newCurrentCell = cell;
 			}
 		}
@@ -95,7 +100,7 @@ private:
 		{
 			tsl::robin_set<GameObject> enabledCells;
 			enabledCells.insert(currentCell);
-			auto mapCell = HFEngine::ECS.GetComponent<MapCell>(currentCell);
+			auto& mapCell = HFEngine::ECS.GetComponent<MapCell>(currentCell);
 			for (auto& bridge : mapCell.Bridges)
 			{
 				enabledCells.insert(bridge.Cell);

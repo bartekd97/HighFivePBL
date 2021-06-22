@@ -503,9 +503,9 @@ public:
 			emitterSmoke.emitting = true;
 
 			grassPrimitive.targetHeight = 0.0f;
-			timerAnimator.AnimateVariable(&grassPrimitive.radius, 0.0f, pushBackDistance * 1.25f, 0.8f);
-			timerAnimator.AnimateVariable(&grassPrimitive.innerRadius, 0.0f, pushBackDistance * 1.25f, 0.8f);
-			timerAnimator.UpdateInTime(0.8f, [&](float t) {
+			timerAnimator.AnimateVariable(&grassPrimitive.radius, 0.0f, pushBackDistance * 1.25f, 0.85f);
+			timerAnimator.AnimateVariable(&grassPrimitive.innerRadius, 0.0f, pushBackDistance * 1.25f * 0.9f, 0.85f);
+			timerAnimator.UpdateInTime(0.85f, [&](float t) {
 				grassPrimitive.targetHeight = t*t*t;
 				});
 			});
