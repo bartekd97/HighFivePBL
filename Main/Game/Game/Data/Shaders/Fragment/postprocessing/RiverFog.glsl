@@ -19,7 +19,7 @@ uniform vec2 viewportSize;
 uniform float fogZoom = 40.0f;
 uniform vec2 noiseOffsets[3];
 
-uniform vec3 fogColor = vec3(0.2, 0.3, 0.5);
+uniform vec3 fogColor = vec3(0.25, 0.35, 0.5);
 uniform float fogFadeDist = 0.025f;
 
 float getFogValue(vec2 uv)

@@ -10,7 +10,7 @@ class Event;
 class RiverFogEffect : public IPostprocessingEffect
 {
 public:
-	const float FogHeightLevel = -0.5f;
+	const float FogHeightLevel = 0.35f; // -0.5
 
 private:
 	std::shared_ptr<Shader> shader;
