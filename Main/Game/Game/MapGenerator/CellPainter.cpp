@@ -22,7 +22,8 @@ namespace Painter {
 
 		const std::vector<FrameBuffer::ColorAttachement> components = {
 			// internalFormat, dataFormat, dataType
-			{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedoFade
+			{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// albedo
+			{GL_RGB, GL_RGB, GL_UNSIGNED_BYTE},	// normal
 			{GL_RED, GL_RED, GL_UNSIGNED_BYTE},		// metalness
 			{GL_RED, GL_RED, GL_UNSIGNED_BYTE},		// roughness
 			{GL_RED, GL_RED, GL_UNSIGNED_BYTE}		// grass density
@@ -78,13 +79,14 @@ void CellPainter::PaintMesh()
 
 	auto material = MaterialManager::CreateEmptyMaterial(MaterialType::DEFERRED);
 	material->albedoMap = fb->popColorAttachement(0);
-	material->metalnessMap = fb->popColorAttachement(1);
-	material->roughnessMap = fb->popColorAttachement(2);
+	material->normalMap = fb->popColorAttachement(1);
+	material->metalnessMap = fb->popColorAttachement(2);
+	material->roughnessMap = fb->popColorAttachement(3);
 	material->albedoColor = glm::vec3(1.0f);
 	material->metalnessValue = 1.0f;
 	material->roughnessValue = 1.0f;
 
-	grassDensityTexture = fb->popColorAttachement(3);
+	grassDensityTexture = fb->popColorAttachement(4);
 
 	FrameBuffer::BindDefaultScreen();
 
@@ -212,11 +214,21 @@ void CellPainter::AssignUniforms(std::shared_ptr<Shader> shader)
 	shader->setVector2F("CellCenter", uvData.uvCenter);
 
 	config.grassTexture->bind(1);
-	config.roadTexture->bind(2);
-	config.cliffTexture->bind(3);
+	config.roadAlbedoTexture->bind(2);
+	config.roadNormalTexture->bind(3);
+	config.roadRoughnessTexture->bind(4);
+	config.cliffAlbedoTexture->bind(5);
+	config.cliffNormalTexture->bind(6);
+	config.cliffRoughnessTexture->bind(7);
+
 	shader->setInt("grassTexture", 1);
-	shader->setInt("roadTexture", 2);
-	shader->setInt("cliffTexture", 3);
+	shader->setInt("roadAlbedoTexture", 2);
+	shader->setInt("roadNormalTexture", 3);
+	shader->setInt("roadRoughnessTexture", 4);
+	shader->setInt("cliffAlbedoTexture", 5);
+	shader->setInt("cliffNormalTexture", 6);
+	shader->setInt("cliffRoughnessTexture", 7);
+
 	shader->setFloat("grassTiling", config.grassTiling);
 	shader->setFloat("roadTiling", config.roadTiling);
 	shader->setFloat("cliffTiling", config.cliffTiling);

@@ -1,8 +1,9 @@
 #version 330 core
 layout (location = 0) out vec3 gAlbedo;
-layout (location = 1) out float gMetalness;
-layout (location = 2) out float gRoughness;
-layout (location = 3) out float gGrassDensity;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out float gMetalness;
+layout (location = 3) out float gRoughness;
+layout (location = 4) out float gGrassDensity;
 
 const float PI = 3.14159265359;
 
@@ -20,8 +21,15 @@ uniform vec2 CellCenter;
 in vec2 TexCoords;
 
 uniform sampler2D grassTexture;
-uniform sampler2D roadTexture;
-uniform sampler2D cliffTexture;
+
+uniform sampler2D roadAlbedoTexture;
+uniform sampler2D roadNormalTexture;
+uniform sampler2D roadRoughnessTexture;
+
+uniform sampler2D cliffAlbedoTexture;
+uniform sampler2D cliffNormalTexture;
+uniform sampler2D cliffRoughnessTexture;
+
 uniform float grassTiling;
 uniform float roadTiling;
 uniform float cliffTiling;
@@ -104,8 +112,8 @@ bool isInsideCircleExcluder()
 void main()
 {
     vec3 grass = texture(grassTexture, TexCoords * grassTiling).rgb;
-    vec3 road = texture(roadTexture, TexCoords * roadTiling).rgb;
-    vec3 cliff = texture(cliffTexture, TexCoords * cliffTiling).rgb;
+    vec3 road = texture(roadAlbedoTexture, TexCoords * roadTiling).rgb;
+    vec3 cliff = texture(cliffAlbedoTexture, TexCoords * cliffTiling).rgb;
 
     float roadFactor = GetRoadFactor();
     float cliffFactor = GetCliffFactor(gCliffLevel);
@@ -118,10 +126,22 @@ void main()
 
 
 
-    gMetalness = mix(0.2f, 0.4f, cliffFactor) * (1.0 - roadFactor);
+    float metalness;
+    metalness = mix(0.2f, 0.1f, cliffFactor); // was 0.4 for clif
+    metalness = mix(metalness, 0.0f, roadFactor);
+    gMetalness = metalness;
 
     //gMetalness = mix(0.2f, 0.3f, cliffFactor);
-    gRoughness = mix(0.75f, 0.55f, roadFactor);
+    //gRoughness = mix(0.75f, 0.55f, roadFactor);
+    float roughness;
+    roughness = mix(0.75f, texture(cliffRoughnessTexture, TexCoords * cliffTiling).r, cliffFactor);
+    roughness = mix(roughness, texture(roadRoughnessTexture, TexCoords * roadTiling).r, roadFactor);
+    gRoughness = roughness;
+
+    vec3 normal;
+    normal = mix(vec3(0.5,0.5,1.0), texture(cliffNormalTexture, TexCoords * cliffTiling).rgb, cliffFactor);
+    normal = mix(normal, texture(roadNormalTexture, TexCoords * roadTiling).rgb, roadFactor);
+    gNormal = normal;
 
     if (isInsideCircleExcluder())
         gGrassDensity = 0.0;

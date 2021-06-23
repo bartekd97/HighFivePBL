@@ -1,5 +1,11 @@
 <textures>
     <texture name="Grass" file="tilable-img_0044-lush.png" format="srgb" />
-    <texture name="Road" file="01tizeta_asphalts.png" format="srgb" />
-    <texture name="Cliff" file="tileable2e.png" format="srgb" />
+
+    <texture name="RoadAlbedo" file="pebble_ground_01_diff_4k.png" format="srgb" />
+    <texture name="RoadNormal" file="pebble_ground_01_nor_4k.png" format="rgb" />
+    <texture name="RoadRoughness" file="pebble_ground_01_rough_4k.png" format="r" />
+
+    <texture name="CliffAlbedo" file="rocks_ground_04_diff_4k.png" format="srgb" />
+    <texture name="CliffNormal" file="rocks_ground_04_nor_4k.png" format="rgb" />
+    <texture name="CliffRoughness" file="rocks_ground_04_rough_4k.png" format="r" />
 </textures>

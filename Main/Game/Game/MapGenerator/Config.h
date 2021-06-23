@@ -103,17 +103,29 @@ struct CellTerrainConfig
 {
     std::shared_ptr<Texture> grassTexture;
     float grassTiling = 2.0f;
-    std::shared_ptr<Texture> roadTexture;
-    float roadTiling = 8.0f;
-    std::shared_ptr<Texture> cliffTexture;
-    float cliffTiling = 2.0f;
+
+    std::shared_ptr<Texture> roadAlbedoTexture;
+    std::shared_ptr<Texture> roadNormalTexture;
+    std::shared_ptr<Texture> roadRoughnessTexture;
+    float roadTiling = 4.0f; // 8.0f
+
+    std::shared_ptr<Texture> cliffAlbedoTexture;
+    std::shared_ptr<Texture> cliffNormalTexture;
+    std::shared_ptr<Texture> cliffRoughnessTexture;
+    float cliffTiling = 4.0f; // 2.0f;
 
     CellTerrainConfig()
     {
         // TODO: make it with cleaner way, with possibility to use different configs for different cells
         grassTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Grass");
-        roadTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Road");
-        cliffTexture = TextureManager::GetTexture("MapGenerator/Terrain", "Cliff");
+
+        roadAlbedoTexture = TextureManager::GetTexture("MapGenerator/Terrain", "RoadAlbedo");
+        roadNormalTexture = TextureManager::GetTexture("MapGenerator/Terrain", "RoadNormal");
+        roadRoughnessTexture = TextureManager::GetTexture("MapGenerator/Terrain", "RoadRoughness");
+
+        cliffAlbedoTexture = TextureManager::GetTexture("MapGenerator/Terrain", "CliffAlbedo");
+        cliffNormalTexture = TextureManager::GetTexture("MapGenerator/Terrain", "CliffNormal");
+        cliffRoughnessTexture = TextureManager::GetTexture("MapGenerator/Terrain", "CliffRoughness");
     }
 };
 
