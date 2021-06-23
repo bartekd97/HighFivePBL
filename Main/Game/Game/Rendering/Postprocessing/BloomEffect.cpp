@@ -21,7 +21,10 @@ void BloomEffect::Init()
 		FrameBuffer::DepthAttachement::DEFAULT
 	);
 
-	brightnessThreshold = 0.55;
+	framebufferA->getColorAttachement(0)->setEdges(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	framebufferB->getColorAttachement(0)->setEdges(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+
+	brightnessThreshold = 0.725f;  // 0.55f
 	bloom = ShaderManager::GetShader("Bloom");
 	bloom->use();
 	bloom->setInt("diffuseTexture", 0);

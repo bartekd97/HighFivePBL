@@ -14,7 +14,8 @@ void main()
     // //FragColor = color;
     // BrightColor = color * brightness;
 
-    float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+    //float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+    float brightness = max(color.r, max(color.g, color.b));
         if(brightness > BrightnessThreshold)
             BrightColor = vec4(color.rgb, 1.0);
         else
